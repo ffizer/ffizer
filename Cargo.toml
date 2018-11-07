@@ -1,5 +1,5 @@
 [package]
-name = "fgen"
+name = "ffizer"
 version = "0.1.0"
 authors = ["David Bernard"]
 

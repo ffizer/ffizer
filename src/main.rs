@@ -1,11 +1,13 @@
 #[macro_use]
 extern crate slog;
+extern crate ffizer;
 extern crate slog_async;
 extern crate slog_term;
 extern crate structopt;
 
 use slog::Drain;
 //use std::env;
+use ffizer::Ctx;
 use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
@@ -61,12 +63,12 @@ fn main() -> Result<(), Box<Error>> {
     let logger = init_log(log_level);
     debug!(logger, "parsed args"; "cmd" => format!("{:?}", &cmd));
 
-    let dest_folder = fs::canonicalize(&cmd.dest_folder)?;
-    let template_uri = &cmd.template_uri;
+    let ctx = Ctx {
+        logger,
+        dest_folder: fs::canonicalize(&cmd.dest_folder)?.clone(),
+        template_uri: cmd.template_uri.clone(),
+    };
 
-    println!(
-        "todo process template {} into folder {:?}",
-        template_uri, dest_folder,
-    );
-    Ok(())
+    println!("todo process {:?}", &ctx);
+    ffizer::process(ctx)
 }

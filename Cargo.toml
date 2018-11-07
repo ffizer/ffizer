@@ -8,3 +8,8 @@ slog = { version= "2.4.1", features = ["max_level_trace", "release_max_level_war
 slog-async = "2.3.0"
 slog-term = "2.4.0"
 structopt = "0.2.13"
+
+[[bin]]
+name = "ffizer"
+path = "src/main.rs"
+doc = false

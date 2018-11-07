@@ -4,7 +4,7 @@ WIP
 
 ffizer is a files and folders generator / initializer. It was created to bootstrap any kind of project.
 
-keywords: file generator, project template, project scaffolding, quickstart, project initializer
+keywords: file generator, project template, project scaffolding, quickstart, project initializer, project skeleton
 
 ## Motivations
 
@@ -18,7 +18,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
   - [ ] chain commands (eg: 'git init') (like a post-hook)
 - [ ] template hosted as a local folder on the file system
 - [ ] template hosted as a (top) git repository on any host (not only public github)
-- [ ] a fast project generator
+- [ ] a fast enough project generator
 
 ### Sub features
 
@@ -72,7 +72,9 @@ The minimal template is an empty dir.
 
 - [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates require python + pip + install dependencies (automatic)
 - [Cookiecutter — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
-- [sethyuan/ffizer: A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache.](https://github.com/sethyuan/ffizer)
+- [sethyuan/ffizer](https://github.com/sethyuan/ffizer): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
+- [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only, plus few bug) I could contributes but I have incompatible requirements (and would like to create my own since a long time).
+- [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
 
 ### Specialized
 

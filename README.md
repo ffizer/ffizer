@@ -10,19 +10,19 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 
 ### Main features
 
-[ ] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
-[ ] a simple and generic project template (no specialisation to one ecosystem)
-[ ] template as simple as possible, like a
-  [ ] copy or clone with file/folder renames without overwrite
-  [ ] few search and replace into file
-  [ ] chain commands (eg: 'git init') (like a post-hook)
-[ ] template hosted as a local folder on the file system
-[ ] template hosted as a (top) git repository on any host (not only public github)
-[ ] a fast project generator
+- [ ] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
+- [ ] a simple and generic project template (no specialisation to one ecosystem)
+- [ ] template as simple as possible, like a
+  - [ ] copy or clone with file/folder renames without overwrite
+  - [ ] few search and replace into file
+  - [ ] chain commands (eg: 'git init') (like a post-hook)
+- [ ] template hosted as a local folder on the file system
+- [ ] template hosted as a (top) git repository on any host (not only public github)
+- [ ] a fast project generator
 
 ### Sub features
 
-[ ] dry mode (usefull to test)
+- [ ] dry mode (usefull to test)
 
 ## Limitations
 

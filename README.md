@@ -23,6 +23,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 ### Sub features
 
 - [ ] dry mode (usefull to test)
+- [ ] chain template generation because fragment of templates can be commons
 
 ## Limitations
 
@@ -38,6 +39,23 @@ Some of the following limitations could change in the future (depends on gain/lo
 ### Install
 
 ### Run
+
+```sh
+ffizer 0.1.0
+davidB
+
+USAGE:
+    ffizer [FLAGS] --destination <folder> --source <uri>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+    -v, --verbose    Verbose mode (-v, -vv, -vvv, etc.) print on stderr
+
+OPTIONS:
+    -d, --destination <folder>    destination folder (created if doesn't exist)
+    -s, --source <uri>            uri / path of the template
+```
 
 ### Create your first template
 

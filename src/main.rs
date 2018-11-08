@@ -9,7 +9,6 @@ use slog::Drain;
 //use std::env;
 use ffizer::Ctx;
 use std::error::Error;
-use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -25,21 +24,23 @@ struct Cmd {
     #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
     verbose: usize,
 
-    /// root directory of the search
+    /// uri / path of the template
     #[structopt(
-        name = "TEMPLATE_URI",
+        short = "s",
+        long = "source",
         //parse(from_os_str),
-        default_value = "."
+        //default_value = "."
     )]
-    template_uri: String,
+    uri: String,
 
-    /// root directory of the search
+    /// destination folder (created if doesn't exist)
     #[structopt(
-        name = "DEST_FOLDER",
+        short = "d",
+        long = "destination",
         parse(from_os_str),
-        default_value = "."
+        //default_value = "."
     )]
-    dest_folder: PathBuf,
+    folder: PathBuf,
 }
 
 fn init_log(level_min: slog::Level) -> slog::Logger {
@@ -65,8 +66,8 @@ fn main() -> Result<(), Box<Error>> {
 
     let ctx = Ctx {
         logger,
-        dest_folder: fs::canonicalize(&cmd.dest_folder)?.clone(),
-        template_uri: cmd.template_uri.clone(),
+        dst_folder: cmd.folder,
+        src_uri: cmd.uri,
     };
 
     println!("todo process {:?}", &ctx);

@@ -4,8 +4,8 @@ use std::path::PathBuf;
 #[derive(Debug, Clone)]
 pub struct Ctx {
     pub logger: slog::Logger,
-    pub dest_folder: PathBuf,
-    pub template_uri: String,
+    pub dst_folder: PathBuf,
+    pub src_uri: String,
 }
 
 pub fn process(ctx: Ctx) -> Result<(), Box<Error>> {

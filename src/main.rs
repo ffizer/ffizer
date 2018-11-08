@@ -71,5 +71,5 @@ fn main() -> Result<(), Box<Error>> {
     };
 
     println!("todo process {:?}", &ctx);
-    ffizer::process(ctx)
+    ffizer::process(&ctx)
 }

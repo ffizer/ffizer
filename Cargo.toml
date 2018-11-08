@@ -4,12 +4,30 @@ version = "0.1.0"
 authors = ["David Bernard"]
 
 [dependencies]
+#fs_extra = "1.1.0"
+#handlebars = "1.1.0"
+#git2 = { version = "0.7.5", features = [], default-features = false }
+#regex = "1.0.6"
+#serde = "1.0"
+#serde_yaml = "0.8"
+# serde_json ="*"
 slog = { version= "2.4.1", features = ["max_level_trace", "release_max_level_warn"] }
 slog-async = "2.3.0"
 slog-term = "2.4.0"
 structopt = "0.2.13"
+walkdir = "2.2.6"
+
+#[dev-dependencies]
+#spectral = "0.6.0"
 
 [[bin]]
 name = "ffizer"
 path = "src/main.rs"
 doc = false
+
+# [target.'cfg(all(unix, not(target_os = "redox")))'.dependencies]
+# libc = "0.2"
+
+# [target.'cfg(windows)'.dependencies]
+# kernel32-sys = "0.2"
+# winapi = "0.3"

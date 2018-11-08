@@ -1,0 +1,86 @@
+language: rust
+cache: cargo
+rust:
+  - stable
+#  - beta
+#  - nightly
+matrix:
+  include:
+    # Stable channel.
+    - os: linux
+      rust: stable
+      env: TARGET=x86_64-unknown-linux-gnu
+    # - os: linux
+    #   rust: stable
+    #   env: TARGET=x86_64-unknown-linux-musl
+    - os: linux
+      rust: stable
+      env: TARGET=i686-unknown-linux-gnu
+    # - os: linux
+    #   rust: stable
+    #   env: TARGET=i686-unknown-linux-musl
+    - os: osx
+      rust: stable
+      env: TARGET=x86_64-apple-darwin
+  # allow_failures:
+  #   - rust: nightly
+  fast_finish: true
+
+addons:
+  apt:
+    packages:
+      # needed for i686-unknown-linux-gnu target
+      - gcc-multilib
+      # needed to build deb packages
+      - fakeroot
+
+env:
+  global:
+    # Default target on travis-ci.
+    # Used as conditional check in the install stage
+    - HOST=x86_64-unknown-linux-gnu
+    # Used on the deployment script
+    - PROJECT_NAME=ffizer
+    - LIBZ_SYS_STATIC=1
+
+install:
+  # prevent target re-add error from rustup
+  - if [[ $TRAVIS_OS_NAME = linux && $HOST != $TARGET ]]; then rustup target add $TARGET; fi
+#   - rustup component add rustfmt-preview
+
+# # Code formatting check
+# before_script: |
+#   - cargo fmt -- --write-mode=diff
+
+script:
+  # Incorporate TARGET env var to the build and test process
+  - cargo build --target $TARGET
+  - cargo test --target $TARGET
+
+before_deploy:
+  - cargo build --target "$TARGET" --release
+  - strip target/${TARGET}/release/${PROJECT_NAME}
+  - tar -czvf  "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" target/${TARGET}/release/${PROJECT_NAME}
+
+deploy:
+  provider: releases
+  api_key:
+    secure: odP2tfVCssKU9BnAbHoCuh6wEF3XoCZeqeg3hJ6El58Y2GrtkOpLWJy3zSlGa/J13z3Dpk7TMkaM3qisegrfzYLM85UTQyxoGpWgfVu5YP3GU1XkPHNTmqUgjJgsI32bEXbaFaxUbC/8PoJaZPxo3vdwVWdQcdXUKEfqFd/fh2NQh7Uc5+SQft1p1JuEnZbD9dQ2VNnbfozDfv7FxBqGOYkPyOOVCZeGN1Sjjn/OQy6iEYso180zl5dN+o823r4YxNPASq/ZrVeB7Da3laBpqXpY0wmaWWDRuqBHSzMF3QXQVcOZPUcJhN/sfUJB3MWCDZBiVzXXXmRQEJgFf8QMaWMkFZy5YcfJFO+LNcZYLq7TcJN1h9LrlyOgfRJ4gozXnRgG16ZnussC8f/QEIXohdyXrP1fWX6uxJw2qHXeG8sbVmIcD6AJeETeYY1nh/NTTSxLv8uXUN6mPJEXwr292y01UdBNjQh6b44c/0oKyWDkaQ38fkWcmVd4DIuiSx1YoGpekxMqXRICjCxxyiBL82m/rp8N4XmTgCSNtn3DBvJ9eJ41SgdGxTbTyJSEXkhpolJEHix+uNHxp94ZxOm4aR3GTQ7UlHH82D8kR0qNpkkTJZhHrcS2ALjSqDufoxVCYhKaDhqlk2HAYnSK87LaBU8EuBtoLKgha2KxV1QLpOs=
+  file_glob: true
+  # NOTE explanation on each env variable
+  # - PROJECT_NAME: name of the project, set on the `env.global` above
+  # - TRAVIS_TAG: tag name that the build is being deployed for, usually the version number
+  # - TARGET: target triple of the build
+  file:
+    - ${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.*
+  # don't delete artifacts from previous stage
+  skip_cleanup: true
+  on:
+    rust: stable
+    tags: true
+    repo: davidB/ffizer
+    condition: $TRAVIS_RUST_VERSION = stable && $TARGET != ""
+
+notifications:
+  email:
+    on_success: never

@@ -8,7 +8,7 @@
 [![Project Status: Concept – Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 [![Build Status](https://travis-ci.com/davidB/ffizer.svg?branch=master)](https://travis-ci.com/davidB/ffizer)
-[![Build status](https://ci.appveyor.com/api/projects/status/03ok7d1x3h0i5kay?svg=true)](https://ci.appveyor.com/project/davidB/git-find)
+[![Build status](https://ci.appveyor.com/api/projects/status/8n6rgvoc2vr6ikoh?svg=true)](https://ci.appveyor.com/project/davidB/ffizer)
 
 ffizer is a files and folders generator / initializer. It was created to bootstrap any kind of project.
 

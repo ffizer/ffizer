@@ -2,6 +2,7 @@
 pub extern crate slog;
 extern crate walkdir;
 
+use std::cmp::Ordering;
 use std::error::Error;
 use std::path::Path;
 use std::path::PathBuf;
@@ -16,6 +17,7 @@ pub struct Ctx {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FileOperation {
+    Nothing,
     Ignore,
     Keep,
     MkDir,
@@ -23,7 +25,7 @@ pub enum FileOperation {
     CopyRender,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Action {
     /// relative path in the template folder
     pub src_path: ChildPath,
@@ -33,7 +35,7 @@ pub struct Action {
     pub operation: FileOperation,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct ChildPath {
     pub relative: PathBuf,
     pub base: PathBuf,
@@ -53,7 +55,7 @@ pub struct ChildPath {
 pub fn process(ctx: &Ctx) -> Result<(), Box<Error>> {
     // TODO define values and ask missing
     let template_base_path = as_local_path(&ctx.src_uri)?;
-    let input_paths = find_childpaths(&ctx, template_base_path);
+    let input_paths = find_childpaths(template_base_path);
     let actions = plan(ctx, input_paths)?;
     //TODO display actions ask for confirmation
     execute(ctx, &actions)
@@ -61,21 +63,31 @@ pub fn process(ctx: &Ctx) -> Result<(), Box<Error>> {
 
 /// list actions to execute
 pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Box<Error>> {
-    // TODO sort input_paths by priority (folder first, *.ffizer(.*) first, alphabetical)
-    let actions = src_paths
+    let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
             let dst_path = compute_dst_path(ctx, &src_path);
             Action {
                 src_path,
                 dst_path,
-                operation: FileOperation::CopyRaw,
+                operation: FileOperation::Nothing,
             }
         }).collect::<Vec<_>>();
+    // TODO sort input_paths by priority (*.ffizer(.*) first, alphabetical)
+    actions.sort_by(cmp_path_for_plan);
     Ok(actions)
 }
 
-pub fn execute(ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
+fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
+    let cmp_dst = a.dst_path.relative.cmp(&b.dst_path.relative);
+    if cmp_dst == Ordering::Equal {
+        a.src_path.relative.cmp(&b.src_path.relative)
+    } else {
+        cmp_dst
+    }
+}
+
+pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
     actions.iter().for_each(|a| println!("TODO {:?}", a));
     // TODO executes actions
     unimplemented!()
@@ -89,7 +101,7 @@ where
     Ok(PathBuf::from(uri.as_ref()))
 }
 
-fn find_childpaths<P>(ctx: &Ctx, base: P) -> Vec<ChildPath>
+fn find_childpaths<P>(base: P) -> Vec<ChildPath>
 where
     P: AsRef<Path>,
 {

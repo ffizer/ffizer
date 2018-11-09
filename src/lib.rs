@@ -15,6 +15,16 @@ pub struct Ctx {
     pub src_uri: String,
 }
 
+impl Default for Ctx {
+    fn default() -> Ctx {
+        Ctx {
+            logger: slog::Logger::root(slog::Discard, o!()),
+            dst_folder: PathBuf::default(),
+            src_uri: String::default(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum FileOperation {
     Nothing,
@@ -126,5 +136,33 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath) -> ChildPath {
         base: ctx.dst_folder.clone(),
         relative: src.relative.clone(),
         is_symlink: src.is_symlink,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    extern crate spectral;
+
+    use super::*;
+    use tests::spectral::prelude::*;
+
+    #[test]
+    fn test_compute_dst_path_asis() {
+        let ctx = Ctx {
+            dst_folder: PathBuf::from("test/dst"),
+            ..Default::default()
+        };
+        let src = ChildPath {
+            relative: PathBuf::from("hello/sample.txt"),
+            base: PathBuf::from("test/src"),
+            is_symlink: false,
+        };
+        let expected = ChildPath {
+            relative: PathBuf::from("hello/sample.txt"),
+            base: ctx.dst_folder.clone(),
+            is_symlink: false,
+        };
+        let actual = compute_dst_path(&ctx, &src);
+        assert_that!(&actual).is_equal_to(&expected);
     }
 }

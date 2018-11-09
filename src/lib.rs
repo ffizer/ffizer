@@ -1,5 +1,6 @@
 #[macro_use]
-pub extern crate slog;
+extern crate slog;
+extern crate dialoguer;
 extern crate walkdir;
 
 use std::cmp::Ordering;
@@ -115,14 +116,15 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
 
 //TODO add flag to filter display: all, changes, none
 //TODO add flag to confirm: auto, always, never
-fn confirm_plan(ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, Box<Error>> {
+fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Error> {
+    use dialoguer::Confirmation;
+
     println!("Plan");
     actions.iter().for_each(|a| {
         println!("{:?}", a);
     });
-    println!("Plan");
-    // TODO promp confirmation
-    Ok(true)
+    Confirmation::new("Do you want to apply plan ?").interact()
+    //Ok(confirm)
 }
 
 //TODO accumulate Result (and error)

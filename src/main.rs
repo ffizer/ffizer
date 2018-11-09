@@ -70,6 +70,5 @@ fn main() -> Result<(), Box<Error>> {
         src_uri: cmd.uri,
     };
 
-    println!("todo process {:?}", &ctx);
     ffizer::process(&ctx)
 }

@@ -2,6 +2,7 @@
 name = "ffizer"
 version = "0.1.0"
 authors = ["David Bernard"]
+description = "ffizer is a files and folders generator / initializer. Create any kind of project from template."
 
 [dependencies]
 #fs_extra = "1.1.0"

@@ -10,7 +10,7 @@
 [![Build Status](https://travis-ci.com/davidB/ffizer.svg?branch=master)](https://travis-ci.com/davidB/ffizer)
 [![Build status](https://ci.appveyor.com/api/projects/status/8n6rgvoc2vr6ikoh?svg=true)](https://ci.appveyor.com/project/davidB/ffizer)
 
-ffizer is a files and folders generator / initializer. It was created to bootstrap any kind of project.
+ffizer is a files and folders generator / initializer. Create any kind of project from template.
 
 keywords: file generator, project template, project scaffolding, quickstart, project initializer, project skeleton
 
@@ -51,6 +51,7 @@ Some of the following limitations could change in the future (depends on gain/lo
 ```sh
 ffizer 0.1.0
 davidB
+ffizer is a files and folders generator / initializer. Create any kind of project from template.
 
 USAGE:
     ffizer [FLAGS] --destination <folder> --source <uri>
@@ -58,7 +59,7 @@ USAGE:
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
-    -v, --verbose    Verbose mode (-v, -vv, -vvv, etc.) print on stderr
+    -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
 
 OPTIONS:
     -d, --destination <folder>    destination folder (created if doesn't exist)

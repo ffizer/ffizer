@@ -19,7 +19,7 @@ use structopt::StructOpt;
 )]
 struct Cmd {
     // The number of occurences of the `v/verbose` flag
-    /// Verbose mode (-v, -vv, -vvv, etc.)
+    /// Verbose mode (-v, -vv (very verbose / level debug), -vvv)
     /// print on stderr
     #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
     verbose: usize,

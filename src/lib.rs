@@ -4,6 +4,7 @@ extern crate walkdir;
 
 use std::cmp::Ordering;
 use std::error::Error;
+use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use walkdir::WalkDir;
@@ -37,9 +38,7 @@ pub enum FileOperation {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Action {
-    /// relative path in the template folder
     pub src_path: ChildPath,
-    /// relative path in the destination folder
     pub dst_path: ChildPath,
     // template: TemplateDef,
     pub operation: FileOperation,
@@ -50,6 +49,12 @@ pub struct ChildPath {
     pub relative: PathBuf,
     pub base: PathBuf,
     pub is_symlink: bool,
+}
+
+impl<'a> From<&'a ChildPath> for PathBuf {
+    fn from(v: &ChildPath) -> Self {
+        v.base.join(&v.relative)
+    }
 }
 
 // pub struct TemplateDef {
@@ -85,6 +90,14 @@ pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Box<Err
         }).collect::<Vec<_>>();
     // TODO sort input_paths by priority (*.ffizer(.*) first, alphabetical)
     actions.sort_by(cmp_path_for_plan);
+    let actions_count = actions.len();
+    actions = actions
+        .into_iter()
+        .fold(Vec::with_capacity(actions_count), |mut acc, e| {
+            let operation = select_operation(ctx, &e.src_path, &e.dst_path, &acc);
+            acc.push(Action { operation, ..e });
+            acc
+        });
     Ok(actions)
 }
 
@@ -97,10 +110,21 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
     }
 }
 
+//TODO accumulate Result (and error)
 pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
-    actions.iter().for_each(|a| println!("TODO {:?}", a));
-    // TODO executes actions
-    unimplemented!()
+    actions.iter().for_each(|a| {
+        println!("TODO {:?}", a);
+        match a.operation {
+            // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
+            FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path)).expect("TODO"),
+            FileOperation::CopyRaw => {
+                fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path)).expect("TODO");
+            }
+            _ => (),
+        };
+    });
+
+    Ok(())
 }
 
 fn as_local_path<S>(uri: S) -> Result<PathBuf, Box<Error>>
@@ -136,6 +160,25 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath) -> ChildPath {
         base: ctx.dst_folder.clone(),
         relative: src.relative.clone(),
         is_symlink: src.is_symlink,
+    }
+}
+
+fn select_operation(
+    _ctx: &Ctx,
+    src_path: &ChildPath,
+    dst_path: &ChildPath,
+    _actions: &Vec<Action>,
+) -> FileOperation {
+    let src_full_path = PathBuf::from(src_path);
+    let dest_full_path = PathBuf::from(dst_path);
+    if dest_full_path.exists()
+    /* || actions.contains(dst_path) propably the last */
+    {
+        FileOperation::Keep
+    } else if src_full_path.is_dir() {
+        FileOperation::MkDir
+    } else {
+        FileOperation::CopyRaw
     }
 }
 

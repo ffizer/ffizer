@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate slog;
 extern crate dialoguer;
+extern crate indicatif;
 extern crate walkdir;
 
 use std::cmp::Ordering;
@@ -129,7 +130,10 @@ fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Erro
 
 //TODO accumulate Result (and error)
 pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
-    actions.iter().for_each(|a| {
+    use indicatif::ProgressBar;
+
+    let pb = ProgressBar::new(actions.len() as u64);
+    pb.wrap_iter(actions.iter()).for_each(|a| {
         match a.operation {
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path)).expect("TODO"),

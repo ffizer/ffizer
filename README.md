@@ -41,6 +41,7 @@ Some of the following limitations could change in the future (depends on gain/lo
 - no update of existing file or folder
 - no specials features
 - no plugin and not extensible (without change the code)
+- handlebars is the only template language supported (support for other is welcome)
 
 ## Usages
 
@@ -112,3 +113,4 @@ specilazed to a platform, build tool,...
 - [Giter8](http://www.foundweekends.org/giter8/) require java + sbt
 - [Typesafe activator](https://developer.lightbend.com/start/), require java, scala ecosystem
 - [Maven – Archetypes](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, maven ecosystem
+- [cargo-generate](https://github.com/ashleygwilliams/cargo-generate), specialized in rust/cargo ecosystem (few features)

@@ -26,9 +26,9 @@ name = "ffizer"
 path = "src/main.rs"
 doc = false
 
-# [target.'cfg(all(unix, not(target_os = "redox")))'.dependencies]
-# libc = "0.2"
+[target.'cfg(all(unix, not(target_os = "redox")))'.dependencies]
+libc = "0.2"
 
-# [target.'cfg(windows)'.dependencies]
-# kernel32-sys = "0.2"
-# winapi = "0.3"
+[target.'cfg(windows)'.dependencies]
+kernel32-sys = "0.2"
+winapi = "0.3"

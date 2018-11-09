@@ -72,8 +72,11 @@ pub fn process(ctx: &Ctx) -> Result<(), Box<Error>> {
     let template_base_path = as_local_path(&ctx.src_uri)?;
     let input_paths = find_childpaths(template_base_path);
     let actions = plan(ctx, input_paths)?;
-    //TODO display actions ask for confirmation
-    execute(ctx, &actions)
+    if confirm_plan(&ctx, &actions)? {
+        execute(ctx, &actions)
+    } else {
+        Ok(())
+    }
 }
 
 /// list actions to execute
@@ -110,10 +113,21 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
     }
 }
 
+//TODO add flag to filter display: all, changes, none
+//TODO add flag to confirm: auto, always, never
+fn confirm_plan(ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, Box<Error>> {
+    println!("Plan");
+    actions.iter().for_each(|a| {
+        println!("{:?}", a);
+    });
+    println!("Plan");
+    // TODO promp confirmation
+    Ok(true)
+}
+
 //TODO accumulate Result (and error)
 pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
     actions.iter().for_each(|a| {
-        println!("TODO {:?}", a);
         match a.operation {
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path)).expect("TODO"),
@@ -123,7 +137,6 @@ pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
             _ => (),
         };
     });
-
     Ok(())
 }
 

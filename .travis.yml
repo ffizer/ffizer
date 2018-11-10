@@ -39,16 +39,13 @@ addons:
 
 env:
   global:
-    # Default target on travis-ci.
-    # Used as conditional check in the install stage
-    - HOST=x86_64-unknown-linux-gnu
     # Used on the deployment script
     - PROJECT_NAME=ffizer
     - LIBZ_SYS_STATIC=1
 
 install:
   # prevent target re-add error from rustup
-  - if [[ $TRAVIS_OS_NAME = linux && $HOST != $TARGET ]]; then rustup target add $TARGET; fi
+  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$TARGET" != "x86_64-unknown-linux-gnu" ]]; then rustup target add $TARGET; fi
 #   - rustup component add rustfmt-preview
 
 # # Code formatting check
@@ -62,8 +59,8 @@ script:
 
 before_deploy:
   - cargo build --target "$TARGET" --release
-  - strip target/${TARGET}/release/${PROJECT_NAME}
-  - tar -czvf  "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" target/${TARGET}/release/${PROJECT_NAME}
+  - if [[ "$TARGET" != "x86_64-pc-windows-msvc" ]]; then strip target/${TARGET}/release/${PROJECT_NAME}; fi
+  - tar -czvf  "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" target/${TARGET}/release/${PROJECT_NAME} target/${TARGET}/release/${PROJECT_NAME}.exe
 
 deploy:
   provider: releases

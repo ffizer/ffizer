@@ -2,7 +2,18 @@
 name = "ffizer"
 version = "0.1.0"
 authors = ["David Bernard"]
-description = "ffizer is a files and folders generator / initializer. Create any kind of project from template."
+description = "ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template."
+readme = "README.md"
+license = "CC0-1.0"
+keywords = ["cli", "project", "generator", "template", "skeleton", "prototype"]
+categories = ["command-line-utilities", "development-tools"]
+repository = "https://github.com/davidB/ffizer"
+homepage = "https://github.com/davidB/ffizer"
+
+[badges]
+maintenance = { status = "experimental" }
+appveyor = {repository = "davidB/ffizer", service = "github"}
+travis-ci = {repository = "davidB/ffizer"}
 
 [dependencies]
 #fs_extra = "1.1.0"

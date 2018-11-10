@@ -10,7 +10,7 @@
 [![Build Status](https://travis-ci.com/davidB/ffizer.svg?branch=master)](https://travis-ci.com/davidB/ffizer)
 [![Build status](https://ci.appveyor.com/api/projects/status/8n6rgvoc2vr6ikoh?svg=true)](https://ci.appveyor.com/project/davidB/ffizer)
 
-ffizer is a files and folders generator / initializer. Create any kind of project from template.
+ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
 keywords: file generator, project template, project scaffolding, quickstart, project initializer, project skeleton
 
@@ -18,19 +18,19 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 
 ### Main features
 
-- [ ] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
-- [ ] a simple and generic project template (no specialisation to one ecosystem)
+- [X] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
+- [X] a simple and generic project template (no specialisation to one ecosystem)
 - [ ] template as simple as possible, like a
   - [ ] copy or clone with file/folder renames without overwrite
   - [ ] few search and replace into file
   - [ ] chain commands (eg: 'git init') (like a post-hook)
-- [ ] template hosted as a local folder on the file system
+- [X] template hosted as a local folder on the file system
 - [ ] template hosted as a (top) git repository on any host (not only public github)
 - [ ] a fast enough project generator
 
 ### Sub features
 
-- [ ] dry mode (usefull to test)
+- [X] dry mode (usefull to test)
 - [ ] chain template generation because fragment of templates can be commons
 
 ## Limitations
@@ -103,6 +103,7 @@ The minimal template is an empty dir.
 - [sethyuan/ffizer](https://github.com/sethyuan/ffizer): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
 - [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only, plus few bug) I could contributes but I have incompatible requirements (and would like to create my own since a long time).
 - [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
+- [porteurbars](https://crates.io/crates/porteurbars), very similar but I discover it too late.
 
 ### Specialized
 

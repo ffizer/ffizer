@@ -1,14 +1,14 @@
 #[macro_use]
 extern crate slog;
+extern crate failure;
 extern crate ffizer;
 extern crate slog_async;
 extern crate slog_term;
 extern crate structopt;
 
-use slog::Drain;
-//use std::env;
+use failure::Error;
 use ffizer::Ctx;
-use std::error::Error;
+use slog::Drain;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -57,7 +57,7 @@ fn init_log(level_min: slog::Level) -> slog::Logger {
     log
 }
 
-fn main() -> Result<(), Box<Error>> {
+fn main() -> Result<(), Error> {
     let cmd = Cmd::from_args();
 
     let log_level = slog::Level::from_usize(3 + cmd.verbose).unwrap_or(slog::Level::Warning);

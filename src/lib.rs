@@ -1,14 +1,26 @@
-#[macro_use]
-extern crate slog;
 extern crate dialoguer;
+extern crate failure;
 extern crate indicatif;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_yaml;
+extern crate slog;
 extern crate walkdir;
 
+#[cfg(test)]
+extern crate spectral;
+
+mod template_cfg;
+
+use failure::Error;
+use slog::o;
 use std::cmp::Ordering;
-use std::error::Error;
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
+use template_cfg::TemplateCfg;
 use walkdir::WalkDir;
 
 #[derive(Debug, Clone)]
@@ -69,9 +81,11 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 //     input_paths: Vec<DirEntry>,
 // }
 
-pub fn process(ctx: &Ctx) -> Result<(), Box<Error>> {
-    // TODO define values and ask missing
+pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(&ctx.src_uri)?;
+    let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
+    // TODO define values and ask missing
+    let _variables = ask_variables(&template_cfg)?;
     let input_paths = find_childpaths(template_base_path);
     let actions = plan(ctx, input_paths)?;
     if confirm_plan(&ctx, &actions)? {
@@ -82,7 +96,7 @@ pub fn process(ctx: &Ctx) -> Result<(), Box<Error>> {
 }
 
 /// list actions to execute
-pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Box<Error>> {
+pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Error> {
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
@@ -129,7 +143,7 @@ fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Erro
 }
 
 //TODO accumulate Result (and error)
-pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
+pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Error> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -146,7 +160,7 @@ pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Box<Error>> {
     Ok(())
 }
 
-fn as_local_path<S>(uri: S) -> Result<PathBuf, Box<Error>>
+fn as_local_path<S>(uri: S) -> Result<PathBuf, Error>
 where
     S: AsRef<str>,
 {
@@ -201,12 +215,27 @@ fn select_operation(
     }
 }
 
+fn ask_variables(cfg: &TemplateCfg) -> Result<BTreeMap<String, String>, Error> {
+    use dialoguer::Input;
+    let mut variables = BTreeMap::new();
+    for variable in cfg.variables.iter() {
+        let name = variable.name.clone();
+        //TODO use variable.ask : let ask = &(variable.ask).unwrap_or(name);
+        let mut input = Input::new(&name);
+        if let Some(default_value) = &variable.default_value {
+            input.default(default_value);
+        }
+        // TODO manage error
+        let value = input.interact().expect("valid interaction");
+        variables.insert(name, value);
+    }
+    Ok(variables)
+}
+
 #[cfg(test)]
 mod tests {
-    extern crate spectral;
-
     use super::*;
-    use tests::spectral::prelude::*;
+    use spectral::prelude::*;
 
     #[test]
     fn test_compute_dst_path_asis() {

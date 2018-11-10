@@ -2,11 +2,8 @@ language: rust
 cache: cargo
 rust:
   - stable
-#  - beta
-#  - nightly
 matrix:
   include:
-    # Stable channel.
     - os: linux
       rust: stable
       env: TARGET=x86_64-unknown-linux-gnu
@@ -62,9 +59,10 @@ before_deploy:
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then 7z a "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.zip" target/${TARGET}/release/${PROJECT_NAME}.exe ; fi
 
 deploy:
+  # generate with "travis setup releases --force --pro"
   provider: releases
   api_key:
-    secure: T+z/yrD7lCiqgnBYa3Nzt6bXSAEKxL8EKuLOTQh9tJl34cZ+sm1801ob+obp43y6SXx3yBnCGtgLxVrbWwELPfTHv1ZxKQx2711ijWwRup2pDi7GeAX7eB+J1oxQzQPydgStwaDmlybtPy4CrxSqoMMNQ6lN/pvLOWwM8rrmptnmlCcdoPizl5TEgoIRx0+1oX0Pe2Q9tCDBnSgIdRo5MJlo23vK8zeC4Wy6jK/llX1vK9rw4r4u7tu4wYsD8s3yefwMcDKFlxkXvNvtHnvnlfCjGq9cYIjgrUjTAJMzF8LjI+GBBJlC5odgUJMKZ4jW4x0tBgN31jW7yxJR5tRpvxOcrsQhv3AefQ+nXl66SqqNiSwP+Uu4gQqNybhsk0j8FHgCP+4lGK+FI8ivunqO4ivd7FmyjhGOMHdH9kpJ5NwJ4AyU0Yseoj0dEmwQcu2uORdfJ29l7LqrczAbyE2j9eOHl8U1TGKFqc4gT6JVeBkN05CussYb8HRXWvPiyMLDI9BL5DI/930InoP/rrB2DpOGQmQeXWbyVExaqdJummzqmGV0tWuxu4gRuA8qhRalzGfSztRnMrPaUr2/Ltg+oioWgoDNBVnuHTMxPpUyFISf2oGFpxhPNZRuyPAEFyD+kqXPAlY/3s/j/rCn3vAlmD4+H6hrCqa4KnTpFpFQxfs=
+    secure: ZhTCIMv/kYN+DwhMsYB0TJmshjfNSKIzmBzlL/ytI6NXAA4lfhou31StE3ue6v5E9bWWymbC/SbdjbQREcEQAa/W9GMDr7kJ/2iaZrn8RD6awZx/urVCpSDUWy3OMaHWeTEQ43gPG85XsSf5TZZOoWyVhJ2KSFbFWbLF68ZutQP/JkcZJuzOGtMv5nyuI1APZw0jYzPue3HtV7QwZRGptX+XuZqY0R/7MmVICU40fWR7MXREhuEQOXt1T8taX0vw+CAt3/mlx8iMjY5pOgy23QjANNntNNbmgx2X176kcPvHfAJzun47SorK1FZ59fP/0+s9O/14Q6m+LanNd5l2xsNXBLNGjQOPg22AelxftJyEF9+vdUOcimM/l/iTiE9SJYRHtFQaZysOOMFGNmxCTDAobB3uq+MUo9xH5CFrbfKGM0Px7UPzYuWMmm8MC3/guNOd+EfHEYrLL69Lq5tNAqcXkFZxNGSLFPa9LQfLK6dJSFOjhNIwbifIWfG9dKYXKCDcizWXUqBH7azFHkp2oIsMWN9M5XXCcYYj5qDfPsuqR/fKOMMEKX8Y2b2jZEom8B0Mgwd4rCoJ5R+m1GxBccVsAQgh3/X3K8Zc29eEJuT3iWvUOKnqK2rqZidLGPR0QXMiw/c+kDjpUHIw8jzFvFYiivvTIFDhgZbpes9asMg=
   file_glob: true
   # NOTE explanation on each env variable
   # - PROJECT_NAME: name of the project, set on the `env.global` above

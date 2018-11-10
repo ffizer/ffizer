@@ -56,7 +56,8 @@ script:
   # Incorporate TARGET env var to the build and test process
   - cargo build --target $TARGET --release
   - cargo test --target $TARGET
-#before_deploy:
+
+before_deploy:
   - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then strip target/${TARGET}/release/${PROJECT_NAME}; tar -czvf  "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" target/${TARGET}/release/${PROJECT_NAME} ; fi
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then 7z a "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.zip" target/${TARGET}/release/${PROJECT_NAME}.exe ; fi
 

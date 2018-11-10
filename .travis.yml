@@ -22,6 +22,9 @@ matrix:
     - os: osx
       rust: stable
       env: TARGET=x86_64-apple-darwin
+    - os: windows
+      rust: stable
+      env: TARGET=x86_64-pc-windows-msvc
   # allow_failures:
   #   - rust: nightly
   fast_finish: true

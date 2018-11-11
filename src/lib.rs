@@ -1,5 +1,6 @@
 extern crate dialoguer;
 extern crate failure;
+extern crate handlebars;
 extern crate indicatif;
 extern crate serde;
 #[macro_use]
@@ -13,7 +14,9 @@ extern crate spectral;
 
 mod template_cfg;
 
+use failure::format_err;
 use failure::Error;
+use handlebars::Handlebars;
 use slog::o;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -22,6 +25,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use template_cfg::TemplateCfg;
 use walkdir::WalkDir;
+
+const FILEEXT_HANDLEBARS: &'static str = ".ffizer.hbs";
 
 #[derive(Debug, Clone)]
 pub struct Ctx {
@@ -85,11 +90,11 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(&ctx.src_uri)?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
-    let _variables = ask_variables(&template_cfg)?;
+    let variables = ask_variables(&template_cfg)?;
     let input_paths = find_childpaths(template_base_path);
     let actions = plan(ctx, input_paths)?;
     if confirm_plan(&ctx, &actions)? {
-        execute(ctx, &actions)
+        execute(ctx, &actions, &variables)
     } else {
         Ok(())
     }
@@ -100,7 +105,7 @@ pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Error> 
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
-            let dst_path = compute_dst_path(ctx, &src_path);
+            let dst_path = compute_dst_path(ctx, &src_path).expect("TODO");
             Action {
                 src_path,
                 dst_path,
@@ -143,16 +148,29 @@ fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Erro
 }
 
 //TODO accumulate Result (and error)
-pub fn execute(_ctx: &Ctx, actions: &Vec<Action>) -> Result<(), Error> {
+pub fn execute(
+    _ctx: &Ctx,
+    actions: &Vec<Action>,
+    variables: &BTreeMap<String, String>,
+) -> Result<(), Error> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
+    let handlebars = Handlebars::new();
+
     pb.wrap_iter(actions.iter()).for_each(|a| {
         match a.operation {
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path)).expect("TODO"),
             FileOperation::CopyRaw => {
                 fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path)).expect("TODO");
+            }
+            FileOperation::CopyRender => {
+                let src = fs::read_to_string(&PathBuf::from(&a.src_path)).expect("TODO");
+                let dst = fs::File::create(PathBuf::from(&a.dst_path)).expect("TODO");
+                handlebars
+                    .render_template_to_write(&src, variables, dst)
+                    .expect("TODO");
             }
             _ => (),
         };
@@ -188,12 +206,29 @@ where
         }).collect::<Vec<_>>()
 }
 
-fn compute_dst_path(ctx: &Ctx, src: &ChildPath) -> ChildPath {
-    ChildPath {
+fn compute_dst_path(ctx: &Ctx, src: &ChildPath) -> Result<ChildPath, Error> {
+    let relative = if is_ffizer_handlebars(&src.relative) {
+        let mut file_name = src
+            .relative
+            .file_name()
+            .and_then(|v| v.to_str())
+            .ok_or(format_err!("faile to extract file_name"))?;
+        file_name = file_name
+            .get(..file_name.len() - FILEEXT_HANDLEBARS.len())
+            .ok_or(format_err!(
+                "failed to remove {} from file_name",
+                FILEEXT_HANDLEBARS
+            ))?;
+        src.relative.with_file_name(file_name)
+    } else {
+        src.relative.clone()
+    };
+
+    Ok(ChildPath {
         base: ctx.dst_folder.clone(),
-        relative: src.relative.clone(),
+        relative,
         is_symlink: src.is_symlink,
-    }
+    })
 }
 
 fn select_operation(
@@ -210,9 +245,18 @@ fn select_operation(
         FileOperation::Keep
     } else if src_full_path.is_dir() {
         FileOperation::MkDir
+    } else if is_ffizer_handlebars(&src_full_path) {
+        FileOperation::CopyRender
     } else {
         FileOperation::CopyRaw
     }
+}
+
+fn is_ffizer_handlebars(path: &Path) -> bool {
+    path.file_name()
+        .and_then(|s| s.to_str())
+        .map(|str| str.ends_with(FILEEXT_HANDLEBARS))
+        .unwrap_or(false)
 }
 
 fn ask_variables(cfg: &TemplateCfg) -> Result<BTreeMap<String, String>, Error> {
@@ -253,7 +297,47 @@ mod tests {
             base: ctx.dst_folder.clone(),
             is_symlink: false,
         };
-        let actual = compute_dst_path(&ctx, &src);
+        let actual = compute_dst_path(&ctx, &src).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
+    }
+
+    #[test]
+    fn test_compute_dst_path_ffizer_handlebars() {
+        let ctx = Ctx {
+            dst_folder: PathBuf::from("test/dst"),
+            ..Default::default()
+        };
+        let src = ChildPath {
+            relative: PathBuf::from("hello/sample.txt.ffizer.hbs"),
+            base: PathBuf::from("test/src"),
+            is_symlink: false,
+        };
+        let expected = ChildPath {
+            relative: PathBuf::from("hello/sample.txt"),
+            base: ctx.dst_folder.clone(),
+            is_symlink: false,
+        };
+        let actual = compute_dst_path(&ctx, &src).unwrap();
+        assert_that!(&actual).is_equal_to(&expected);
+    }
+
+    #[test]
+    fn test_path_extension_extraction() {
+        use std::ffi::OsStr;
+
+        assert_that!(PathBuf::from("foo.ext1").extension()).is_equal_to(&Some(OsStr::new("ext1")));
+        assert_that!(PathBuf::from("foo.ext2.ext1").extension())
+            .is_equal_to(&Some(OsStr::new("ext1")));
+    }
+
+    #[test]
+    fn test_is_ffizer_handlebars() {
+        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.hbs"))).is_false();
+        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs/bar"))).is_false();
+        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo_ffizer.hbs"))).is_false();
+        assert_that!(is_ffizer_handlebars(&PathBuf::from("fooffizer.hbs"))).is_false();
+
+        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs"))).is_true();
+        assert_that!(is_ffizer_handlebars(&PathBuf::from("bar/foo.ffizer.hbs"))).is_true();
     }
 }

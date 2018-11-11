@@ -56,8 +56,11 @@ script:
   - cargo publish --dry-run
 
 before_deploy:
-  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then strip target/${TARGET}/release/${PROJECT_NAME}; tar -czvf  "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" target/${TARGET}/release/${PROJECT_NAME} ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then 7z a "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.zip" target/${TARGET}/release/${PROJECT_NAME}.exe ; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then cd target/${TARGET}/release ; strip ${PROJECT_NAME}; tar -czvf  "../../../${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" ${PROJECT_NAME} ; cd - ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cd target/${TARGET}/release ; 7z a ../../../"${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.zip" ${PROJECT_NAME}.exe ; cd - ; fi
+  # releases not packaged into archive
+  # - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then strip target/${TARGET}/release/${PROJECT_NAME} -o "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}"; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cp target/${TARGET}/release/${PROJECT_NAME}.exe "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.exe"; fi
 
 deploy:
   # generate with "travis setup releases --force --pro"

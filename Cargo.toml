@@ -34,7 +34,7 @@ walkdir = "2.2.6"
 # dir-diff = "0.3.1"
 # rexpect = "0.3"
 spectral = "0.6.0"
-# tempfile = "3.0.4"
+tempfile = "3.0.4"
 
 # duct for orchestrating multiple processes.
 # rexpect for testing interactive programs.

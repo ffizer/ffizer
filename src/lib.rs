@@ -237,7 +237,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
                 "failed to remove {} from file_name",
                 FILEEXT_HANDLEBARS
             ))?;
-        src.relative.with_file_name(file_name)
+        rendered_relative.with_file_name(file_name)
     } else {
         rendered_relative
     };

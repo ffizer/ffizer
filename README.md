@@ -49,9 +49,9 @@ Some of the following limitations could change in the future (depends on gain/lo
 ### Run
 
 ```sh
-ffizer 0.1.0
+ffizer 0.2.0
 davidB
-ffizer is a files and folders generator / initializer. Create any kind of project from template.
+ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
 USAGE:
     ffizer [FLAGS] --destination <folder> --source <uri>
@@ -87,6 +87,14 @@ EOF
 cat > file1.txt.ffizer.hbs <<EOF
 I'm file1.txt of {{ project }}.
 EOF
+
+# add a file with a name that will be "rendered" by the handlebars engine
+# - the file should have {{ variable }},
+# - [Handlebars templating language](https://handlebarsjs.com/)
+cat > '{{ project }}.txt' <<EOF
+I'm a fixed content file with rendered file name.
+EOF
+
 ```
 
 The minimal template is an empty dir.

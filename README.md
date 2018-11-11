@@ -55,7 +55,7 @@ Some of the following limitations could change in the future (depends on gain/lo
 
 Download the binary for your platform from [github releases](https://github.com/davidB/ffizer/releases), then unarchive it and place it your PATH.
 
-### via cargo
+#### via cargo
 
 ```sh
 cargo install ffizer

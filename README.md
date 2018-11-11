@@ -46,9 +46,19 @@ Some of the following limitations could change in the future (depends on gain/lo
 
 ### Install
 
-### Run
+#### via github releases
+
+Download the binary for your platform from [github releases](https://github.com/davidB/ffizer/releases), then unarchive it and place it your PATH.
+
+### via cargo
 
 ```sh
+cargo install ffizer
+```
+
+### Run
+
+```txt
 ffizer 0.2.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.

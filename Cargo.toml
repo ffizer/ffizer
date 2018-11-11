@@ -12,7 +12,6 @@ homepage = "https://github.com/davidB/ffizer"
 
 [badges]
 maintenance = { status = "experimental" }
-appveyor = {repository = "davidB/ffizer", service = "github"}
 travis-ci = {repository = "davidB/ffizer"}
 
 [dependencies]

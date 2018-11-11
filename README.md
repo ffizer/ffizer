@@ -81,8 +81,8 @@ I'm file0.
 EOF
 
 # add a template file that will be "rendered" by the handlebars engine
-# - the file should have the .ffizer.hbs extention,
-# - the extention .ffizer.hbs is removed from the generated filename
+# - the file should have the .ffizer.hbs extension,
+# - the extension .ffizer.hbs is removed from the generated filename
 # - [Handlebars templating language](https://handlebarsjs.com/)
 cat > file1.txt.ffizer.hbs <<EOF
 I'm file1.txt of {{ project }}.
@@ -97,9 +97,9 @@ The minimal template is an empty dir.
 
 ### Generic
 
-- [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates require python + pip + install dependencies (automatic)
+- [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
 - [Cookiecutter — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
-- [sethyuan/ffizer](https://github.com/sethyuan/ffizer): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
+- [sethyuan/fgen](https://github.com/sethyuan/fgen): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
 - [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only, plus few bug) I could contributes but I have incompatible requirements (and would like to create my own since a long time).
 - [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
 - [porteurbars](https://crates.io/crates/porteurbars), very similar but I discover it too late.
@@ -110,7 +110,7 @@ specilazed to a platform, build tool,...
 
 - [The web's scaffolding tool for modern webapps | Yeoman](http://yeoman.io/), nodejs ecosystem
 - [JHipster - Generate your Spring Boot + Angular/React applications!](https://www.jhipster.tech/) require java, dedicated to java web ecosystem, optionnated template (not generic)
-- [Giter8](http://www.foundweekends.org/giter8/) require java + sbt
-- [Typesafe activator](https://developer.lightbend.com/start/), require java, scala ecosystem
-- [Maven – Archetypes](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, maven ecosystem
-- [cargo-generate](https://github.com/ashleygwilliams/cargo-generate), specialized in rust/cargo ecosystem (few features)
+- [Giter8](http://www.foundweekends.org/giter8/) require java + [Conscript](http://www.foundweekends.org/conscript/index.html)
+- [Typesafe activator](https://developer.lightbend.com/start/), require java, target scala ecosystem
+- [Maven – Archetypes](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, target maven ecosystem
+- [cargo-generate](https://github.com/ashleygwilliams/cargo-generate), limited capabilities, target rust/cargo ecosystem

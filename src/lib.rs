@@ -28,6 +28,8 @@ use walkdir::WalkDir;
 
 const FILEEXT_HANDLEBARS: &'static str = ".ffizer.hbs";
 
+type Variables = BTreeMap<String, String>;
+
 #[derive(Debug, Clone)]
 pub struct Ctx {
     pub logger: slog::Logger,
@@ -92,7 +94,7 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     // TODO define values and ask missing
     let variables = ask_variables(&template_cfg)?;
     let input_paths = find_childpaths(template_base_path);
-    let actions = plan(ctx, input_paths)?;
+    let actions = plan(ctx, input_paths, &variables)?;
     if confirm_plan(&ctx, &actions)? {
         execute(ctx, &actions, &variables)
     } else {
@@ -101,11 +103,15 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
 }
 
 /// list actions to execute
-pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Error> {
+pub fn plan(
+    ctx: &Ctx,
+    src_paths: Vec<ChildPath>,
+    variables: &Variables,
+) -> Result<Vec<Action>, Error> {
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
-            let dst_path = compute_dst_path(ctx, &src_path).expect("TODO");
+            let dst_path = compute_dst_path(ctx, &src_path, variables).expect("TODO");
             Action {
                 src_path,
                 dst_path,
@@ -125,12 +131,17 @@ pub fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>) -> Result<Vec<Action>, Error> 
     Ok(actions)
 }
 
+// TODO add test
+// TODO add priority for generated file name / folder name
+// TODO document priority (via test ?)
 fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
     let cmp_dst = a.dst_path.relative.cmp(&b.dst_path.relative);
-    if cmp_dst == Ordering::Equal {
-        a.src_path.relative.cmp(&b.src_path.relative)
-    } else {
+    if cmp_dst != Ordering::Equal {
         cmp_dst
+    } else if is_ffizer_handlebars(&a.src_path.relative) {
+        Ordering::Less
+    } else {
+        a.src_path.relative.cmp(&b.src_path.relative)
     }
 }
 
@@ -148,11 +159,7 @@ fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Erro
 }
 
 //TODO accumulate Result (and error)
-pub fn execute(
-    _ctx: &Ctx,
-    actions: &Vec<Action>,
-    variables: &BTreeMap<String, String>,
-) -> Result<(), Error> {
+pub fn execute(_ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Result<(), Error> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -206,13 +213,22 @@ where
         }).collect::<Vec<_>>()
 }
 
-fn compute_dst_path(ctx: &Ctx, src: &ChildPath) -> Result<ChildPath, Error> {
-    let relative = if is_ffizer_handlebars(&src.relative) {
-        let mut file_name = src
-            .relative
+//TODO optimise / bench to avoid creation and rendering of path handlebars
+fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result<ChildPath, Error> {
+    let rendered_relative = src
+        .relative
+        .to_str()
+        .ok_or(format_err!("failed to stringify path"))
+        .and_then(|s| {
+            let handlebars = Handlebars::new();
+            let p = handlebars.render_template(&s, variables)?;
+            Ok(PathBuf::from(p))
+        })?;
+    let relative = if is_ffizer_handlebars(&rendered_relative) {
+        let mut file_name = rendered_relative
             .file_name()
             .and_then(|v| v.to_str())
-            .ok_or(format_err!("faile to extract file_name"))?;
+            .ok_or(format_err!("failed to extract file_name"))?;
         file_name = file_name
             .get(..file_name.len() - FILEEXT_HANDLEBARS.len())
             .ok_or(format_err!(
@@ -221,7 +237,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath) -> Result<ChildPath, Error> {
             ))?;
         src.relative.with_file_name(file_name)
     } else {
-        src.relative.clone()
+        rendered_relative
     };
 
     Ok(ChildPath {
@@ -259,7 +275,7 @@ fn is_ffizer_handlebars(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
-fn ask_variables(cfg: &TemplateCfg) -> Result<BTreeMap<String, String>, Error> {
+fn ask_variables(cfg: &TemplateCfg) -> Result<Variables, Error> {
     use dialoguer::Input;
     let mut variables = BTreeMap::new();
     for variable in cfg.variables.iter() {
@@ -287,6 +303,7 @@ mod tests {
             dst_folder: PathBuf::from("test/dst"),
             ..Default::default()
         };
+        let variables = BTreeMap::new();
         let src = ChildPath {
             relative: PathBuf::from("hello/sample.txt"),
             base: PathBuf::from("test/src"),
@@ -297,7 +314,7 @@ mod tests {
             base: ctx.dst_folder.clone(),
             is_symlink: false,
         };
-        let actual = compute_dst_path(&ctx, &src).unwrap();
+        let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
     }
 
@@ -307,6 +324,8 @@ mod tests {
             dst_folder: PathBuf::from("test/dst"),
             ..Default::default()
         };
+        let variables = BTreeMap::new();
+
         let src = ChildPath {
             relative: PathBuf::from("hello/sample.txt.ffizer.hbs"),
             base: PathBuf::from("test/src"),
@@ -317,7 +336,53 @@ mod tests {
             base: ctx.dst_folder.clone(),
             is_symlink: false,
         };
-        let actual = compute_dst_path(&ctx, &src).unwrap();
+        let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
+        assert_that!(&actual).is_equal_to(&expected);
+    }
+
+    #[test]
+    fn test_compute_dst_path_rendered_filename() {
+        let ctx = Ctx {
+            dst_folder: PathBuf::from("test/dst"),
+            ..Default::default()
+        };
+        let mut variables = BTreeMap::new();
+        variables.insert("prj".to_owned(), "myprj".to_owned());
+
+        let src = ChildPath {
+            relative: PathBuf::from("hello/{{ prj }}.txt"),
+            base: PathBuf::from("test/src"),
+            is_symlink: false,
+        };
+        let expected = ChildPath {
+            relative: PathBuf::from("hello/myprj.txt"),
+            base: ctx.dst_folder.clone(),
+            is_symlink: false,
+        };
+        let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
+        assert_that!(&actual).is_equal_to(&expected);
+    }
+
+    #[test]
+    fn test_compute_dst_path_rendered_folder() {
+        let ctx = Ctx {
+            dst_folder: PathBuf::from("test/dst"),
+            ..Default::default()
+        };
+        let mut variables = BTreeMap::new();
+        variables.insert("prj".to_owned(), "myprj".to_owned());
+
+        let src = ChildPath {
+            relative: PathBuf::from("hello/{{ prj }}/sample.txt"),
+            base: PathBuf::from("test/src"),
+            is_symlink: false,
+        };
+        let expected = ChildPath {
+            relative: PathBuf::from("hello/myprj/sample.txt"),
+            base: ctx.dst_folder.clone(),
+            is_symlink: false,
+        };
+        let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
     }
 

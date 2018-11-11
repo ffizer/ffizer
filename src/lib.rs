@@ -17,7 +17,7 @@ mod template_cfg;
 use failure::format_err;
 use failure::Error;
 use handlebars::Handlebars;
-use slog::o;
+use slog::{debug, o};
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::fs;
@@ -159,11 +159,13 @@ fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Erro
 }
 
 //TODO accumulate Result (and error)
-pub fn execute(_ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Result<(), Error> {
+pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Result<(), Error> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
-    let handlebars = Handlebars::new();
+    let mut handlebars = Handlebars::new();
+    handlebars.set_strict_mode(true);
+    debug!(ctx.logger, "execute"; "variables" => format!("{:?}", variables));
 
     pb.wrap_iter(actions.iter()).for_each(|a| {
         match a.operation {

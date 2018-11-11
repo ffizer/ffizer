@@ -1,5 +1,6 @@
 extern crate dialoguer;
 extern crate failure;
+extern crate globset;
 extern crate handlebars;
 extern crate indicatif;
 extern crate serde;
@@ -94,7 +95,7 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     // TODO define values and ask missing
     let variables = ask_variables(&template_cfg)?;
     let input_paths = find_childpaths(template_base_path);
-    let actions = plan(ctx, input_paths, &variables)?;
+    let actions = plan(ctx, input_paths, &variables, &template_cfg)?;
     if confirm_plan(&ctx, &actions)? {
         execute(ctx, &actions, &variables)
     } else {
@@ -107,6 +108,7 @@ pub fn plan(
     ctx: &Ctx,
     src_paths: Vec<ChildPath>,
     variables: &Variables,
+    cfg: &TemplateCfg,
 ) -> Result<Vec<Action>, Error> {
     let mut actions = src_paths
         .into_iter()
@@ -124,7 +126,7 @@ pub fn plan(
     actions = actions
         .into_iter()
         .fold(Vec::with_capacity(actions_count), |mut acc, e| {
-            let operation = select_operation(ctx, &e.src_path, &e.dst_path, &acc);
+            let operation = select_operation(ctx, &e.src_path, &e.dst_path, cfg, &acc);
             acc.push(Action { operation, ..e });
             acc
         });
@@ -253,6 +255,7 @@ fn select_operation(
     _ctx: &Ctx,
     src_path: &ChildPath,
     dst_path: &ChildPath,
+    cfg: &TemplateCfg,
     _actions: &Vec<Action>,
 ) -> FileOperation {
     let src_full_path = PathBuf::from(src_path);
@@ -261,6 +264,13 @@ fn select_operation(
     /* || actions.contains(dst_path) propably the last */
     {
         FileOperation::Keep
+    } else if src_path
+        .relative
+        .to_str()
+        .map(|s| cfg.ignores.iter().any(|f| f.is_match(s)))
+        .unwrap_or(false)
+    {
+        FileOperation::Ignore
     } else if src_full_path.is_dir() {
         FileOperation::MkDir
     } else if is_ffizer_handlebars(&src_full_path) {

@@ -1,13 +1,18 @@
 use failure::Error;
+use globset::{Glob, GlobMatcher};
 use std::fs;
 use std::path::Path;
 
 const TEMPLATE_CFG_FILENAME: &'static str = ".ffizer.yaml";
 
-#[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
     pub variables: Vec<Variable>,
+    #[serde(rename = "ignores")]
+    ignores_str: Vec<String>,
+    #[serde(skip)]
+    pub ignores: Vec<GlobMatcher>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -28,7 +33,7 @@ impl TemplateCfg {
     {
         let cfg = serde_yaml::from_str::<TemplateCfg>(str.as_ref())?;
         //let cfg = serde_json::from_str::<TemplateCfg>(str.as_ref())?;
-        Ok(cfg)
+        cfg.post_load()
     }
 
     pub fn from_template_folder(template_base: &Path) -> Result<TemplateCfg, Error> {
@@ -37,8 +42,18 @@ impl TemplateCfg {
             let cfg_str = fs::read_to_string(cfg_path)?;
             Self::from_str(cfg_str)
         } else {
-            Ok(TemplateCfg::default())
+            TemplateCfg::default().post_load()
         }
+    }
+
+    fn post_load(mut self) -> Result<Self, Error> {
+        self.ignores_str.push(TEMPLATE_CFG_FILENAME.to_owned());
+        self.ignores = self
+            .ignores_str
+            .iter()
+            .map(|s| Glob::new(s).expect("TODO").compile_matcher())
+            .collect::<Vec<_>>();
+        Ok(self)
     }
 }
 
@@ -83,6 +98,6 @@ mod tests {
             ..Default::default()
         });
         let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
-        assert_that!(&actual).is_equal_to(&expected);
+        assert_that!(&actual.variables).is_equal_to(&expected.variables);
     }
 }

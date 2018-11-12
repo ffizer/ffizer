@@ -18,9 +18,31 @@ ffizer is a files and folders initializer / generator. Create any kind (or part)
 
 keywords: file generator, project template, project scaffolding, quickstart, project initializer, project skeleton
 
-## Motivations
+<!-- vscode-markdown-toc -->
+- 1. [Motivations](#Motivations)
+	- 1.1. [Main features](#Mainfeatures)
+	- 1.2. [Sub features](#Subfeatures)
+- 2. [Limitations](#Limitations)
+- 3. [Usages](#Usages)
+	- 3.1. [Install](#Install)
+		- 3.1.1. [via github releases](#viagithubreleases)
+		- 3.1.2. [via cargo](#viacargo)
+	- 3.2. [Run](#Run)
+	- 3.3. [Create your first template](#Createyourfirsttemplate)
+- 4. [Build](#Build)
+- 5. [Alternatives](#Alternatives)
+	- 5.1. [Generic](#Generic)
+	- 5.2. [Specialized](#Specialized)
 
-### Main features
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+## 1. <a name='Motivations'></a>Motivations
+
+### 1.1. <a name='Mainfeatures'></a>Main features
 
 - [X] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
 - [X] a simple and generic project template (no specialisation to one ecosystem)
@@ -32,12 +54,12 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 - [ ] template hosted as a (top) git repository on any host (not only public github)
 - [ ] a fast enough project generator
 
-### Sub features
+### 1.2. <a name='Subfeatures'></a>Sub features
 
 - [X] dry mode (usefull to test)
 - [ ] chain template generation because fragment of templates can be commons
 
-## Limitations
+## 2. <a name='Limitations'></a>Limitations
 
 Some of the following limitations could change in the future (depends on gain/loss):
 
@@ -47,21 +69,21 @@ Some of the following limitations could change in the future (depends on gain/lo
 - no plugin and not extensible (without change the code)
 - handlebars is the only template language supported (support for other is welcome)
 
-## Usages
+## 3. <a name='Usages'></a>Usages
 
-### Install
+### 3.1. <a name='Install'></a>Install
 
-#### via github releases
+#### 3.1.1. <a name='viagithubreleases'></a>via github releases
 
 Download the binary for your platform from [github releases](https://github.com/davidB/ffizer/releases), then unarchive it and place it your PATH.
 
-#### via cargo
+#### 3.1.2. <a name='viacargo'></a>via cargo
 
 ```sh
 cargo install ffizer
 ```
 
-### Run
+### 3.2. <a name='Run'></a>Run
 
 ```txt
 ffizer 0.2.0
@@ -81,7 +103,7 @@ OPTIONS:
     -s, --source <uri>            uri / path of the template
 ```
 
-### Create your first template
+### 3.3. <a name='Createyourfirsttemplate'></a>Create your first template
 
 ( from scratch without ffizer ;-) )
 
@@ -114,11 +136,11 @@ EOF
 
 The minimal template is an empty dir.
 
-## Build
+## 4. <a name='Build'></a>Build
 
-## Alternatives
+## 5. <a name='Alternatives'></a>Alternatives
 
-### Generic
+### 5.1. <a name='Generic'></a>Generic
 
 - [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
 - [Cookiecutter — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
@@ -127,7 +149,7 @@ The minimal template is an empty dir.
 - [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
 - [porteurbars](https://crates.io/crates/porteurbars), very similar but I discover it too late.
 
-### Specialized
+### 5.2. <a name='Specialized'></a>Specialized
 
 specilazed to a platform, build tool,...
 

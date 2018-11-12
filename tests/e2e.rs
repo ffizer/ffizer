@@ -21,8 +21,11 @@ fn empty_template() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     let ctx = ffizer::Ctx {
-        dst_folder: actual_path.clone(),
-        src_uri: template_path.to_str().unwrap().to_owned(),
+        cmd_opt: ffizer::CmdOpt {
+            dst_folder: actual_path.clone(),
+            src_uri: template_path.to_str().unwrap().to_owned(),
+            ..Default::default()
+        },
         ..Default::default()
     };
     assert!(ffizer::process(&ctx).is_ok());
@@ -42,8 +45,11 @@ fn test_1() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     let ctx = ffizer::Ctx {
-        dst_folder: actual_path.clone(),
-        src_uri: template_path.to_str().unwrap().to_owned(),
+        cmd_opt: ffizer::CmdOpt {
+            dst_folder: actual_path.clone(),
+            src_uri: template_path.to_str().unwrap().to_owned(),
+            ..Default::default()
+        },
         ..Default::default()
     };
     assert!(ffizer::process(&ctx).is_ok());

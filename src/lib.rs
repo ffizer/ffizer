@@ -8,13 +8,16 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_yaml;
 extern crate slog;
+extern crate structopt;
 extern crate walkdir;
 
 #[cfg(test)]
 extern crate spectral;
 
+mod cmd_opt;
 mod template_cfg;
 
+pub use cmd_opt::*;
 use failure::format_err;
 use failure::Error;
 use handlebars::Handlebars;
@@ -34,16 +37,14 @@ type Variables = BTreeMap<String, String>;
 #[derive(Debug, Clone)]
 pub struct Ctx {
     pub logger: slog::Logger,
-    pub dst_folder: PathBuf,
-    pub src_uri: String,
+    pub cmd_opt: CmdOpt,
 }
 
 impl Default for Ctx {
     fn default() -> Ctx {
         Ctx {
             logger: slog::Logger::root(slog::Discard, o!()),
-            dst_folder: PathBuf::default(),
-            src_uri: String::default(),
+            cmd_opt: CmdOpt::default(),
         }
     }
 }
@@ -90,7 +91,7 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 // }
 
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
-    let template_base_path = as_local_path(&ctx.src_uri)?;
+    let template_base_path = as_local_path(&ctx.cmd_opt.src_uri)?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
     let variables = ask_variables(&template_cfg)?;
@@ -245,7 +246,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
     };
 
     Ok(ChildPath {
-        base: ctx.dst_folder.clone(),
+        base: ctx.cmd_opt.dst_folder.clone(),
         relative,
         is_symlink: src.is_symlink,
     })
@@ -312,7 +313,10 @@ mod tests {
     #[test]
     fn test_compute_dst_path_asis() {
         let ctx = Ctx {
-            dst_folder: PathBuf::from("test/dst"),
+            cmd_opt: CmdOpt {
+                dst_folder: PathBuf::from("test/dst"),
+                ..Default::default()
+            },
             ..Default::default()
         };
         let variables = BTreeMap::new();
@@ -323,7 +327,7 @@ mod tests {
         };
         let expected = ChildPath {
             relative: PathBuf::from("hello/sample.txt"),
-            base: ctx.dst_folder.clone(),
+            base: ctx.cmd_opt.dst_folder.clone(),
             is_symlink: false,
         };
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
@@ -333,7 +337,10 @@ mod tests {
     #[test]
     fn test_compute_dst_path_ffizer_handlebars() {
         let ctx = Ctx {
-            dst_folder: PathBuf::from("test/dst"),
+            cmd_opt: CmdOpt {
+                dst_folder: PathBuf::from("test/dst"),
+                ..Default::default()
+            },
             ..Default::default()
         };
         let variables = BTreeMap::new();
@@ -345,7 +352,7 @@ mod tests {
         };
         let expected = ChildPath {
             relative: PathBuf::from("hello/sample.txt"),
-            base: ctx.dst_folder.clone(),
+            base: ctx.cmd_opt.dst_folder.clone(),
             is_symlink: false,
         };
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
@@ -355,7 +362,10 @@ mod tests {
     #[test]
     fn test_compute_dst_path_rendered_filename() {
         let ctx = Ctx {
-            dst_folder: PathBuf::from("test/dst"),
+            cmd_opt: CmdOpt {
+                dst_folder: PathBuf::from("test/dst"),
+                ..Default::default()
+            },
             ..Default::default()
         };
         let mut variables = BTreeMap::new();
@@ -368,7 +378,7 @@ mod tests {
         };
         let expected = ChildPath {
             relative: PathBuf::from("hello/myprj.txt"),
-            base: ctx.dst_folder.clone(),
+            base: ctx.cmd_opt.dst_folder.clone(),
             is_symlink: false,
         };
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
@@ -378,7 +388,10 @@ mod tests {
     #[test]
     fn test_compute_dst_path_rendered_folder() {
         let ctx = Ctx {
-            dst_folder: PathBuf::from("test/dst"),
+            cmd_opt: CmdOpt {
+                dst_folder: PathBuf::from("test/dst"),
+                ..Default::default()
+            },
             ..Default::default()
         };
         let mut variables = BTreeMap::new();
@@ -391,7 +404,7 @@ mod tests {
         };
         let expected = ChildPath {
             relative: PathBuf::from("hello/myprj/sample.txt"),
-            base: ctx.dst_folder.clone(),
+            base: ctx.cmd_opt.dst_folder.clone(),
             is_symlink: false,
         };
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();

@@ -86,21 +86,24 @@ cargo install ffizer
 ### 3.2. <a name='Run'></a>Run
 
 ```txt
-ffizer 0.2.0
+ffizer 0.3.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
 USAGE:
-    ffizer [FLAGS] --destination <folder> --source <uri>
+    ffizer [FLAGS] [OPTIONS] --destination <dst_folder> --source <src_uri>
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-    -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+    -h, --help                      Prints help information
+    -V, --version                   Prints version information
+    -v, --verbose                   Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+        --x-always_default_value    should not ask for valiables values, always use defautl value or empty (experimental
+                                    - for test only)
 
 OPTIONS:
-    -d, --destination <folder>    destination folder (created if doesn't exist)
-    -s, --source <uri>            uri / path of the template
+        --confirm <confirm>           ask confirmation 'never', 'always' or 'auto' (default) [default: auto]
+    -d, --destination <dst_folder>    destination folder (created if doesn't exist)
+    -s, --source <src_uri>            uri / path of the template
 ```
 
 ### 3.3. <a name='Createyourfirsttemplate'></a>Create your first template

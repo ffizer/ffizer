@@ -149,16 +149,19 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
 }
 
 //TODO add flag to filter display: all, changes, none
-//TODO add flag to confirm: auto, always, never
-fn confirm_plan(_ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Error> {
+fn confirm_plan(ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Error> {
     use dialoguer::Confirmation;
 
     println!("Plan");
     actions.iter().for_each(|a| {
         println!("{:?}", a);
     });
-    Confirmation::new("Do you want to apply plan ?").interact()
-    //Ok(confirm)
+    if ctx.cmd_opt.confirm == AskConfirmation::Always {
+        Confirmation::new("Do you want to apply plan ?").interact()
+    } else {
+        //TODO implement a algo for auto, like if no change then no ask.
+        Ok(true)
+    }
 }
 
 //TODO accumulate Result (and error)

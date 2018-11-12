@@ -24,6 +24,7 @@ fn empty_template() -> Result<(), Error> {
         cmd_opt: ffizer::CmdOpt {
             dst_folder: actual_path.clone(),
             src_uri: template_path.to_str().unwrap().to_owned(),
+            confirm: ffizer::AskConfirmation::Never,
             ..Default::default()
         },
         ..Default::default()
@@ -48,6 +49,7 @@ fn test_1() -> Result<(), Error> {
         cmd_opt: ffizer::CmdOpt {
             dst_folder: actual_path.clone(),
             src_uri: template_path.to_str().unwrap().to_owned(),
+            confirm: ffizer::AskConfirmation::Never,
             ..Default::default()
         },
         ..Default::default()

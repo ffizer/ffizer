@@ -20,6 +20,10 @@ pub struct CmdOpt {
     #[structopt(long = "confirm", default_value = "auto")]
     pub confirm: AskConfirmation,
 
+    /// should not ask for valiables values, always use defautl value or empty (experimental - for test only)
+    #[structopt(long = "x-always_default_value")]
+    pub x_always_default_value: bool,
+
     /// uri / path of the template
     #[structopt(
         short = "s",

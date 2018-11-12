@@ -94,7 +94,7 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(&ctx.cmd_opt.src_uri)?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
-    let variables = ask_variables(&template_cfg)?;
+    let variables = ask_variables(&ctx, &template_cfg)?;
     let input_paths = find_childpaths(template_base_path);
     let actions = plan(ctx, input_paths, &variables, &template_cfg)?;
     if confirm_plan(&ctx, &actions)? {
@@ -291,19 +291,27 @@ fn is_ffizer_handlebars(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
-fn ask_variables(cfg: &TemplateCfg) -> Result<Variables, Error> {
+fn ask_variables(ctx: &Ctx, cfg: &TemplateCfg) -> Result<Variables, Error> {
     use dialoguer::Input;
     let mut variables = BTreeMap::new();
-    for variable in cfg.variables.iter() {
-        let name = variable.name.clone();
-        //TODO use variable.ask : let ask = &(variable.ask).unwrap_or(name);
-        let mut input = Input::new(&name);
-        if let Some(default_value) = &variable.default_value {
-            input.default(default_value);
+    if !ctx.cmd_opt.x_always_default_value {
+        for variable in cfg.variables.iter() {
+            let name = variable.name.clone();
+            //TODO use variable.ask : let ask = &(variable.ask).unwrap_or(name);
+            let mut input = Input::new(&name);
+            if let Some(default_value) = &variable.default_value {
+                input.default(default_value);
+            }
+            // TODO manage error
+            let value = input.interact().expect("valid interaction");
+            variables.insert(name, value);
         }
-        // TODO manage error
-        let value = input.interact().expect("valid interaction");
-        variables.insert(name, value);
+    } else {
+        for variable in cfg.variables.iter() {
+            let name = variable.name.clone();
+            let value = (variable.default_value).clone().unwrap_or("".into());
+            variables.insert(name, value);
+        }
     }
     Ok(variables)
 }

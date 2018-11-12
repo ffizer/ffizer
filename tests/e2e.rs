@@ -25,6 +25,7 @@ fn empty_template() -> Result<(), Error> {
             dst_folder: actual_path.clone(),
             src_uri: template_path.to_str().unwrap().to_owned(),
             confirm: ffizer::AskConfirmation::Never,
+            x_always_default_value: true,
             ..Default::default()
         },
         ..Default::default()
@@ -50,6 +51,7 @@ fn test_1() -> Result<(), Error> {
             dst_folder: actual_path.clone(),
             src_uri: template_path.to_str().unwrap().to_owned(),
             confirm: ffizer::AskConfirmation::Never,
+            x_always_default_value: true,
             ..Default::default()
         },
         ..Default::default()

@@ -142,7 +142,7 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
     if cmp_dst != Ordering::Equal {
         cmp_dst
     } else if is_ffizer_handlebars(&a.src_path.relative) {
-        Ordering::Less
+        Ordering::Greater
     } else {
         a.src_path.relative.cmp(&b.src_path.relative)
     }
@@ -260,12 +260,14 @@ fn select_operation(
     src_path: &ChildPath,
     dst_path: &ChildPath,
     cfg: &TemplateCfg,
-    _actions: &Vec<Action>,
+    actions: &Vec<Action>,
 ) -> FileOperation {
     let src_full_path = PathBuf::from(src_path);
     let dest_full_path = PathBuf::from(dst_path);
-    if dest_full_path.exists()
-    /* || actions.contains(dst_path) propably the last */
+    if dest_full_path.exists() || actions
+        .iter()
+        .any(|a| a.dst_path.relative == dst_path.relative)
+    // optim: propably the last
     {
         FileOperation::Keep
     } else if src_path

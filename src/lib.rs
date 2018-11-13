@@ -157,7 +157,9 @@ fn confirm_plan(ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Error
         println!("{:?}", a);
     });
     if ctx.cmd_opt.confirm == AskConfirmation::Always {
-        Confirmation::new("Do you want to apply plan ?").interact()
+        Confirmation::new()
+            .with_text("Do you want to apply plan ?")
+            .interact()
     } else {
         //TODO implement a algo for auto, like if no change then no ask.
         Ok(true)
@@ -298,15 +300,25 @@ fn ask_variables(ctx: &Ctx, cfg: &TemplateCfg) -> Result<Variables, Error> {
     use dialoguer::Input;
     let mut variables = BTreeMap::new();
     if !ctx.cmd_opt.x_always_default_value {
-        for variable in cfg.variables.iter() {
-            let name = variable.name.clone();
-            //TODO use variable.ask : let ask = &(variable.ask).unwrap_or(name);
-            let mut input = Input::new(&name);
-            if let Some(default_value) = &variable.default_value {
-                input.default(default_value);
-            }
-            // TODO manage error
-            let value = input.interact().expect("valid interaction");
+        // TODO optimize to reduce clones
+        for variable in cfg.variables.iter().cloned() {
+            let name = variable.name;
+            let value: String = {
+                let mut input = Input::new();
+                if let Some(default_value) = variable.default_value {
+                    input.default(default_value);
+                }
+                let prompt = if variable.ask.is_some() {
+                    variable.ask.unwrap()
+                } else {
+                    name.clone()
+                };
+                // TODO manage error
+                input
+                    .with_prompt(&prompt)
+                    .interact()
+                    .expect("valid interaction")
+            };
             variables.insert(name, value);
         }
     } else {

@@ -3,6 +3,8 @@ extern crate failure;
 extern crate globset;
 extern crate handlebars;
 extern crate indicatif;
+extern crate lazy_static;
+extern crate regex;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -79,16 +81,6 @@ impl<'a> From<&'a ChildPath> for PathBuf {
         v.base.join(&v.relative)
     }
 }
-
-// pub struct TemplateDef {
-//     uri: String,
-// }
-
-// pub struct Template {
-//     def: TemplateDef,
-//     root_path: PathBuf,
-//     input_paths: Vec<DirEntry>,
-// }
 
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(&ctx.cmd_opt.src_uri)?;
@@ -201,12 +193,13 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     Ok(())
 }
 
-fn as_local_path<S>(uri: S) -> Result<PathBuf, Error>
-where
-    S: AsRef<str>,
-{
+// TODO add support for an offline mode
+fn as_local_path(uri: &Uri) -> Result<PathBuf, Error> {
     //TODO download / clone / pull templates if it is not local
-    Ok(PathBuf::from(uri.as_ref()))
+    match uri {
+        Uri::Local(p) => Ok(p.clone()),
+        Uri::Remote(_) => unimplemented!(),
+    }
 }
 
 fn find_childpaths<P>(base: P) -> Vec<ChildPath>

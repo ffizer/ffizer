@@ -137,7 +137,16 @@ EOF
 
 ```
 
-The minimal template is an empty dir.
+- The minimal template is an empty dir.
+- a sample template and its expected output (on empty folder) is available at [tests/test_1](tests/test_1).
+- file priority (what file will be used if they have the same destination path)
+
+  ```txt
+  existing file
+  file with source extension .ffizer.hbs (and no {{...}} in the source file path)
+  file with identical source file name (and extension)
+  file with {{...}} in the source file path
+  ```
 
 ## 4. <a name='Build'></a>Build
 

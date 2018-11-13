@@ -23,7 +23,7 @@ fn empty_template() -> Result<(), Error> {
     let ctx = ffizer::Ctx {
         cmd_opt: ffizer::CmdOpt {
             dst_folder: actual_path.clone(),
-            src_uri: template_path.to_str().unwrap().to_owned(),
+            src_uri: ffizer::Uri::Local(template_path.clone()),
             confirm: ffizer::AskConfirmation::Never,
             x_always_default_value: true,
             ..Default::default()
@@ -49,7 +49,7 @@ fn test_1() -> Result<(), Error> {
     let ctx = ffizer::Ctx {
         cmd_opt: ffizer::CmdOpt {
             dst_folder: actual_path.clone(),
-            src_uri: template_path.to_str().unwrap().to_owned(),
+            src_uri: ffizer::Uri::Local(template_path.clone()),
             confirm: ffizer::AskConfirmation::Never,
             x_always_default_value: true,
             ..Default::default()

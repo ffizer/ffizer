@@ -3,6 +3,8 @@ extern crate failure;
 extern crate globset;
 extern crate handlebars;
 extern crate indicatif;
+extern crate lazy_static;
+extern crate regex;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -80,16 +82,6 @@ impl<'a> From<&'a ChildPath> for PathBuf {
     }
 }
 
-// pub struct TemplateDef {
-//     uri: String,
-// }
-
-// pub struct Template {
-//     def: TemplateDef,
-//     root_path: PathBuf,
-//     input_paths: Vec<DirEntry>,
-// }
-
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(&ctx.cmd_opt.src_uri)?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
@@ -141,8 +133,16 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
     let cmp_dst = a.dst_path.relative.cmp(&b.dst_path.relative);
     if cmp_dst != Ordering::Equal {
         cmp_dst
-    } else if is_ffizer_handlebars(&a.src_path.relative) {
+    } else if a
+        .src_path
+        .relative
+        .to_str()
+        .map(|s| s.contains("{{"))
+        .unwrap_or(false)
+    {
         Ordering::Greater
+    } else if is_ffizer_handlebars(&a.src_path.relative) {
+        Ordering::Less
     } else {
         a.src_path.relative.cmp(&b.src_path.relative)
     }
@@ -193,12 +193,13 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     Ok(())
 }
 
-fn as_local_path<S>(uri: S) -> Result<PathBuf, Error>
-where
-    S: AsRef<str>,
-{
+// TODO add support for an offline mode
+fn as_local_path(uri: &Uri) -> Result<PathBuf, Error> {
     //TODO download / clone / pull templates if it is not local
-    Ok(PathBuf::from(uri.as_ref()))
+    match uri {
+        Uri::Local(p) => Ok(p.clone()),
+        Uri::Remote(_) => unimplemented!(),
+    }
 }
 
 fn find_childpaths<P>(base: P) -> Vec<ChildPath>

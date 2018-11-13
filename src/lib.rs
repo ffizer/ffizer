@@ -141,8 +141,16 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
     let cmp_dst = a.dst_path.relative.cmp(&b.dst_path.relative);
     if cmp_dst != Ordering::Equal {
         cmp_dst
-    } else if is_ffizer_handlebars(&a.src_path.relative) {
+    } else if a
+        .src_path
+        .relative
+        .to_str()
+        .map(|s| s.contains("{{"))
+        .unwrap_or(false)
+    {
         Ordering::Greater
+    } else if is_ffizer_handlebars(&a.src_path.relative) {
+        Ordering::Less
     } else {
         a.src_path.relative.cmp(&b.src_path.relative)
     }

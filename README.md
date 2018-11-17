@@ -18,48 +18,54 @@ ffizer is a files and folders initializer / generator. Create any kind (or part)
 
 keywords: file generator, project template, project scaffolding, quickstart, project initializer, project skeleton
 
-<!-- vscode-markdown-toc -->
-- 1. [Motivations](#Motivations)
-	- 1.1. [Main features](#Mainfeatures)
-	- 1.2. [Sub features](#Subfeatures)
-- 2. [Limitations](#Limitations)
-- 3. [Usages](#Usages)
-	- 3.1. [Install](#Install)
-		- 3.1.1. [via github releases](#viagithubreleases)
-		- 3.1.2. [via cargo](#viacargo)
-	- 3.2. [Run](#Run)
-	- 3.3. [Create your first template](#Createyourfirsttemplate)
-- 4. [Build](#Build)
-- 5. [Alternatives](#Alternatives)
-	- 5.1. [Generic](#Generic)
-	- 5.2. [Specialized](#Specialized)
+<!-- TOC -->
 
-<!-- vscode-markdown-toc-config
-	numbering=true
-	autoSave=true
-	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc -->
+- [Motivations](#motivations)
+    - [Main features](#main-features)
+    - [Sub features](#sub-features)
+- [Limitations](#limitations)
+- [Usages](#usages)
+    - [Install](#install)
+        - [via github releases](#via-github-releases)
+        - [via cargo](#via-cargo)
+    - [Run](#run)
+    - [Create your first template](#create-your-first-template)
+- [Build](#build)
+- [Alternatives](#alternatives)
+    - [Generic](#generic)
+    - [Specialized](#specialized)
 
-## 1. <a name='Motivations'></a>Motivations
+<!-- /TOC -->
 
-### 1.1. <a name='Mainfeatures'></a>Main features
+<a id="markdown-motivations" name="motivations"></a>
+## Motivations
+
+<a id="markdown-main-features" name="main-features"></a>
+### Main features
 
 - [X] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
 - [X] a simple and generic project template (no specialisation to one ecosystem)
 - [ ] template as simple as possible, like a
   - [ ] copy or clone with file/folder renames without overwrite
-  - [ ] few search and replace into file
-  - [ ] chain commands (eg: 'git init') (like a post-hook)
+  - [X] few search and replace into file
 - [X] template hosted as a local folder on the file system
-- [ ] template hosted as a (top) git repository on any host (not only public github)
-- [ ] a fast enough project generator
+- [ ] template hosted as a git repository on any host (not only public github)
+  - [ ] at root of the repository
+  - [ ] in subfolder of the repository
+  - [ ] in any revision (branch, tag, commit)
+- [X] a fast enough project generator
 
-### 1.2. <a name='Subfeatures'></a>Sub features
+<a id="markdown-sub-features" name="sub-features"></a>
+### Sub features
 
 - [X] dry mode (usefull to test)
 - [ ] chain template generation because fragment of templates can be commons
+- [ ] chain commands (eg: 'git init') (like a post-hook)
+  - [ ] raw command
+  - [ ] template command
 
-## 2. <a name='Limitations'></a>Limitations
+<a id="markdown-limitations" name="limitations"></a>
+## Limitations
 
 Some of the following limitations could change in the future (depends on gain/loss):
 
@@ -69,21 +75,26 @@ Some of the following limitations could change in the future (depends on gain/lo
 - no plugin and not extensible (without change the code)
 - handlebars is the only template language supported (support for other is welcome)
 
-## 3. <a name='Usages'></a>Usages
+<a id="markdown-usages" name="usages"></a>
+## Usages
 
-### 3.1. <a name='Install'></a>Install
+<a id="markdown-install" name="install"></a>
+### Install
 
-#### 3.1.1. <a name='viagithubreleases'></a>via github releases
+<a id="markdown-via-github-releases" name="via-github-releases"></a>
+#### via github releases
 
 Download the binary for your platform from [github releases](https://github.com/davidB/ffizer/releases), then unarchive it and place it your PATH.
 
-#### 3.1.2. <a name='viacargo'></a>via cargo
+<a id="markdown-via-cargo" name="via-cargo"></a>
+#### via cargo
 
 ```sh
 cargo install ffizer
 ```
 
-### 3.2. <a name='Run'></a>Run
+<a id="markdown-run" name="run"></a>
+### Run
 
 ```txt
 ffizer 0.3.0
@@ -106,7 +117,8 @@ OPTIONS:
     -s, --source <src_uri>            uri / path of the template
 ```
 
-### 3.3. <a name='Createyourfirsttemplate'></a>Create your first template
+<a id="markdown-create-your-first-template" name="create-your-first-template"></a>
+### Create your first template
 
 ( from scratch without ffizer ;-) )
 
@@ -148,11 +160,14 @@ EOF
   file with {{...}} in the source file path
   ```
 
-## 4. <a name='Build'></a>Build
+<a id="markdown-build" name="build"></a>
+## Build
 
-## 5. <a name='Alternatives'></a>Alternatives
+<a id="markdown-alternatives" name="alternatives"></a>
+## Alternatives
 
-### 5.1. <a name='Generic'></a>Generic
+<a id="markdown-generic" name="generic"></a>
+### Generic
 
 - [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
 - [Cookiecutter — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
@@ -161,7 +176,8 @@ EOF
 - [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
 - [porteurbars](https://crates.io/crates/porteurbars), very similar but I discover it too late.
 
-### 5.2. <a name='Specialized'></a>Specialized
+<a id="markdown-specialized" name="specialized"></a>
+### Specialized
 
 specilazed to a platform, build tool,...
 

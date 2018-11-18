@@ -19,7 +19,7 @@ extern crate spectral;
 mod cmd_opt;
 mod template_cfg;
 
-pub use cmd_opt::*;
+pub use crate::cmd_opt::*;
 use failure::format_err;
 use failure::Error;
 use handlebars::Handlebars;
@@ -29,7 +29,7 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
-use template_cfg::TemplateCfg;
+use crate::template_cfg::TemplateCfg;
 use walkdir::WalkDir;
 
 const FILEEXT_HANDLEBARS: &'static str = ".ffizer.hbs";

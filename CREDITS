@@ -1,0 +1,8 @@
+MIT: ansi_term, void, atty, textwrap, synstructure, redox_syscall, termios, kernel32-sys, clicolors-control, clap, strsim, redox_termios, owning_ref, winapi, console, handlebars, dialoguer, indicatif, take_mut, termion
+BSD-3-Clause: fuchsia-zircon, fuchsia-zircon-sys
+Custom(BSD-2-Clause): cloudabi
+Custom(CC0-1.0): ffizer
+Any(MIT, Apache-2.0): pest_meta, regex, num-traits, lazy_static, ucd-trie, unicode-width, serde_yaml, winapi-x86_64-pc-windows-gnu, itoa, term, dtoa, ucd-util, chrono, unicode-segmentation, parking_lot_core, regex, backtrace-sys, libc, parking_lot, winapi, unicode-xid, failure, proc-macro2, lock_api, lazy_static, rand_core, rustc-demangle, linked-hash-map, unreachable, quick-error, structopt, heck, pest, rand_core, thread_local, maplit, tempfile, syn, winapi-i686-pc-windows-gnu, serde_json, regex-syntax, serde, smallvec, yaml-rust, pest_generator, log, structopt-derive, failure_derive, pest_derive, serde_derive, rand, isatty, backtrace, cfg-if, rand, rand, stable_deref_trait, syn, bitflags, regex-syntax, quote, time, fnv, scopeguard, vec_map, num-integer
+Any(MIT, Apache-2.0, MPL-2.0): slog-term, slog-async, slog
+Any(MIT, Custom(Unlicense)): utf8-ranges, memchr, winapi-util, walkdir, aho-corasick, byteorder, same-file, globset
+Any(Apache-2.0, Custom(BSL-1.0)): ryu

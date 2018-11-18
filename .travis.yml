@@ -45,9 +45,15 @@ install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$TARGET" != "x86_64-unknown-linux-gnu" ]]; then rustup target add $TARGET; fi
 #   - rustup component add rustfmt-preview
 
-# # Code formatting check
 # before_script: |
+#   - export PATH=$HOME/.cargo/bin:$PATH
+#   - cargo install cargo-update || echo "cargo-update already installed"
+#   - cargo install cargo-outdated || echo "cargo-outdated already installed"
+#   - cargo install cargo-travis || echo "cargo-travis already installed"
+#   - cargo install cargo-lichking || echo "cargo-lichking already installed"
+#   - cargo update # update outdated cached binaries
 #   - cargo fmt -- --write-mode=diff
+#   - cargo outdated --root-deps-only --exit-code 1
 
 script:
   # Incorporate TARGET env var to the build and test process

@@ -33,18 +33,10 @@ structopt = "0.2.13"
 walkdir = "2.2.7"
 
 [dev-dependencies]
+assert_cmd = "0.10.1"
 # rexpect = "0.3"
 spectral = "0.6.0"
 tempfile = "3.0.4"
-
-# duct for orchestrating multiple processes.
-# rexpect for testing interactive programs.
-# assert_fs for filesystem fixtures and assertions.
-# dir-diff for testing file side-effects.
-# tempfile for scratchpad directories.
-# assert_cmd ?
-# maybe switch to linefeed for interfaction, ui,...
-
 
 [[bin]]
 name = "ffizer"

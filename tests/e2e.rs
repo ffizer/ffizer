@@ -1,11 +1,13 @@
-//extern crate dir_diff;
+extern crate assert_cmd;
 extern crate failure;
 extern crate ffizer;
 extern crate tempfile;
 
+use assert_cmd::prelude::*;
 use failure::Error;
 use std::fs;
 use std::path::PathBuf;
+use std::process::Command;
 use tempfile::tempdir;
 
 mod dir_diff;
@@ -20,17 +22,16 @@ fn empty_template() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    let ctx = ffizer::Ctx {
-        cmd_opt: ffizer::CmdOpt {
-            dst_folder: actual_path.clone(),
-            src_uri: ffizer::Uri::Local(template_path.clone()),
-            confirm: ffizer::AskConfirmation::Never,
-            x_always_default_value: true,
-            ..Default::default()
-        },
-        ..Default::default()
-    };
-    assert!(ffizer::process(&ctx).is_ok());
+    Command::main_binary()?
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg(template_path.to_str().unwrap())
+        .assert()
+        .success();
 
     dir_diff::is_same(&actual_path, &expected_path)?;
     Ok(())
@@ -46,17 +47,16 @@ fn test_1() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    let ctx = ffizer::Ctx {
-        cmd_opt: ffizer::CmdOpt {
-            dst_folder: actual_path.clone(),
-            src_uri: ffizer::Uri::Local(template_path.clone()),
-            confirm: ffizer::AskConfirmation::Never,
-            x_always_default_value: true,
-            ..Default::default()
-        },
-        ..Default::default()
-    };
-    assert!(ffizer::process(&ctx).is_ok());
+    Command::main_binary()?
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg(template_path.to_str().unwrap())
+        .assert()
+        .success();
 
     dir_diff::is_same(&actual_path, &expected_path)?;
     Ok(())

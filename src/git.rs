@@ -57,6 +57,7 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
+    std::fs::create_dir_all(&dst.as_ref())?;
     RepoBuilder::new()
         .branch(rev.as_ref())
         .fetch_options(fo)

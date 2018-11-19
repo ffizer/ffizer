@@ -25,6 +25,10 @@ pub struct CmdOpt {
     #[structopt(long = "x-always_default_value")]
     pub x_always_default_value: bool,
 
+    /// in offline, only local templates or cached templates are used
+    #[structopt(long = "offline")]
+    pub offline: bool,
+
     /// uri / path of the template
     #[structopt(short = "s", long = "source",)]
     pub src_uri: SourceUri,

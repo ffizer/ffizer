@@ -5,7 +5,7 @@ use std::path::Path;
 
 /// clone a repository at a rev to a directory
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
-pub fn retreive<P, U, R>(dst: P, url: U, rev: R) -> Result<(), Error>
+pub fn retrieve<P, U, R>(dst: P, url: U, rev: R) -> Result<(), Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,

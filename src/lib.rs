@@ -88,7 +88,7 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 }
 
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
-    let template_base_path = as_local_path(&ctx.cmd_opt.src_uri)?;
+    let template_base_path = as_local_path(&ctx.cmd_opt.src_uri, ctx.cmd_opt.offline)?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
     let variables = ask_variables(&ctx, &template_cfg)?;
@@ -200,16 +200,23 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     Ok(())
 }
 
-// TODO add support for an offline mode
-fn as_local_path(uri: &SourceUri) -> Result<PathBuf, Error> {
-    //TODO download / clone / pull templates if it is not local
-    match uri.host {
-        None => Ok(PathBuf::from(uri.path.clone())),
-        Some(_) => remote_as_local(&uri),
+fn as_local_path(uri: &SourceUri, offline: bool) -> Result<PathBuf, Error> {
+    let path = match uri.host {
+        None => PathBuf::from(uri.path.clone()),
+        Some(_) => remote_as_local(&uri, offline)?,
+    };
+    if !path.exists() {
+        Err(format_err!(
+            "Path not found for {} ({})",
+            &uri.raw,
+            path.to_str().unwrap_or("??")
+        ))
+    } else {
+        Ok(path)
     }
 }
 
-fn remote_as_local(uri: &SourceUri) -> Result<PathBuf, Error> {
+fn remote_as_local(uri: &SourceUri, offline: bool) -> Result<PathBuf, Error> {
     let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or("".into());
     let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
         .ok_or(format_err!("Home directory not found"))?;
@@ -220,7 +227,9 @@ fn remote_as_local(uri: &SourceUri) -> Result<PathBuf, Error> {
         .join(&uri.host.clone().unwrap_or("no_host".to_owned()))
         .join(&uri.path)
         .join(rev);
-    git::retreive(&cache_uri, &uri.raw, rev)?;
+    if !offline {
+        git::retrieve(&cache_uri, &uri.raw, rev)?;
+    }
     Ok(cache_uri)
 }
 

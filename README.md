@@ -97,7 +97,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.3.0
+ffizer 0.4.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -106,6 +106,7 @@ USAGE:
 
 FLAGS:
     -h, --help                      Prints help information
+        --offline                   in offline, only local templates or cached templates are used
     -V, --version                   Prints version information
     -v, --verbose                   Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
         --x-always_default_value    should not ask for valiables values, always use defautl value or empty (experimental

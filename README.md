@@ -45,12 +45,12 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 
 - [X] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
 - [X] a simple and generic project template (no specialisation to one ecosystem)
-- [ ] template as simple as possible, like a
-  - [ ] copy or clone with file/folder renames without overwrite
+- [X] template as simple as possible, like a
+  - [X] copy or clone with file/folder renames without overwrite
   - [X] few search and replace into file
 - [X] template hosted as a local folder on the file system
 - [ ] template hosted as a git repository on any host (not only public github)
-  - [ ] at root of the repository
+  - [X] at root of the repository
   - [ ] in subfolder of the repository
   - [ ] in any revision (branch, tag, commit)
 - [X] a fast enough project generator
@@ -116,6 +116,15 @@ OPTIONS:
     -d, --destination <dst_folder>    destination folder (created if doesn't exist)
     -s, --source <src_uri>            uri / path of the template
 ```
+
+- use a local folder as template
+    ```sh
+    ffizer --source $HOME/my_templates/tmpl0 --destination my_project
+    ```
+- use a remote git repository as template
+    ```sh
+    ffizer --source https://github.com/davidB/ffizer_demo_template.git --destination my_project
+    ```
 
 <a id="markdown-create-your-first-template" name="create-your-first-template"></a>
 ### Create your first template

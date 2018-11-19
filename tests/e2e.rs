@@ -61,3 +61,26 @@ fn test_1() -> Result<(), Error> {
     dir_diff::is_same(&actual_path, &expected_path)?;
     Ok(())
 }
+
+#[test]
+fn test_1_remote() -> Result<(), Error> {
+    let tmp_dir = tempdir()?;
+    let expected_path = PathBuf::from("./tests/test_1/expected");
+    let actual_path = tmp_dir.path().to_path_buf();
+
+    fs::create_dir_all(&expected_path)?;
+
+    Command::main_binary()?
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg("https://github.com/davidB/ffizer_demo_template.git")
+        .assert()
+        .success();
+
+    dir_diff::is_same(&actual_path, &expected_path)?;
+    Ok(())
+}

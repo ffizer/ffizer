@@ -1,5 +1,7 @@
 extern crate dialoguer;
+extern crate directories;
 extern crate failure;
+extern crate git2;
 extern crate globset;
 extern crate handlebars;
 extern crate indicatif;
@@ -17,6 +19,7 @@ extern crate walkdir;
 extern crate spectral;
 
 mod cmd_opt;
+mod git;
 mod source_uri;
 mod template_cfg;
 
@@ -32,7 +35,6 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
-use crate::template_cfg::TemplateCfg;
 use walkdir::WalkDir;
 
 const FILEEXT_HANDLEBARS: &'static str = ".ffizer.hbs";
@@ -203,8 +205,23 @@ fn as_local_path(uri: &SourceUri) -> Result<PathBuf, Error> {
     //TODO download / clone / pull templates if it is not local
     match uri.host {
         None => Ok(PathBuf::from(uri.path.clone())),
-        Some(_) => unimplemented!(),
+        Some(_) => remote_as_local(&uri),
     }
+}
+
+fn remote_as_local(uri: &SourceUri) -> Result<PathBuf, Error> {
+    let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or("".into());
+    let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
+        .ok_or(format_err!("Home directory not found"))?;
+    let cache_base = project_dirs.cache_dir();
+    let rev = "master";
+    let cache_uri = cache_base
+        .join("git")
+        .join(&uri.host.clone().unwrap_or("no_host".to_owned()))
+        .join(&uri.path)
+        .join(rev);
+    git::retreive(&cache_uri, &uri.raw, rev)?;
+    Ok(cache_uri)
 }
 
 fn find_childpaths<P>(base: P) -> Vec<ChildPath>

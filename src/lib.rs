@@ -92,8 +92,8 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
     let variables = ask_variables(&ctx, &template_cfg)?;
-    let input_paths = find_childpaths(template_base_path);
-    let actions = plan(ctx, input_paths, &variables, &template_cfg)?;
+    let input_paths = find_childpaths(template_base_path, &template_cfg);
+    let actions = plan(ctx, input_paths, &variables)?;
     if confirm_plan(&ctx, &actions)? {
         execute(ctx, &actions, &variables)
     } else {
@@ -106,7 +106,6 @@ pub fn plan(
     ctx: &Ctx,
     src_paths: Vec<ChildPath>,
     variables: &Variables,
-    cfg: &TemplateCfg,
 ) -> Result<Vec<Action>, Error> {
     let mut actions = src_paths
         .into_iter()
@@ -124,7 +123,7 @@ pub fn plan(
     actions = actions
         .into_iter()
         .fold(Vec::with_capacity(actions_count), |mut acc, e| {
-            let operation = select_operation(ctx, &e.src_path, &e.dst_path, cfg, &acc);
+            let operation = select_operation(ctx, &e.src_path, &e.dst_path, &acc);
             acc.push(Action { operation, ..e });
             acc
         });
@@ -182,23 +181,21 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     handlebars.set_strict_mode(true);
     debug!(ctx.logger, "execute"; "variables" => format!("{:?}", variables));
 
-    pb.wrap_iter(actions.iter()).for_each(|a| {
+    for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
-            FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path)).expect("TODO"),
+            FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path))?,
             FileOperation::CopyRaw => {
-                fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path)).expect("TODO");
+                fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path))?;
             }
             FileOperation::CopyRender => {
-                let src = fs::read_to_string(&PathBuf::from(&a.src_path)).expect("TODO");
-                let dst = fs::File::create(PathBuf::from(&a.dst_path)).expect("TODO");
-                handlebars
-                    .render_template_to_write(&src, variables, dst)
-                    .expect("TODO");
+                let src = fs::read_to_string(&PathBuf::from(&a.src_path))?;
+                let dst = fs::File::create(PathBuf::from(&a.dst_path))?;
+                handlebars.render_template_to_write(&src, variables, dst)?;
             }
             _ => (),
         };
-    });
+    }
     Ok(())
 }
 
@@ -235,7 +232,7 @@ fn remote_as_local(uri: &SourceUri, offline: bool) -> Result<PathBuf, Error> {
     Ok(cache_uri)
 }
 
-fn find_childpaths<P>(base: P) -> Vec<ChildPath>
+fn find_childpaths<P>(base: P, cfg: &TemplateCfg) -> Vec<ChildPath>
 where
     P: AsRef<Path>,
 {
@@ -243,7 +240,16 @@ where
     WalkDir::new(base)
         .follow_links(false)
         .into_iter()
-        .filter_map(|e| e.ok())
+        .filter_entry(|e| {
+            e.clone()
+                .into_path()
+                .strip_prefix(base)
+                .expect("scanned child path to be under base")
+                .to_str()
+                .map(|s| !cfg.ignores.iter().any(|f| f.is_match(s)))
+                // .map(|s| true)
+                .unwrap_or(true)
+        }).filter_map(|e| e.ok())
         .map(|entry| ChildPath {
             base: base.to_path_buf(),
             is_symlink: entry.path_is_symlink(),
@@ -293,7 +299,6 @@ fn select_operation(
     _ctx: &Ctx,
     src_path: &ChildPath,
     dst_path: &ChildPath,
-    cfg: &TemplateCfg,
     actions: &Vec<Action>,
 ) -> FileOperation {
     let src_full_path = PathBuf::from(src_path);
@@ -304,13 +309,13 @@ fn select_operation(
     // optim: propably the last
     {
         FileOperation::Keep
-    } else if src_path
-        .relative
-        .to_str()
-        .map(|s| cfg.ignores.iter().any(|f| f.is_match(s)))
-        .unwrap_or(false)
-    {
-        FileOperation::Ignore
+    // } else if src_path
+    //     .relative
+    //     .to_str()
+    //     .map(|s| cfg.ignores.iter().any(|f| f.is_match(s)))
+    //     .unwrap_or(false)
+    // {
+    //     FileOperation::Ignore
     } else if src_full_path.is_dir() {
         FileOperation::MkDir
     } else if is_ffizer_handlebars(&src_full_path) {

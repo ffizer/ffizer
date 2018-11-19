@@ -17,13 +17,16 @@ extern crate walkdir;
 extern crate spectral;
 
 mod cmd_opt;
+mod source_uri;
 mod template_cfg;
 
 pub use crate::cmd_opt::*;
+use crate::template_cfg::TemplateCfg;
 use failure::format_err;
 use failure::Error;
 use handlebars::Handlebars;
 use slog::{debug, o};
+use source_uri::SourceUri;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::fs;
@@ -196,11 +199,11 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
 }
 
 // TODO add support for an offline mode
-fn as_local_path(uri: &Uri) -> Result<PathBuf, Error> {
+fn as_local_path(uri: &SourceUri) -> Result<PathBuf, Error> {
     //TODO download / clone / pull templates if it is not local
-    match uri {
-        Uri::Local(p) => Ok(p.clone()),
-        Uri::Remote(_) => unimplemented!(),
+    match uri.host {
+        None => Ok(PathBuf::from(uri.path.clone())),
+        Some(_) => unimplemented!(),
     }
 }
 

@@ -1,7 +1,6 @@
 use failure::format_err;
 use failure::Error;
-use lazy_static::lazy_static;
-use regex::Regex;
+use source_uri::SourceUri;
 use std::path::PathBuf;
 use std::str::FromStr;
 use structopt::StructOpt;
@@ -27,13 +26,8 @@ pub struct CmdOpt {
     pub x_always_default_value: bool,
 
     /// uri / path of the template
-    #[structopt(
-        short = "s",
-        long = "source",
-        //parse(from_os_str),
-        //default_value = "."
-    )]
-    pub src_uri: Uri,
+    #[structopt(short = "s", long = "source",)]
+    pub src_uri: SourceUri,
 
     /// destination folder (created if doesn't exist)
     #[structopt(
@@ -70,34 +64,5 @@ impl FromStr for AskConfirmation {
 impl Default for AskConfirmation {
     fn default() -> Self {
         AskConfirmation::Auto
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum Uri {
-    Local(PathBuf),
-    Remote(String),
-}
-
-impl FromStr for Uri {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        lazy_static! {
-            static ref REMOTE: Regex =
-                Regex::new(r#"^(git[@|://].*)|(https://.*)|(http://.*)|(ssh://.*)$"#).unwrap();
-        }
-        if REMOTE.is_match(s) {
-            Ok(Uri::Remote(s.to_owned()))
-        } else {
-            //TODO better check
-            Ok(Uri::Local(PathBuf::from(s)))
-        }
-    }
-}
-
-impl Default for Uri {
-    fn default() -> Self {
-        Uri::Local(PathBuf::from("."))
     }
 }

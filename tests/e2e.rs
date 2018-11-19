@@ -7,7 +7,7 @@ use assert_cmd::prelude::*;
 use failure::Error;
 use std::fs;
 use std::path::PathBuf;
-use std::process::Command;
+use std::process::{Command, Stdio};
 use tempfile::tempdir;
 
 mod dir_diff;
@@ -55,6 +55,7 @@ fn test_1() -> Result<(), Error> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg(template_path.to_str().unwrap())
+        .stdout(Stdio::inherit())
         .assert()
         .success();
 

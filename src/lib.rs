@@ -148,6 +148,8 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
         Ordering::Greater
     } else if is_ffizer_handlebars(&a.src_path.relative) {
         Ordering::Less
+    } else if is_ffizer_handlebars(&b.src_path.relative) {
+        Ordering::Greater
     } else {
         a.src_path.relative.cmp(&b.src_path.relative)
     }
@@ -364,6 +366,38 @@ fn ask_variables(ctx: &Ctx, cfg: &TemplateCfg) -> Result<Variables, Error> {
 mod tests {
     use super::*;
     use spectral::prelude::*;
+
+    #[test]
+    fn test_cmp_path_for_plan() {
+        let a = Action {
+            src_path: ChildPath {
+                relative: PathBuf::from("file_2.txt"),
+                base: PathBuf::from("./tests/test_1/template"),
+                is_symlink: false,
+            },
+            dst_path: ChildPath {
+                relative: PathBuf::from("file_2.txt"),
+                base: PathBuf::from("/tmp/.tmpYPoYTW"),
+                is_symlink: false,
+            },
+            operation: FileOperation::Nothing,
+        };
+        let b = Action {
+            src_path: ChildPath {
+                relative: PathBuf::from("file_2.txt.ffizer.hbs"),
+                base: PathBuf::from("./tests/test_1/template"),
+                is_symlink: false,
+            },
+            dst_path: ChildPath {
+                relative: PathBuf::from("file_2.txt"),
+                base: PathBuf::from("/tmp/.tmpYPoYTW"),
+                is_symlink: false,
+            },
+            operation: FileOperation::Nothing,
+        };
+        assert_that!(cmp_path_for_plan(&a, &b)).is_equal_to(&Ordering::Greater);
+        assert_that!(cmp_path_for_plan(&b, &a)).is_equal_to(&Ordering::Less);
+    }
 
     #[test]
     fn test_compute_dst_path_asis() {

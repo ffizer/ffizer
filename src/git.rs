@@ -1,6 +1,6 @@
 use failure::Error;
-use git2::build::{CheckoutBuilder, RepoBuilder};
-use git2::{FetchOptions, Reference, Repository};
+use git2::build::RepoBuilder;
+use git2::FetchOptions;
 use std::path::Path;
 
 /// clone a repository at a rev to a directory
@@ -66,22 +66,22 @@ where
 }
 
 // FIXME doesn't work like "git pull"
-fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), Error>
-where
-    P: AsRef<Path>,
-    R: AsRef<str>,
-{
-    let repository = Repository::discover(dst.as_ref())?;
-    let revref = format!("origin/{}", rev.as_ref());
-    assert!(Reference::is_valid_name(&revref));
-    let mut remote = repository.find_remote("origin")?;
-    remote.fetch(&[&revref], Some(fo), None);
-    // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
-    // remote.disconnect();
-    let mut co = CheckoutBuilder::new();
-    co.force().remove_ignored(true);
-    let reference = repository.find_reference(&revref)?;
-    repository.set_head(&revref)?;
-    repository.checkout_head(Some(&mut co))?;
-    Ok(())
-}
+// fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), Error>
+// where
+//     P: AsRef<Path>,
+//     R: AsRef<str>,
+// {
+//     let repository = Repository::discover(dst.as_ref())?;
+//     let revref = format!("origin/{}", rev.as_ref());
+//     assert!(Reference::is_valid_name(&revref));
+//     let mut remote = repository.find_remote("origin")?;
+//     remote.fetch(&[&revref], Some(fo), None);
+//     // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
+//     // remote.disconnect();
+//     let mut co = CheckoutBuilder::new();
+//     co.force().remove_ignored(true);
+//     let reference = repository.find_reference(&revref)?;
+//     repository.set_head(&revref)?;
+//     repository.checkout_head(Some(&mut co))?;
+//     Ok(())
+// }

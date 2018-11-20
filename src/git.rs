@@ -15,8 +15,13 @@ where
     if dst.as_ref().exists() {
         //pull(dst, rev, &mut fo)
         //until pull is fixed and work as expected
+        let mut tmp = dst.as_ref().to_path_buf().clone();
+        tmp.set_extension("part");
+        std::fs::remove_dir_all(&tmp)?;
+        clone(&tmp, url, rev, fo)?;
         std::fs::remove_dir_all(&dst)?;
-        clone(dst, url, rev, fo)
+        std::fs::rename(&tmp, &dst)?;
+        Ok(())
     } else {
         clone(dst, url, rev, fo)
     }

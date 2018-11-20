@@ -1,6 +1,6 @@
 use failure::Error;
-use git2::build::RepoBuilder;
-use git2::FetchOptions;
+use git2::build::{CheckoutBuilder, RepoBuilder};
+use git2::{FetchOptions, Repository};
 use std::path::Path;
 
 /// clone a repository at a rev to a directory
@@ -12,19 +12,24 @@ where
     U: AsRef<str>,
 {
     let fo = make_fetch_options()?;
-    if dst.as_ref().exists() {
+    let dst = dst.as_ref();
+    if dst.exists() {
         //pull(dst, rev, &mut fo)
         //until pull is fixed and work as expected
-        let mut tmp = dst.as_ref().to_path_buf().clone();
+        let mut tmp = dst.to_path_buf().clone();
         tmp.set_extension("part");
-        std::fs::remove_dir_all(&tmp)?;
-        clone(&tmp, url, rev, fo)?;
+        if tmp.exists() {
+            std::fs::remove_dir_all(&tmp)?;
+        }
+        clone(&tmp, url, "master", fo)?;
+        checkout(&tmp, rev)?;
         std::fs::remove_dir_all(&dst)?;
         std::fs::rename(&tmp, &dst)?;
-        Ok(())
     } else {
-        clone(dst, url, rev, fo)
+        clone(&dst, url, "master", fo)?;
+        checkout(&dst, rev)?;
     }
+    Ok(())
 }
 
 /// a best attempt effort is made to authenticate
@@ -67,7 +72,6 @@ where
         .branch(rev.as_ref())
         .fetch_options(fo)
         .clone(url.as_ref(), dst.as_ref())?;
-    //.chain_err(|| format!("failed to clone repo {}@{}", &url, revision.clone()))?;
     Ok(())
 }
 
@@ -78,16 +82,31 @@ where
 //     R: AsRef<str>,
 // {
 //     let repository = Repository::discover(dst.as_ref())?;
-//     let revref = format!("origin/{}", rev.as_ref());
+//     let revref = "origin/master";
 //     assert!(Reference::is_valid_name(&revref));
 //     let mut remote = repository.find_remote("origin")?;
 //     remote.fetch(&[&revref], Some(fo), None);
-//     // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
-//     // remote.disconnect();
-//     let mut co = CheckoutBuilder::new();
-//     co.force().remove_ignored(true);
-//     let reference = repository.find_reference(&revref)?;
-//     repository.set_head(&revref)?;
-//     repository.checkout_head(Some(&mut co))?;
+//     // // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
+//     // // remote.disconnect();
+//     // let mut co = CheckoutBuilder::new();
+//     // co.force().remove_ignored(true);
+//     // let reference = repository.find_reference(&revref)?;
+//     // repository.set_head(&revref)?;
+//     // repository.checkout_head(Some(&mut co))?;
+//     checkout(dst, rev)?;
 //     Ok(())
 // }
+
+fn checkout<'a, P, R>(dst: P, rev: R) -> Result<(), Error>
+where
+    P: AsRef<Path>,
+    R: AsRef<str>,
+{
+    let rev = rev.as_ref();
+    let repository = Repository::discover(dst.as_ref())?;
+    let mut co = CheckoutBuilder::new();
+    co.force().remove_ignored(true);
+    let treeish = repository.revparse_single(rev)?;
+    repository.checkout_tree(&treeish, Some(&mut co))?;
+    Ok(())
+}

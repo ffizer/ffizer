@@ -64,7 +64,7 @@ fn test_1() -> Result<(), Error> {
 }
 
 #[test]
-fn test_1_remote() -> Result<(), Error> {
+fn test_1_remote_master() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
     let expected_path = PathBuf::from("./tests/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();
@@ -79,6 +79,56 @@ fn test_1_remote() -> Result<(), Error> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg("https://github.com/davidB/ffizer_demo_template.git")
+        .assert()
+        .success();
+
+    dir_diff::is_same(&actual_path, &expected_path)?;
+    Ok(())
+}
+
+#[test]
+fn test_1_remote_commitsha1() -> Result<(), Error> {
+    let tmp_dir = tempdir()?;
+    let expected_path = PathBuf::from("./tests/test_1/expected");
+    let actual_path = tmp_dir.path().to_path_buf();
+
+    fs::create_dir_all(&expected_path)?;
+
+    Command::main_binary()?
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg("https://github.com/davidB/ffizer_demo_template.git")
+        .arg("--rev")
+        .arg("8cab693bbf2eb4f8291ede174d8625d8d21e7b92")
+        .assert()
+        .success();
+
+    dir_diff::is_same(&actual_path, &expected_path)?;
+    Ok(())
+}
+
+#[test]
+fn test_1_remote_tag() -> Result<(), Error> {
+    let tmp_dir = tempdir()?;
+    let expected_path = PathBuf::from("./tests/test_1/expected");
+    let actual_path = tmp_dir.path().to_path_buf();
+
+    fs::create_dir_all(&expected_path)?;
+
+    Command::main_binary()?
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg("https://github.com/davidB/ffizer_demo_template.git")
+        .arg("--rev")
+        .arg("1.0.0")
         .assert()
         .success();
 

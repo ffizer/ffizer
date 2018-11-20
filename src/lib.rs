@@ -88,7 +88,11 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 }
 
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
-    let template_base_path = as_local_path(&ctx.cmd_opt.src_uri, ctx.cmd_opt.offline)?;
+    let template_base_path = as_local_path(
+        &ctx.cmd_opt.src_uri,
+        &ctx.cmd_opt.src_rev,
+        ctx.cmd_opt.offline,
+    )?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
     let variables = ask_variables(&ctx, &template_cfg)?;
@@ -199,10 +203,10 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     Ok(())
 }
 
-fn as_local_path(uri: &SourceUri, offline: bool) -> Result<PathBuf, Error> {
+fn as_local_path(uri: &SourceUri, rev: &str, offline: bool) -> Result<PathBuf, Error> {
     let path = match uri.host {
         None => PathBuf::from(uri.path.clone()),
-        Some(_) => remote_as_local(&uri, offline)?,
+        Some(_) => remote_as_local(&uri, rev, offline)?,
     };
     if !path.exists() {
         Err(format_err!(
@@ -215,12 +219,11 @@ fn as_local_path(uri: &SourceUri, offline: bool) -> Result<PathBuf, Error> {
     }
 }
 
-fn remote_as_local(uri: &SourceUri, offline: bool) -> Result<PathBuf, Error> {
+fn remote_as_local(uri: &SourceUri, rev: &str, offline: bool) -> Result<PathBuf, Error> {
     let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or("".into());
     let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
         .ok_or(format_err!("Home directory not found"))?;
     let cache_base = project_dirs.cache_dir();
-    let rev = "master";
     let cache_uri = cache_base
         .join("git")
         .join(&uri.host.clone().unwrap_or("no_host".to_owned()))

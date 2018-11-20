@@ -33,6 +33,10 @@ pub struct CmdOpt {
     #[structopt(short = "s", long = "source",)]
     pub src_uri: SourceUri,
 
+    /// git revision of the template
+    #[structopt(long = "rev", default_value = "master")]
+    pub src_rev: String,
+
     /// destination folder (created if doesn't exist)
     #[structopt(
         short = "d",

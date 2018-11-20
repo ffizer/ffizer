@@ -97,7 +97,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.4.0
+ffizer 0.4.1
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -115,6 +115,7 @@ FLAGS:
 OPTIONS:
         --confirm <confirm>           ask confirmation 'never', 'always' or 'auto' (default) [default: auto]
     -d, --destination <dst_folder>    destination folder (created if doesn't exist)
+        --rev <src_rev>               git revision of the template [default: master]
     -s, --source <src_uri>            uri / path of the template
 ```
 

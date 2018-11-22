@@ -52,7 +52,10 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 - [ ] template hosted as a git repository on any host (not only public github)
   - [X] at root of the repository
   - [ ] in subfolder of the repository
-  - [ ] in any revision (branch, tag, commit)
+  - [X] in any revision (branch, tag, commit)
+- [ ] template composed of other template
+  - [ ] composite template are regular standalone template
+  - [ ] composite template can be apply at root folder
 - [X] a fast enough project generator
 
 <a id="markdown-sub-features" name="sub-features"></a>
@@ -62,8 +65,14 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 - [ ] chain template generation because fragment of templates can be commons
 - [ ] chain commands (eg: 'git init') (like a post-hook)
   - [ ] raw command
-  - [ ] template command
-
+- [ ] composite template can be apply at root folder
+- [ ] composite template include under conditions
+- [ ] file / folder ignored under conditions
+- [ ] handlebars helpers
+  - [ ] transform strings (toUpperCase, toLowerCase, Capitelize,...)
+  - [ ] render content of GET url
+  - [ ] render content from https://gitignore.io
+  - [ ] suggestions welcomes ;-)
 <a id="markdown-limitations" name="limitations"></a>
 ## Limitations
 

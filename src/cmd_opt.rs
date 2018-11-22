@@ -17,11 +17,11 @@ pub struct CmdOpt {
     #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
     pub verbose: usize,
 
-    /// ask confirmation 'never', 'always' or 'auto' (default)
-    #[structopt(long = "confirm", default_value = "auto")]
+    /// ask confirmation 'never' or 'always'
+    #[structopt(long = "confirm", default_value = "never")]
     pub confirm: AskConfirmation,
 
-    /// should not ask for valiables values, always use defautl value or empty (experimental - for test only)
+    /// should not ask for valiables values, always use defautl value or empty (experimental)
     #[structopt(long = "x-always_default_value")]
     pub x_always_default_value: bool,
 
@@ -36,6 +36,10 @@ pub struct CmdOpt {
     /// git revision of the template
     #[structopt(long = "rev", default_value = "master")]
     pub src_rev: String,
+
+    /// path of the folder under the source uri to use for template
+    #[structopt(long = "source-folder", parse(from_os_str))]
+    pub src_folder: Option<PathBuf>,
 
     /// destination folder (created if doesn't exist)
     #[structopt(

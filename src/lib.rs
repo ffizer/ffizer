@@ -91,6 +91,7 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(
         &ctx.cmd_opt.src_uri,
         &ctx.cmd_opt.src_rev,
+        &ctx.cmd_opt.src_folder,
         ctx.cmd_opt.offline,
     )?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
@@ -203,16 +204,27 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     Ok(())
 }
 
-fn as_local_path(uri: &SourceUri, rev: &str, offline: bool) -> Result<PathBuf, Error> {
-    let path = match uri.host {
+fn as_local_path(
+    uri: &SourceUri,
+    rev: &str,
+    subfolder: &Option<PathBuf>,
+    offline: bool,
+) -> Result<PathBuf, Error> {
+    let mut path = match uri.host {
         None => PathBuf::from(uri.path.clone()),
         Some(_) => remote_as_local(&uri, rev, offline)?,
     };
+    if let Some(f) = subfolder {
+        path = path.join(f);
+    }
     if !path.exists() {
         Err(format_err!(
-            "Path not found for {} ({})",
+            "Path not found for {}{}",
             &uri.raw,
-            path.to_str().unwrap_or("??")
+            subfolder
+                .clone()
+                .and_then(|s| s.to_str().map(|v| format!(" and subfolder {}", v)))
+                .unwrap_or("".to_owned()) //path.to_str().unwrap_or("??")
         ))
     } else {
         Ok(path)

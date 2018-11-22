@@ -51,6 +51,6 @@ libc = "0.2"
 kernel32-sys = "0.2"
 winapi = "0.3"
 
-# [profile.release]
-# lto = true
-# panic = 'abort'
+[profile.release]
+lto = true
+panic = 'abort'

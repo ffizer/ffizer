@@ -15,7 +15,7 @@ exclude = ["/.travis.yml", ".gitignore", "/tests/test_1"]
 maintenance = { status = "experimental" }
 
 [dependencies]
-dialoguer = "0.2.0"
+dialoguer = "0.3.0"
 directories = "1.0.2"
 failure = "0.1.3"
 git2 = "0.7.5"

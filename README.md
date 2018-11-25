@@ -74,10 +74,10 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 - [ ] composite template can be apply at root folder
 - [ ] composite template include under conditions
 - [ ] file / folder ignored under conditions
-- [ ] handlebars helpers
-  - [ ] transform strings (toUpperCase, toLowerCase, Capitelize,...)
-  - [ ] render content of GET url
-  - [ ] render content from https://gitignore.io
+- [X] handlebars helpers
+  - [X] transform strings (toUpperCase, toLowerCase, Capitelize,...)
+  - [X] render content of GET url
+  - [X] render content from https://gitignore.io
   - [ ] suggestions welcomes ;-)
 
 <a id="markdown-limitations" name="limitations"></a>

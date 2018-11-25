@@ -63,6 +63,7 @@ fn test_1() -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(any(test_remote))]
 #[test]
 fn test_2() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
@@ -118,6 +119,7 @@ fn test_1_subfolder() -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(any(test_remote))]
 #[test]
 fn test_1_remote_master() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
@@ -141,6 +143,7 @@ fn test_1_remote_master() -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(any(test_remote))]
 #[test]
 fn test_1_remote_commitsha1() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
@@ -166,6 +169,7 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(any(test_remote))]
 #[test]
 fn test_1_remote_tag() -> Result<(), Error> {
     let tmp_dir = tempdir()?;

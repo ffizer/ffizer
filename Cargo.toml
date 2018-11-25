@@ -9,7 +9,7 @@ keywords = ["project", "generator", "template", "skeleton"]
 categories = ["command-line-utilities", "development-tools"]
 repository = "https://github.com/davidB/ffizer"
 homepage = "https://github.com/davidB/ffizer"
-exclude = ["/.travis.yml", ".gitignore", "/tests/test_1"]
+exclude = ["/.travis.yml", ".gitignore", "/tests/**"]
 
 [dependencies]
 Inflector = "0.11.3"

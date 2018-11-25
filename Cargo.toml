@@ -1,6 +1,6 @@
 [package]
 name = "ffizer"
-version = "0.4.2"
+version = "0.5.0"
 authors = ["David Bernard"]
 description = "ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template."
 readme = "README.md"
@@ -11,10 +11,8 @@ repository = "https://github.com/davidB/ffizer"
 homepage = "https://github.com/davidB/ffizer"
 exclude = ["/.travis.yml", ".gitignore", "/tests/test_1"]
 
-[badges]
-maintenance = { status = "experimental" }
-
 [dependencies]
+console = "0.7.0"
 dialoguer = "0.3.0"
 directories = "1.0.2"
 failure = "0.1.3"

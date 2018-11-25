@@ -1,3 +1,4 @@
+extern crate console;
 extern crate dialoguer;
 extern crate directories;
 extern crate failure;
@@ -22,6 +23,7 @@ mod cmd_opt;
 mod git;
 mod source_uri;
 mod template_cfg;
+mod ui;
 
 pub use crate::cmd_opt::*;
 use crate::template_cfg::TemplateCfg;
@@ -39,7 +41,7 @@ use walkdir::WalkDir;
 
 const FILEEXT_HANDLEBARS: &'static str = ".ffizer.hbs";
 
-type Variables = BTreeMap<String, String>;
+pub type Variables = BTreeMap<String, String>;
 
 #[derive(Debug, Clone)]
 pub struct Ctx {
@@ -96,10 +98,10 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     )?;
     let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
     // TODO define values and ask missing
-    let variables = ask_variables(&ctx, &template_cfg)?;
+    let variables = ui::ask_variables(&ctx, &template_cfg)?;
     let input_paths = find_childpaths(template_base_path, &template_cfg);
     let actions = plan(ctx, input_paths, &variables)?;
-    if confirm_plan(&ctx, &actions)? {
+    if ui::confirm_plan(&ctx, &actions)? {
         execute(ctx, &actions, &variables)
     } else {
         Ok(())
@@ -156,24 +158,6 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
         Ordering::Greater
     } else {
         a.src_path.relative.cmp(&b.src_path.relative)
-    }
-}
-
-//TODO add flag to filter display: all, changes, none
-fn confirm_plan(ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, std::io::Error> {
-    use dialoguer::Confirmation;
-
-    println!("Plan");
-    actions.iter().for_each(|a| {
-        println!("{:?}", a);
-    });
-    if ctx.cmd_opt.confirm == AskConfirmation::Always {
-        Confirmation::new()
-            .with_text("Do you want to apply plan ?")
-            .interact()
-    } else {
-        //TODO implement a algo for auto, like if no change then no ask.
-        Ok(true)
     }
 }
 
@@ -345,41 +329,6 @@ fn is_ffizer_handlebars(path: &Path) -> bool {
         .and_then(|s| s.to_str())
         .map(|str| str.ends_with(FILEEXT_HANDLEBARS))
         .unwrap_or(false)
-}
-
-fn ask_variables(ctx: &Ctx, cfg: &TemplateCfg) -> Result<Variables, Error> {
-    use dialoguer::Input;
-    let mut variables = BTreeMap::new();
-    if !ctx.cmd_opt.x_always_default_value {
-        // TODO optimize to reduce clones
-        for variable in cfg.variables.iter().cloned() {
-            let name = variable.name;
-            let value: String = {
-                let mut input = Input::new();
-                if let Some(default_value) = variable.default_value {
-                    input.default(default_value);
-                }
-                let prompt = if variable.ask.is_some() {
-                    variable.ask.unwrap()
-                } else {
-                    name.clone()
-                };
-                // TODO manage error
-                input
-                    .with_prompt(&prompt)
-                    .interact()
-                    .expect("valid interaction")
-            };
-            variables.insert(name, value);
-        }
-    } else {
-        for variable in cfg.variables.iter() {
-            let name = variable.name.clone();
-            let value = (variable.default_value).clone().unwrap_or("".into());
-            variables.insert(name, value);
-        }
-    }
-    Ok(variables)
 }
 
 #[cfg(test)]

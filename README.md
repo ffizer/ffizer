@@ -113,7 +113,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.5.0
+ffizer 0.6.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -252,6 +252,7 @@ see [Handlebars templating language](https://handlebarsjs.com/)
 ##### String transformation
 
 for the same input: "Hello foo-bars"
+
 helper_name | example out
 -- | --
 to_lower_case | "hello foo-bars"

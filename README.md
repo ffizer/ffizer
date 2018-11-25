@@ -33,7 +33,9 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
         - [Rules](#rules)
         - [A 5 minutes tutorial](#a-5-minutes-tutorial)
         - [Template Helpers / Functions](#template-helpers--functions)
-        - [String transformation](#string-transformation)
+            - [String transformation](#string-transformation)
+            - [Http content](#http-content)
+        - [Templates](#templates)
 - [Build](#build)
 - [Alternatives](#alternatives)
     - [Generic](#generic)
@@ -247,7 +249,7 @@ To use an helper:
 see [Handlebars templating language](https://handlebarsjs.com/)
 
 <a id="markdown-string-transformation" name="string-transformation"></a>
-#### String transformation
+##### String transformation
 
 for the same input: "Hello foo-bars"
 helper_name | example out
@@ -266,6 +268,24 @@ to_class_case | "HelloFooBar"
 to_table_case | "hello_foo_bars"
 to_plural | "bars"
 to_singular | "bar"
+
+<a id="markdown-http-content" name="http-content"></a>
+##### Http content
+
+Helper able to render body response from an http request.
+
+helper_name | usage
+-- | --
+http_get | http_get "http://hello/..."
+gitignore_io | gitignore_io "rust"
+
+<a id="markdown-templates" name="templates"></a>
+#### Templates
+
+- samples (used for test, demo)
+  - [test_1](tests/test_1/template)
+  - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
+  - [davidB/ffizer_demo_template: a simple template for ffizer used for demo and test](https://github.com/davidB/ffizer_demo_template)
 
 <a id="markdown-build" name="build"></a>
 ## Build

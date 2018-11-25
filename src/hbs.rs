@@ -2,6 +2,7 @@ use failure::Error;
 use handlebars::handlebars_helper;
 use handlebars::*;
 use inflector::Inflector;
+use reqwest;
 
 pub fn new_hbs() -> Result<Handlebars, Error> {
     let mut handlebars = Handlebars::new();
@@ -12,6 +13,7 @@ pub fn new_hbs() -> Result<Handlebars, Error> {
 pub fn setup_handlebars(handlebars: &mut Handlebars) -> Result<(), Error> {
     handlebars.set_strict_mode(true);
     register_string_helpers(handlebars)?;
+    register_http_helpers(handlebars)?;
     Ok(())
 }
 
@@ -42,6 +44,32 @@ fn register_string_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
     handlebars_register_inflector!(handlebars, to_table_case);
     handlebars_register_inflector!(handlebars, to_plural);
     handlebars_register_inflector!(handlebars, to_singular);
+    Ok(())
+}
+
+fn http_get_fct<T: AsRef<str>>(url: T) -> String {
+    match reqwest::get(url.as_ref()).and_then(|mut r| r.text()) {
+        Ok(s) => s,
+        Err(e) => {
+            //TODO better error handler
+            //use slog::warn;
+            //warn!(ctx.logger, "helper: http_get"; "url" => format!("{:?}", url), "err" => format!("{:?}", e))
+            eprintln!(
+                "helper: http_get failed for url '{:?}' with error '{:?}'",
+                url.as_ref(),
+                e
+            );
+            "".to_owned()
+        }
+    }
+}
+
+fn register_http_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
+    handlebars_helper!(http_get: |v: str| http_get_fct(&v));
+    handlebars.register_helper("http_get", Box::new(http_get));
+
+    handlebars_helper!(gitignore_io: |v: str| http_get_fct(format!("https://www.gitignore.io/api/{}", v)));
+    handlebars.register_helper("gitignore_io", Box::new(gitignore_io));
     Ok(())
 }
 

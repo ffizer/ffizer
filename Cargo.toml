@@ -12,6 +12,7 @@ homepage = "https://github.com/davidB/ffizer"
 exclude = ["/.travis.yml", ".gitignore", "/tests/test_1"]
 
 [dependencies]
+Inflector = "0.11.3"
 console = "0.7.0"
 dialoguer = "0.3.0"
 directories = "1.0.2"

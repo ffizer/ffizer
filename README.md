@@ -31,7 +31,9 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
     - [Run](#run)
     - [Create a template](#create-a-template)
         - [Rules](#rules)
-        - [A basic tutorial](#a-basic-tutorial)
+        - [A 5 minutes tutorial](#a-5-minutes-tutorial)
+        - [Template Helpers / Functions](#template-helpers--functions)
+        - [String transformation](#string-transformation)
 - [Build](#build)
 - [Alternatives](#alternatives)
     - [Generic](#generic)
@@ -180,8 +182,8 @@ OPTIONS:
   file with {{...}} in the source file path
   ```
 
-<a id="markdown-a-basic-tutorial" name="a-basic-tutorial"></a>
-#### A basic tutorial
+<a id="markdown-a-5-minutes-tutorial" name="a-5-minutes-tutorial"></a>
+#### A 5 minutes tutorial
 
 1. create the folder with the template
     ```sh
@@ -229,6 +231,41 @@ OPTIONS:
     I am a fixed content file with rendered file name.
     EOF
     ```
+
+<a id="markdown-template-helpers--functions" name="template-helpers--functions"></a>
+#### Template Helpers / Functions
+
+Helpers extend the template to generate or to transform content.
+Few helpers are included, but if you need more helpers, ask via an issue or a PR.
+
+To use an helper:
+
+```handlebars
+{{ helper_name argument}}
+```
+
+see [Handlebars templating language](https://handlebarsjs.com/)
+
+<a id="markdown-string-transformation" name="string-transformation"></a>
+#### String transformation
+
+for the same input: "Hello foo-bars"
+helper_name | example out
+-- | --
+to_lower_case | "hello foo-bars"
+to_upper_case | "HELLO FOO-BARS"
+to_camel_case | "helloFooBars"
+to_pascal_case | "HelloFooBars"
+to_snake_case | "hello_foo_bars"
+to_screaming_snake_case | "HELLO_FOO_BARS"
+to_kebab_case | "hello-foo-bars"
+to_train_case | "Hello-Foo-Bars"
+to_sentence_case | "Hello foo bars"
+to_title_case | "Hello Foo Bars"
+to_class_case | "HelloFooBar"
+to_table_case | "hello_foo_bars"
+to_plural | "bars"
+to_singular | "bar"
 
 <a id="markdown-build" name="build"></a>
 ## Build

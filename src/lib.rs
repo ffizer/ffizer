@@ -6,6 +6,7 @@ extern crate git2;
 extern crate globset;
 extern crate handlebars;
 extern crate indicatif;
+extern crate inflector;
 extern crate lazy_static;
 extern crate regex;
 extern crate serde;
@@ -21,6 +22,7 @@ extern crate spectral;
 
 mod cmd_opt;
 mod git;
+mod hbs;
 mod source_uri;
 mod template_cfg;
 mod ui;
@@ -29,7 +31,6 @@ pub use crate::cmd_opt::*;
 use crate::template_cfg::TemplateCfg;
 use failure::format_err;
 use failure::Error;
-use handlebars::Handlebars;
 use slog::{debug, o};
 use source_uri::SourceUri;
 use std::cmp::Ordering;
@@ -166,8 +167,7 @@ pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Resul
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
-    let mut handlebars = Handlebars::new();
-    handlebars.set_strict_mode(true);
+    let handlebars = hbs::new_hbs()?;
     debug!(ctx.logger, "execute"; "variables" => format!("{:?}", variables));
 
     for a in pb.wrap_iter(actions.iter()) {
@@ -267,7 +267,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
         .to_str()
         .ok_or(format_err!("failed to stringify path"))
         .and_then(|s| {
-            let handlebars = Handlebars::new();
+            let handlebars = hbs::new_hbs()?;
             let p = handlebars.render_template(&s, variables)?;
             Ok(PathBuf::from(p))
         })?;

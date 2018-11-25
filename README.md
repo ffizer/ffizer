@@ -29,7 +29,9 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
         - [via github releases](#via-github-releases)
         - [via cargo](#via-cargo)
     - [Run](#run)
-    - [Create your first template](#create-your-first-template)
+    - [Create a template](#create-a-template)
+        - [Rules](#rules)
+        - [A basic tutorial](#a-basic-tutorial)
 - [Build](#build)
 - [Alternatives](#alternatives)
     - [Generic](#generic)
@@ -49,9 +51,9 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
   - [X] copy or clone with file/folder renames without overwrite
   - [X] few search and replace into file
 - [X] template hosted as a local folder on the file system
-- [ ] template hosted as a git repository on any host (not only public github)
+- [X] template hosted as a git repository on any host (not only public github)
   - [X] at root of the repository
-  - [ ] in subfolder of the repository
+  - [X] in subfolder of the repository
   - [X] in any revision (branch, tag, commit)
 - [ ] template composed of other template
   - [ ] composite template are regular standalone template
@@ -73,6 +75,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
   - [ ] render content of GET url
   - [ ] render content from https://gitignore.io
   - [ ] suggestions welcomes ;-)
+
 <a id="markdown-limitations" name="limitations"></a>
 ## Limitations
 
@@ -106,7 +109,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.4.1
+ffizer 0.5.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -118,14 +121,15 @@ FLAGS:
         --offline                   in offline, only local templates or cached templates are used
     -V, --version                   Prints version information
     -v, --verbose                   Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
-        --x-always_default_value    should not ask for valiables values, always use defautl value or empty (experimental
-                                    - for test only)
+        --x-always_default_value    should not ask for valiables values, always use defautl value or empty
+                                    (experimental)
 
 OPTIONS:
-        --confirm <confirm>           ask confirmation 'never', 'always' or 'auto' (default) [default: auto]
-    -d, --destination <dst_folder>    destination folder (created if doesn't exist)
-        --rev <src_rev>               git revision of the template [default: master]
-    -s, --source <src_uri>            uri / path of the template
+        --confirm <confirm>             ask confirmation 'never' or 'always' [default: never]
+    -d, --destination <dst_folder>      destination folder (created if doesn't exist)
+        --source-folder <src_folder>    path of the folder under the source uri to use for template
+        --rev <src_rev>                 git revision of the template [default: master]
+    -s, --source <src_uri>              uri / path of the template
 ```
 
 - use a local folder as template
@@ -136,38 +140,34 @@ OPTIONS:
     ```sh
     ffizer --source https://github.com/davidB/ffizer_demo_template.git --destination my_project
     ```
+    output
+    ```sh
+    Configure variables
 
-<a id="markdown-create-your-first-template" name="create-your-first-template"></a>
-### Create your first template
+    project_name: my_project
 
-( from scratch without ffizer ;-) )
 
-```sh
-# create the folder with the template
-mkdir my-template
-cd my-template
+    Plan to execute
 
-# add file that will be copied as is
-cat > file0.txt <<EOF
-I'm file0.
-EOF
+      - mkdir "my_project/"
+      - mkdir "my_project/dir_1"
+      - copyraw "my_project/dir_1/file_1_1.txt"
+      - mkdir "my_project/dir_2_my_project"
+      - copyraw "my_project/dir_2_my_project/file_1_2.txt"
+      - copyraw "my_project/file_1.txt"
+      - copyrender "my_project/file_2.txt"
+      - keep "my_project/file_2.txt"
+      - copyrender "my_project/file_3.txt"
+      - copyraw "my_project/file_4_my_project.txt"
+      - copyrender "my_project/file_5_my_project.txt"
+      - copyraw "my_project/file_6.hbs"
+    ```
+  
+<a id="markdown-create-a-template" name="create-a-template"></a>
+### Create a template
 
-# add a template file that will be "rendered" by the handlebars engine
-# - the file should have the .ffizer.hbs extension,
-# - the extension .ffizer.hbs is removed from the generated filename
-# - [Handlebars templating language](https://handlebarsjs.com/)
-cat > file1.txt.ffizer.hbs <<EOF
-I'm file1.txt of {{ project }}.
-EOF
-
-# add a file with a name that will be "rendered" by the handlebars engine
-# - the file should have {{ variable }},
-# - [Handlebars templating language](https://handlebarsjs.com/)
-cat > '{{ project }}.txt' <<EOF
-I'm a fixed content file with rendered file name.
-EOF
-
-```
+<a id="markdown-rules" name="rules"></a>
+#### Rules
 
 - The minimal template is an empty dir.
 - a sample template and its expected output (on empty folder) is available at [tests/test_1](tests/test_1).
@@ -180,8 +180,63 @@ EOF
   file with {{...}} in the source file path
   ```
 
+<a id="markdown-a-basic-tutorial" name="a-basic-tutorial"></a>
+#### A basic tutorial
+
+1. create the folder with the template
+    ```sh
+    mkdir my-template
+    cd my-template
+    ```
+
+1. add file that will be copied as is
+    ```sh
+    cat > file0.txt <<EOF
+    I am file0.
+    EOF
+    ```
+
+1. add a template file that will be "rendered" by the handlebars engine
+
+    - the file should have the .ffizer.hbs extension,
+    - the extension .ffizer.hbs is removed from the generated filename
+    - [Handlebars templating language](https://handlebarsjs.com/)
+  
+    ```sh
+    cat > file1.txt.ffizer.hbs <<EOF
+    I am file1.txt of {{ project }}.
+    EOF
+    ```
+1. add a ffizer configuration file (.ffizer.yaml)
+    - to list variables
+    - to list pattern to ignore
+
+    ```yaml
+    variables:
+      - name: project
+        default_value: my-project
+
+    ignores:
+      - .git # exclude .git of the template host
+    ```
+1. add a file with a name that will be "rendered" by the handlebars engine
+
+    - the file should have {{ variable }},
+    - [Handlebars templating language](https://handlebarsjs.com/)
+
+    ```sh
+    cat > '{{ project }}.txt' <<EOF
+    I am a fixed content file with rendered file name.
+    EOF
+    ```
+
 <a id="markdown-build" name="build"></a>
 ## Build
+
+```sh
+cargo test
+cargo build --release
+```
 
 <a id="markdown-alternatives" name="alternatives"></a>
 ## Alternatives

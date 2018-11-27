@@ -35,6 +35,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
         - [Template Helpers / Functions](#template-helpers--functions)
             - [String transformation](#string-transformation)
             - [Http content](#http-content)
+            - [Path extraction](#path-extraction)
         - [Templates](#templates)
 - [Build](#build)
 - [Alternatives](#alternatives)
@@ -279,6 +280,19 @@ helper_name | usage
 -- | --
 http_get | http_get "http://hello/..."
 gitignore_io | gitignore_io "rust"
+
+<a id="markdown-path-extraction" name="path-extraction"></a>
+##### Path extraction
+
+Helper able to extract (or transform) path (defined as string).
+
+for the same input: "/hello/bar/foo.txt"
+
+helper_name | sample output
+-- | --
+file_name | "foo.txt"
+parent | "/hello/bar"
+extension | "txt"
 
 <a id="markdown-templates" name="templates"></a>
 #### Templates

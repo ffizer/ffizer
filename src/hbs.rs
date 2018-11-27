@@ -3,6 +3,7 @@ use handlebars::handlebars_helper;
 use handlebars::*;
 use inflector::Inflector;
 use reqwest;
+use std::path::Path;
 
 pub fn new_hbs() -> Result<Handlebars, Error> {
     let mut handlebars = Handlebars::new();
@@ -14,6 +15,7 @@ pub fn setup_handlebars(handlebars: &mut Handlebars) -> Result<(), Error> {
     handlebars.set_strict_mode(true);
     register_string_helpers(handlebars)?;
     register_http_helpers(handlebars)?;
+    register_path_helpers(handlebars)?;
     Ok(())
 }
 
@@ -73,39 +75,112 @@ fn register_http_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
     Ok(())
 }
 
+fn register_path_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
+    handlebars_helper!(parent: |v: str| Path::new(v).parent().and_then(|s| s.to_str()).unwrap_or("".into()));
+    handlebars.register_helper("parent", Box::new(parent));
+
+    handlebars_helper!(file_name: |v: str| Path::new(v).file_name().and_then(|s| s.to_str()).unwrap_or("".into()));
+    handlebars.register_helper("file_name", Box::new(file_name));
+
+    handlebars_helper!(extension: |v: str| Path::new(v).extension().and_then(|s| s.to_str()).unwrap_or("".into()));
+    handlebars.register_helper("extension", Box::new(extension));
+
+    handlebars_helper!(canonicalize: |v: str| {
+        Path::new(v).canonicalize().ok().and_then(|s| s.to_str().map(|v| v.to_owned())).unwrap_or("".into())
+    });
+    handlebars.register_helper("canonicalize", Box::new(canonicalize));
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::Variables;
     use super::*;
     use spectral::prelude::*;
 
-    #[test]
-    fn test_register_string_helpers() -> Result<(), Error> {
-        let hbs = new_hbs()?;
+    fn assert_helpers(input: &str, helper_expected: Vec<(&str, &str)>) -> Result<(), Error> {
         let mut vs = Variables::new();
-        vs.insert("var".into(), "Hello foo-bars".into());
-        let samples = vec![
-            ("to_lower_case", "hello foo-bars"),
-            ("to_upper_case", "HELLO FOO-BARS"),
-            ("to_camel_case", "helloFooBars"),
-            ("to_pascal_case", "HelloFooBars"),
-            ("to_snake_case", "hello_foo_bars"),
-            ("to_screaming_snake_case", "HELLO_FOO_BARS"),
-            ("to_kebab_case", "hello-foo-bars"),
-            ("to_train_case", "Hello-Foo-Bars"),
-            ("to_sentence_case", "Hello foo bars"),
-            ("to_title_case", "Hello Foo Bars"),
-            ("to_class_case", "HelloFooBar"),
-            ("to_table_case", "hello_foo_bars"),
-            ("to_plural", "bars"),
-            ("to_singular", "bar"),
-        ];
-        for sample in samples {
+        vs.insert("var".into(), input.into());
+        let hbs = new_hbs()?;
+        for sample in helper_expected {
             let tmpl = format!("{{{{ {} var}}}}", sample.0);
             assert_that!(hbs.render_template(&tmpl, &vs)?)
                 .named(sample.0)
                 .is_equal_to(sample.1.to_owned());
         }
+        Ok(())
+    }
+
+    #[test]
+    fn test_register_string_helpers() -> Result<(), Error> {
+        assert_helpers(
+            "Hello foo-bars",
+            vec![
+                ("to_lower_case", "hello foo-bars"),
+                ("to_upper_case", "HELLO FOO-BARS"),
+                ("to_camel_case", "helloFooBars"),
+                ("to_pascal_case", "HelloFooBars"),
+                ("to_snake_case", "hello_foo_bars"),
+                ("to_screaming_snake_case", "HELLO_FOO_BARS"),
+                ("to_kebab_case", "hello-foo-bars"),
+                ("to_train_case", "Hello-Foo-Bars"),
+                ("to_sentence_case", "Hello foo bars"),
+                ("to_title_case", "Hello Foo Bars"),
+                ("to_class_case", "HelloFooBar"),
+                ("to_table_case", "hello_foo_bars"),
+                ("to_plural", "bars"),
+                ("to_singular", "bar"),
+            ],
+        )?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_register_path_helpers() -> Result<(), Error> {
+        assert_helpers(
+            "/hello/bar/foo",
+            vec![
+                ("file_name", "foo"),
+                ("parent", "/hello/bar"),
+                ("extension", ""),
+                ("canonicalize", ""),
+            ],
+        )?;
+        assert_helpers(
+            "foo",
+            vec![("file_name", "foo"), ("parent", ""), ("extension", "")],
+        )?;
+        assert_helpers(
+            "bar/foo",
+            vec![("file_name", "foo"), ("parent", "bar"), ("extension", "")],
+        )?;
+        assert_helpers(
+            "bar/foo.txt",
+            vec![
+                ("file_name", "foo.txt"),
+                ("parent", "bar"),
+                ("extension", "txt"),
+            ],
+        )?;
+        assert_helpers(
+            "./foo",
+            vec![
+                ("file_name", "foo"),
+                ("parent", "."),
+                ("extension", ""),
+                ("canonicalize", ""),
+            ],
+        )?;
+        assert_helpers(
+            "/hello/bar/../foo",
+            vec![
+                ("file_name", "foo"),
+                ("parent", "/hello/bar/.."),
+                ("extension", ""),
+                ("canonicalize", ""),
+            ],
+        )?;
         Ok(())
     }
 }

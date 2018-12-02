@@ -1,5 +1,9 @@
 language: rust
-cache: cargo
+cache:
+  cargo: true
+  # timeout on windows
+  timeout: 1000
+
 rust:
   - stable
 matrix:

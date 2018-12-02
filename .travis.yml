@@ -68,8 +68,8 @@ install:
 script:
   # Incorporate TARGET env var to the build and test process
   #- cargo test --target $TARGET --cfg test_remote
-  - travis_wait cargo test --target $TARGET
   - travis_wait cargo build --target $TARGET --release
+  - travis_wait cargo test --target $TARGET --release
   # failed on os == windows
   # - cargo publish --dry-run
 

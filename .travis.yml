@@ -1,8 +1,13 @@
 language: rust
 cache:
-  cargo: true
   # timeout on windows
-  timeout: 1000
+  # cargo: true
+  #timeout: 1000
+  directories:
+    - $HOME/.cargo
+    # - $TRAVIS_BUILD_DIR/target
+    - $TRAVIS_BUILD_DIR/target/debug/deps
+    # - $TRAVIS_BUILD_DIR/target/release/deps
 
 rust:
   - stable

@@ -1,8 +1,8 @@
 language: rust
-cache:
+cache: false
   # timeout on windows
-  cargo: true
-  #timeout: 1000
+  # cargo: true
+  # timeout: 2000
   #directories:
     # - $HOME/.cargo
     # - $TRAVIS_BUILD_DIR/target
@@ -30,7 +30,6 @@ matrix:
       env: TARGET=x86_64-apple-darwin
     - os: windows
       rust: stable
-      cache: false
       env: TARGET=x86_64-pc-windows-msvc
   # allow_failures:
   #   - rust: nightly

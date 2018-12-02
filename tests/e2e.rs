@@ -30,6 +30,8 @@ fn empty_template() -> Result<(), Error> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg(template_path.to_str().unwrap())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -56,6 +58,7 @@ fn test_1() -> Result<(), Error> {
         .arg("--source")
         .arg(template_path.to_str().unwrap())
         .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -83,6 +86,7 @@ fn test_2() -> Result<(), Error> {
         .arg("--source")
         .arg(template_path.to_str().unwrap())
         .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -112,6 +116,7 @@ fn test_1_subfolder() -> Result<(), Error> {
         .arg("--source-folder")
         .arg(source_subfolder)
         .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -136,6 +141,8 @@ fn test_1_remote_master() -> Result<(), Error> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg("https://github.com/davidB/ffizer_demo_template.git")
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -162,6 +169,8 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
         .arg("https://github.com/davidB/ffizer_demo_template.git")
         .arg("--rev")
         .arg("8cab693bbf2eb4f8291ede174d8625d8d21e7b92")
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -188,6 +197,8 @@ fn test_1_remote_tag() -> Result<(), Error> {
         .arg("https://github.com/davidB/ffizer_demo_template.git")
         .arg("--rev")
         .arg("1.0.0")
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .assert()
         .success();
 

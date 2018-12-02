@@ -326,6 +326,8 @@ extension | "txt"
   - [test_1](tests/test_1/template)
   - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
   - [davidB/ffizer_demo_template: a simple template for ffizer used for demo and test](https://github.com/davidB/ffizer_demo_template)
+- [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
+
 
 <a id="markdown-build" name="build"></a>
 ## Build

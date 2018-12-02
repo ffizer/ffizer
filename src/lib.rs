@@ -32,7 +32,7 @@ pub use crate::cmd_opt::*;
 use crate::template_cfg::TemplateCfg;
 use failure::format_err;
 use failure::Error;
-use slog::{debug, o};
+use slog::{debug, o, warn};
 use source_uri::SourceUri;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -98,9 +98,14 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
         &ctx.cmd_opt.src_folder,
         ctx.cmd_opt.offline,
     )?;
-    let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
+    let variables_from_cli = extract_variables(&ctx)?;
+    let template_cfg = render_cfg(
+        &ctx,
+        &TemplateCfg::from_template_folder(&template_base_path)?,
+        &variables_from_cli,
+    )?;
     // TODO define values and ask missing
-    let variables = ui::ask_variables(&ctx, &template_cfg)?;
+    let variables = ui::ask_variables(&ctx, &template_cfg, variables_from_cli)?;
     let input_paths = find_childpaths(template_base_path, &template_cfg);
     let actions = plan(ctx, input_paths, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
@@ -110,12 +115,41 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     }
 }
 
-/// list actions to execute
-pub fn plan(
+pub fn extract_variables(ctx: &Ctx) -> Result<Variables, Error> {
+    let mut variables = Variables::new();
+    variables.insert(
+        "ffizer_dst_folder".to_owned(),
+        ctx.cmd_opt
+            .dst_folder
+            .to_str()
+            .expect("dst_folder to converted via to_str")
+            .to_owned(),
+    );
+    variables.insert("ffizer_src_uri".to_owned(), ctx.cmd_opt.src_uri.raw.clone());
+    variables.insert("ffizer_src_rev".to_owned(), ctx.cmd_opt.src_rev.clone());
+    Ok(variables)
+}
+
+fn render_cfg(
     ctx: &Ctx,
-    src_paths: Vec<ChildPath>,
+    template_cfg: &TemplateCfg,
     variables: &Variables,
-) -> Result<Vec<Action>, Error> {
+) -> Result<TemplateCfg, Error> {
+    let handlebars = hbs::new_hbs()?;
+    template_cfg.transforms_values(|v| {
+        let r = handlebars.render_template(v, variables);
+        match r {
+            Ok(s) => s,
+            Err(e) => {
+                warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e));
+                v.into()
+            }
+        }
+    })
+}
+
+/// list actions to execute
+fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<Vec<Action>, Error> {
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
@@ -164,7 +198,7 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
 }
 
 //TODO accumulate Result (and error)
-pub fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Result<(), Error> {
+fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Result<(), Error> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);

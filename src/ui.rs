@@ -19,8 +19,13 @@ fn write_title(s: &str) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn ask_variables(ctx: &Ctx, cfg: &TemplateCfg) -> Result<Variables, Error> {
+pub fn ask_variables(
+    ctx: &Ctx,
+    cfg: &TemplateCfg,
+    mut init: Variables,
+) -> Result<Variables, Error> {
     let mut variables = Variables::new();
+    variables.append(&mut init);
     if !ctx.cmd_opt.x_always_default_value {
         write_title("Configure variables")?;
         // TODO optimize to reduce clones

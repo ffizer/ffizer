@@ -47,13 +47,43 @@ impl TemplateCfg {
     }
 
     fn post_load(mut self) -> Result<Self, Error> {
-        self.ignores_str.push(TEMPLATE_CFG_FILENAME.to_owned());
         self.ignores = self
             .ignores_str
             .iter()
             .map(|s| Glob::new(s).expect("TODO").compile_matcher())
             .collect::<Vec<_>>();
+        self.ignores.push(
+            Glob::new(TEMPLATE_CFG_FILENAME)
+                .expect("TODO")
+                .compile_matcher(),
+        );
         Ok(self)
+    }
+
+    /// transforms default_value & ignore
+    pub fn transforms_values<F>(&self, mut render: F) -> Result<TemplateCfg, Error>
+    where
+        F: FnMut(&str) -> String,
+    {
+        let variables = self
+            .variables
+            .iter()
+            .map(|v| {
+                let mut nv = v.clone();
+                nv.default_value = nv.default_value.map(|s| render(&s));
+                nv
+            }).collect::<Vec<_>>();
+        let ignores_str = self
+            .ignores_str
+            .iter()
+            .map(|s| render(s))
+            .collect::<Vec<_>>();
+        let cfg = TemplateCfg {
+            variables,
+            ignores_str,
+            ignores: vec![],
+        };
+        cfg.post_load()
     }
 }
 
@@ -99,5 +129,44 @@ mod tests {
         });
         let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
+    }
+
+    #[test]
+    fn test_transforms_values() {
+        let cfg_in_str = r#"
+        ignores:
+            - keep
+            - to_transform
+        variables:
+            - name: k2
+              default_value: v2
+            - name: k1
+              default_value: to_transform
+            - name: k3
+        "#;
+        let cfg_expected_str = r#"
+        ignores:
+            - keep
+            - transformed
+        variables:
+            - name: k2
+              default_value: v2
+            - name: k1
+              default_value: transformed
+            - name: k3
+        "#;
+        let cfg_in = TemplateCfg::from_str(&cfg_in_str).unwrap();
+        let expected = TemplateCfg::from_str(&cfg_expected_str).unwrap();
+        let actual = cfg_in
+            .transforms_values(|v| {
+                if v == "to_transform" {
+                    "transformed".to_owned()
+                } else {
+                    v.to_string()
+                }
+            }).unwrap();
+        assert_that!(&actual.variables).is_equal_to(&expected.variables);
+        assert_that!(&actual.ignores_str).is_equal_to(&expected.ignores_str);
+        //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
     }
 }

@@ -32,7 +32,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
     - [Create a template](#create-a-template)
         - [Rules](#rules)
         - [A 5 minutes tutorial](#a-5-minutes-tutorial)
-    - [Pre-defined variables](#pre-defined-variables)
+        - [Pre-defined variables](#pre-defined-variables)
         - [Template Helpers / Functions](#template-helpers--functions)
             - [String transformation](#string-transformation)
             - [Http content](#http-content)
@@ -115,7 +115,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.6.0
+ffizer 0.7.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 

@@ -326,14 +326,14 @@ cargo build --release
 - [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
 - [Cookiecutter — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
 - [sethyuan/fgen](https://github.com/sethyuan/fgen): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
-- [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only, plus few bug) I could contributes but I have incompatible requirements (and would like to create my own since a long time).
+- [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only) I could contributes but I have incompatible requirements.
 - [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
-- [porteurbars](https://crates.io/crates/porteurbars), very similar but I discover it too late.
+- [porteurbars](https://crates.io/crates/porteurbars), very similar but I discovered it too late.
 
 <a id="markdown-specialized" name="specialized"></a>
 ### Specialized
 
-specilazed to a platform, build tool,...
+specialized to a platform, build tool,...
 
 - [The web's scaffolding tool for modern webapps | Yeoman](http://yeoman.io/), nodejs ecosystem
 - [JHipster - Generate your Spring Boot + Angular/React applications!](https://www.jhipster.tech/) require java, dedicated to java web ecosystem, optionnated template (not generic)

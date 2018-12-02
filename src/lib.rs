@@ -99,13 +99,13 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
         ctx.cmd_opt.offline,
     )?;
     let variables_from_cli = extract_variables(&ctx)?;
-    let template_cfg = render_cfg(
-        &ctx,
-        &TemplateCfg::from_template_folder(&template_base_path)?,
-        &variables_from_cli,
-    )?;
-    // TODO define values and ask missing
+    // update cfg with variables defined by user
+    let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
+    // update cfg with variables defined by cli (use to update default_value)
+    template_cfg = render_cfg(&ctx, &template_cfg, &variables_from_cli, false)?;
     let variables = ui::ask_variables(&ctx, &template_cfg, variables_from_cli)?;
+    // update cfg with variables defined by user (use to update ignore)
+    template_cfg = render_cfg(&ctx, &template_cfg, &variables, true)?;
     let input_paths = find_childpaths(template_base_path, &template_cfg);
     let actions = plan(ctx, input_paths, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
@@ -134,6 +134,7 @@ fn render_cfg(
     ctx: &Ctx,
     template_cfg: &TemplateCfg,
     variables: &Variables,
+    log_warning: bool,
 ) -> Result<TemplateCfg, Error> {
     let handlebars = hbs::new_hbs()?;
     template_cfg.transforms_values(|v| {
@@ -141,7 +142,7 @@ fn render_cfg(
         match r {
             Ok(s) => s,
             Err(e) => {
-                warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e));
+                if log_warning { warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e))}
                 v.into()
             }
         }

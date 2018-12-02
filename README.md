@@ -32,6 +32,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
     - [Create a template](#create-a-template)
         - [Rules](#rules)
         - [A 5 minutes tutorial](#a-5-minutes-tutorial)
+    - [Pre-defined variables](#pre-defined-variables)
         - [Template Helpers / Functions](#template-helpers--functions)
             - [String transformation](#string-transformation)
             - [Http content](#http-content)
@@ -74,7 +75,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
   - [ ] raw command
 - [ ] composite template can be apply at root folder
 - [ ] composite template include under conditions
-- [ ] file / folder ignored under conditions
+- [X] file / folder ignored under conditions (ignores'item in ffizer.yaml are defined as handlerbar expression)
 - [X] handlebars helpers
   - [X] transform strings (toUpperCase, toLowerCase, Capitelize,...)
   - [X] render content of GET url
@@ -234,6 +235,23 @@ OPTIONS:
     I am a fixed content file with rendered file name.
     EOF
     ```
+
+<a id="markdown-pre-defined-variables" name="pre-defined-variables"></a>
+#### Pre-defined variables
+
+Some variables are predefined and they can be used into `ffizer.yaml` into the `ignores` section or `default_value` via handlebars expression.
+
+```yaml
+variables:
+  - name: project_name
+    default_value: "{{ file_name ffizer_dst_folder }}"
+```
+
+The predefined variables are:
+
+- `ffizer_dst_folder` contains the value from cli arg `--destination`
+- `ffizer_src_rev` contains the value from cli arg `--rev`
+- `ffizer_src_uri` contains the value from cli arg `--source`
 
 <a id="markdown-template-helpers--functions" name="template-helpers--functions"></a>
 #### Template Helpers / Functions

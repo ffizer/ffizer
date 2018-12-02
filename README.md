@@ -247,6 +247,13 @@ To use an helper:
 {{ helper_name argument}}
 ```
 
+To chain helpers, use parenthesis:
+
+```handlebars
+{{ to_upper_case (to_singular "Hello foo-bars") }}
+// -> "BAR"
+```
+
 see [Handlebars templating language](https://handlebarsjs.com/)
 
 <a id="markdown-string-transformation" name="string-transformation"></a>

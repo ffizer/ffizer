@@ -99,6 +99,16 @@ mod tests {
     use super::*;
     use spectral::prelude::*;
 
+    #[test]
+    fn test_chain_of_helpers_with_1_param() -> Result<(), Error> {
+        let vs = Variables::new();
+        let hbs = new_hbs()?;
+        let tmpl = r#"{{ to_upper_case (to_singular "Hello foo-bars")}}"#.to_owned();
+        let actual = hbs.render_template(&tmpl, &vs)?;
+        assert_that!(&actual).is_equal_to("BAR".to_string());
+        Ok(())
+    }
+
     fn assert_helpers(input: &str, helper_expected: Vec<(&str, &str)>) -> Result<(), Error> {
         let mut vs = Variables::new();
         vs.insert("var".into(), input.into());

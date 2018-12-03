@@ -13,7 +13,7 @@ exclude = ["/.travis.yml", ".gitignore", "/tests/**"]
 
 [dependencies]
 Inflector = "0.11.3"
-console = "0.7.0"
+console = "0.7.1"
 dialoguer = "0.3.0"
 directories = "1.0.2"
 failure = "0.1.3"

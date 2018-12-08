@@ -1,5 +1,6 @@
 extern crate failure;
 extern crate ffizer;
+extern crate human_panic;
 extern crate slog;
 extern crate slog_async;
 extern crate slog_term;
@@ -27,6 +28,7 @@ fn init_log(level_min: slog::Level) -> slog::Logger {
 }
 
 fn main() -> Result<(), Error> {
+    human_panic::setup_panic!();
     let cmd_opt = CmdOpt::from_args();
 
     let log_level = slog::Level::from_usize(3 + cmd_opt.verbose).unwrap_or(slog::Level::Warning);

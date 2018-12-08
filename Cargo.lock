@@ -341,7 +341,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "ffizer"
-version = "0.7.1"
+version = "0.8.0"
 dependencies = [
  "Inflector 0.11.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "assert_cmd 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",

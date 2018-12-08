@@ -115,7 +115,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.7.1
+ffizer 0.8.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 

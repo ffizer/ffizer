@@ -1,13 +1,13 @@
-use super::{Action, Ctx, Variables};
-use cmd_opt::*;
 use console::Style;
 use console::Term;
+use crate::cmd_opt::*;
+use crate::template_cfg::TemplateCfg;
+use crate::{Action, Ctx, Variables};
 use dialoguer::Confirmation;
 use dialoguer::Input;
 use failure::Error;
 use lazy_static::lazy_static;
 use slog::debug;
-use template_cfg::TemplateCfg;
 
 lazy_static! {
     static ref term: Term = Term::stdout();

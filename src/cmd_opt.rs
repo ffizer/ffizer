@@ -1,6 +1,6 @@
+use crate::source_uri::SourceUri;
 use failure::format_err;
 use failure::Error;
-use source_uri::SourceUri;
 use std::path::PathBuf;
 use std::str::FromStr;
 use structopt::StructOpt;

@@ -29,11 +29,11 @@ mod template_cfg;
 mod ui;
 
 pub use crate::cmd_opt::*;
+use crate::source_uri::SourceUri;
 use crate::template_cfg::TemplateCfg;
 use failure::format_err;
 use failure::Error;
 use slog::{debug, o, warn};
-use source_uri::SourceUri;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::fs;

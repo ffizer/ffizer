@@ -38,7 +38,7 @@ impl FromStr for SourceUri {
                     path: PathBuf::from(s.to_owned()),
                     host: None,
                 })
-            }).ok_or(format_err!("failed to parse source uri"))
+            }).ok_or_else(|| format_err!("failed to parse source uri"))
     }
 }
 

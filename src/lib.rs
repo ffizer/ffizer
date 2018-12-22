@@ -41,7 +41,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
-const FILEEXT_HANDLEBARS: &'static str = ".ffizer.hbs";
+const FILEEXT_HANDLEBARS: &str = ".ffizer.hbs";
 
 pub type Variables = BTreeMap<String, String>;
 
@@ -199,7 +199,7 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
 }
 
 //TODO accumulate Result (and error)
-fn execute(ctx: &Ctx, actions: &Vec<Action>, variables: &Variables) -> Result<(), Error> {
+fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<(), Error> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -231,7 +231,7 @@ fn as_local_path(
     offline: bool,
 ) -> Result<PathBuf, Error> {
     let mut path = match uri.host {
-        None => PathBuf::from(uri.path.clone()),
+        None => uri.path.clone(),
         Some(_) => remote_as_local(&uri, rev, offline)?,
     };
     if let Some(f) = subfolder {
@@ -244,7 +244,7 @@ fn as_local_path(
             subfolder
                 .clone()
                 .and_then(|s| s.to_str().map(|v| format!(" and subfolder {}", v)))
-                .unwrap_or("".to_owned()) //path.to_str().unwrap_or("??")
+                .unwrap_or_else(|| "".to_owned()) //path.to_str().unwrap_or("??")
         ))
     } else {
         Ok(path)
@@ -252,13 +252,13 @@ fn as_local_path(
 }
 
 fn remote_as_local(uri: &SourceUri, rev: &str, offline: bool) -> Result<PathBuf, Error> {
-    let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or("".into());
+    let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
     let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
-        .ok_or(format_err!("Home directory not found"))?;
+        .ok_or_else(|| format_err!("Home directory not found"))?;
     let cache_base = project_dirs.cache_dir();
     let cache_uri = cache_base
         .join("git")
-        .join(&uri.host.clone().unwrap_or("no_host".to_owned()))
+        .join(&uri.host.clone().unwrap_or_else(|| "no_host".to_owned()))
         .join(&uri.path)
         .join(rev);
     if !offline {
@@ -301,7 +301,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
     let rendered_relative = src
         .relative
         .to_str()
-        .ok_or(format_err!("failed to stringify path"))
+        .ok_or_else(|| format_err!("failed to stringify path"))
         .and_then(|s| {
             let handlebars = hbs::new_hbs()?;
             let p = handlebars.render_template(&s, variables)?;
@@ -311,10 +311,10 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
         let mut file_name = rendered_relative
             .file_name()
             .and_then(|v| v.to_str())
-            .ok_or(format_err!("failed to extract file_name"))?;
+            .ok_or_else(|| format_err!("failed to extract file_name"))?;
         file_name = file_name
             .get(..file_name.len() - FILEEXT_HANDLEBARS.len())
-            .ok_or(format_err!(
+            .ok_or_else(|| format_err!(
                 "failed to remove {} from file_name",
                 FILEEXT_HANDLEBARS
             ))?;
@@ -334,7 +334,7 @@ fn select_operation(
     _ctx: &Ctx,
     src_path: &ChildPath,
     dst_path: &ChildPath,
-    actions: &Vec<Action>,
+    actions: &[Action],
 ) -> FileOperation {
     let src_full_path = PathBuf::from(src_path);
     let dest_full_path = PathBuf::from(dst_path);

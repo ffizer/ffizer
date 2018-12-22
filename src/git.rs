@@ -61,7 +61,7 @@ fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, Error> {
     Ok(fo)
 }
 
-fn clone<'a, P, U, R>(dst: P, url: U, rev: R, fo: FetchOptions<'a>) -> Result<(), Error>
+fn clone<P, U, R>(dst: P, url: U, rev: R, fo: FetchOptions<'_>) -> Result<(), Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,
@@ -97,7 +97,7 @@ where
 //     Ok(())
 // }
 
-fn checkout<'a, P, R>(dst: P, rev: R) -> Result<(), Error>
+fn checkout<P, R>(dst: P, rev: R) -> Result<(), Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,

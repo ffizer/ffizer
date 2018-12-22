@@ -3,7 +3,7 @@ use globset::{Glob, GlobMatcher};
 use std::fs;
 use std::path::Path;
 
-const TEMPLATE_CFG_FILENAME: &'static str = ".ffizer.yaml";
+const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(deny_unknown_fields, default)]

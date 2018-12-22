@@ -76,17 +76,17 @@ fn register_http_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
 }
 
 fn register_path_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
-    handlebars_helper!(parent: |v: str| Path::new(v).parent().and_then(|s| s.to_str()).unwrap_or("".into()));
+    handlebars_helper!(parent: |v: str| Path::new(v).parent().and_then(|s| s.to_str()).unwrap_or(""));
     handlebars.register_helper("parent", Box::new(parent));
 
-    handlebars_helper!(file_name: |v: str| Path::new(v).file_name().and_then(|s| s.to_str()).unwrap_or("".into()));
+    handlebars_helper!(file_name: |v: str| Path::new(v).file_name().and_then(|s| s.to_str()).unwrap_or(""));
     handlebars.register_helper("file_name", Box::new(file_name));
 
-    handlebars_helper!(extension: |v: str| Path::new(v).extension().and_then(|s| s.to_str()).unwrap_or("".into()));
+    handlebars_helper!(extension: |v: str| Path::new(v).extension().and_then(|s| s.to_str()).unwrap_or(""));
     handlebars.register_helper("extension", Box::new(extension));
 
     handlebars_helper!(canonicalize: |v: str| {
-        Path::new(v).canonicalize().ok().and_then(|s| s.to_str().map(|v| v.to_owned())).unwrap_or("".into())
+        Path::new(v).canonicalize().ok().and_then(|s| s.to_str().map(|v| v.to_owned())).unwrap_or_else(|| "".into())
     });
     handlebars.register_helper("canonicalize", Box::new(canonicalize));
 

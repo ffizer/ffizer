@@ -49,7 +49,7 @@ pub fn ask_variables(
     } else {
         for variable in cfg.variables.iter() {
             let name = variable.name.clone();
-            let value = (variable.default_value).clone().unwrap_or("".into());
+            let value = (variable.default_value).clone().unwrap_or_else(|| "".into());
             variables.insert(name, value);
         }
     }
@@ -57,7 +57,7 @@ pub fn ask_variables(
 }
 
 //TODO add flag to filter display: all, changes, none
-pub fn confirm_plan(ctx: &Ctx, actions: &Vec<Action>) -> Result<bool, Error> {
+pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool, Error> {
     write_title("Plan to execute")?;
     debug!(ctx.logger, "plan"; "actions" => format!("{:?}", actions));
     for a in actions {

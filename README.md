@@ -29,6 +29,8 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
         - [via github releases](#via-github-releases)
         - [via cargo](#via-cargo)
     - [Run](#run)
+        - [Self upgrade the executable](#self-upgrade-the-executable)
+        - [Apply a template](#apply-a-template)
     - [Create a template](#create-a-template)
         - [Rules](#rules)
         - [A 5 minutes tutorial](#a-5-minutes-tutorial)
@@ -115,7 +117,7 @@ cargo install ffizer
 ### Run
 
 ```txt
-ffizer 0.8.0
+ffizer 0.9.0
 davidB
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -138,13 +140,56 @@ OPTIONS:
     -s, --source <src_uri>              uri / path of the template
 ```
 
+<a id="markdown-self-upgrade-the-executable" name="self-upgrade-the-executable"></a>
+#### Self upgrade the executable
+
+```sh
+ffizer-upgrade 0.9.0
+David Bernard
+self upgrade ffizer executable
+
+USAGE:
+    ffizer upgrade
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+```
+
+<a id="markdown-apply-a-template" name="apply-a-template"></a>
+#### Apply a template
+
+```sh
+ffizer-apply 0.9.0
+https://github.com/davidB/ffizer
+apply a template into a target directory
+
+USAGE:
+    ffizer apply [FLAGS] [OPTIONS] --destination <dst_folder> --source <src_uri>
+
+FLAGS:
+    -h, --help                      Prints help information
+        --offline                   in offline, only local templates or cached templates are used
+    -V, --version                   Prints version information
+    -v, --verbose                   Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+        --x-always_default_value    should not ask for valiables values, always use defautl value or empty
+                                    (experimental)
+
+OPTIONS:
+        --confirm <confirm>             ask confirmation 'never' or 'always' [default: never]
+    -d, --destination <dst_folder>      destination folder (created if doesn't exist)
+        --source-folder <src_folder>    path of the folder under the source uri to use for template
+        --rev <src_rev>                 git revision of the template [default: master]
+    -s, --source <src_uri>              uri / path of the template
+```
+
 - use a local folder as template
     ```sh
-    ffizer --source $HOME/my_templates/tmpl0 --destination my_project
+    ffizer apply --source $HOME/my_templates/tmpl0 --destination my_project
     ```
 - use a remote git repository as template
     ```sh
-    ffizer --source https://github.com/davidB/ffizer_demo_template.git --destination my_project
+    ffizer apply --source https://github.com/davidB/ffizer_demo_template.git --destination my_project
     ```
     output
     ```sh

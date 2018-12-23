@@ -23,6 +23,7 @@ fn empty_template() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -50,6 +51,7 @@ fn test_1() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -78,6 +80,7 @@ fn test_2() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -105,6 +108,7 @@ fn test_3() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -133,6 +137,7 @@ fn test_1_subfolder() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -161,6 +166,7 @@ fn test_1_remote_master() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -187,6 +193,7 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")
@@ -215,6 +222,7 @@ fn test_1_remote_tag() -> Result<(), Error> {
     fs::create_dir_all(&expected_path)?;
 
     Command::main_binary()?
+        .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
         .arg("never")

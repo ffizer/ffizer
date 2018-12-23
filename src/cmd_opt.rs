@@ -5,11 +5,30 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use structopt::StructOpt;
 
-#[derive(StructOpt, Debug, Default, Clone)]
+#[derive(StructOpt, Debug, Clone)]
 #[structopt(
     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-    author = "davidB"
+    rename_all = "kebab-case",
+    author = "https://github.com/davidB/ffizer",
 )]
+pub enum Command {
+    /// Apply a template into a target directory
+    #[structopt(
+        raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+        rename_all = "kebab-case",
+        author = "https://github.com/davidB/ffizer",
+    )]
+    Apply(CmdOpt),
+    /// Self upgrade ffizer executable
+    #[structopt(
+        raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
+        rename_all = "kebab-case",
+        author = "https://github.com/davidB/ffizer",
+    )]
+    Upgrade,
+}
+
+#[derive(StructOpt, Debug, Default, Clone)]
 pub struct CmdOpt {
     // The number of occurences of the `v/verbose` flag
     /// Verbose mode (-v, -vv (very verbose / level debug), -vvv)

@@ -144,7 +144,7 @@ OPTIONS:
 #### Self upgrade the executable
 
 ```sh
-ffizer-upgrade 0.9.0
+ffizer upgrade --help
 David Bernard
 self upgrade ffizer executable
 
@@ -160,7 +160,7 @@ FLAGS:
 #### Apply a template
 
 ```sh
-ffizer-apply 0.9.0
+ffizer apply --help
 https://github.com/davidB/ffizer
 apply a template into a target directory
 

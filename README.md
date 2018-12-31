@@ -117,36 +117,35 @@ cargo install ffizer
 ### Run
 
 ```txt
+➜  ffizer --help
+
 ffizer 0.9.0
-davidB
+https://github.com/davidB/ffizer
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
 USAGE:
-    ffizer [FLAGS] [OPTIONS] --destination <dst_folder> --source <src_uri>
+    ffizer [FLAGS] <SUBCOMMAND>
 
 FLAGS:
-    -h, --help                      Prints help information
-        --offline                   in offline, only local templates or cached templates are used
-    -V, --version                   Prints version information
-    -v, --verbose                   Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
-        --x-always_default_value    should not ask for valiables values, always use defautl value or empty
-                                    (experimental)
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+    -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
 
-OPTIONS:
-        --confirm <confirm>             ask confirmation 'never' or 'always' [default: never]
-    -d, --destination <dst_folder>      destination folder (created if doesn't exist)
-        --source-folder <src_folder>    path of the folder under the source uri to use for template
-        --rev <src_rev>                 git revision of the template [default: master]
-    -s, --source <src_uri>              uri / path of the template
+SUBCOMMANDS:
+    apply      Apply a template into a target directory
+    help       Prints this message or the help of the given subcommand(s)
+    upgrade    Self upgrade ffizer executable
 ```
 
 <a id="markdown-self-upgrade-the-executable" name="self-upgrade-the-executable"></a>
 #### Self upgrade the executable
 
 ```sh
-ffizer upgrade --help
-David Bernard
-self upgrade ffizer executable
+➜  ffizer upgrade --help
+
+ffizer-upgrade 0.9.0
+https://github.com/davidB/ffizer
+Self upgrade ffizer executable
 
 USAGE:
     ffizer upgrade
@@ -160,27 +159,28 @@ FLAGS:
 #### Apply a template
 
 ```sh
-ffizer apply --help
+➜  ffizer apply --help
+
+ffizer-apply 0.9.0
 https://github.com/davidB/ffizer
-apply a template into a target directory
+Apply a template into a target directory
 
 USAGE:
-    ffizer apply [FLAGS] [OPTIONS] --destination <dst_folder> --source <src_uri>
+    ffizer apply [FLAGS] [OPTIONS] --destination <dst_folder> --source <uri>
 
 FLAGS:
     -h, --help                      Prints help information
         --offline                   in offline, only local templates or cached templates are used
     -V, --version                   Prints version information
-    -v, --verbose                   Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
         --x-always_default_value    should not ask for valiables values, always use defautl value or empty
                                     (experimental)
 
 OPTIONS:
-        --confirm <confirm>             ask confirmation 'never' or 'always' [default: never]
-    -d, --destination <dst_folder>      destination folder (created if doesn't exist)
-        --source-folder <src_folder>    path of the folder under the source uri to use for template
-        --rev <src_rev>                 git revision of the template [default: master]
-    -s, --source <src_uri>              uri / path of the template
+        --confirm <confirm>               ask confirmation 'never' or 'always' [default: never]
+    -d, --destination <dst_folder>        destination folder (created if doesn't exist)
+        --rev <rev>                       git revision of the template [default: master]
+        --source-subfolder <subfolder>    path of the folder under the source uri to use for template
+    -s, --source <uri>                    uri / path of the template
 ```
 
 - use a local folder as template

@@ -1,6 +1,6 @@
 use console::Style;
 use console::Term;
-use crate::cmd_opt::*;
+use crate::cli_opt::*;
 use crate::template_cfg::TemplateCfg;
 use crate::{Action, Ctx, Variables};
 use dialoguer::Confirmation;

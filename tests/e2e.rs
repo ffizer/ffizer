@@ -145,7 +145,7 @@ fn test_1_subfolder() -> Result<(), Error> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg(template_path.to_str().unwrap())
-        .arg("--source-folder")
+        .arg("--source-subfolder")
         .arg(source_subfolder)
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())

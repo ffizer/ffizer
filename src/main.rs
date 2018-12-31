@@ -8,7 +8,8 @@ extern crate structopt;
 
 use self_update;
 use failure::Error;
-use ffizer::CmdOpt;
+use ffizer::CliOpts;
+use ffizer::ApplyOpts;
 use ffizer::Command;
 use ffizer::Ctx;
 use slog::Drain;
@@ -29,8 +30,9 @@ fn init_log(level_min: slog::Level) -> slog::Logger {
     log
 }
 
-fn upgrade() -> Result<(), Error> {
+fn upgrade(logger: slog::Logger) -> Result<(), Error> {
     let target = self_update::get_target()?;
+    // TODO extract repo info from CARGO_PKG_REPOSITORY
     let status = self_update::backends::github::Update::configure()?
         .repo_owner("davidB")
         .repo_name("ffizer")
@@ -41,25 +43,26 @@ fn upgrade() -> Result<(), Error> {
         .current_version(env!("CARGO_PKG_VERSION"))
         .build()?
         .update()?;
-    println!("Update status: `{}`!", status.version());
+    info!(logger, "ugrade"; "status" => status.version());
     Ok(())
 }
 
-fn apply(cmd_opt: CmdOpt) -> Result<(), Error> {
-    let log_level = slog::Level::from_usize(3 + cmd_opt.verbose).unwrap_or(slog::Level::Warning);
-    let logger = init_log(log_level);
-    debug!(logger, "parsed args"; "cmd" => format!("{:?}", &cmd_opt));
-
+fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Error> {
     let ctx = Ctx { logger, cmd_opt };
-
     ffizer::process(&ctx)
 }
 
 fn main() -> Result<(), Error> {
     human_panic::setup_panic!();
-    match Command::from_args() {
-        Command::Apply(g) => apply(g),
-        Command::Upgrade => upgrade(),
+    let cli_opts= CliOpts::from_args();
+
+    let log_level = slog::Level::from_usize(3 + cli_opts.verbose).unwrap_or(slog::Level::Warning);
+    let logger = init_log(log_level);
+    debug!(logger, "parsed args"; "cmd" => format!("{:?}", &cli_opts));
+
+    match cli_opts.cmd {
+        Command::Apply(g) => apply(logger, g),
+        Command::Upgrade => upgrade(logger),
     }
 
 

@@ -21,14 +21,14 @@ extern crate walkdir;
 #[cfg(test)]
 extern crate spectral;
 
-mod cmd_opt;
+mod cli_opt;
 mod git;
 mod hbs;
 mod source_uri;
 mod template_cfg;
 mod ui;
 
-pub use crate::cmd_opt::*;
+pub use crate::cli_opt::*;
 use crate::source_uri::SourceUri;
 use crate::template_cfg::TemplateCfg;
 use failure::format_err;
@@ -48,14 +48,14 @@ pub type Variables = BTreeMap<String, String>;
 #[derive(Debug, Clone)]
 pub struct Ctx {
     pub logger: slog::Logger,
-    pub cmd_opt: CmdOpt,
+    pub cmd_opt: ApplyOpts,
 }
 
 impl Default for Ctx {
     fn default() -> Ctx {
         Ctx {
             logger: slog::Logger::root(slog::Discard, o!()),
-            cmd_opt: CmdOpt::default(),
+            cmd_opt: ApplyOpts::default(),
         }
     }
 }
@@ -93,10 +93,10 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
     let template_base_path = as_local_path(
-        &ctx.cmd_opt.src_uri,
-        &ctx.cmd_opt.src_rev,
-        &ctx.cmd_opt.src_folder,
-        ctx.cmd_opt.offline,
+        &ctx.cmd_opt.src.uri,
+        &ctx.cmd_opt.src.rev,
+        &ctx.cmd_opt.src.subfolder,
+        ctx.cmd_opt.src.offline,
     )?;
     let variables_from_cli = extract_variables(&ctx)?;
     // update cfg with variables defined by user
@@ -125,8 +125,8 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables, Error> {
             .expect("dst_folder to converted via to_str")
             .to_owned(),
     );
-    variables.insert("ffizer_src_uri".to_owned(), ctx.cmd_opt.src_uri.raw.clone());
-    variables.insert("ffizer_src_rev".to_owned(), ctx.cmd_opt.src_rev.clone());
+    variables.insert("ffizer_src_uri".to_owned(), ctx.cmd_opt.src.uri.raw.clone());
+    variables.insert("ffizer_src_rev".to_owned(), ctx.cmd_opt.src.rev.clone());
     Ok(variables)
 }
 
@@ -407,7 +407,7 @@ mod tests {
     #[test]
     fn test_compute_dst_path_asis() {
         let ctx = Ctx {
-            cmd_opt: CmdOpt {
+            cmd_opt: ApplyOpts {
                 dst_folder: PathBuf::from("test/dst"),
                 ..Default::default()
             },
@@ -431,7 +431,7 @@ mod tests {
     #[test]
     fn test_compute_dst_path_ffizer_handlebars() {
         let ctx = Ctx {
-            cmd_opt: CmdOpt {
+            cmd_opt: ApplyOpts {
                 dst_folder: PathBuf::from("test/dst"),
                 ..Default::default()
             },
@@ -456,7 +456,7 @@ mod tests {
     #[test]
     fn test_compute_dst_path_rendered_filename() {
         let ctx = Ctx {
-            cmd_opt: CmdOpt {
+            cmd_opt: ApplyOpts {
                 dst_folder: PathBuf::from("test/dst"),
                 ..Default::default()
             },
@@ -482,7 +482,7 @@ mod tests {
     #[test]
     fn test_compute_dst_path_rendered_folder() {
         let ctx = Ctx {
-            cmd_opt: CmdOpt {
+            cmd_opt: ApplyOpts {
                 dst_folder: PathBuf::from("test/dst"),
                 ..Default::default()
             },

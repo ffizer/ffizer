@@ -1,11 +1,3 @@
-extern crate failure;
-extern crate ffizer;
-extern crate human_panic;
-extern crate slog;
-extern crate slog_async;
-extern crate slog_term;
-extern crate structopt;
-
 use self_update;
 use failure::Error;
 use ffizer::CliOpts;

@@ -1,25 +1,5 @@
-extern crate console;
-extern crate dialoguer;
-extern crate directories;
-extern crate failure;
-extern crate git2;
-extern crate globset;
-extern crate handlebars;
-extern crate indicatif;
-extern crate inflector;
-extern crate lazy_static;
-extern crate regex;
-extern crate reqwest;
-extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_yaml;
-extern crate slog;
-extern crate structopt;
-extern crate walkdir;
-
-#[cfg(test)]
-extern crate spectral;
 
 mod cli_opt;
 mod git;

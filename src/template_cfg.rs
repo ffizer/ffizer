@@ -1,16 +1,18 @@
+use crate::path_pattern::PathPattern;
+use crate::source_loc::SourceLoc;
 use failure::Error;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
-use crate::path_pattern::PathPattern;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 
-#[derive(Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default, Clone)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
     pub variables: Vec<Variable>,
     pub ignores: Vec<PathPattern>,
+    pub imports: Vec<SourceLoc>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -62,7 +64,8 @@ impl TemplateCfg {
                 let mut nv = v.clone();
                 nv.default_value = nv.default_value.map(|s| render(&s));
                 nv
-            }).collect::<Vec<_>>();
+            })
+            .collect::<Vec<_>>();
         let ignores = self
             .ignores
             .iter()
@@ -71,6 +74,7 @@ impl TemplateCfg {
         Ok(TemplateCfg {
             variables,
             ignores,
+            imports: self.imports.clone(),
         })
     }
 }
@@ -152,7 +156,8 @@ mod tests {
                 } else {
                     v.to_string()
                 }
-            }).unwrap();
+            })
+            .unwrap();
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
         assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
         //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);

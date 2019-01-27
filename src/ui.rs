@@ -1,8 +1,8 @@
+use crate::cli_opt::*;
+use crate::template_cfg::Variable;
+use crate::{Action, Ctx, Variables};
 use console::Style;
 use console::Term;
-use crate::cli_opt::*;
-use crate::template_cfg::TemplateCfg;
-use crate::{Action, Ctx, Variables};
 use dialoguer::Confirmation;
 use dialoguer::Input;
 use failure::Error;
@@ -21,7 +21,7 @@ fn write_title(s: &str) -> Result<(), Error> {
 
 pub fn ask_variables(
     ctx: &Ctx,
-    cfg: &TemplateCfg,
+    list_variables: &Vec<Variable>,
     mut init: Variables,
 ) -> Result<Variables, Error> {
     let mut variables = Variables::new();
@@ -29,7 +29,7 @@ pub fn ask_variables(
     if !ctx.cmd_opt.x_always_default_value {
         write_title("Configure variables")?;
         // TODO optimize to reduce clones
-        for variable in cfg.variables.iter().cloned() {
+        for variable in list_variables.iter().cloned() {
             let name = variable.name;
             let value: String = {
                 let mut input = Input::new();
@@ -47,9 +47,11 @@ pub fn ask_variables(
             variables.insert(name, value);
         }
     } else {
-        for variable in cfg.variables.iter() {
+        for variable in list_variables.iter() {
             let name = variable.name.clone();
-            let value = (variable.default_value).clone().unwrap_or_else(|| "".into());
+            let value = (variable.default_value)
+                .clone()
+                .unwrap_or_else(|| "".into());
             variables.insert(name, value);
         }
     }

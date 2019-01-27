@@ -5,7 +5,7 @@ use failure::Error;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-#[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq)]
+#[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
 pub struct SourceLoc {
     /// uri / path of the template
@@ -22,29 +22,18 @@ pub struct SourceLoc {
 }
 
 impl SourceLoc {
-    pub fn as_local_path(&self, offline: bool) -> Result<PathBuf, Error> {
+    pub fn as_local_path(&self) -> Result<PathBuf, Error> {
         let mut path = match self.uri.host {
             None => self.uri.path.clone(),
-            Some(_) => self.remote_as_local(offline)?,
+            Some(_) => self.remote_as_local()?,
         };
         if let Some(f) = &self.subfolder {
             path = path.join(f.clone());
         }
-        if !path.exists() {
-            Err(format_err!(
-                "Path not found for {}{}",
-                &self.uri.raw,
-                self.subfolder
-                    .clone()
-                    .and_then(|s| s.to_str().map(|v| format!(" and subfolder {}", v)))
-                    .unwrap_or_else(|| "".to_owned()) //path.to_str().unwrap_or("??")
-            ))
-        } else {
-            Ok(path)
-        }
+        Ok(path)
     }
 
-    pub fn remote_as_local(&self, offline: bool) -> Result<PathBuf, Error> {
+    fn remote_as_local(&self) -> Result<PathBuf, Error> {
         let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
         let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
             .ok_or_else(|| format_err!("Home directory not found"))?;
@@ -60,9 +49,25 @@ impl SourceLoc {
             )
             .join(&self.uri.path)
             .join(&self.rev);
-        if !offline {
-            git::retrieve(&cache_uri, &self.uri.raw, &self.rev)?;
-        }
         Ok(cache_uri)
+    }
+
+    pub fn download(&self, offline: bool) -> Result<PathBuf, Error> {
+        let path = self.as_local_path()?;
+        if path.exists() && !offline && self.uri.host.is_some() {
+            git::retrieve(&path, &self.uri.raw, &self.rev)?;
+        }
+        if !path.exists() {
+            Err(format_err!(
+                "Path not found for {}{}",
+                &self.uri.raw,
+                self.subfolder
+                    .clone()
+                    .and_then(|s| s.to_str().map(|v| format!(" and subfolder {}", v)))
+                    .unwrap_or_else(|| "".to_owned()) //path.to_str().unwrap_or("??")
+            ))
+        } else {
+            Ok(path)
+        }
     }
 }

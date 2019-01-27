@@ -2,6 +2,7 @@
 extern crate serde_derive;
 
 mod cli_opt;
+mod files;
 mod git;
 mod graph;
 mod hbs;
@@ -9,21 +10,21 @@ mod path_pattern;
 mod source_loc;
 mod source_uri;
 mod template_cfg;
+mod template_composite;
 mod ui;
 
 pub use crate::cli_opt::*;
-use crate::template_cfg::TemplateCfg;
+use crate::files::is_ffizer_handlebars;
+use crate::files::ChildPath;
+use crate::files::FILEEXT_HANDLEBARS;
+use crate::template_composite::TemplateComposite;
 use failure::format_err;
 use failure::Error;
-use slog::{debug, o, warn};
+use slog::{debug, o};
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::Path;
 use std::path::PathBuf;
-use walkdir::WalkDir;
-
-const FILEEXT_HANDLEBARS: &str = ".ffizer.hbs";
 
 pub type Variables = BTreeMap<String, String>;
 
@@ -60,30 +61,18 @@ pub struct Action {
     pub operation: FileOperation,
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
-pub struct ChildPath {
-    pub relative: PathBuf,
-    pub base: PathBuf,
-    pub is_symlink: bool,
-}
-
-impl<'a> From<&'a ChildPath> for PathBuf {
-    fn from(v: &ChildPath) -> Self {
-        v.base.join(&v.relative)
-    }
-}
-
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
-    let template_base_path = &ctx.cmd_opt.src.as_local_path(ctx.cmd_opt.offline)?;
     let variables_from_cli = extract_variables(&ctx)?;
-    // update cfg with variables defined by user
-    let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
-    // update cfg with variables defined by cli (use to update default_value)
-    template_cfg = render_cfg(&ctx, &template_cfg, &variables_from_cli, false)?;
-    let variables = ui::ask_variables(&ctx, &template_cfg, variables_from_cli)?;
+    let template_composite = TemplateComposite::from_src(
+        &ctx,
+        &variables_from_cli,
+        ctx.cmd_opt.offline,
+        &ctx.cmd_opt.src,
+    )?;
+    let variables = ui::ask_variables(&ctx, &template_composite.variables(), variables_from_cli)?;
     // update cfg with variables defined by user (use to update ignore)
-    template_cfg = render_cfg(&ctx, &template_cfg, &variables, true)?;
-    let input_paths = find_childpaths(template_base_path, &template_cfg);
+    //TODO template_cfg = render_cfg(&ctx, &template_cfg, &variables, true)?;
+    let input_paths = template_composite.find_childpaths()?;
     let actions = plan(ctx, input_paths, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
         execute(ctx, &actions, &variables)
@@ -105,25 +94,6 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables, Error> {
     variables.insert("ffizer_src_uri".to_owned(), ctx.cmd_opt.src.uri.raw.clone());
     variables.insert("ffizer_src_rev".to_owned(), ctx.cmd_opt.src.rev.clone());
     Ok(variables)
-}
-
-fn render_cfg(
-    ctx: &Ctx,
-    template_cfg: &TemplateCfg,
-    variables: &Variables,
-    log_warning: bool,
-) -> Result<TemplateCfg, Error> {
-    let handlebars = hbs::new_hbs()?;
-    template_cfg.transforms_values(|v| {
-        let r = handlebars.render_template(v, variables);
-        match r {
-            Ok(s) => s,
-            Err(e) => {
-                if log_warning { warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e))}
-                v.into()
-            }
-        }
-    })
 }
 
 /// list actions to execute
@@ -202,37 +172,6 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<(), E
     Ok(())
 }
 
-fn find_childpaths<P>(base: P, cfg: &TemplateCfg) -> Vec<ChildPath>
-where
-    P: AsRef<Path>,
-{
-    let base = base.as_ref();
-    WalkDir::new(base)
-        .follow_links(false)
-        .into_iter()
-        .filter_entry(|e| {
-            e.clone()
-                .into_path()
-                .strip_prefix(base)
-                .expect("scanned child path to be under base")
-                .to_str()
-                .map(|s| !cfg.ignores.iter().any(|f| f.is_match(s)))
-                // .map(|s| true)
-                .unwrap_or(true)
-        })
-        .filter_map(|e| e.ok())
-        .map(|entry| ChildPath {
-            base: base.to_path_buf(),
-            is_symlink: entry.path_is_symlink(),
-            relative: entry
-                .into_path()
-                .strip_prefix(base)
-                .expect("scanned child path to be under base")
-                .to_path_buf(),
-        })
-        .collect::<Vec<_>>()
-}
-
 //TODO optimise / bench to avoid creation and rendering of path handlebars
 fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result<ChildPath, Error> {
     let rendered_relative = src
@@ -293,13 +232,6 @@ fn select_operation(
     } else {
         FileOperation::CopyRaw
     }
-}
-
-fn is_ffizer_handlebars(path: &Path) -> bool {
-    path.file_name()
-        .and_then(|s| s.to_str())
-        .map(|str| str.ends_with(FILEEXT_HANDLEBARS))
-        .unwrap_or(false)
 }
 
 #[cfg(test)]
@@ -447,16 +379,5 @@ mod tests {
         assert_that!(PathBuf::from("foo.ext1").extension()).is_equal_to(&Some(OsStr::new("ext1")));
         assert_that!(PathBuf::from("foo.ext2.ext1").extension())
             .is_equal_to(&Some(OsStr::new("ext1")));
-    }
-
-    #[test]
-    fn test_is_ffizer_handlebars() {
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.hbs"))).is_false();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs/bar"))).is_false();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo_ffizer.hbs"))).is_false();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("fooffizer.hbs"))).is_false();
-
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs"))).is_true();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("bar/foo.ffizer.hbs"))).is_true();
     }
 }

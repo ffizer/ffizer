@@ -1,9 +1,9 @@
-use self_update;
 use failure::Error;
-use ffizer::CliOpts;
 use ffizer::ApplyOpts;
+use ffizer::CliOpts;
 use ffizer::Command;
 use ffizer::Ctx;
+use self_update;
 use slog::Drain;
 use slog::{debug, info, o, trace};
 use structopt::StructOpt;
@@ -46,7 +46,7 @@ fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Error> {
 
 fn main() -> Result<(), Error> {
     human_panic::setup_panic!();
-    let cli_opts= CliOpts::from_args();
+    let cli_opts = CliOpts::from_args();
 
     let log_level = slog::Level::from_usize(3 + cli_opts.verbose).unwrap_or(slog::Level::Warning);
     let logger = init_log(log_level);
@@ -56,6 +56,4 @@ fn main() -> Result<(), Error> {
         Command::Apply(g) => apply(logger, g),
         Command::Upgrade => upgrade(logger),
     }
-
-
 }

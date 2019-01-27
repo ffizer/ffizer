@@ -7,6 +7,7 @@ mod hbs;
 mod source_uri;
 mod template_cfg;
 mod ui;
+mod path_pattern;
 
 pub use crate::cli_opt::*;
 use crate::source_uri::SourceUri;

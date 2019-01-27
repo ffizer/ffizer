@@ -1,18 +1,16 @@
 use failure::Error;
-use globset::{Glob, GlobMatcher};
 use std::fs;
 use std::path::Path;
+use std::str::FromStr;
+use crate::path_pattern::PathPattern;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
     pub variables: Vec<Variable>,
-    #[serde(rename = "ignores")]
-    ignores_str: Vec<String>,
-    #[serde(skip)]
-    pub ignores: Vec<GlobMatcher>,
+    pub ignores: Vec<PathPattern>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -47,16 +45,8 @@ impl TemplateCfg {
     }
 
     fn post_load(mut self) -> Result<Self, Error> {
-        self.ignores = self
-            .ignores_str
-            .iter()
-            .map(|s| Glob::new(s).expect("TODO").compile_matcher())
-            .collect::<Vec<_>>();
-        self.ignores.push(
-            Glob::new(TEMPLATE_CFG_FILENAME)
-                .expect("TODO")
-                .compile_matcher(),
-        );
+        let cfg_pattern = PathPattern::from_str(TEMPLATE_CFG_FILENAME)?;
+        self.ignores.push(cfg_pattern);
         Ok(self)
     }
 
@@ -73,17 +63,15 @@ impl TemplateCfg {
                 nv.default_value = nv.default_value.map(|s| render(&s));
                 nv
             }).collect::<Vec<_>>();
-        let ignores_str = self
-            .ignores_str
+        let ignores = self
+            .ignores
             .iter()
-            .map(|s| render(s))
+            .map(|s| PathPattern::from_str(&render(&s.raw)).expect("TODO"))
             .collect::<Vec<_>>();
-        let cfg = TemplateCfg {
+        Ok(TemplateCfg {
             variables,
-            ignores_str,
-            ignores: vec![],
-        };
-        cfg.post_load()
+            ignores,
+        })
     }
 }
 
@@ -166,7 +154,7 @@ mod tests {
                 }
             }).unwrap();
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
-        assert_that!(&actual.ignores_str).is_equal_to(&expected.ignores_str);
+        assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
         //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
     }
 }

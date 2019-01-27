@@ -3,6 +3,7 @@ use failure::Error;
 use regex::Regex;
 use std::path::PathBuf;
 use std::str::FromStr;
+use serde_plain::derive_deserialize_from_str;
 
 // create my own URI because didn't found acceptable solution
 // - http = "0.1.13" failed to parse "git@github.com:davidB/ffizer.git"
@@ -14,6 +15,8 @@ pub struct SourceUri {
     pub path: PathBuf,
     pub host: Option<String>,
 }
+
+derive_deserialize_from_str!(SourceUri, "source uri");
 
 impl FromStr for SourceUri {
     type Err = Error;

@@ -3,14 +3,15 @@ extern crate serde_derive;
 
 mod cli_opt;
 mod git;
+mod graph;
 mod hbs;
+mod path_pattern;
+mod source_loc;
 mod source_uri;
 mod template_cfg;
 mod ui;
-mod path_pattern;
 
 pub use crate::cli_opt::*;
-use crate::source_uri::SourceUri;
 use crate::template_cfg::TemplateCfg;
 use failure::format_err;
 use failure::Error;
@@ -73,12 +74,7 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 }
 
 pub fn process(ctx: &Ctx) -> Result<(), Error> {
-    let template_base_path = as_local_path(
-        &ctx.cmd_opt.src.uri,
-        &ctx.cmd_opt.src.rev,
-        &ctx.cmd_opt.src.subfolder,
-        ctx.cmd_opt.src.offline,
-    )?;
+    let template_base_path = &ctx.cmd_opt.src.as_local_path(ctx.cmd_opt.offline)?;
     let variables_from_cli = extract_variables(&ctx)?;
     // update cfg with variables defined by user
     let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
@@ -141,7 +137,8 @@ fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<V
                 dst_path,
                 operation: FileOperation::Nothing,
             }
-        }).collect::<Vec<_>>();
+        })
+        .collect::<Vec<_>>();
     // TODO sort input_paths by priority (*.ffizer(.*) first, alphabetical)
     actions.sort_by(cmp_path_for_plan);
     let actions_count = actions.len();
@@ -205,49 +202,6 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<(), E
     Ok(())
 }
 
-fn as_local_path(
-    uri: &SourceUri,
-    rev: &str,
-    subfolder: &Option<PathBuf>,
-    offline: bool,
-) -> Result<PathBuf, Error> {
-    let mut path = match uri.host {
-        None => uri.path.clone(),
-        Some(_) => remote_as_local(&uri, rev, offline)?,
-    };
-    if let Some(f) = subfolder {
-        path = path.join(f);
-    }
-    if !path.exists() {
-        Err(format_err!(
-            "Path not found for {}{}",
-            &uri.raw,
-            subfolder
-                .clone()
-                .and_then(|s| s.to_str().map(|v| format!(" and subfolder {}", v)))
-                .unwrap_or_else(|| "".to_owned()) //path.to_str().unwrap_or("??")
-        ))
-    } else {
-        Ok(path)
-    }
-}
-
-fn remote_as_local(uri: &SourceUri, rev: &str, offline: bool) -> Result<PathBuf, Error> {
-    let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
-    let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
-        .ok_or_else(|| format_err!("Home directory not found"))?;
-    let cache_base = project_dirs.cache_dir();
-    let cache_uri = cache_base
-        .join("git")
-        .join(&uri.host.clone().unwrap_or_else(|| "no_host".to_owned()))
-        .join(&uri.path)
-        .join(rev);
-    if !offline {
-        git::retrieve(&cache_uri, &uri.raw, rev)?;
-    }
-    Ok(cache_uri)
-}
-
 fn find_childpaths<P>(base: P, cfg: &TemplateCfg) -> Vec<ChildPath>
 where
     P: AsRef<Path>,
@@ -265,7 +219,8 @@ where
                 .map(|s| !cfg.ignores.iter().any(|f| f.is_match(s)))
                 // .map(|s| true)
                 .unwrap_or(true)
-        }).filter_map(|e| e.ok())
+        })
+        .filter_map(|e| e.ok())
         .map(|entry| ChildPath {
             base: base.to_path_buf(),
             is_symlink: entry.path_is_symlink(),
@@ -274,7 +229,8 @@ where
                 .strip_prefix(base)
                 .expect("scanned child path to be under base")
                 .to_path_buf(),
-        }).collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>()
 }
 
 //TODO optimise / bench to avoid creation and rendering of path handlebars
@@ -295,10 +251,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             .ok_or_else(|| format_err!("failed to extract file_name"))?;
         file_name = file_name
             .get(..file_name.len() - FILEEXT_HANDLEBARS.len())
-            .ok_or_else(|| format_err!(
-                "failed to remove {} from file_name",
-                FILEEXT_HANDLEBARS
-            ))?;
+            .ok_or_else(|| format_err!("failed to remove {} from file_name", FILEEXT_HANDLEBARS))?;
         rendered_relative.with_file_name(file_name)
     } else {
         rendered_relative
@@ -319,9 +272,10 @@ fn select_operation(
 ) -> FileOperation {
     let src_full_path = PathBuf::from(src_path);
     let dest_full_path = PathBuf::from(dst_path);
-    if dest_full_path.exists() || actions
-        .iter()
-        .any(|a| a.dst_path.relative == dst_path.relative)
+    if dest_full_path.exists()
+        || actions
+            .iter()
+            .any(|a| a.dst_path.relative == dst_path.relative)
     // optim: propably the last
     {
         FileOperation::Keep

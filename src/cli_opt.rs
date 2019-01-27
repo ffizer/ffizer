@@ -1,4 +1,4 @@
-use crate::source_uri::SourceUri;
+use crate::source_loc::SourceLoc;
 use failure::format_err;
 use failure::Error;
 use std::path::PathBuf;
@@ -9,7 +9,7 @@ use structopt::StructOpt;
 #[structopt(
     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
     rename_all = "kebab-case",
-    raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")"),
+    raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
 )]
 pub struct CliOpts {
     // The number of occurences of the `v/verbose` flag
@@ -18,7 +18,7 @@ pub struct CliOpts {
     #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
     pub verbose: usize,
 
-    #[structopt(subcommand)]  // Note that we mark a field as a subcommand
+    #[structopt(subcommand)] // Note that we mark a field as a subcommand
     pub cmd: Command,
 }
 
@@ -26,21 +26,21 @@ pub struct CliOpts {
 #[structopt(
     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
     rename_all = "kebab-case",
-    raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")"),
+    raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
 )]
 pub enum Command {
     /// Apply a template into a target directory
     #[structopt(
         raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
         rename_all = "kebab-case",
-        raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")"),
+        raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
     )]
     Apply(ApplyOpts),
     /// Self upgrade ffizer executable
     #[structopt(
         raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
         rename_all = "kebab-case",
-        raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")"),
+        raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
     )]
     Upgrade,
 }
@@ -55,8 +55,12 @@ pub struct ApplyOpts {
     #[structopt(long = "x-always_default_value")]
     pub x_always_default_value: bool,
 
+    /// in offline, only local templates or cached templates are used
+    #[structopt(long = "offline")]
+    pub offline: bool,
+
     #[structopt(flatten)]
-    pub src: SourceOpts,
+    pub src: SourceLoc,
 
     /// destination folder (created if doesn't exist)
     #[structopt(
@@ -66,25 +70,6 @@ pub struct ApplyOpts {
         //default_value = "."
     )]
     pub dst_folder: PathBuf,
-}
-
-#[derive(StructOpt, Debug, Default, Clone)]
-pub struct SourceOpts {
-    /// in offline, only local templates or cached templates are used
-    #[structopt(long = "offline")]
-    pub offline: bool,
-
-    /// uri / path of the template
-    #[structopt(short = "s", long = "source",)]
-    pub uri: SourceUri,
-
-    /// git revision of the template
-    #[structopt(long = "rev", default_value = "master")]
-    pub rev: String,
-
-    /// path of the folder under the source uri to use for template
-    #[structopt(long = "source-subfolder", parse(from_os_str))]
-    pub subfolder: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

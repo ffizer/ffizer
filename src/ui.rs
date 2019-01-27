@@ -21,7 +21,7 @@ fn write_title(s: &str) -> Result<(), Error> {
 
 pub fn ask_variables(
     ctx: &Ctx,
-    list_variables: &Vec<Variable>,
+    list_variables: &[Variable],
     mut init: Variables,
 ) -> Result<Variables, Error> {
     let mut variables = Variables::new();

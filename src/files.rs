@@ -25,7 +25,7 @@ pub fn is_ffizer_handlebars(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
-pub fn find_childpaths<P>(base: P, ignores: &Vec<PathPattern>) -> Vec<ChildPath>
+pub fn find_childpaths<P>(base: P, ignores: &[PathPattern]) -> Vec<ChildPath>
 where
     P: AsRef<Path>,
 {

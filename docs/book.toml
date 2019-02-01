@@ -1,0 +1,5 @@
+[book]
+authors = ["David Bernard"]
+multilingual = false
+src = "src"
+title = "ffizer"

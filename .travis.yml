@@ -1,13 +1,17 @@
 language: rust
-cache: false
+cache:
   # timeout on windows
-  # cargo: true
+  cargo: true
   # timeout: 2000
   #directories:
     # - $HOME/.cargo
     # - $TRAVIS_BUILD_DIR/target
     # - $TRAVIS_BUILD_DIR/target/debug/deps
     # - $TRAVIS_BUILD_DIR/target/release/deps
+
+before_cache:
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
 
 rust:
   - stable

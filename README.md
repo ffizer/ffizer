@@ -210,7 +210,7 @@ OPTIONS:
 <a id="markdown-authoring-a-template" name="authoring-a-template"></a>
 ### Authoring a template
 
-see WIP [documention](./docs/src/SUMMARY.md)
+see [Template Authoring - ffizer](https://davidb.github.io/ffizer/book/template_authoring.html) *WIP*
 
 <a id="markdown-templates" name="templates"></a>
 #### Templates

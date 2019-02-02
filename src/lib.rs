@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate serde_derive;
+extern crate serde;
 
 mod cli_opt;
 mod files;

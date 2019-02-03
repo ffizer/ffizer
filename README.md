@@ -26,6 +26,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 - [Limitations](#limitations)
 - [Usages](#usages)
     - [Install](#install)
+        - [via homebrew](#via-homebrew)
         - [via github releases](#via-github-releases)
         - [via cargo](#via-cargo)
     - [Run](#run)
@@ -93,6 +94,14 @@ Some of the following limitations could change in the future (depends on gain/lo
 
 <a id="markdown-install" name="install"></a>
 ### Install
+
+<a id="markdown-via-homebrew" name="via-homebrew"></a>
+#### via homebrew
+
+```sh
+brew tap ffizer/ffizer
+brew install ffizer-bin
+```
 
 <a id="markdown-via-github-releases" name="via-github-releases"></a>
 #### via github releases

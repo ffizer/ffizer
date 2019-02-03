@@ -26,7 +26,7 @@ fn upgrade(logger: slog::Logger) -> Result<(), Error> {
     let target = self_update::get_target()?;
     // TODO extract repo info from CARGO_PKG_REPOSITORY
     let status = self_update::backends::github::Update::configure()?
-        .repo_owner("davidB")
+        .repo_owner("ffizer")
         .repo_name("ffizer")
         .target(&target)
         .bin_name("ffizer")

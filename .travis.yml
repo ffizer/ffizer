@@ -104,7 +104,7 @@ deploy:
   on:
     rust: stable
     tags: true
-    repo: davidB/ffizer
+    repo: ffizer/ffizer
     condition: $TRAVIS_RUST_VERSION = stable && $TARGET != ""
 
 notifications:

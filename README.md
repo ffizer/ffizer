@@ -9,10 +9,10 @@
 [![Crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Build Status](https://travis-ci.com/davidB/ffizer.svg?branch=master)](https://travis-ci.com/davidB/ffizer)
+[![Build Status](https://travis-ci.com/ffizer/ffizer.svg?branch=master)](https://travis-ci.com/ffizer/ffizer)
 
 [![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
-![GitHub All Releases](https://img.shields.io/github/downloads/davidB/ffizer/total.svg)
+![GitHub All Releases](https://img.shields.io/github/downloads/ffizer/ffizer/total.svg)
 
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -97,7 +97,7 @@ Some of the following limitations could change in the future (depends on gain/lo
 <a id="markdown-via-github-releases" name="via-github-releases"></a>
 #### via github releases
 
-Download the binary for your platform from [github releases](https://github.com/davidB/ffizer/releases), then unarchive it and place it your PATH.
+Download the binary for your platform from [github releases](https://github.com/ffizer/ffizer/releases), then unarchive it and place it your PATH.
 
 <a id="markdown-via-cargo" name="via-cargo"></a>
 #### via cargo
@@ -113,7 +113,7 @@ cargo install ffizer
 ➜  ffizer --help
 
 ffizer 0.9.0
-https://github.com/davidB/ffizer
+https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
 USAGE:
@@ -137,7 +137,7 @@ SUBCOMMANDS:
 ➜  ffizer upgrade --help
 
 ffizer-upgrade 0.9.0
-https://github.com/davidB/ffizer
+https://github.com/ffizer/ffizer
 Self upgrade ffizer executable
 
 USAGE:
@@ -155,7 +155,7 @@ FLAGS:
 ➜  ffizer apply --help
 
 ffizer-apply 0.9.0
-https://github.com/davidB/ffizer
+https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
 USAGE:
@@ -182,7 +182,7 @@ OPTIONS:
     ```
 - use a remote git repository as template
     ```sh
-    ffizer apply --source https://github.com/davidB/ffizer_demo_template.git --destination my_project
+    ffizer apply --source https://github.com/ffizer/ffizer_demo_template.git --destination my_project
     ```
     output
     ```sh
@@ -210,7 +210,7 @@ OPTIONS:
 <a id="markdown-authoring-a-template" name="authoring-a-template"></a>
 ### Authoring a template
 
-see [Template Authoring - ffizer](https://davidb.github.io/ffizer/book/template_authoring.html) *WIP*
+see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_authoring.html) *WIP*
 
 <a id="markdown-templates" name="templates"></a>
 #### Templates
@@ -218,7 +218,7 @@ see [Template Authoring - ffizer](https://davidb.github.io/ffizer/book/template_
 - samples (used for test, demo)
   - [test_1](tests/test_1/template)
   - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
-  - [davidB/ffizer_demo_template: a simple template for ffizer used for demo and test](https://github.com/davidB/ffizer_demo_template)
+  - [ffizer/ffizer_demo_template: a simple template for ffizer used for demo and test](https://github.com/ffizer/ffizer_demo_template)
 - [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
 
 <a id="markdown-build" name="build"></a>

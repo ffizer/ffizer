@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 // create my own URI because didn't found acceptable solution
-// - http = "0.1.13" failed to parse "git@github.com:davidB/ffizer.git"
+// - http = "0.1.13" failed to parse "git@github.com:ffizer/ffizer.git"
 // - uriparse = "0.3.3" require rust nightly
 // - uri_parser = "0.2.0" use explicit lifetime for URI, too hard for intergration with CmdOpt
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -75,23 +75,23 @@ mod tests {
     fn test_source_uri_from_str() {
         assert_source_uri_from_str("/foo/bar", "/foo/bar", None);
         assert_source_uri_from_str(
-            "git@github.com:davidB/ffizer.git",
-            "davidB/ffizer",
+            "git@github.com:ffizer/ffizer.git",
+            "ffizer/ffizer",
             Some("github.com"),
         );
         // assert_source_uri_from_str(
-        //     "git@github.com:davidB/ffizer",
-        //     "davidB/ffizer",
+        //     "git@github.com:ffizer/ffizer",
+        //     "ffizer/ffizer",
         //     Some("github.com"),
         // );
         assert_source_uri_from_str(
-            "https://github.com/davidB/ffizer.git",
-            "davidB/ffizer",
+            "https://github.com/ffizer/ffizer.git",
+            "ffizer/ffizer",
             Some("github.com"),
         );
         // assert_source_uri_from_str(
-        //     "https://github.com/davidB/ffizer",
-        //     "davidB/ffizer",
+        //     "https://github.com/ffizer/ffizer",
+        //     "ffizer/ffizer",
         //     Some("github.com"),
         // );
     }

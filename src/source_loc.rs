@@ -35,7 +35,7 @@ impl SourceLoc {
 
     fn remote_as_local(&self) -> Result<PathBuf, Error> {
         let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
-        let project_dirs = directories::ProjectDirs::from("net", "alchim31", &app_name)
+        let project_dirs = directories::ProjectDirs::from("com", "github", &app_name)
             .ok_or_else(|| format_err!("Home directory not found"))?;
         let cache_base = project_dirs.cache_dir();
         let cache_uri = cache_base

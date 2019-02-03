@@ -192,7 +192,7 @@ OPTIONS:
     ```
 - use a remote git repository as template
     ```sh
-    ffizer apply --source https://github.com/ffizer/ffizer_demo_template.git --destination my_project
+    ffizer apply --source https://github.com/ffizer/template_sample.git --destination my_project
     ```
     output
     ```sh
@@ -228,7 +228,7 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
 - samples (used for test, demo)
   - [test_1](tests/test_1/template)
   - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
-  - [ffizer/ffizer_demo_template: a simple template for ffizer used for demo and test](https://github.com/ffizer/ffizer_demo_template)
+  - [ffizer/template_sample: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
 - [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
 
 <a id="markdown-build" name="build"></a>

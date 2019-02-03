@@ -101,6 +101,7 @@ Some of the following limitations could change in the future (depends on gain/lo
 ```sh
 brew tap ffizer/ffizer
 brew install ffizer-bin
+ffizer upgrade
 ```
 
 <a id="markdown-via-github-releases" name="via-github-releases"></a>

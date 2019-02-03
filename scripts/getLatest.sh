@@ -121,5 +121,5 @@ main() {
 #Stop execution on any error
 trap "bye" EXIT
 set -e
-set -x
+# set -x
 main

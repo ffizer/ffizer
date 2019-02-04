@@ -16,7 +16,6 @@ mod ui;
 pub use crate::cli_opt::*;
 use crate::files::is_ffizer_handlebars;
 use crate::files::ChildPath;
-use crate::files::FILEEXT_HANDLEBARS;
 use crate::template_composite::TemplateComposite;
 use failure::format_err;
 use failure::Error;
@@ -183,18 +182,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             let p = handlebars.render_template(&s, variables)?;
             Ok(PathBuf::from(p))
         })?;
-    let relative = if is_ffizer_handlebars(&rendered_relative) {
-        let mut file_name = rendered_relative
-            .file_name()
-            .and_then(|v| v.to_str())
-            .ok_or_else(|| format_err!("failed to extract file_name"))?;
-        file_name = file_name
-            .get(..file_name.len() - FILEEXT_HANDLEBARS.len())
-            .ok_or_else(|| format_err!("failed to remove {} from file_name", FILEEXT_HANDLEBARS))?;
-        rendered_relative.with_file_name(file_name)
-    } else {
-        rendered_relative
-    };
+    let relative = files::remove_special_suffix(&rendered_relative)?;
 
     Ok(ChildPath {
         base: ctx.cmd_opt.dst_folder.clone(),

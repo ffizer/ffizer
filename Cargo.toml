@@ -40,7 +40,7 @@ walkdir = "2.2.7"
 assert_cmd = "0.10.2"
 # rexpect = "0.3"
 spectral = "0.6.0"
-tempfile = "3.0.5"
+tempfile = "3.0.6"
 
 [[bin]]
 name = "ffizer"

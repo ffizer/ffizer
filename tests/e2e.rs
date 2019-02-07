@@ -22,7 +22,7 @@ fn empty_template() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -50,7 +50,7 @@ fn test_1() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -79,7 +79,7 @@ fn test_2() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -107,7 +107,7 @@ fn test_3() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -136,7 +136,7 @@ fn test_1_subfolder() -> Result<(), Error> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -165,7 +165,7 @@ fn test_1_remote_master() -> Result<(), Error> {
 
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -192,7 +192,7 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
 
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")
@@ -221,7 +221,7 @@ fn test_1_remote_tag() -> Result<(), Error> {
 
     fs::create_dir_all(&expected_path)?;
 
-    Command::main_binary()?
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
         .arg("--x-always_default_value")
         .arg("--confirm")

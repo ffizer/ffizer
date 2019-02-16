@@ -240,3 +240,31 @@ fn test_1_remote_tag() -> Result<(), Error> {
     dir_diff::is_same(&actual_path, &expected_path)?;
     Ok(())
 }
+
+#[test]
+fn test_4_imports() -> Result<(), Error> {
+    let tmp_dir = tempdir()?;
+    let template_path = PathBuf::from("./tests/test_4/template");
+    let expected_path = PathBuf::from("./tests/test_4/expected");
+    let actual_path = tmp_dir.path().join("test_4").to_path_buf();
+
+    fs::create_dir_all(&template_path)?;
+    fs::create_dir_all(&expected_path)?;
+
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        .arg("apply")
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg(template_path.to_str().unwrap())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .assert()
+        .success();
+
+    dir_diff::is_same(&actual_path, &expected_path)?;
+    Ok(())
+}

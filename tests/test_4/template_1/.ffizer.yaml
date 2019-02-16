@@ -1,0 +1,4 @@
+
+imports:
+  - uri: "{{ ffizer_src_uri }}/../template_1_1"
+    rev: "{{ ffizer_src_rev }}"

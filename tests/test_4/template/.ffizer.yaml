@@ -1,0 +1,10 @@
+variables:
+  - name: project_name
+    default_value: "{{ file_name ffizer_dst_folder }}"
+
+imports:
+  - uri: "{{ ffizer_src_uri }}/../template_1"
+    rev: "{{ ffizer_src_rev }}"
+    # subfolder:
+  - uri: "{{ ffizer_src_uri }}/../template_2"
+    rev: "{{ ffizer_src_rev }}"

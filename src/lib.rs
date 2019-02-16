@@ -11,6 +11,7 @@ mod source_loc;
 mod source_uri;
 mod template_cfg;
 mod template_composite;
+mod transform_values;
 mod ui;
 
 pub use crate::cli_opt::*;

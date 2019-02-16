@@ -1,3 +1,4 @@
+use crate::transform_values::TransformsValues;
 use failure::format_err;
 use failure::Error;
 use regex::Regex;
@@ -55,6 +56,15 @@ impl Default for SourceUri {
             path: PathBuf::from("."),
             host: None,
         }
+    }
+}
+
+impl TransformsValues for SourceUri {
+    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    where
+        F: Fn(&str) -> String,
+    {
+        SourceUri::from_str(&render(&self.raw))
     }
 }
 

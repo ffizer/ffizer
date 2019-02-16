@@ -1,7 +1,9 @@
+use crate::transform_values::TransformsValues;
+use failure::Error;
 use globset::{Glob, GlobMatcher};
-use std::str::FromStr;
 use serde_plain::derive_deserialize_from_str;
 use std::cmp::PartialEq;
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct PathPattern {
@@ -13,9 +15,9 @@ impl FromStr for PathPattern {
     type Err = globset::Error;
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let g = Glob::new(value)?;
-        Ok(PathPattern{
+        Ok(PathPattern {
             raw: value.to_owned(),
-            matcher: g.compile_matcher()
+            matcher: g.compile_matcher(),
         })
     }
 }
@@ -31,6 +33,16 @@ impl PartialEq for PathPattern {
 impl PathPattern {
     pub fn is_match(&self, value: &str) -> bool {
         self.matcher.is_match(value)
+    }
+}
+
+impl TransformsValues for PathPattern {
+    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    where
+        F: Fn(&str) -> String,
+    {
+        let v = PathPattern::from_str(&render(&self.raw))?;
+        Ok(v)
     }
 }
 

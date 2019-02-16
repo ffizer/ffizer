@@ -4,6 +4,7 @@ use crate::hbs;
 use crate::source_loc::SourceLoc;
 use crate::template_cfg::TemplateCfg;
 use crate::template_cfg::Variable;
+use crate::transform_values::TransformsValues;
 use crate::ChildPath;
 use crate::Ctx;
 use crate::Variables;
@@ -108,14 +109,17 @@ fn render_cfg(
     log_warning: bool,
 ) -> Result<TemplateCfg, Error> {
     let handlebars = hbs::new_hbs()?;
-    template_cfg.transforms_values(|v| {
+    let render = |v: &str| {
         let r = handlebars.render_template(v, variables);
         match r {
             Ok(s) => s,
             Err(e) => {
-                if log_warning { warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e))}
+                if log_warning {
+                    warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e))
+                }
                 v.into()
             }
         }
-    })
+    };
+    template_cfg.transforms_values(&render)
 }

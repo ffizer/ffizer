@@ -1,5 +1,6 @@
 use crate::path_pattern::PathPattern;
 use crate::source_loc::SourceLoc;
+use crate::transform_values::TransformsValues;
 use failure::Error;
 use std::fs;
 use std::path::Path;
@@ -24,6 +25,18 @@ pub struct Variable {
     pub default_value: Option<String>,
     /// sentence to ask the value (default to the name on variable)
     pub ask: Option<String>,
+}
+
+impl TransformsValues for Variable {
+    /// transforms default_value
+    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    where
+        F: Fn(&str) -> String,
+    {
+        let mut nv = self.clone();
+        nv.default_value = nv.default_value.map(|s| render(&s));
+        Ok(nv)
+    }
 }
 
 impl TemplateCfg {
@@ -51,30 +64,21 @@ impl TemplateCfg {
         self.ignores.push(cfg_pattern);
         Ok(self)
     }
+}
 
-    /// transforms default_value & ignore
-    pub fn transforms_values<F>(&self, mut render: F) -> Result<TemplateCfg, Error>
+impl TransformsValues for TemplateCfg {
+    /// transforms default_value, ignore, imports
+    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
     where
-        F: FnMut(&str) -> String,
+        F: Fn(&str) -> String,
     {
-        let variables = self
-            .variables
-            .iter()
-            .map(|v| {
-                let mut nv = v.clone();
-                nv.default_value = nv.default_value.map(|s| render(&s));
-                nv
-            })
-            .collect::<Vec<_>>();
-        let ignores = self
-            .ignores
-            .iter()
-            .map(|s| PathPattern::from_str(&render(&s.raw)).expect("TODO"))
-            .collect::<Vec<_>>();
+        let variables = self.variables.transforms_values(render)?;
+        let ignores = self.ignores.transforms_values(render)?;
+        let imports = self.imports.transforms_values(render)?;
         Ok(TemplateCfg {
             variables,
             ignores,
-            imports: self.imports.clone(),
+            imports,
         })
     }
 }
@@ -149,15 +153,14 @@ mod tests {
         "#;
         let cfg_in = TemplateCfg::from_str(&cfg_in_str).unwrap();
         let expected = TemplateCfg::from_str(&cfg_expected_str).unwrap();
-        let actual = cfg_in
-            .transforms_values(|v| {
-                if v == "to_transform" {
-                    "transformed".to_owned()
-                } else {
-                    v.to_string()
-                }
-            })
-            .unwrap();
+        let render = |v: &str| {
+            if v == "to_transform" {
+                "transformed".to_owned()
+            } else {
+                v.to_string()
+            }
+        };
+        let actual = cfg_in.transforms_values(&render).unwrap();
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
         assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
         //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);

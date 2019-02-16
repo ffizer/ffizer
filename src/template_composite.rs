@@ -92,11 +92,15 @@ fn deep_download(
         // update cfg with variables defined by user
         let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
         // update cfg with variables defined by cli (use to update default_value)
-        template_cfg = render_cfg(&ctx, &template_cfg, &variables, false)?;
+        let mut variables_children = variables.clone();
+        variables_children.insert("ffizer_src_uri".to_owned(), src.uri.raw.clone());
+        variables_children.insert("ffizer_src_rev".to_owned(), src.rev.clone());
+        //variables_children.insert("ffizer_src_subfolder".to_owned(), src.subfolder.clone());
+        template_cfg = render_cfg(&ctx, &template_cfg, &variables_children, false)?;
         let children = template_cfg.imports.clone();
         templates.insert(src.clone(), template_cfg);
         for child in children {
-            deep_download(ctx, variables, offline, &child, templates)?;
+            deep_download(ctx, &variables_children, offline, &child, templates)?;
         }
     }
     Ok(())

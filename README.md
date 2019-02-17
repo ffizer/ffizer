@@ -20,22 +20,23 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 
 <!-- TOC -->
 
-- [Motivations](#motivations)
+- [ffizer](#ffizer)
+  - [Motivations](#motivations)
     - [Main features](#main-features)
     - [Sub features](#sub-features)
-- [Limitations](#limitations)
-- [Usages](#usages)
+  - [Limitations](#limitations)
+  - [Usages](#usages)
     - [Install](#install)
-        - [via homebrew](#via-homebrew)
-        - [via github releases](#via-github-releases)
-        - [via cargo](#via-cargo)
+      - [via homebrew](#via-homebrew)
+      - [via github releases](#via-github-releases)
+      - [via cargo](#via-cargo)
     - [Run](#run)
-        - [Self upgrade the executable](#self-upgrade-the-executable)
-        - [Apply a template](#apply-a-template)
+      - [Self upgrade the executable](#self-upgrade-the-executable)
+      - [Apply a template](#apply-a-template)
     - [Authoring a template](#authoring-a-template)
-        - [Templates](#templates)
-- [Build](#build)
-- [Alternatives](#alternatives)
+      - [Templates](#templates)
+  - [Build](#build)
+  - [Alternatives](#alternatives)
     - [Generic](#generic)
     - [Specialized](#specialized)
 
@@ -57,19 +58,17 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
   - [X] at root of the repository
   - [X] in subfolder of the repository
   - [X] in any revision (branch, tag, commit)
-- [ ] template composed of other template
-  - [ ] composite template are regular standalone template
-  - [ ] composite template can be apply at root folder
+- [X] template composed of other template
+  - [X] composite template are regular standalone template
+  - [X] composite template can be apply at root folder
 - [X] a fast enough project generator
 
 <a id="markdown-sub-features" name="sub-features"></a>
 ### Sub features
 
 - [X] dry mode (usefull to test)
-- [ ] chain template generation because fragment of templates can be commons
 - [ ] chain commands (eg: 'git init') (like a post-hook)
   - [ ] raw command
-- [ ] composite template can be apply at root folder
 - [ ] composite template include under conditions
 - [X] file / folder ignored under conditions (ignores'item in ffizer.yaml are defined as handlerbar expression)
 - [X] handlebars helpers
@@ -126,7 +125,7 @@ cargo install ffizer
 ```txt
 ➜  ffizer --help
 
-ffizer 0.9.0
+ffizer 0.10.0
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -150,7 +149,7 @@ SUBCOMMANDS:
 ```sh
 ➜  ffizer upgrade --help
 
-ffizer-upgrade 0.9.0
+ffizer-upgrade 0.10.0
 https://github.com/ffizer/ffizer
 Self upgrade ffizer executable
 
@@ -168,7 +167,7 @@ FLAGS:
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 0.9.0
+ffizer-apply 0.10.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
@@ -191,14 +190,19 @@ OPTIONS:
 ```
 
 - use a local folder as template
+
     ```sh
     ffizer apply --source $HOME/my_templates/tmpl0 --destination my_project
     ```
+
 - use a remote git repository as template
+
     ```sh
     ffizer apply --source https://github.com/ffizer/template_sample.git --destination my_project
     ```
+
     output
+
     ```sh
     Configure variables
 
@@ -229,11 +233,13 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
 <a id="markdown-templates" name="templates"></a>
 #### Templates
 
+- [ffizer/templates_default: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
+- [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
 - samples (used for test, demo)
+templates_default)
   - [test_1](tests/test_1/template)
   - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
   - [ffizer/template_sample: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
-- [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
 
 <a id="markdown-build" name="build"></a>
 ## Build

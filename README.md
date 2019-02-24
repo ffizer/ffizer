@@ -10,6 +10,8 @@
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Build Status](https://travis-ci.com/ffizer/ffizer.svg?branch=master)](https://travis-ci.com/ffizer/ffizer)
+[![codecov](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
+
 
 [![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
 ![GitHub All Releases](https://img.shields.io/github/downloads/ffizer/ffizer/total.svg)

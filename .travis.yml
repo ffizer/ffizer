@@ -49,43 +49,23 @@ addons:
 
 env:
   global:
-    # Used on the deployment script
-    - PROJECT_NAME=ffizer
-    - LIBZ_SYS_STATIC=1
-    - PKG_CONFIG_ALLOW_CROSS=1
+    - CARGO_MAKE_CI=TRUE
+    - CARGO_MAKE_RUN_CODECOV=true
 
 install:
   # prevent target re-add error from rustup
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$TARGET" != "x86_64-unknown-linux-gnu" ]]; then rustup target add $TARGET; fi
-#   - rustup component add rustfmt-preview
 
-#before_script:
+before_script:
 #   - export PATH=$HOME/.cargo/bin:$PATH
-#   - cargo install cargo-update || echo "cargo-update already installed"
-#   - cargo install cargo-outdated || echo "cargo-outdated already installed"
-#   - cargo install cargo-travis || echo "cargo-travis already installed"
-#   - cargo install cargo-lichking || echo "cargo-lichking already installed"
-#   - cargo update # update outdated cached binaries
-#   - cargo fmt -- --write-mode=diff
-#   - cargo outdated --root-deps-only --exit-code 1
-#   - (test -x $HOME/.cargo/bin/cargo-install-update || cargo install cargo-update)
-#   - (test -x $HOME/.cargo/bin/mdbook || cargo install --vers "^0.1" mdbook)
-#   - cargo install-update -a
+    - cargo install cargo-make || echo "cargo-make already installed"
+    - rustup -V; rustc -V; cargo -V; cargo make --version
 
 script:
-  # Incorporate TARGET env var to the build and test process
-  #- cargo test --target $TARGET --cfg test_remote
-  - travis_wait 30 cargo build --target $TARGET --release
-  - travis_wait 30 cargo test --target $TARGET --release
-  # failed on os == windows
-  # - cargo publish --dry-run
+  - travis_wait 30 cargo make ci-flow
 
 before_deploy:
-  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then cd target/${TARGET}/release ; strip ${PROJECT_NAME}; tar -czvf  "../../../${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.tar.gz" ${PROJECT_NAME} ; cd - ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cd target/${TARGET}/release ; 7z a ../../../"${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.zip" ${PROJECT_NAME}.exe ; cd - ; fi
-  # releases not packaged into archive
-  # - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then strip target/${TARGET}/release/${PROJECT_NAME} -o "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}"; fi
-  # - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cp target/${TARGET}/release/${PROJECT_NAME}.exe "${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.exe"; fi
+  - travis_wait 30 cargo make zip-release-ci-flow
 
 deploy:
   # generate with "travis setup releases --force --pro"
@@ -98,7 +78,7 @@ deploy:
   # - TRAVIS_TAG: tag name that the build is being deployed for, usually the version number
   # - TARGET: target triple of the build
   file:
-    - ${PROJECT_NAME}_${TRAVIS_TAG}-${TARGET}.*
+    - target/dist/*-${TARGET}.*
   # don't delete artifacts from previous stage
   skip_cleanup: true
   on:

@@ -7,6 +7,6 @@ test_task:
   cargo_cache:
     folder: $CARGO_HOME/registry
     fingerprint_script: cat Cargo.lock
-  build_script: cargo build --target $TARGET --release
-  test_script: cargo test --target $TARGET --release
+  display_env_script: rustup -V; rustc -V; cargo -V; cargo make --version
+  build_script: cargo make ci-flow
   before_cache_script: rm -rf $CARGO_HOME/registry/index

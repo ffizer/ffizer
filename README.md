@@ -245,8 +245,8 @@ templates_default)
 ## Build
 
 ```sh
-cargo test
-cargo build --release
+cargo install cargo-make --force
+cargo make ci-flow
 ```
 
 <a id="markdown-alternatives" name="alternatives"></a>

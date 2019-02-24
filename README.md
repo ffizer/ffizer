@@ -34,7 +34,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
       - [Self upgrade the executable](#self-upgrade-the-executable)
       - [Apply a template](#apply-a-template)
     - [Authoring a template](#authoring-a-template)
-      - [Templates](#templates)
+  - [Templates](#templates)
   - [Build](#build)
   - [Alternatives](#alternatives)
     - [Generic](#generic)
@@ -83,7 +83,7 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
 
 Some of the following limitations could change in the future (depends on gain/loss):
 
-- no conditionnals file or folder creation
+- no conditionals file or folder creation
 - no framework X dedicated features
 - no plugin and not extensible (without change the code)
 - handlebars is the only template language supported (support for other is welcome)
@@ -231,7 +231,7 @@ OPTIONS:
 see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_authoring.html) *WIP*
 
 <a id="markdown-templates" name="templates"></a>
-#### Templates
+## Templates
 
 - [ffizer/templates_default: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
 - [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.

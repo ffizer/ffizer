@@ -7,7 +7,7 @@ test_task:
   cargo_cache:
     folder: $CARGO_HOME/registry
     fingerprint_script: cat Cargo.lock
-  before_script: cargo install cargo-make --force
+  before_script: cargo install cargo-make || echo "cargo-make already installed"
   display_env_script: rustup -V; rustc -V; cargo -V; cargo make --version
   build_script: cargo make ci-flow
   before_cache_script: rm -rf $CARGO_HOME/registry/index

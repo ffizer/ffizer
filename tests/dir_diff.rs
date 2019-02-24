@@ -34,8 +34,8 @@ pub fn is_same<A: AsRef<Path>, B: AsRef<Path>>(a_base: A, b_base: B) -> Result<b
             //     .that(&read_to_vec(a.path())?)
             //     .is_equal_to(&read_to_vec(b.path())?);
             asserting(&format!("test content of {:?} vs {:?}", a, b))
-                .that(&fs::read_to_string(a.path())?)
-                .is_equal_to(&fs::read_to_string(b.path())?);
+                .that(&fs::read_to_string(a.path())?.replace("\r\n", "\n"))
+                .is_equal_to(&fs::read_to_string(b.path())?.replace("\r\n", "\n"));
         }
     }
 

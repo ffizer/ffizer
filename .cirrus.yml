@@ -3,6 +3,9 @@ container:
 
 test_task:
   environment:
+    CARGO_MAKE_CI: TRUE
+    CARGO_MAKE_RUN_CODECOV: true
+    CODECOV_TOKEN: ENCRYPTED[753b7c8cdef62fcfd7149044e8a56c47d145122e17da193be80d7c614e9bc4804c5aa98260283aa7e78c9236b7775929]
     TARGET: x86_64-unknown-linux-gnu
   cargo_cache:
     folder: $CARGO_HOME/registry

@@ -23,13 +23,8 @@ impl FromStr for SourceUri {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let url_re = Regex::new(
-            r"^(https?|ssh)://(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$",
-        )
-        .unwrap();
-        let git_re =
-            Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")
-                .unwrap();
+        let url_re = Regex::new(r"^(https?|ssh)://(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$")?;
+        let git_re = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")?;
         git_re
             .captures(s)
             .or_else(|| url_re.captures(s))

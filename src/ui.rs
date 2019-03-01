@@ -37,7 +37,7 @@ pub fn ask_variables(
                     input.default(default_value);
                 }
                 let prompt = if variable.ask.is_some() {
-                    variable.ask.unwrap()
+                    variable.ask.expect("variable ask should defined")
                 } else {
                     name.clone()
                 };

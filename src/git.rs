@@ -49,7 +49,7 @@ fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, Error> {
             // methods to try. Make sure we only try ssh-agent once,
             // to avoid looping forever.
             tried_sshkey = true;
-            let username = username.unwrap();
+            let username = username.expect("a username in the git credentials");
             return git2::Cred::ssh_key_from_agent(&username);
         }
         Err(git2::Error::from_str("no authentication available"))

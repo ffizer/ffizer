@@ -1,12 +1,17 @@
 # Changelog
 
-<a name="0.10.1-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
-## Version 0.10.1-dev
+<a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version x.y.z-dev
 
 ### Fixed
+- 🐛  (make) fix syntax error into windows path
+- 🐛  (windows) try to fix the packaging
 - ✏️  (README) syntax error
+- 🐛  (travis) always build the zip to not fail during release
 
 ### Miscellaneous
+- 📝  add a CHANGELOG.md
+- 📦  (cargo) update lock
 - 🚧  (cargo-release) start next development iteration 0.10.1-dev
 
 <a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>

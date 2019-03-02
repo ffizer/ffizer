@@ -73,5 +73,20 @@ script = [
 [tasks.update-changelog]
 category="Publish"
 install_crate = {crate_name="gitmoji-changelog", binary = "gitmoji-changelog", test_arg = "--help"}
-command = "gitmoji-changelog"
-args =["-r", "${CARGO_MAKE_CRATE_VERSION}", "-o", "CHANGELOG.md", "."]
+script = [
+  "rm -Rf CHANGELOG.md",
+  "gitmoji-changelog -r x.y.z-dev -o CHANGELOG.md .",
+]
+
+[tasks.pre-publish]
+dependencies = [
+  "update-changelog"
+]
+
+[tasks.publish]
+command = "cargo"
+args = ["release", "${@}"]
+
+
+
+

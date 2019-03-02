@@ -49,7 +49,7 @@ script_runner = "@shell"
 script = [
   "rm -Rf ${RELEASE_PATH}*",
   "mkdir -p ${RELEASE_PATH}",
-  "cp target/TARGET/release/${CARGO_MAKE_CRATE_NAME} ${RELEASE_PATH}/",
+  "cp target/${TARGET}/release/${CARGO_MAKE_CRATE_NAME} ${RELEASE_PATH}/",
   "strip ${RELEASE_PATH}/${CARGO_MAKE_CRATE_NAME}",
   # "cp README.md LICENSE* ${OUTPUT_NAME}/",
   # "zip -r ${OUTPUT_NAME}.zip ${OUTPUT_NAME}",

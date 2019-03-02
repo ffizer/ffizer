@@ -10,12 +10,12 @@ use lazy_static::lazy_static;
 use slog::debug;
 
 lazy_static! {
-    static ref term: Term = Term::stdout();
-    static ref title_style: Style = Style::new().bold();
+    static ref TERM: Term = Term::stdout();
+    static ref TITLE_STYLE: Style = Style::new().bold();
 }
 
 fn write_title(s: &str) -> Result<(), Error> {
-    term.write_line(&format!("\n\n{}\n", title_style.apply_to(s)))?;
+    TERM.write_line(&format!("\n\n{}\n", TITLE_STYLE.apply_to(s)))?;
     Ok(())
 }
 
@@ -68,7 +68,7 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool, Error> {
             format!("{:?}", a.operation).to_lowercase(),
             a.dst_path.base.join(&a.dst_path.relative)
         );
-        term.write_line(&s)?;
+        TERM.write_line(&s)?;
     }
     let r = if ctx.cmd_opt.confirm == AskConfirmation::Always {
         Confirmation::new()

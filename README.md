@@ -97,7 +97,7 @@ Some of the following limitations could change in the future (depends on gain/lo
 ### Install
 
 ```sh
-curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | sh`
+curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | sh
 ```
 
 <a id="markdown-via-homebrew" name="via-homebrew"></a>

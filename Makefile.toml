@@ -44,12 +44,12 @@ description = "Zips up the release binary, README, and license(s)"
 category = "Publish"
 condition = { env_set = [ "TARGET" ] }
 # env = { "LIBZ_SYS_STATIC" = "1", "PKG_CONFIG_ALLOW_CROSS" = "1" }
-env = { "OUTPUT_NAME" = "${CARGO_MAKE_CRATE_NAME}_${CARGO_MAKE_CRATE_VERSION}-${TARGET}", "RELEASE_PATH"="target/dist/${OUTPUT_NAME}"}
+env = {OUTPUT_NAME = "${CARGO_MAKE_CRATE_NAME}_${CARGO_MAKE_CRATE_VERSION}-${TARGET}", RELEASE_PATH="target/dist/${OUTPUT_NAME}"}
 script_runner = "@shell"
 script = [
   "rm -Rf ${RELEASE_PATH}*",
   "mkdir -p ${RELEASE_PATH}",
-  "cp target/$TARGET/release/${CARGO_MAKE_CRATE_NAME} ${RELEASE_PATH}/",
+  "cp target/TARGET/release/${CARGO_MAKE_CRATE_NAME} ${RELEASE_PATH}/",
   "strip ${RELEASE_PATH}/${CARGO_MAKE_CRATE_NAME}",
   # "cp README.md LICENSE* ${OUTPUT_NAME}/",
   # "zip -r ${OUTPUT_NAME}.zip ${OUTPUT_NAME}",
@@ -60,9 +60,15 @@ script = [
 script = [
   "rm -Rf ${RELEASE_PATH}*",
   "mkdir -p ${RELEASE_PATH}",
-  "powershell copy-item -path target/${TARGET}/release/${CARGO_MAKE_CRATE_NAME}.exe -destination ${RELEASE_PATH}",
+  "powershell copy-item -path target\${TARGET}\release\${CARGO_MAKE_CRATE_NAME}.exe -destination ${RELEASE_PATH}",
   # "powershell copy-item -path README.md -destination ${OUTPUT_NAME}",
   # "powershell copy-item -path LICENSE -destination ${OUTPUT_NAME}",
   #"dir ${OUTPUT_NAME}",
   "powershell Compress-Archive -Path ${RELEASE_PATH} -DestinationPath ${RELEASE_PATH}.zip",
 ]
+
+[tasks.update-changelog]
+category="Publish"
+install_crate = {crate_name="gitmoji-changelog", binary = "gitmoji-changelog", test_arg = "--help"}
+command = "gitmoji-changelog"
+args =["-r", "${CARGO_MAKE_CRATE_VERSION}", "-o", "CHANGELOG.md", "."]

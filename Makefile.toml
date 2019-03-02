@@ -57,17 +57,17 @@ script = [
 ]
 
 [tasks.zip-release-binary-for-target.windows]
-env = { RELEASE_PATH="target\dist\${OUTPUT_NAME}"}
+env = { RELEASE_PATH="target\\dist\\${OUTPUT_NAME}"}
 script_runner = "@shell"
 script = [
   "setlocal enableextensions",
   "rm -Rf ${RELEASE_PATH}*",
   "md ${RELEASE_PATH}",
-  "powershell copy-item -path target\${TARGET}\release\${CARGO_MAKE_CRATE_NAME}.exe -destination ${RELEASE_PATH}",
+  "powershell copy-item -path target\\${TARGET}\\release\\${CARGO_MAKE_CRATE_NAME}.exe -destination ${RELEASE_PATH}",
   # "powershell copy-item -path README.md -destination ${OUTPUT_NAME}",
   # "powershell copy-item -path LICENSE -destination ${OUTPUT_NAME}",
   #"dir ${OUTPUT_NAME}",
-  "powershell Compress-Archive -Path ${RELEASE_PATH}\* -DestinationPath ${RELEASE_PATH}.zip -CompressionLevel Optimal",
+  "powershell Compress-Archive -Path ${RELEASE_PATH}\\* -DestinationPath ${RELEASE_PATH}.zip -CompressionLevel Optimal",
 ]
 
 [tasks.update-changelog]

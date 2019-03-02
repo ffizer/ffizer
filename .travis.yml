@@ -2,7 +2,7 @@ language: rust
 cache:
   # timeout on windows
   cargo: true
-  # timeout: 2000
+  timeout: 2000
   #directories:
     # - $HOME/.cargo
     # - $TRAVIS_BUILD_DIR/target

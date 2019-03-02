@@ -63,8 +63,6 @@ before_script:
 
 script:
   - travis_wait 30 cargo make ci-flow
-
-before_deploy:
   - travis_wait 30 cargo make zip-release-ci-flow
 
 deploy:

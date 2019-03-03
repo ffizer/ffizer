@@ -3,20 +3,6 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
-### Fixed
-- 🐛  (make) fix syntax error into windows path
-- 🐛  (windows) try to fix the packaging
-- ✏️  (README) syntax error
-- 🐛  (travis) always build the zip to not fail during release
-
-### Miscellaneous
-- 📝  add a CHANGELOG.md
-- 📦  (cargo) update lock
-- 🚧  (cargo-release) start next development iteration 0.10.1-dev
-
-<a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
-## Version 0.10.0
-
 ### Added
 - 👷  (travis) increase cache timeout (try to fix for windows)
 - 👷  (cirrus) try to setup codecov
@@ -25,13 +11,6 @@
 - 👷  (travis, cirrus, make) setup cargo-make
 - 👷  (cirrus) trigger and enable release mode
 - 👷  start experiment with cirrus-ci
-- ✅  (e2e) add a basic test about import
-- ✨  (imports) allow to use ffizer_src_uri and ffizer_src_rev into imports
-- ✨  (fileext) remove extention .ffizer.raw (and keep it)
-- 👷  (travis) try to re-enable the cache
-- 👷  (travis) disable cargo install-update -a
-- ✨  (imports) allow template to be composed by other template
-- 👷  increase timeout when builing on travis
 
 ### Changed
 - 🎨  use Upper Case for lazy static ref
@@ -42,6 +21,43 @@
 - ⬆️  Bump reqwest from 0.9.9 to 0.9.10
 - ⬆️  Bump serde from 1.0.87 to 1.0.88
 - ⬆️  Bump tempfile from 3.0.6 to 3.0.7
+
+### Fixed
+- 🐛  (make) fix typo in tasks.zip-release-binary-for-target
+- 🐛  (make) fix syntax error into windows path
+- 🐛  (windows) try to fix the packaging
+- ✏️  (README) syntax error
+- 🐛  (travis) always build the zip to not fail during release
+- 🐛  fix getLatest.sh for linux
+- 🐛  remove .unwrap() inside main code
+- 🐛  (e2e) ignore diff between \r\n and \n
+- ✏️  (README) fix typo
+
+### Miscellaneous
+- 🚧  (cirrus) disable codecov on cirrus
+- 📦  (make) use &quot;cargo release&quot; for publish-flow
+- 📝  add a CHANGELOG.md
+- 📦  (cargo) update lock
+- 🚧  (cargo-release) start next development iteration 0.10.1-dev
+- 🚀  (cargo-release) version 0.10.0
+- 📦  set the right version (0.10.0 not yet release)
+- 📝  (README) add codecov badge
+- 📦  try cargo-release
+- 📝  (README) update features checkbox
+
+<a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.10.0
+
+### Added
+- ✅  (e2e) add a basic test about import
+- ✨  (imports) allow to use ffizer_src_uri and ffizer_src_rev into imports
+- ✨  (fileext) remove extention .ffizer.raw (and keep it)
+- 👷  (travis) try to re-enable the cache
+- 👷  (travis) disable cargo install-update -a
+- ✨  (imports) allow template to be composed by other template
+- 👷  increase timeout when builing on travis
+
+### Changed
 - 🎨  (render) introduce a TransformValues trait - use it to delegate its impl to each type
 - ⬆️  Bump assert_cmd from 0.10.2 to 0.11.0
 - ⬆️  Bump tempfile from 3.0.5 to 3.0.6
@@ -75,18 +91,9 @@
 - 🔇  (scripts) remove trace when run getLatest.sh
 
 ### Fixed
-- 🐛  fix getLatest.sh for linux
-- 🐛  remove .unwrap() inside main code
-- 🐛  (e2e) ignore diff between \r\n and \n
-- ✏️  (README) fix typo
 - 🐛  (travis) fix syntax error
 
 ### Miscellaneous
-- 🚀  (cargo-release) version 0.10.0
-- 📦  set the right version (0.10.0 not yet release)
-- 📝  (README) add codecov badge
-- 📦  try cargo-release
-- 📝  (README) update features checkbox
 - 📦  prepare release
 - 📦  (scripts) to download the latest binary
 - 📦  repo for sample renamed

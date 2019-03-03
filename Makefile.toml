@@ -78,10 +78,10 @@ script = [
   "gitmoji-changelog -r x.y.z-dev -o CHANGELOG.md .",
 ]
 
-[tasks.pre-publish]
-dependencies = [
-  "update-changelog"
-]
+# [tasks.pre-publish]
+# dependencies = [
+#   "update-changelog"
+# ]
 
 [tasks.publish]
 command = "cargo"

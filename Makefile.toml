@@ -96,7 +96,7 @@ args = ["release", "${@}"]
 
 
 [tasks.github-upload]
-condition = { env_set = [ "GITHUB_TOKEN" ] }
+condition = { env_set = [ "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"], channels = ["stable"] }
 script= [
 '''
 curl "-H" "Authorization: token ${GITHUB_TOKEN}" \
@@ -106,3 +106,6 @@ curl "-H" "Authorization: token ${GITHUB_TOKEN}" \
     "https://uploads.github.com/repos/${GITHUB_REPO}/${GITHUB_USER}/releases/${CARGO_MAKE_CRATE_VERSION}/assets?name=${DIST_NAME}.${DIST_EXT}"
 '''
 ]
+
+[tasks.echo]
+script=["echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH}"]

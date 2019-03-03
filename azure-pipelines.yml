@@ -1,17 +1,26 @@
 trigger:
-  batch: true
+  # batch: true
+  branches:
+    include:
+    - "*"
+  tags:
+    include:
+    - "*"
 
 strategy:
   matrix:
     linux:
       imageName: 'ubuntu-16.04'
       TARGET: x86_64-unknown-linux-gnu
-    mac:
+      PROFILE: linux
+    macos:
       imageName: 'macos-10.13'
       TARGET: x86_64-apple-darwin
+      PROFILE: macos
     windows:
       imageName: 'vs2017-win2016'
       TARGET: x86_64-pc-windows-msvc
+      PROFILE: windows
 
 pool:
   vmImage: $(imageName)
@@ -58,15 +67,15 @@ steps:
   displayName: query versions
 
 - script: |
-    cargo make ci-flow
+    cargo make --profile ${PROFILE} ci-flow
   displayName: ci-flow
 
 - script: |
-    cargo make zip-release-ci-flow
+    cargo make --profile ${PROFILE} zip-release-ci-flow
   displayName: zip-release-ci-flow
 
 - script: |
-    cargo make github-upload
+    cargo make --profile ${PROFILE} github-upload
   displayName: upload to gitHub release
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
 

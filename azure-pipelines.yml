@@ -6,13 +6,13 @@ strategy:
     mac:
       imageName: 'macos-10.13'
       TARGET: x86_64-apple-darwin
-  windows:
+    windows:
       imageName: 'vs2017-win2016'
 
 pool:
   vmImage: $(imageName)
 
-env:
+variables:
   RUSTUP_TOOLCHAIN: stable
   CARGO_MAKE_CI: TRUE
   # CARGO_MAKE_RUN_CODECOV: true

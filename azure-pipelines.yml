@@ -65,11 +65,16 @@ steps:
     cargo make zip-release-ci-flow
   displayName: zip-release-ci-flow
 
-- task: GithubRelease@0
-  displayName: create gitHub release
-  # condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'master'))
+- script: |
+    cargo make github-upload
+  displayName: upload to gitHub release
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-  inputs:
-    githubConnection: ffizer
-    repositoryName: ffizer/ffizer
-    assets: target/dist/*-$(TARGET).*
+
+# - task: GithubRelease@0
+#   displayName: create gitHub release
+#   # condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'master'))
+#   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+#   inputs:
+#     githubConnection: ffizer
+#     repositoryName: ffizer/ffizer
+#     assets: target/dist/*-$(TARGET).*

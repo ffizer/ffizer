@@ -3,7 +3,16 @@
 [env]
 RUST_TEST_THREADS = "1"
 CARGO_MAKE_TEST_COVERAGE_BINARY_FILTER = "cli-[a-z0-9]*$\\|makers-[a-z0-9]*$\\|${CARGO_MAKE_TEST_COVERAGE_DEFAULT_BINARY_FILTER}"
+GITHUB_REPO="ffizer"
+GITHUB_USER="ffizer"
+# GITHUB_TOKEN=
+DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${CARGO_MAKE_CRATE_VERSION}-${TARGET}"
+DIST_EXT="tar.gz"
+DIST_PATH="target/dist/${DIST_NAME}"
 
+[env.windows]
+DIST_PATH="target\\dist\\${DIST_NAME}"
+DIST_EXT="zip"
 
 [tasks.build-verbose]
 # override
@@ -20,7 +29,7 @@ args = ["test"]
 [tasks.zip-release-ci-flow]
 description = "Compiles the binary in release mode and zips it up"
 category = "CI"
-condition = { env_set = ["TARGET", "TAG"] }
+condition = { env_set = ["TARGET"] }
 dependencies = [
   # "clean",
   "build-release-for-target",
@@ -44,30 +53,28 @@ description = "Zips up the release binary, README, and license(s)"
 category = "Publish"
 condition = { env_set = [ "TARGET" ] }
 # env = { "LIBZ_SYS_STATIC" = "1", "PKG_CONFIG_ALLOW_CROSS" = "1" }
-env = {OUTPUT_NAME = "${CARGO_MAKE_CRATE_NAME}_${CARGO_MAKE_CRATE_VERSION}-${TARGET}", RELEASE_PATH="target/dist/${OUTPUT_NAME}"}
 script_runner = "@shell"
 script = [
-  "rm -Rf ${RELEASE_PATH}*",
-  "mkdir -p ${RELEASE_PATH}",
-  "cp target/${TARGET}/release/${CARGO_MAKE_CRATE_NAME} ${RELEASE_PATH}/",
-  "strip ${RELEASE_PATH}/${CARGO_MAKE_CRATE_NAME}",
+  "rm -Rf ${DIST_PATH}*",
+  "mkdir -p ${DIST_PATH}",
+  "cp target/${TARGET}/release/${CARGO_MAKE_CRATE_NAME} ${DIST_PATH}/",
+  "strip ${DIST_PATH}/${CARGO_MAKE_CRATE_NAME}",
   # "cp README.md LICENSE* ${OUTPUT_NAME}/",
   # "zip -r ${OUTPUT_NAME}.zip ${OUTPUT_NAME}",
-  "tar -czvf ${RELEASE_PATH}.tar.gz -C ${RELEASE_PATH} ."
+  "tar -czvf ${DIST_PATH}.${DIST_EXT} -C ${DIST_PATH} ."
 ]
 
 [tasks.zip-release-binary-for-target.windows]
-env = { RELEASE_PATH="target\\dist\\${OUTPUT_NAME}"}
 script_runner = "@shell"
 script = [
   "setlocal enableextensions",
-  "rm -Rf ${RELEASE_PATH}*",
-  "md ${RELEASE_PATH}",
-  "powershell copy-item -path target\\${TARGET}\\release\\${CARGO_MAKE_CRATE_NAME}.exe -destination ${RELEASE_PATH}",
+  "rm -Rf ${DIST_PATH}*",
+  "md ${DIST_PATH}",
+  "powershell copy-item -path target\\${TARGET}\\release\\${CARGO_MAKE_CRATE_NAME}.exe -destination ${DIST_PATH}",
   # "powershell copy-item -path README.md -destination ${OUTPUT_NAME}",
   # "powershell copy-item -path LICENSE -destination ${OUTPUT_NAME}",
   #"dir ${OUTPUT_NAME}",
-  "powershell Compress-Archive -Path ${RELEASE_PATH}\\* -DestinationPath ${RELEASE_PATH}.zip -CompressionLevel Optimal",
+  "powershell Compress-Archive -Path ${DIST_PATH}\\* -DestinationPath ${DIST_PATH}.${DIST_EXT} -CompressionLevel Optimal",
 ]
 
 [tasks.update-changelog]
@@ -88,5 +95,14 @@ command = "cargo"
 args = ["release", "${@}"]
 
 
-
-
+[tasks.github-upload]
+condition = { env_set = [ "GITHUB_TOKEN" ] }
+script= [
+'''
+curl "-H" "Authorization: token ${GITHUB_TOKEN}" \
+    "-H" "Accept: application/vnd.github.manifold-preview" \
+    "-H" "Content-Type: application/zip" \
+    "--data-binary" "@${DIST_PATH}.${DIST_EXT}" \
+    "https://uploads.github.com/repos/${GITHUB_REPO}/${GITHUB_USER}/releases/${CARGO_MAKE_CRATE_VERSION}/assets?name=${DIST_NAME}.${DIST_EXT}"
+'''
+]

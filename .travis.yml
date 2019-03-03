@@ -50,7 +50,7 @@ addons:
 env:
   global:
     - CARGO_MAKE_CI=TRUE
-    - CARGO_MAKE_RUN_CODECOV=true
+    - CARGO_MAKE_RUN_CODECOV=false
 
 install:
   # prevent target re-add error from rustup
@@ -63,6 +63,9 @@ before_script:
 
 script:
   - travis_wait 30 cargo make ci-flow
+  # - travis_wait 30 cargo make zip-release-ci-flow
+
+before_deploy:
   - travis_wait 30 cargo make zip-release-ci-flow
 
 deploy:

@@ -67,15 +67,15 @@ steps:
   displayName: query versions
 
 - script: |
-    cargo make --profile $PROFILE ci-flow
+    cargo make --profile $(PROFILE) ci-flow
   displayName: ci-flow
 
 - script: |
-    cargo make --profile $PROFILE zip-release-ci-flow
+    cargo make --profile $(PROFILE) zip-release-ci-flow
   displayName: zip-release-ci-flow
 
 - script: |
-    cargo make --profile $PROFILE github-upload
+    cargo make --profile $(PROFILE) github-upload
   displayName: upload to gitHub release
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
 

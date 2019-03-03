@@ -1,13 +1,17 @@
+trigger:
+  batch: true
+
 strategy:
   matrix:
     linux:
       imageName: 'ubuntu-16.04'
-      TARGET: x86_64-apple-darwin
+      TARGET: x86_64-unknown-linux-gnu
     mac:
       imageName: 'macos-10.13'
       TARGET: x86_64-apple-darwin
     windows:
       imageName: 'vs2017-win2016'
+      TARGET: x86_64-pc-windows-msvc
 
 pool:
   vmImage: $(imageName)
@@ -16,21 +20,23 @@ variables:
   RUSTUP_TOOLCHAIN: stable
   CARGO_MAKE_CI: TRUE
   # CARGO_MAKE_RUN_CODECOV: true
-  # CODECOV_TOKEN: ENCRYPTED[753b7c8cdef62fcfd7149044e8a56c47d145122e17da193be80d7c614e9bc4804c5aa98260283aa7e78c9236b7775929]
 
 steps:
+
 # Linux
 - bash: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
     echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
   condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: install rustup
+
 # macOS
 - bash: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
     echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: install rustup
+
 # Windows
 - script: |
     curl -sSf -o rustup-init.exe https://win.rustup.rs
@@ -41,14 +47,29 @@ steps:
   displayName: install rustup
 
 # All platforms.
+- script: cargo install cargo-make || echo "cargo-make already installed"
+  displayName: install cargo-make
+
 - script: |
-      cargo install cargo-make || echo "cargo-make already installed"
       rustup -V
       rustc -V
       cargo -V
       cargo make --version
-  displayName: Query rust and cargo versions
+  displayName: query versions
 
 - script: |
     cargo make ci-flow
   displayName: ci-flow
+
+- script: |
+    cargo make zip-release-ci-flow
+  displayName: zip-release-ci-flow
+
+- task: GithubRelease@0
+  displayName: create gitHub release
+  # condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'master'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  inputs:
+    githubConnection: ffizer
+    repositoryName: ffizer/ffizer
+    assets: target/dist/*-$(TARGET).*

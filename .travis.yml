@@ -19,7 +19,9 @@ matrix:
   include:
     - os: linux
       rust: stable
-      env: TARGET=x86_64-unknown-linux-gnu
+      env:
+        - TARGET=x86_64-unknown-linux-gnu
+        - CACHE_JOB=stable
     # - os: linux
     #   rust: stable
     #   env: TARGET=x86_64-unknown-linux-musl
@@ -31,10 +33,14 @@ matrix:
     #   env: TARGET=i686-unknown-linux-musl
     - os: osx
       rust: stable
-      env: TARGET=x86_64-apple-darwin
+      env:
+        - TARGET=x86_64-apple-darwin
+        - CACHE_JOB=stable
     - os: windows
       rust: stable
-      env: TARGET=x86_64-pc-windows-msvc
+      env:
+        - TARGET=x86_64-pc-windows-msvc
+        - CACHE_JOB=stable
   # allow_failures:
   #   - rust: nightly
   fast_finish: true

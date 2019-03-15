@@ -9,6 +9,12 @@ GITHUB_USER="ffizer"
 DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${CARGO_MAKE_CRATE_VERSION}-${TARGET}"
 DIST_EXT="tar.gz"
 DIST_PATH="target/dist/${DIST_NAME}"
+LIBZ_SYS_STATIC="1"
+PKG_CONFIG_ALLOW_CROSS="1"
+# see https://github.com/naftulikay/rust-openssl-static-example
+OPENSSL_STATIC="1"
+# OPENSSL_LIB_DIR="/usr/lib64"
+# OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 
 [env.windows]
 DIST_PATH="target\\dist\\${DIST_NAME}"

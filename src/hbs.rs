@@ -16,6 +16,7 @@ pub fn setup_handlebars(handlebars: &mut Handlebars) -> Result<(), Error> {
     register_string_helpers(handlebars)?;
     register_http_helpers(handlebars)?;
     register_path_helpers(handlebars)?;
+    register_env_helpers(handlebars)?;
     Ok(())
 }
 
@@ -90,6 +91,29 @@ fn register_path_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
     });
     handlebars.register_helper("canonicalize", Box::new(canonicalize));
 
+    Ok(())
+}
+
+fn env_var_fct<T: AsRef<str>>(key: T) -> String {
+    match std::env::var(key.as_ref()) {
+        Ok(s) => s,
+        Err(e) => {
+            //TODO better error handler
+            //use slog::warn;
+            //warn!(ctx.logger, "helper: http_get"; "url" => format!("{:?}", url), "err" => format!("{:?}", e))
+            eprintln!(
+                "helper: env_var failed for key '{:?}' with error '{:?}'",
+                key.as_ref(),
+                e
+            );
+            "".to_owned()
+        }
+    }
+}
+
+fn register_env_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
+    handlebars_helper!(env_var: |v: str| env_var_fct(&v));
+    handlebars.register_helper("env_var", Box::new(env_var));
     Ok(())
 }
 
@@ -189,6 +213,29 @@ mod tests {
                 ("parent", "/hello/bar/.."),
                 ("extension", ""),
                 ("canonicalize", ""),
+            ],
+        )?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_register_env_helpers() -> Result<(), Error> {
+        assert_helpers(
+            "HOME",
+            vec![
+                ("env_var", &std::env::var("HOME").unwrap()),
+            ],
+        )?;
+        assert_helpers(
+            "USER",
+            vec![
+                ("env_var", &std::env::var("USER").unwrap_or("undef".to_owned())),
+            ],
+        )?;
+        assert_helpers(
+            "A_DO_NOT_EXIST_ENVVAR",
+            vec![
+                ("env_var", ""),
             ],
         )?;
         Ok(())

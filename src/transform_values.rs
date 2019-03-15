@@ -9,6 +9,17 @@ pub trait TransformsValues {
         Self: Sized;
 }
 
+
+impl TransformsValues for String {
+    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    where
+        F: Fn(&str) -> String,
+    {
+        let b = render(self);
+        Ok(b)
+    }
+}
+
 impl TransformsValues for PathBuf {
     fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
     where

@@ -8,6 +8,8 @@ use dialoguer::Input;
 use failure::Error;
 use lazy_static::lazy_static;
 use slog::debug;
+use crate::hbs;
+
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -26,6 +28,7 @@ pub fn ask_variables(
 ) -> Result<Variables, Error> {
     let mut variables = Variables::new();
     variables.append(&mut init);
+    let handlebars = hbs::new_hbs()?;
     if !ctx.cmd_opt.x_always_default_value {
         write_title("Configure variables")?;
         // TODO optimize to reduce clones
@@ -34,10 +37,12 @@ pub fn ask_variables(
             let value: String = {
                 let mut input = Input::new();
                 if let Some(default_value) = variable.default_value {
-                    input.default(default_value);
+                    let default = handlebars.render_template(&default_value, &variables)?;
+                    input.default(default);
                 }
                 let prompt = if variable.ask.is_some() {
-                    variable.ask.expect("variable ask should defined")
+                    let ask = variable.ask.expect("variable ask should defined");
+                    handlebars.render_template(&ask, &variables)?
                 } else {
                     name.clone()
                 };
@@ -47,11 +52,13 @@ pub fn ask_variables(
             variables.insert(name, value);
         }
     } else {
-        for variable in list_variables.iter() {
+        for variable in list_variables {
             let name = variable.name.clone();
-            let value = (variable.default_value)
-                .clone()
-                .unwrap_or_else(|| "".into());
+            let value = if let Some(default_value) = &variable.default_value {
+                handlebars.render_template(&default_value, &variables)?
+            } else {
+                "".to_owned()
+            };
             variables.insert(name, value);
         }
     }

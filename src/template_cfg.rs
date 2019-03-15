@@ -27,18 +27,6 @@ pub struct Variable {
     pub ask: Option<String>,
 }
 
-impl TransformsValues for Variable {
-    /// transforms default_value
-    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
-    where
-        F: Fn(&str) -> String,
-    {
-        let mut nv = self.clone();
-        nv.default_value = nv.default_value.map(|s| render(&s));
-        Ok(nv)
-    }
-}
-
 impl TemplateCfg {
     pub fn from_str<S>(str: S) -> Result<TemplateCfg, Error>
     where
@@ -67,12 +55,12 @@ impl TemplateCfg {
 }
 
 impl TransformsValues for TemplateCfg {
-    /// transforms default_value, ignore, imports
+    /// transforms ignore, imports
     fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
     where
         F: Fn(&str) -> String,
     {
-        let variables = self.variables.transforms_values(render)?;
+        let variables = self.variables.clone();
         let ignores = self.ignores.transforms_values(render)?;
         let imports = self.imports.transforms_values(render)?;
         Ok(TemplateCfg {
@@ -148,7 +136,7 @@ mod tests {
             - name: k2
               default_value: v2
             - name: k1
-              default_value: transformed
+              default_value: to_transform
             - name: k3
         "#;
         let cfg_in = TemplateCfg::from_str(&cfg_in_str).unwrap();
@@ -161,6 +149,7 @@ mod tests {
             }
         };
         let actual = cfg_in.transforms_values(&render).unwrap();
+        // variables are transformed on-demand
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
         assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
         //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);

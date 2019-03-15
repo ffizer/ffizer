@@ -55,12 +55,13 @@ impl SourceLoc {
 
     pub fn download(&self, offline: bool) -> Result<PathBuf, Error> {
         let path = self.as_local_path()?;
-        if path.exists() && !offline && self.uri.host.is_some() {
+        if !offline && self.uri.host.is_some() {
             git::retrieve(&path, &self.uri.raw, &self.rev)?;
         }
         if !path.exists() {
             Err(format_err!(
-                "Path not found for {}{}",
+                "local path not found {} for {}{}",
+                path.to_str().unwrap_or("(empty)"),
                 &self.uri.raw,
                 self.subfolder
                     .clone()
@@ -92,3 +93,22 @@ impl TransformsValues for SourceLoc {
         })
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use spectral::prelude::*;
+//     use crate::source_uri::SourceUri;
+//     use std::str::FromStr;
+
+//     #[test]
+//     fn as_local_path_on_git() -> Result<(), Error> {
+//         let sut = SourceLoc {
+//             uri: SourceUri::from_str("git@github.com:ffizer/ffizer.git")?,
+//             rev: "master".to_owned(),
+//             subfolder: None,
+//         };
+//         assert_that!(&sut.as_local_path().unwrap()).ends_with("/com.github.ffizer/git/github.com/ffizer/ffizer/master");
+//         Ok(())
+//     }
+// }

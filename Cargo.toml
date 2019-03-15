@@ -58,3 +58,5 @@ winapi = "0.3"
 [profile.release]
 lto = true
 panic = 'abort'
+opt-level = 'z'  # Optimize for size.
+codegen-units = 1

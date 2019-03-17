@@ -15,7 +15,11 @@ mod dir_diff;
 
 test_generator::test_expand_paths! { test_local_sample; "tests/test_*" }
 
-fn test_local_sample(dir_name: &str) -> Result<(), Error> {
+fn test_local_sample(dir_name: &str) {
+    assert!(test_local_sample_impl(dir_name).is_ok());
+}
+
+fn test_local_sample_impl(dir_name: &str) -> Result<(), Error> {
     let tmp_dir = tempdir()?;
     let sample_path = PathBuf::from(dir_name);
     let template_path = sample_path.join("template");

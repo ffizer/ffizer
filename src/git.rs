@@ -11,20 +11,21 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
-    let fo = make_fetch_options()?;
+    let mut fo = make_fetch_options()?;
     let dst = dst.as_ref();
     if dst.exists() {
-        //pull(dst, rev, &mut fo)
+        checkout(dst, &rev)?;
+        pull(dst, rev, &mut fo)?;
         //until pull is fixed and work as expected
-        let mut tmp = dst.to_path_buf().clone();
-        tmp.set_extension("part");
-        if tmp.exists() {
-            std::fs::remove_dir_all(&tmp)?;
-        }
-        clone(&tmp, url, "master", fo)?;
-        checkout(&tmp, rev)?;
-        std::fs::remove_dir_all(&dst)?;
-        std::fs::rename(&tmp, &dst)?;
+        // let mut tmp = dst.to_path_buf().clone();
+        // tmp.set_extension("part");
+        // if tmp.exists() {
+        //     std::fs::remove_dir_all(&tmp)?;
+        // }
+        // clone(&tmp, url, "master", fo)?;
+        // checkout(&tmp, rev)?;
+        // std::fs::remove_dir_all(&dst)?;
+        // std::fs::rename(&tmp, &dst)?;
     } else {
         clone(&dst, url, "master", fo)?;
         checkout(&dst, rev)?;
@@ -57,7 +58,8 @@ fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, Error> {
 
     let mut fo = FetchOptions::new();
     fo.remote_callbacks(cb)
-        .download_tags(git2::AutotagOption::All);
+        .download_tags(git2::AutotagOption::All)
+        .update_fetchhead(true);
     Ok(fo)
 }
 
@@ -75,27 +77,28 @@ where
     Ok(())
 }
 
-// FIXME doesn't work like "git pull"
-// fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), Error>
-// where
-//     P: AsRef<Path>,
-//     R: AsRef<str>,
-// {
-//     let repository = Repository::discover(dst.as_ref())?;
-//     let revref = "origin/master";
-//     assert!(Reference::is_valid_name(&revref));
-//     let mut remote = repository.find_remote("origin")?;
-//     remote.fetch(&[&revref], Some(fo), None);
-//     // // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
-//     // // remote.disconnect();
-//     // let mut co = CheckoutBuilder::new();
-//     // co.force().remove_ignored(true);
-//     // let reference = repository.find_reference(&revref)?;
-//     // repository.set_head(&revref)?;
-//     // repository.checkout_head(Some(&mut co))?;
-//     checkout(dst, rev)?;
-//     Ok(())
-// }
+//FIXME doesn't work like "git pull"
+fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), Error>
+where
+    P: AsRef<Path>,
+    R: AsRef<str>,
+{
+    let repository = Repository::discover(dst.as_ref())?;
+    let revref = rev.as_ref();
+    // assert!(Reference::is_valid_name(&revref));
+    let mut remote = repository.find_remote("origin")?;
+    remote.fetch(&[revref], Some(fo), None)?;
+    repository.set_head("FETCH_HEAD")?;
+    // // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
+    // // remote.disconnect();
+    // let mut co = CheckoutBuilder::new();
+    // co.force().remove_ignored(true);
+    // let reference = repository.find_reference(&revref)?;
+    // repository.set_head(&revref)?;
+    // repository.checkout_head(Some(&mut co))?;
+    checkout(dst, rev)?;
+    Ok(())
+}
 
 fn checkout<P, R>(dst: P, rev: R) -> Result<(), Error>
 where

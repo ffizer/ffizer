@@ -3,7 +3,7 @@ use handlebars::handlebars_helper;
 use handlebars::*;
 use inflector::Inflector;
 use reqwest;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn new_hbs() -> Result<Handlebars, Error> {
     let mut handlebars = Handlebars::new();
@@ -76,14 +76,29 @@ fn register_http_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
     Ok(())
 }
 
+fn expand(s: &str) -> PathBuf {
+    let p = PathBuf::from(s);
+    // canonicalize to be able to extract file_name, parent, extension from path like '.'
+    // without requested template author to call canonicalize in every place
+    if p.exists() {
+        p.canonicalize().unwrap_or(p)
+    } else {
+        p
+    }
+}
+
 fn register_path_helpers(handlebars: &mut Handlebars) -> Result<(), Error> {
-    handlebars_helper!(parent: |v: str| Path::new(v).parent().and_then(|s| s.to_str()).unwrap_or(""));
+    handlebars_helper!(parent: |v: str| {
+        expand(&v).parent().and_then(|s| s.to_str()).unwrap_or("").to_owned()
+    });
     handlebars.register_helper("parent", Box::new(parent));
 
-    handlebars_helper!(file_name: |v: str| Path::new(v).file_name().and_then(|s| s.to_str()).unwrap_or(""));
+    handlebars_helper!(file_name: |v: str| {
+        expand(&v).file_name().and_then(|s| s.to_str()).unwrap_or("").to_owned()
+    });
     handlebars.register_helper("file_name", Box::new(file_name));
 
-    handlebars_helper!(extension: |v: str| Path::new(v).extension().and_then(|s| s.to_str()).unwrap_or(""));
+    handlebars_helper!(extension: |v: str| expand(&v).extension().and_then(|s| s.to_str()).unwrap_or("").to_owned());
     handlebars.register_helper("extension", Box::new(extension));
 
     handlebars_helper!(canonicalize: |v: str| {

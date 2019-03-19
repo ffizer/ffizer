@@ -161,6 +161,7 @@ Expand-Archive -LiteralPath $output -Destination .
 condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
 script_runner = "@shell"
 script= [
+# multi-line command with \ at EOL doesn't work on windows
 #  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
 '''
 cd ${GITHUB_RELEASE_PATH}

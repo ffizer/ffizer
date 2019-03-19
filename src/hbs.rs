@@ -235,24 +235,11 @@ mod tests {
 
     #[test]
     fn test_register_env_helpers() -> Result<(), Error> {
-        assert_helpers(
-            "HOME",
-            vec![
-                ("env_var", &std::env::var("HOME").unwrap()),
-            ],
-        )?;
-        assert_helpers(
-            "USER",
-            vec![
-                ("env_var", &std::env::var("USER").unwrap_or("undef".to_owned())),
-            ],
-        )?;
-        assert_helpers(
-            "A_DO_NOT_EXIST_ENVVAR",
-            vec![
-                ("env_var", ""),
-            ],
-        )?;
+        let key = "KEY";
+        std::env::set_var(key, "VALUE");
+
+        assert_helpers(key, vec![("env_var", "VALUE")])?;
+        assert_helpers("A_DO_NOT_EXIST_ENVVAR", vec![("env_var", "")])?;
         Ok(())
     }
 }

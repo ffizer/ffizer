@@ -17,9 +17,19 @@ OPENSSL_STATIC="1"
 # OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 GITHUB_RELEASE_VERSION="v0.7.2"
 
+[env.linux]
+GITHUB_RELEASE_PATH="target/bin/linux/amd64"
+GITHUB_RELEASE_PATH_REV="../../../"
+
+[env.mac]
+GITHUB_RELEASE_PATH="target/bin/darwin/amd64"
+GITHUB_RELEASE_PATH_REV="../../../"
+
 [env.windows]
 DIST_PATH="target\\dist\\${DIST_NAME}"
 DIST_EXT="zip"
+GITHUB_RELEASE_PATH="target\\bin\\windows\\amd64"
+GITHUB_RELEASE_PATH_REV="..\\..\\..\\"
 
 [tasks.build-verbose]
 # override
@@ -112,43 +122,38 @@ dependencies = [
 [tasks.github-release-install]
 
 [task.github-release-install.mac]
-env = { "GITHUB_RELEASE_PATH" = "target/bin/darwin/amd64/github-release" }
 script= [
 '''
 cd target
 echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.tar.bz2"
 curl -o darwin-amd64-github-release.tar.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.tar.bz2"
 tar -xzvf darwin-amd64-github-release.tar.bz2
-cd ..
-${GITHUB_RELEASE_PATH} -h
 '''
 ]
 
 [tasks.github-release-install.linux]
-env = {"GITHUB_RELEASE_PATH"= "target/bin/linux/amd64/github-release"}
 script= [
 '''
 cd target
 echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.tar.bz2"
 curl -o linux-amd64-github-release.tar.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.tar.bz2"
 tar -xjvf linux-amd64-github-release.tar.bz2
-cd ..
-${GITHUB_RELEASE_PATH} -h
 '''
 ]
 
 [tasks.github-release-install.windows]
-env = {"GITHUB_RELEASE_PATH"= "target/bin/windows/amd64/github-release.exe"}
-script_runner = "@shell"
-# script_extension = "ps1"
+script_runner = "powershell"
+script_extension = "ps1"
 # see https://blog.jourdant.me/post/3-ways-to-download-files-with-powershell
 script= [
 '''
+$url ="https://github.com/aktau/github-release/releases/download/$env:GITHUB_RELEASE_VERSION/windows-amd64-github-release.zip"
+$output = "windows-amd64-github-release.zip"
 cd target
-powershell Invoke-WebRequest -Uri "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/windows-amd64-github-release.zip" -OutFile "windows-amd64-github-release.zip"
-powershell Expand-Archive -LiteralPath "windows-amd64-github-release.zip"
-cd ..
-${GITHUB_RELEASE_PATH} -h
+[Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
+echo $url
+Invoke-WebRequest -Uri $url -OutFile $output
+Expand-Archive -LiteralPath $output -Destination .
 '''
 ]
 
@@ -156,29 +161,13 @@ ${GITHUB_RELEASE_PATH} -h
 condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
 script_runner = "@shell"
 script= [
-#    --header "Content-Type: application/octet-stream" \
-# '''echo "${DIST_PATH}.${DIST_EXT}"''',
-# '''echo "https://uploads.github.com/repos/${GITHUB_REPO}/${GITHUB_USER}/releases/${CARGO_MAKE_CRATE_VERSION}/assets?name=tmp-${DIST_NAME}.${DIST_EXT}"''',
+#  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
 '''
-${GITHUB_RELEASE_PATH} upload \
-    --user "${GITHUB_USER}" \
-    --repo "${GITHUB_REPO}" \
-    --tag "${CARGO_MAKE_CRATE_VERSION}" \
-    --name "tmp-${DIST_NAME}.${DIST_EXT}" \
-    --file "../${DIST_PATH}.${DIST_EXT}"
+cd ${GITHUB_RELEASE_PATH}
+github-release upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
 ''',
-
-# '''
-# curl \
-#     "-i" \
-#     "-X" "POST" \
-#     "-H" "Authorization: token ${GITHUB_TOKEN}" \
-#     "-H" "Accept: application/vnd.github.manifold-preview" \
-#     "-H" "Content-Type: application/zip" \
-#     "--data-binary" "@${DIST_PATH}.${DIST_EXT}" \
-#     "https://uploads.github.com/repos/${GITHUB_REPO}/${GITHUB_USER}/releases/${CARGO_MAKE_CRATE_VERSION}/assets?name=tmp-${DIST_NAME}.${DIST_EXT}"
-# '''
 ]
 
 [tasks.echo]
-script=["echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH}"]
+script_runner = "@shell"
+script=["echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH}"]

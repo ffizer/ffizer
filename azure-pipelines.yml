@@ -16,7 +16,7 @@ strategy:
     macos:
       imageName: 'macos-10.13'
       TARGET: x86_64-apple-darwin
-      PROFILE: macos
+      PROFILE: mac
     windows:
       imageName: 'vs2017-win2016'
       TARGET: x86_64-pc-windows-msvc

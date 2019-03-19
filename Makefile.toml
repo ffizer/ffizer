@@ -19,17 +19,17 @@ GITHUB_RELEASE_VERSION="v0.7.2"
 
 [env.linux]
 GITHUB_RELEASE_PATH="target/bin/linux/amd64"
-GITHUB_RELEASE_PATH_REV="../../../"
+GITHUB_RELEASE_PATH_REV="../../../../"
 
 [env.mac]
 GITHUB_RELEASE_PATH="target/bin/darwin/amd64"
-GITHUB_RELEASE_PATH_REV="../../../"
+GITHUB_RELEASE_PATH_REV="../../../../"
 
 [env.windows]
 DIST_PATH="target\\dist\\${DIST_NAME}"
 DIST_EXT="zip"
 GITHUB_RELEASE_PATH="target\\bin\\windows\\amd64"
-GITHUB_RELEASE_PATH_REV="..\\..\\..\\"
+GITHUB_RELEASE_PATH_REV="..\\..\\..\\..\\"
 
 [tasks.build-verbose]
 # override
@@ -121,7 +121,7 @@ dependencies = [
 
 [tasks.github-release-install]
 
-[task.github-release-install.mac]
+[tasks.github-release-install.mac]
 script= [
 '''
 cd target
@@ -165,10 +165,11 @@ script= [
 #  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
 '''
 cd ${GITHUB_RELEASE_PATH}
-github-release upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
+./github-release release --tag "${CARGO_MAKE_CRATE_VERSION}"
+./github-release upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
 ''',
 ]
 
 [tasks.echo]
 script_runner = "@shell"
-script=["echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH}"]
+script=["echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}"]

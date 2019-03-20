@@ -3,6 +3,103 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+### Miscellaneous
+- 🚧  (cargo-release) start next development iteration 0.11.3-dev
+
+<a name="0.11.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.11.2
+
+### Fixed
+- 🐛  (ci) try to fix github-upload-flow
+
+### Miscellaneous
+- 🚀  (cargo-release) version 0.11.2
+- 🚧  (cargo-release) start next development iteration 0.11.2-dev
+
+<a name="0.11.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.11.1
+
+### Added
+- ✨  (hbs) add helper env_var
+- ✨  default_value can be composed of previously defined value
+
+### Changed
+- ⬆️  (build) update cargo.lock
+- 🔧  (ci) try to fix upload of asset on github (for windows, mac, linux)
+- ⬆️  Bump handlebars from 1.1.0 to 2.0.0-beta.1
+- ♻️  (git) try to git pull instead of rm + clone on already cached (cloned) template
+- 🔧  (cargo) tried to decrease size of executable
+- ⬆️  Bump structopt from 0.2.14 to 0.2.15
+
+### Fixed
+- 🐛  (test) fix test about env_var
+- 🐛  path_helpers canonicalize existing path
+- 🐛  (test) fix warning
+- 🐛  try to static link openssl
+- 🐛  fix the download of git repository
+
+### Miscellaneous
+- 🚀  (cargo-release) version 0.11.1
+- 🚀  (cargo-release) version 0.11.0
+- 📝  (ci) add info
+- ⚗  (build) fix syntax error in Makefile.toml
+- ⚗  (build) try to use github-release to upload dist
+- 🚧  (cargo-release) start next development iteration 0.10.3-dev
+
+<a name="0.10.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.10.2
+
+### Changed
+- ⬆️  Bump reqwest from 0.9.10 to 0.9.11
+
+### Removed
+- 🔥  (cirrus) remove upload script
+
+### Miscellaneous
+- 🚀  (cargo-release) version 0.10.2
+- ⚗  (travis) try named cache to optimize
+- 🚧  (cargo-release) start next development iteration 0.10.2-dev
+
+<a name="0.10.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.10.1
+
+### Added
+- 👷  (azure) set up CI with Azure Pipelines
+
+### Changed
+- 🔧  (make) use profile and platform
+- 🔧  (make) move upload to github as part of make
+- 🔧  (azure) add deploy to github + fix variables
+- 🔧  (cirrus) fix osx script
+- 🔧  (cirrus) fix syntax
+- 🔧  (publish) diseable changelog update during publication
+- 🔧  (travis) try to workaround the timeout (on windows)
+- 🔧  (cirrus) try a windows &amp; osx setup
+
+### Removed
+- 🔥  (cirrus) remove cirrus-ci configuration
+
+### Fixed
+- 🐛  (azure) profile injection cross platform
+- 🐛  (azure) fix typo in profile injection
+- 🐛  (azure) try to fix syntax
+- 🐛  (make) fix typo in tasks.zip-release-binary-for-target
+- 🐛  (make) fix syntax error into windows path
+- 🐛  (windows) try to fix the packaging
+- ✏️  (README) syntax error
+- 🐛  (travis) always build the zip to not fail during release
+
+### Miscellaneous
+- 🚀  (cargo-release) version 0.10.1
+- 🚧  (cirrus) disable codecov on cirrus
+- 📦  (make) use &quot;cargo release&quot; for publish-flow
+- 📝  add a CHANGELOG.md
+- 📦  (cargo) update lock
+- 🚧  (cargo-release) start next development iteration 0.10.1-dev
+
+<a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.10.0
+
 ### Added
 - 👷  (travis) increase cache timeout (try to fix for windows)
 - 👷  (cirrus) try to setup codecov
@@ -11,6 +108,13 @@
 - 👷  (travis, cirrus, make) setup cargo-make
 - 👷  (cirrus) trigger and enable release mode
 - 👷  start experiment with cirrus-ci
+- ✅  (e2e) add a basic test about import
+- ✨  (imports) allow to use ffizer_src_uri and ffizer_src_rev into imports
+- ✨  (fileext) remove extention .ffizer.raw (and keep it)
+- 👷  (travis) try to re-enable the cache
+- 👷  (travis) disable cargo install-update -a
+- ✨  (imports) allow template to be composed by other template
+- 👷  increase timeout when builing on travis
 
 ### Changed
 - 🎨  use Upper Case for lazy static ref
@@ -21,43 +125,6 @@
 - ⬆️  Bump reqwest from 0.9.9 to 0.9.10
 - ⬆️  Bump serde from 1.0.87 to 1.0.88
 - ⬆️  Bump tempfile from 3.0.6 to 3.0.7
-
-### Fixed
-- 🐛  (make) fix typo in tasks.zip-release-binary-for-target
-- 🐛  (make) fix syntax error into windows path
-- 🐛  (windows) try to fix the packaging
-- ✏️  (README) syntax error
-- 🐛  (travis) always build the zip to not fail during release
-- 🐛  fix getLatest.sh for linux
-- 🐛  remove .unwrap() inside main code
-- 🐛  (e2e) ignore diff between \r\n and \n
-- ✏️  (README) fix typo
-
-### Miscellaneous
-- 🚧  (cirrus) disable codecov on cirrus
-- 📦  (make) use &quot;cargo release&quot; for publish-flow
-- 📝  add a CHANGELOG.md
-- 📦  (cargo) update lock
-- 🚧  (cargo-release) start next development iteration 0.10.1-dev
-- 🚀  (cargo-release) version 0.10.0
-- 📦  set the right version (0.10.0 not yet release)
-- 📝  (README) add codecov badge
-- 📦  try cargo-release
-- 📝  (README) update features checkbox
-
-<a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
-## Version 0.10.0
-
-### Added
-- ✅  (e2e) add a basic test about import
-- ✨  (imports) allow to use ffizer_src_uri and ffizer_src_rev into imports
-- ✨  (fileext) remove extention .ffizer.raw (and keep it)
-- 👷  (travis) try to re-enable the cache
-- 👷  (travis) disable cargo install-update -a
-- ✨  (imports) allow template to be composed by other template
-- 👷  increase timeout when builing on travis
-
-### Changed
 - 🎨  (render) introduce a TransformValues trait - use it to delegate its impl to each type
 - ⬆️  Bump assert_cmd from 0.10.2 to 0.11.0
 - ⬆️  Bump tempfile from 3.0.5 to 3.0.6
@@ -91,9 +158,18 @@
 - 🔇  (scripts) remove trace when run getLatest.sh
 
 ### Fixed
+- 🐛  fix getLatest.sh for linux
+- 🐛  remove .unwrap() inside main code
+- 🐛  (e2e) ignore diff between \r\n and \n
+- ✏️  (README) fix typo
 - 🐛  (travis) fix syntax error
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 0.10.0
+- 📦  set the right version (0.10.0 not yet release)
+- 📝  (README) add codecov badge
+- 📦  try cargo-release
+- 📝  (README) update features checkbox
 - 📦  prepare release
 - 📦  (scripts) to download the latest binary
 - 📦  repo for sample renamed

@@ -75,9 +75,12 @@ steps:
   displayName: zip-release-ci-flow
 
 - script: |
-    cargo make --profile $(PROFILE) github-upload-flow
+    cargo make -v --profile $(PROFILE) github-upload-flow
   displayName: upload to gitHub release
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  env:
+    GITHUB_TOKEN: $(GITHUB_TOKEN)
+
 
 # - task: GithubRelease@0
 #   displayName: create gitHub release

@@ -3,6 +3,7 @@ use crate::source_uri::SourceUri;
 use crate::transform_values::TransformsValues;
 use failure::format_err;
 use failure::Error;
+use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -56,7 +57,12 @@ impl SourceLoc {
     pub fn download(&self, offline: bool) -> Result<PathBuf, Error> {
         let path = self.as_local_path()?;
         if !offline && self.uri.host.is_some() {
-            git::retrieve(&path, &self.uri.raw, &self.rev)?;
+            if let Err(v) = git::retrieve(&path, &self.uri.raw, &self.rev) {
+                if path.exists() {
+                    fs::remove_dir_all("/some/dir")?;
+                }
+                return Err(v);
+            }
         }
         if !path.exists() {
             Err(format_err!(

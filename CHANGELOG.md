@@ -3,7 +3,26 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+### Changed
+- ⬆️  Bump reqwest from 0.9.11 to 0.9.12
+
+### Fixed
+- 🐛  (git) fix authentication via ssh, https
+
 ### Miscellaneous
+- ⚗  (ci) update github-upload task to not failed on error during release creation
+- 🚧  (cargo-release) start next development iteration 0.11.4-dev
+
+<a name="0.11.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.11.3
+
+### Fixed
+- 🐛  (git) remove folder if error during git retieve
+
+### Miscellaneous
+- 🚀  (cargo-release) version 0.11.3
+- ⚗  (ci) try fix for github-upload
+- 📝  update changelog
 - 🚧  (cargo-release) start next development iteration 0.11.3-dev
 
 <a name="0.11.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>

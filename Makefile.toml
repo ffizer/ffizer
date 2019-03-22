@@ -165,11 +165,26 @@ script= [
 #  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
 '''
 cd ${GITHUB_RELEASE_PATH}
-./github-release release --tag "${CARGO_MAKE_CRATE_VERSION}"
+./github-release release --tag "${CARGO_MAKE_CRATE_VERSION}" || echo "skip"
 ./github-release upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
+''',
+]
+
+[tasks.github-upload.windows]
+condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
+script_runner = "@shell"
+script= [
+# multi-line command with \ at EOL doesn't work on windows
+#  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
+'''
+cd ${GITHUB_RELEASE_PATH}
+github-release.exe release --tag "${CARGO_MAKE_CRATE_VERSION}" || echo "skip"
+github-release.exe upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
 ''',
 ]
 
 [tasks.echo]
 script_runner = "@shell"
-script=["echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}"]
+script=[
+  "echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}",
+]

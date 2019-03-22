@@ -59,7 +59,7 @@ impl SourceLoc {
         if !offline && self.uri.host.is_some() {
             if let Err(v) = git::retrieve(&path, &self.uri.raw, &self.rev) {
                 if path.exists() {
-                    fs::remove_dir_all("/some/dir")?;
+                    fs::remove_dir_all(path)?;
                 }
                 return Err(v);
             }

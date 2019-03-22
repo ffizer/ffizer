@@ -24,10 +24,10 @@ impl FromStr for SourceUri {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let url_re = Regex::new(
-            r"^(https?|ssh)://(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$",
+            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$",
         )?;
         let url_re2 = Regex::new(
-            r"^(https?|ssh)://(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
+            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
         )?;
         let git_re =
             Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")?;
@@ -126,6 +126,34 @@ mod tests {
     fn test_source_uri_from_str_http_without_git_extension() {
         assert_source_uri_from_str(
             "https://github.com/ffizer/ffizer",
+            "ffizer/ffizer",
+            Some("github.com"),
+        );
+    }
+
+    #[test]
+    fn test_source_uri_from_str_http_with_git_extension_and_username() {
+        assert_source_uri_from_str(
+            "https://user@github.com/ffizer/ffizer.git",
+            "ffizer/ffizer",
+            Some("github.com"),
+        );
+        assert_source_uri_from_str(
+            "http://user@github.com/ffizer/ffizer.git",
+            "ffizer/ffizer",
+            Some("github.com"),
+        );
+    }
+
+    #[test]
+    fn test_source_uri_from_str_http_with_git_extension_and_username_and_password() {
+        assert_source_uri_from_str(
+            "https://user:pass@github.com/ffizer/ffizer.git",
+            "ffizer/ffizer",
+            Some("github.com"),
+        );
+        assert_source_uri_from_str(
+            "http://user:pass@github.com/ffizer/ffizer.git",
             "ffizer/ffizer",
             Some("github.com"),
         );

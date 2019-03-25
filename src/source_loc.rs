@@ -57,9 +57,10 @@ impl SourceLoc {
     pub fn download(&self, offline: bool) -> Result<PathBuf, Error> {
         let path = self.as_local_path()?;
         if !offline && self.uri.host.is_some() {
-            if let Err(v) = git::retrieve(&path, &self.uri.raw, &self.rev) {
+            let remote_folder = self.remote_as_local()?;
+            if let Err(v) = git::retrieve(&remote_folder, &self.uri.raw, &self.rev) {
                 if path.exists() {
-                    fs::remove_dir_all(path)?;
+                    fs::remove_dir_all(remote_folder)?;
                 }
                 return Err(v);
             }

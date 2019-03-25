@@ -101,14 +101,14 @@ fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<V
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
-            let dst_path = compute_dst_path(ctx, &src_path, variables).expect("TODO");
-            Action {
+            dbg!(&src_path);
+            compute_dst_path(ctx, &src_path, variables).map(|dst_path| Action {
                 src_path,
                 dst_path,
                 operation: FileOperation::Nothing,
-            }
+            })
         })
-        .collect::<Vec<_>>();
+        .collect::<Result<Vec<_>, _>>()?;
     // TODO sort input_paths by priority (*.ffizer(.*) first, alphabetical)
     actions.sort_by(cmp_path_for_plan);
     let actions_count = actions.len();

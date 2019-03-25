@@ -35,7 +35,7 @@ fn upgrade(logger: slog::Logger) -> Result<(), Error> {
         .current_version(env!("CARGO_PKG_VERSION"))
         .build()?
         .update()?;
-    info!(logger, "ugrade"; "status" => status.version());
+    info!(logger, "upgrade"; "status" => status.version());
     Ok(())
 }
 

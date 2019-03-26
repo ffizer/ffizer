@@ -143,9 +143,9 @@
                         <a class="header" href="#configuration" id="configuration"><h1>Configuration</h1></a>
 <p>The configuration is:</p>
 <ul>
-<li>optionnal</li>
+<li>optional</li>
 <li>stored into a yaml file named <code>.ffizer.yaml</code> at the root of the template.</li>
-<li>sections (top level entry) of the yaml are optionnals</li>
+<li>sections (top level entry) of the yaml are optionals</li>
 </ul>
 <pre><code class="language-yaml">variables:
   - name: project
@@ -160,7 +160,7 @@ ignores:
 Variables are defined by:</p>
 <ul>
 <li><code>name</code>: (required) the name of the variable</li>
-<li><code>default_value</code>: a suggested value, the value is a string and support hbs templating</li>
+<li><code>default_value</code>: a suggested value, the value is a string and support <code>hbs</code> templating</li>
 <li><code>ask</code>: the sentence use to prompt user to set the value of the variable</li>
 </ul>
 <p>Variables definition are prompt in the order of the list, and with the prompt defined by <code>ask</code> (if defined, else <code>name</code>)</p>
@@ -168,8 +168,42 @@ Variables are defined by:</p>
   - name: project_name
     default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
 </code></pre>
+<p>Every variables are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
+<pre><code class="language-yaml">  - name: foo
+    default_value: &quot;&quot;
+</code></pre>
 <a class="header" href="#ignores" id="ignores"><h3>ignores</h3></a>
+<p>List patterns of file path (relative to root of the template) that should be ignored when search for file to be copied or rendered from the template into the destination.</p>
+<p>To ignore .git folder from the template (useful for template hosted on root of a git repository)</p>
+<pre><code class="language-yaml">ignores:
+  - .git/*
+  - .git # exclude .git of the template host
+</code></pre>
 <a class="header" href="#imports" id="imports"><h3>imports</h3></a>
+<p>It is possible to imports templates into a template. It is useful to reuse templates or to compose template from other template.</p>
+<p>The <code>imports</code> section is a list of templates:</p>
+<pre><code class="language-yaml">imports:
+  - uri: &quot;git@github.com:ffizer/templates_default.git&quot;
+    rev: &quot;master&quot;
+    subfolder: &quot;gitignore_io&quot;
+</code></pre>
+<p>The order in the list define:</p>
+<ul>
+<li>the order to ask variables (and to find variables definition): first the variable of the root template, then the variables of the first import, the second import,... then the variables of the first import of the first imports.</li>
+<li>the order of files: first the file of the root template, then the files from the first import,... (same as variable)</li>
+</ul>
+<!-- TODO insert a diagram of priority and order -->
+<p>The first variable definition found (following the order) is keep. So a higher level variables definition override the lower level. In the example below, the <code>ask</code>and the <code>default_value</code> override the definition of <code>gitignore_what</code> into the imported template.</p>
+<pre><code class="language-yaml">variables:
+  - name: gitignore_what
+    default_value: rust,git,visualstudiocode
+    ask: Create useful .gitignore (via gitignore.io) for
+
+imports:
+  - uri: &quot;git@github.com:ffizer/templates_default.git&quot;
+    rev: &quot;master&quot;
+    subfolder: &quot;gitignore_io&quot;
+</code></pre>
 
                     </main>
 

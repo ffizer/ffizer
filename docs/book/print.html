@@ -215,9 +215,9 @@ EOF
 <a class="header" href="#configuration" id="configuration"><h1>Configuration</h1></a>
 <p>The configuration is:</p>
 <ul>
-<li>optionnal</li>
+<li>optional</li>
 <li>stored into a yaml file named <code>.ffizer.yaml</code> at the root of the template.</li>
-<li>sections (top level entry) of the yaml are optionnals</li>
+<li>sections (top level entry) of the yaml are optionals</li>
 </ul>
 <pre><code class="language-yaml">variables:
   - name: project
@@ -232,7 +232,7 @@ ignores:
 Variables are defined by:</p>
 <ul>
 <li><code>name</code>: (required) the name of the variable</li>
-<li><code>default_value</code>: a suggested value, the value is a string and support hbs templating</li>
+<li><code>default_value</code>: a suggested value, the value is a string and support <code>hbs</code> templating</li>
 <li><code>ask</code>: the sentence use to prompt user to set the value of the variable</li>
 </ul>
 <p>Variables definition are prompt in the order of the list, and with the prompt defined by <code>ask</code> (if defined, else <code>name</code>)</p>
@@ -240,8 +240,42 @@ Variables are defined by:</p>
   - name: project_name
     default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
 </code></pre>
+<p>Every variables are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
+<pre><code class="language-yaml">  - name: foo
+    default_value: &quot;&quot;
+</code></pre>
 <a class="header" href="#ignores" id="ignores"><h3>ignores</h3></a>
+<p>List patterns of file path (relative to root of the template) that should be ignored when search for file to be copied or rendered from the template into the destination.</p>
+<p>To ignore .git folder from the template (useful for template hosted on root of a git repository)</p>
+<pre><code class="language-yaml">ignores:
+  - .git/*
+  - .git # exclude .git of the template host
+</code></pre>
 <a class="header" href="#imports" id="imports"><h3>imports</h3></a>
+<p>It is possible to imports templates into a template. It is useful to reuse templates or to compose template from other template.</p>
+<p>The <code>imports</code> section is a list of templates:</p>
+<pre><code class="language-yaml">imports:
+  - uri: &quot;git@github.com:ffizer/templates_default.git&quot;
+    rev: &quot;master&quot;
+    subfolder: &quot;gitignore_io&quot;
+</code></pre>
+<p>The order in the list define:</p>
+<ul>
+<li>the order to ask variables (and to find variables definition): first the variable of the root template, then the variables of the first import, the second import,... then the variables of the first import of the first imports.</li>
+<li>the order of files: first the file of the root template, then the files from the first import,... (same as variable)</li>
+</ul>
+<!-- TODO insert a diagram of priority and order -->
+<p>The first variable definition found (following the order) is keep. So a higher level variables definition override the lower level. In the example below, the <code>ask</code>and the <code>default_value</code> override the definition of <code>gitignore_what</code> into the imported template.</p>
+<pre><code class="language-yaml">variables:
+  - name: gitignore_what
+    default_value: rust,git,visualstudiocode
+    ask: Create useful .gitignore (via gitignore.io) for
+
+imports:
+  - uri: &quot;git@github.com:ffizer/templates_default.git&quot;
+    rev: &quot;master&quot;
+    subfolder: &quot;gitignore_io&quot;
+</code></pre>
 <a class="header" href="#the-predefined-variables" id="the-predefined-variables"><h1>The predefined variables</h1></a>
 <p>Some variables are predefined and they can be used into <code>.ffizer.yaml</code> into the <code>ignores</code> section or <code>default_value</code> via handlebars expression.</p>
 <ul>
@@ -266,36 +300,41 @@ Few helpers are included, but if you need more helpers, ask via an issue or a PR
 </code></pre>
 <p>see <a href="https://handlebarsjs.com/">Handlebars templating language</a></p>
 <a class="header" href="#string-transformation" id="string-transformation"><h2>String transformation</h2></a>
-<p>for the same input: &quot;Hello foo-bars&quot;</p>
+<p>for the same input: <code>&quot;Hello foo-bars&quot;</code></p>
 <table><thead><tr><th>helper_name </th><th> example out</th></tr></thead><tbody>
-<tr><td>to_lower_case </td><td> &quot;hello foo-bars&quot;</td></tr>
-<tr><td>to_upper_case </td><td> &quot;HELLO FOO-BARS&quot;</td></tr>
-<tr><td>to_camel_case </td><td> &quot;helloFooBars&quot;</td></tr>
-<tr><td>to_pascal_case </td><td> &quot;HelloFooBars&quot;</td></tr>
-<tr><td>to_snake_case </td><td> &quot;hello_foo_bars&quot;</td></tr>
-<tr><td>to_screaming_snake_case </td><td> &quot;HELLO_FOO_BARS&quot;</td></tr>
-<tr><td>to_kebab_case </td><td> &quot;hello-foo-bars&quot;</td></tr>
-<tr><td>to_train_case </td><td> &quot;Hello-Foo-Bars&quot;</td></tr>
-<tr><td>to_sentence_case </td><td> &quot;Hello foo bars&quot;</td></tr>
-<tr><td>to_title_case </td><td> &quot;Hello Foo Bars&quot;</td></tr>
-<tr><td>to_class_case </td><td> &quot;HelloFooBar&quot;</td></tr>
-<tr><td>to_table_case </td><td> &quot;hello_foo_bars&quot;</td></tr>
-<tr><td>to_plural </td><td> &quot;bars&quot;</td></tr>
-<tr><td>to_singular </td><td> &quot;bar&quot;</td></tr>
+<tr><td><code>to_lower_case</code> </td><td> <code>&quot;hello foo-bars&quot;</code></td></tr>
+<tr><td><code>to_upper_case</code> </td><td> <code>&quot;HELLO FOO-BARS&quot;</code></td></tr>
+<tr><td><code>to_camel_case</code> </td><td> <code>&quot;helloFooBars&quot;</code></td></tr>
+<tr><td><code>to_pascal_case</code> </td><td> <code>&quot;HelloFooBars&quot;</code></td></tr>
+<tr><td><code>to_snake_case</code> </td><td> <code>&quot;hello_foo_bars&quot;</code></td></tr>
+<tr><td><code>to_screaming_snake_case</code> </td><td> <code>&quot;HELLO_FOO_BARS&quot;</code></td></tr>
+<tr><td><code>to_kebab_case</code> </td><td> <code>&quot;hello-foo-bars&quot;</code></td></tr>
+<tr><td><code>to_train_case</code> </td><td> <code>&quot;Hello-Foo-Bars&quot;</code></td></tr>
+<tr><td><code>to_sentence_case</code> </td><td> <code>&quot;Hello foo bars&quot;</code></td></tr>
+<tr><td><code>to_title_case</code> </td><td> <code>&quot;Hello Foo Bars&quot;</code></td></tr>
+<tr><td><code>to_class_case</code> </td><td> <code>&quot;HelloFooBar&quot;</code></td></tr>
+<tr><td><code>to_table_case</code> </td><td> <code>&quot;hello_foo_bars&quot;</code></td></tr>
+<tr><td><code>to_plural</code> </td><td> <code>&quot;bars&quot;</code></td></tr>
+<tr><td><code>to_singular</code> </td><td> <code>&quot;bar&quot;</code></td></tr>
 </tbody></table>
 <a class="header" href="#http-content" id="http-content"><h2>Http content</h2></a>
 <p>Helper able to render body response from an http request.</p>
 <table><thead><tr><th>helper_name </th><th> usage</th></tr></thead><tbody>
-<tr><td>http_get </td><td> http_get &quot;http://hello/...&quot;</td></tr>
-<tr><td>gitignore_io </td><td> gitignore_io &quot;rust&quot;</td></tr>
+<tr><td><code>http_get</code> </td><td> <code>http_get &quot;http://hello/...&quot;</code></td></tr>
+<tr><td><code>gitignore_io</code> </td><td> <code>gitignore_io &quot;rust&quot;</code></td></tr>
 </tbody></table>
 <a class="header" href="#path-extraction" id="path-extraction"><h2>Path extraction</h2></a>
 <p>Helper able to extract (or transform) path (defined as string).</p>
-<p>for the same input: &quot;/hello/bar/foo.txt&quot;</p>
+<p>for the same input: <code>&quot;/hello/bar/foo.txt&quot;</code></p>
 <table><thead><tr><th>helper_name </th><th> sample output</th></tr></thead><tbody>
-<tr><td>file_name </td><td> &quot;foo.txt&quot;</td></tr>
-<tr><td>parent </td><td> &quot;/hello/bar&quot;</td></tr>
-<tr><td>extension </td><td> &quot;txt&quot;</td></tr>
+<tr><td>file_name </td><td> <code>&quot;foo.txt&quot;</code></td></tr>
+<tr><td>parent </td><td> <code>&quot;/hello/bar&quot;</code></td></tr>
+<tr><td>extension </td><td> <code>&quot;txt&quot;</code></td></tr>
+</tbody></table>
+<a class="header" href="#environment-variable" id="environment-variable"><h2>Environment variable</h2></a>
+<p>Helper able to get environment variables.</p>
+<table><thead><tr><th>helper_name </th><th> usage</th></tr></thead><tbody>
+<tr><td>env_var </td><td> <code>env_var &quot;HOME&quot;</code></td></tr>
 </tbody></table>
 
                     </main>

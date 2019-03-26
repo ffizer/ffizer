@@ -9,7 +9,6 @@
 [![Crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Build Status](https://travis-ci.com/ffizer/ffizer.svg?branch=master)](https://travis-ci.com/ffizer/ffizer)
 [![Build Status](https://dev.azure.com/ffizer/ffizer/_apis/build/status/ffizer.ffizer)](https://dev.azure.com/ffizer/ffizer/_build/latest?definitionId=1)
 [![codecov](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
 
@@ -128,7 +127,7 @@ cargo install ffizer
 ```txt
 ➜  ffizer --help
 
-ffizer 0.10.0
+ffizer 0.12.0
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -152,7 +151,7 @@ SUBCOMMANDS:
 ```sh
 ➜  ffizer upgrade --help
 
-ffizer-upgrade 0.10.0
+ffizer-upgrade 0.12.0
 https://github.com/ffizer/ffizer
 Self upgrade ffizer executable
 
@@ -170,7 +169,7 @@ FLAGS:
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 0.10.0
+ffizer-apply 0.12.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 

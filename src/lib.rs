@@ -101,7 +101,6 @@ fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<V
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
-            dbg!(&src_path);
             compute_dst_path(ctx, &src_path, variables).map(|dst_path| Action {
                 src_path,
                 dst_path,

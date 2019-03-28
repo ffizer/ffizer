@@ -251,6 +251,11 @@ cargo install cargo-make --force
 cargo make ci-flow
 ```
 
+Release a new version by bump `patch` (or `minor`or `major`)
+```sh
+cargo make publish -- patch --dry-run
+cargo make publish -- patch
+```
 <a id="markdown-alternatives" name="alternatives"></a>
 ## Alternatives
 

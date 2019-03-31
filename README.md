@@ -251,11 +251,21 @@ cargo install cargo-make --force
 cargo make ci-flow
 ```
 
+Update [CHANGELOG.md](./CHANGELOG.md)
+
+```sh
+cargo make update-changelog
+git add CHANGELOG.md
+git commit -m ':memo: (CHANGELOG) update'
+```
+
 Release a new version by bump `patch` (or `minor`or `major`)
+
 ```sh
 cargo make publish -- patch --dry-run
 cargo make publish -- patch
 ```
+
 <a id="markdown-alternatives" name="alternatives"></a>
 ## Alternatives
 

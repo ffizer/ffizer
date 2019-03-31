@@ -61,3 +61,6 @@ lto = true
 panic = 'abort'
 opt-level = 'z'  # Optimize for size.
 codegen-units = 1
+
+[features]
+test_remote = [] # feature has no explicit dependencies

@@ -100,7 +100,7 @@ fn test_1_subfolder() -> Result<(), Error> {
     Ok(())
 }
 
-#[cfg(any(test_remote))]
+#[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_master() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
@@ -125,7 +125,7 @@ fn test_1_remote_master() -> Result<(), Error> {
     Ok(())
 }
 
-#[cfg(any(test_remote))]
+#[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_commitsha1() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
@@ -142,7 +142,7 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("8cab693bbf2eb4f8291ede174d8625d8d21e7b92")
+        .arg("a476767b3ea4cde604d28761c4a2f8e4a31198e0")
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .assert()
@@ -152,7 +152,7 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
     Ok(())
 }
 
-#[cfg(any(test_remote))]
+#[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_tag() -> Result<(), Error> {
     let tmp_dir = tempdir()?;
@@ -169,7 +169,7 @@ fn test_1_remote_tag() -> Result<(), Error> {
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("1.0.0")
+        .arg("1.1.0")
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .assert()

@@ -127,7 +127,7 @@ cargo install ffizer
 ```txt
 ➜  ffizer --help
 
-ffizer 0.12.0
+ffizer 1.0.0
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -151,7 +151,7 @@ SUBCOMMANDS:
 ```sh
 ➜  ffizer upgrade --help
 
-ffizer-upgrade 0.12.0
+ffizer-upgrade 1.0.0
 https://github.com/ffizer/ffizer
 Self upgrade ffizer executable
 
@@ -169,7 +169,7 @@ FLAGS:
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 0.12.0
+ffizer-apply 1.0.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 

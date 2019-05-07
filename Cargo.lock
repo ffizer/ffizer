@@ -507,7 +507,7 @@ dependencies = [
  "directories 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "git2_credentials 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "git2_credentials 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "globset 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "handlebars 2.0.0-beta.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "human-panic 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -629,10 +629,11 @@ dependencies = [
 
 [[package]]
 name = "git2_credentials"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "dialoguer 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "dirs 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -2427,7 +2428,7 @@ dependencies = [
 "checksum futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "ab90cde24b3319636588d0c35fe03b1333857621051837ed769faefb4c2162e4"
 "checksum generic-array 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ef25c5683767570c2bbd7deba372926a55eaae9982d7726ee2a1050239d45b9d"
 "checksum git2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c7339329bfa14a00223244311560d11f8f489b453fb90092af97f267a6090ab0"
-"checksum git2_credentials 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "78d0b80bbf62b61018fb6b1c135fd66fed9a475a99a46a00c2b25084e073566d"
+"checksum git2_credentials 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "92024801ada4a207e9a66b6ec1855980229d587d4ed11d7e7501f718c24a5e50"
 "checksum glob 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)" = "8be18de09a56b60ed0edf84bc9df007e30040691af7acd1c41874faac5895bfb"
 "checksum globset 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)" = "ef4feaabe24a0a658fd9cf4a9acf6ed284f045c77df0f49020ba3245cfb7b454"
 "checksum h2 0.1.17 (registry+https://github.com/rust-lang/crates.io-index)" = "910a5e7be6283a9c91b3982fa5188368c8719cce2a3cf3b86048673bf9d9c36b"

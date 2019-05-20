@@ -41,7 +41,7 @@ walkdir = "2.2.7"
 assert_cmd = "0.11.1"
 # rexpect = "0.3"
 spectral = "0.6.0"
-tempfile = "3.0.7"
+tempfile = "3.0.8"
 test-generator = "0.2.2"
 
 [[bin]]

@@ -91,6 +91,15 @@ script = [
   "gitmoji-changelog -r x.y.z-dev -o CHANGELOG.md .",
 ]
 
+[tasks.update-book]
+category="Publish"
+install_crate = {crate_name="mdbook", binary = "mdbook", test_arg = "--help"}
+script = [
+  "cd docs",
+  "rm -Rf book",
+  "mdbook build",
+]
+
 # [tasks.pre-publish]
 # dependencies = [
 #   "update-changelog"

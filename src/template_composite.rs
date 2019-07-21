@@ -9,9 +9,9 @@ use crate::ChildPath;
 use crate::Ctx;
 use crate::Variables;
 use failure::Error;
+use hashbrown::HashMap;
+use hashbrown::HashSet;
 use slog::warn;
-use std::collections::BTreeMap;
-use std::collections::HashSet;
 
 pub struct TemplateComposite {
     layers: Vec<(SourceLoc, TemplateCfg)>,
@@ -24,7 +24,7 @@ impl TemplateComposite {
         offline: bool,
         src: &SourceLoc,
     ) -> Result<TemplateComposite, Error> {
-        let mut templates = BTreeMap::new();
+        let mut templates = HashMap::new();
         deep_download(ctx, variables, offline, src, &mut templates)?;
         let layers = templates
             .find_edges_ordered_by_depth(src)
@@ -68,7 +68,7 @@ impl TemplateComposite {
     }
 }
 
-impl Graph for BTreeMap<SourceLoc, TemplateCfg> {
+impl Graph for HashMap<SourceLoc, TemplateCfg> {
     type K = SourceLoc;
     type V = TemplateCfg;
     fn find_node(&self, k: &Self::K) -> Option<&Self::V> {
@@ -85,7 +85,7 @@ fn deep_download(
     variables: &Variables,
     offline: bool,
     src: &SourceLoc,
-    templates: &mut BTreeMap<SourceLoc, TemplateCfg>,
+    templates: &mut HashMap<SourceLoc, TemplateCfg>,
 ) -> Result<(), Error> {
     if !templates.contains_key(src) {
         let template_base_path = &src.download(offline)?;

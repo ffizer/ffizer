@@ -1,6 +1,5 @@
 use crate::files;
 use crate::graph::Graph;
-use crate::hbs;
 use crate::source_loc::SourceLoc;
 use crate::template_cfg::TemplateCfg;
 use crate::template_cfg::Variable;
@@ -9,6 +8,7 @@ use crate::ChildPath;
 use crate::Ctx;
 use crate::Variables;
 use failure::Error;
+use handlebars_misc_helpers::new_hbs;
 use hashbrown::HashMap;
 use hashbrown::HashSet;
 use slog::warn;
@@ -112,7 +112,7 @@ fn render_cfg(
     variables: &Variables,
     log_warning: bool,
 ) -> Result<TemplateCfg, Error> {
-    let handlebars = hbs::new_hbs()?;
+    let handlebars = new_hbs()?;
     let render = |v: &str| {
         let r = handlebars.render_template(v, variables);
         match r {

@@ -6,10 +6,9 @@ use console::Term;
 use dialoguer::Confirmation;
 use dialoguer::Input;
 use failure::Error;
+use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use slog::debug;
-use crate::hbs;
-
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -28,7 +27,7 @@ pub fn ask_variables(
 ) -> Result<Variables, Error> {
     let mut variables = Variables::new();
     variables.append(&mut init);
-    let handlebars = hbs::new_hbs()?;
+    let handlebars = new_hbs()?;
     if !ctx.cmd_opt.x_always_default_value {
         write_title("Configure variables")?;
         // TODO optimize to reduce clones

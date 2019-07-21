@@ -5,7 +5,6 @@ mod cli_opt;
 mod files;
 mod git;
 mod graph;
-mod hbs;
 mod path_pattern;
 mod source_loc;
 mod source_uri;
@@ -20,6 +19,7 @@ use crate::files::ChildPath;
 use crate::template_composite::TemplateComposite;
 use failure::format_err;
 use failure::Error;
+use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o};
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -150,7 +150,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<(), E
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
-    let handlebars = hbs::new_hbs()?;
+    let handlebars = new_hbs()?;
     debug!(ctx.logger, "execute"; "variables" => format!("{:?}", variables));
 
     for a in pb.wrap_iter(actions.iter()) {
@@ -178,7 +178,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
         .to_str()
         .ok_or_else(|| format_err!("failed to stringify path"))
         .and_then(|s| {
-            let handlebars = hbs::new_hbs()?;
+            let handlebars = new_hbs()?;
             let p = handlebars.render_template(&s, variables)?;
             Ok(PathBuf::from(p))
         })?;

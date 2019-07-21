@@ -1,7 +1,8 @@
 # Template Helpers / Functions
 
 Helpers extend the template to generate or to transform content.
-Few helpers are included, but if you need more helpers, ask via an issue or a PR.
+
+The helpers from [handlebars_misc_helpers](https://crates.io/crates/handlebars_misc_helpers) are included. But if you need more helpers, ask via an issue or a PR.
 
 To use an helper:
 

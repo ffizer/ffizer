@@ -237,6 +237,8 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
 
 - [ffizer/templates_default: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
 - [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
+- [davidB/templates: repository to host the my collections of templates to used with [ffizer](https://github.com/ffizer/ffizer).](https://github.com/davidB/templates)
+- github repo tagged [ffizer-template](https://github.com/topics/ffizer-template)
 - samples (used for test, demo)
 templates_default)
   - [test_1](tests/test_1/template)

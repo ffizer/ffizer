@@ -1,8 +1,8 @@
 use failure::Error;
 use git2::build::{CheckoutBuilder, RepoBuilder};
-use git2::{Cred, CredentialType, FetchOptions, Repository};
-use std::path::Path;
+use git2::{FetchOptions, Repository};
 use git2_credentials;
+use std::path::Path;
 
 /// clone a repository at a rev to a directory
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
@@ -99,12 +99,4 @@ where
     let treeish = repository.revparse_single(rev)?;
     repository.checkout_tree(&treeish, Some(&mut co))?;
     Ok(())
-}
-
-struct CredentialHandler {
-    usernames: Vec<String>,
-    ssh_agent_attempts_count: usize,
-    username_attempts_count: usize,
-    cred_helper_bad: Option<bool>,
-    cfg: git2::Config,
 }

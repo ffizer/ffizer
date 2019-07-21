@@ -87,3 +87,34 @@ imports:
     subfolder: "gitignore_io"
 ```
 
+### use_template_dir
+
+By default, content of the template is mixed with its optional metadata (`.ffizer.yaml`, ...). So it means that if you have a `README.md` both as the template description and as template content (a README.md to generate), you have to follow this layout:
+
+```txt
++- README.md.ffizer.hbs (or README.md.ffizer.raw)
++- README.md
++- .ffizer.yaml
+```
+
+And to add into `.ffizer.yaml`
+
+```yaml
+ignores:
+  - README.md
+```
+
+Or you can choose to move the template content under a `template` folder:
+
+```txt
++- template
+|  +- README.md.ffizer.hbs (or README.md)
++- README.md
++- .ffizer.yaml
+```
+
+And to add into `.ffizer.yaml`
+
+```yaml
+use_template_dir: true
+```

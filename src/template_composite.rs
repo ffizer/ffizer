@@ -55,8 +55,13 @@ impl TemplateComposite {
         let mut back = vec![];
         let mut relatives = HashSet::new();
         for layer in &self.layers {
-            let path = layer.0.as_local_path()?;
             let ignores = &layer.1.ignores;
+            let template_dir = if layer.1.use_template_dir {
+                "template"
+            } else {
+                ""
+            };
+            let path = layer.0.as_local_path()?.join(template_dir);
             for childpath in files::find_childpaths(path, ignores) {
                 if !relatives.contains(&childpath.relative) {
                     relatives.insert(childpath.relative.clone());

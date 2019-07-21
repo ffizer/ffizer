@@ -8,8 +8,8 @@
 [![Crates.io](https://img.shields.io/crates/l/ffizer.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 [![Crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Build Status](https://dev.azure.com/ffizer/ffizer/_apis/build/status/ffizer.ffizer)](https://dev.azure.com/ffizer/ffizer/_build/latest?definitionId=1)
+![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Build Status](https://dev.azure.com/ffizer/ffizer/_apis/build/status/ffizer.ffizer)](https://dev.azure.com/ffizer/ffizer/_build/latest)
 [![codecov](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
 
 
@@ -73,12 +73,14 @@ keywords: file generator, project template, project scaffolding, quickstart, pro
   - [ ] raw command
 - [ ] composite template include under conditions
 - [X] file / folder ignored under conditions (ignores'item in ffizer.yaml are defined as handlerbar expression)
+- [X] template's content can be stored under the subfolder `template`
 - [X] handlebars helpers
   - [X] transform strings (toUpperCase, toLowerCase, Capitelize,...)
   - [X] render content of GET url
   - [X] render content from https://gitignore.io
-  - [ ] suggestions welcomes ;-)
 - [ ] ability to update / diff / overwrite existing file
+- [X] can be used as a cli or as a lib
+- [ ] suggestions welcomes ;-)
 
 <a id="markdown-limitations" name="limitations"></a>
 ## Limitations

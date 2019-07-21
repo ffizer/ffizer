@@ -14,6 +14,8 @@ pub struct TemplateCfg {
     pub variables: Vec<Variable>,
     pub ignores: Vec<PathPattern>,
     pub imports: Vec<SourceLoc>,
+    // set to true if the template content is under a `template` folder (not mixed with metadata)
+    pub use_template_dir: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -67,6 +69,7 @@ impl TransformsValues for TemplateCfg {
             variables,
             ignores,
             imports,
+            use_template_dir: self.use_template_dir,
         })
     }
 }
@@ -113,6 +116,7 @@ mod tests {
         });
         let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
+        assert_that!(&actual.use_template_dir).is_false();
     }
 
     #[test]
@@ -153,5 +157,23 @@ mod tests {
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
         assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
         //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
+    }
+
+    #[test]
+    fn test_deserialize_cfg_yaml_use_template_dir_false() {
+        let cfg_str = r#"
+        use_template_dir: false
+        "#;
+        let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
+        assert_that!(&actual.use_template_dir).is_false();
+    }
+
+    #[test]
+    fn test_deserialize_cfg_yaml_use_template_dir_true() {
+        let cfg_str = r#"
+        use_template_dir: true
+        "#;
+        let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
+        assert_that!(&actual.use_template_dir).is_true();
     }
 }

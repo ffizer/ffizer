@@ -129,7 +129,7 @@ cargo install ffizer
 ```txt
 ➜  ffizer --help
 
-ffizer 1.0.0
+ffizer 1.2.0
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
@@ -153,7 +153,7 @@ SUBCOMMANDS:
 ```sh
 ➜  ffizer upgrade --help
 
-ffizer-upgrade 1.0.0
+ffizer-upgrade 1.2.0
 https://github.com/ffizer/ffizer
 Self upgrade ffizer executable
 
@@ -171,7 +171,7 @@ FLAGS:
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 1.0.0
+ffizer-apply 1.2.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
@@ -239,7 +239,7 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
 
 - [ffizer/templates_default: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
 - [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
-- [davidB/templates: repository to host the my collections of templates to used with [ffizer](https://github.com/ffizer/ffizer).](https://github.com/davidB/templates)
+- [davidB/templates: repository to host the my collections of templates to used with ffizer.](https://github.com/davidB/templates)
 - github repo tagged [ffizer-template](https://github.com/topics/ffizer-template)
 - samples (used for test, demo)
 templates_default)

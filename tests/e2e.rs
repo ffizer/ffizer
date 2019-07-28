@@ -1,11 +1,10 @@
 extern crate assert_cmd;
-extern crate failure;
 extern crate ffizer;
 extern crate tempfile;
 extern crate test_generator;
 
 use assert_cmd::prelude::*;
-use failure::Error;
+use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
@@ -19,7 +18,7 @@ fn test_local_sample(dir_name: &str) {
     assert!(test_local_sample_impl(dir_name).is_ok());
 }
 
-fn test_local_sample_impl(dir_name: &str) -> Result<(), Error> {
+fn test_local_sample_impl(dir_name: &str) -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let sample_path = PathBuf::from(dir_name);
     let template_path = sample_path.join("template");
@@ -45,7 +44,7 @@ fn test_local_sample_impl(dir_name: &str) -> Result<(), Error> {
 }
 
 #[test]
-fn empty_template() -> Result<(), Error> {
+fn empty_template() -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let template_path = tmp_dir.path().join("t0_template");
     let expected_path = tmp_dir.path().join("t0_expected");
@@ -73,7 +72,7 @@ fn empty_template() -> Result<(), Error> {
 }
 
 #[test]
-fn test_1_subfolder() -> Result<(), Error> {
+fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
     let source_subfolder = "dir_1";
     let tmp_dir = tempdir()?;
     let template_path = PathBuf::from("./tests/test_1/template");
@@ -102,7 +101,7 @@ fn test_1_subfolder() -> Result<(), Error> {
 
 #[cfg(feature = "test_remote")]
 #[test]
-fn test_1_remote_master() -> Result<(), Error> {
+fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let expected_path = PathBuf::from("./tests/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();
@@ -127,7 +126,7 @@ fn test_1_remote_master() -> Result<(), Error> {
 
 #[cfg(feature = "test_remote")]
 #[test]
-fn test_1_remote_commitsha1() -> Result<(), Error> {
+fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let expected_path = PathBuf::from("./tests/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();
@@ -154,7 +153,7 @@ fn test_1_remote_commitsha1() -> Result<(), Error> {
 
 #[cfg(feature = "test_remote")]
 #[test]
-fn test_1_remote_tag() -> Result<(), Error> {
+fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let expected_path = PathBuf::from("./tests/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();

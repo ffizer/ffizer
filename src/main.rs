@@ -1,4 +1,3 @@
-use failure::Error;
 use ffizer::ApplyOpts;
 use ffizer::CliOpts;
 use ffizer::Command;
@@ -6,6 +5,7 @@ use ffizer::Ctx;
 use self_update;
 use slog::Drain;
 use slog::{debug, info, o, trace};
+use std::error::Error;
 use structopt::StructOpt;
 
 fn init_log(level_min: slog::Level) -> slog::Logger {
@@ -22,7 +22,7 @@ fn init_log(level_min: slog::Level) -> slog::Logger {
     log
 }
 
-fn upgrade(logger: slog::Logger) -> Result<(), Error> {
+fn upgrade(logger: slog::Logger) -> Result<(), Box<dyn Error>> {
     let target = self_update::get_target()?;
     // TODO extract repo info from CARGO_PKG_REPOSITORY
     let status = self_update::backends::github::Update::configure()?
@@ -39,12 +39,13 @@ fn upgrade(logger: slog::Logger) -> Result<(), Error> {
     Ok(())
 }
 
-fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Error> {
+fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>> {
     let ctx = Ctx { logger, cmd_opt };
-    ffizer::process(&ctx)
+    ffizer::process(&ctx)?;
+    Ok(())
 }
 
-fn main() -> Result<(), Error> {
+fn main() -> Result<(), Box<dyn Error>> {
     human_panic::setup_panic!();
     let cli_opts = CliOpts::from_args();
 

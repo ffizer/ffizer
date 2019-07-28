@@ -2,6 +2,7 @@
 extern crate serde;
 
 mod cli_opt;
+mod error;
 mod files;
 mod git;
 mod graph;
@@ -14,13 +15,13 @@ mod transform_values;
 mod ui;
 
 pub use crate::cli_opt::*;
+pub use crate::error::*;
 use crate::files::is_ffizer_handlebars;
 use crate::files::ChildPath;
 use crate::template_composite::TemplateComposite;
-use failure::format_err;
-use failure::Error;
 use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o};
+use snafu::ResultExt;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::fs;
@@ -61,7 +62,7 @@ pub struct Action {
     pub operation: FileOperation,
 }
 
-pub fn process(ctx: &Ctx) -> Result<(), Error> {
+pub fn process(ctx: &Ctx) -> Result<()> {
     let variables_from_cli = extract_variables(&ctx)?;
     let template_composite = TemplateComposite::from_src(
         &ctx,
@@ -81,7 +82,7 @@ pub fn process(ctx: &Ctx) -> Result<(), Error> {
     }
 }
 
-pub fn extract_variables(ctx: &Ctx) -> Result<Variables, Error> {
+pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
     let mut variables = Variables::new();
     variables.insert(
         "ffizer_dst_folder".to_owned(),
@@ -97,7 +98,7 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables, Error> {
 }
 
 /// list actions to execute
-fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<Vec<Action>, Error> {
+fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<Vec<Action>> {
     let mut actions = src_paths
         .into_iter()
         .map(|src_path| {
@@ -107,7 +108,7 @@ fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<V
                 operation: FileOperation::Nothing,
             })
         })
-        .collect::<Result<Vec<_>, _>>()?;
+        .collect::<Result<Vec<_>>>()?;
     // TODO sort input_paths by priority (*.ffizer(.*) first, alphabetical)
     actions.sort_by(cmp_path_for_plan);
     let actions_count = actions.len();
@@ -146,24 +147,29 @@ fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
 }
 
 //TODO accumulate Result (and error)
-fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<(), Error> {
+fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
-    let handlebars = new_hbs()?;
+    let handlebars = new_hbs();
     debug!(ctx.logger, "execute"; "variables" => format!("{:?}", variables));
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
-            FileOperation::MkDir => fs::create_dir_all(&PathBuf::from(&a.dst_path))?,
+            FileOperation::MkDir => {
+                fs::create_dir_all(&PathBuf::from(&a.dst_path)).context(Io {})?
+            }
             FileOperation::CopyRaw => {
-                fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path))?;
+                fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path))
+                    .context(Io {})?;
             }
             FileOperation::CopyRender => {
-                let src = fs::read_to_string(&PathBuf::from(&a.src_path))?;
-                let dst = fs::File::create(PathBuf::from(&a.dst_path))?;
-                handlebars.render_template_to_write(&src, variables, dst)?;
+                let src = fs::read_to_string(&PathBuf::from(&a.src_path)).context(Io {})?;
+                let dst = fs::File::create(PathBuf::from(&a.dst_path)).context(Io {})?;
+                handlebars
+                    .render_template_to_write(&src, variables, dst)
+                    .context(crate::Handlebars {})?;
             }
             _ => (),
         };
@@ -172,14 +178,18 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<(), E
 }
 
 //TODO optimise / bench to avoid creation and rendering of path handlebars
-fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result<ChildPath, Error> {
+fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result<ChildPath> {
     let rendered_relative = src
         .relative
         .to_str()
-        .ok_or_else(|| format_err!("failed to stringify path"))
+        .ok_or(Error::Any {
+            msg: "failed to stringify path".to_owned(),
+        })
         .and_then(|s| {
-            let handlebars = new_hbs()?;
-            let p = handlebars.render_template(&s, variables)?;
+            let handlebars = new_hbs();
+            let p = handlebars
+                .render_template(&s, variables)
+                .context(crate::Handlebars {})?;
             Ok(PathBuf::from(p))
         })?;
     let relative = files::remove_special_suffix(&rendered_relative)?;

@@ -1,18 +1,20 @@
-extern crate failure;
 extern crate spectral;
 extern crate walkdir;
 
 use self::spectral::prelude::*;
 use self::walkdir::{DirEntry, WalkDir};
-use failure::Error;
 use std::cmp::Ordering;
+use std::error::Error;
 use std::fs;
 // use std::fs::File;
 // use std::io::prelude::*;
 use std::path::Path;
 
 /// Are the contents of two directories same?
-pub fn is_same<A: AsRef<Path>, B: AsRef<Path>>(a_base: A, b_base: B) -> Result<bool, Error> {
+pub fn is_same<A: AsRef<Path>, B: AsRef<Path>>(
+    a_base: A,
+    b_base: B,
+) -> Result<bool, Box<dyn Error>> {
     let mut a_walker = walk_dir(a_base);
     let mut b_walker = walk_dir(b_base);
 
@@ -53,7 +55,7 @@ fn compare_by_file_name(a: &DirEntry, b: &DirEntry) -> Ordering {
     a.file_name().cmp(&b.file_name())
 }
 
-// fn read_to_vec<P: AsRef<Path>>(file: P) -> Result<Vec<u8>, Error> {
+// fn read_to_vec<P: AsRef<Path>>(file: P) -> Result<Vec<u8>> {
 //     let mut data = Vec::new();
 //     let mut file = File::open(file.as_ref())?;
 

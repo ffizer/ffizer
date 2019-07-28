@@ -1,7 +1,8 @@
 use crate::path_pattern::PathPattern;
 use crate::source_loc::SourceLoc;
 use crate::transform_values::TransformsValues;
-use failure::Error;
+use crate::Result;
+use snafu::ResultExt;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
@@ -30,26 +31,26 @@ pub struct Variable {
 }
 
 impl TemplateCfg {
-    pub fn from_str<S>(str: S) -> Result<TemplateCfg, Error>
+    pub fn from_str<S>(str: S) -> Result<TemplateCfg>
     where
         S: AsRef<str>,
     {
-        let cfg = serde_yaml::from_str::<TemplateCfg>(str.as_ref())?;
+        let cfg = serde_yaml::from_str::<TemplateCfg>(str.as_ref()).context(crate::SerdeYaml {})?;
         //let cfg = serde_json::from_str::<TemplateCfg>(str.as_ref())?;
         cfg.post_load()
     }
 
-    pub fn from_template_folder(template_base: &Path) -> Result<TemplateCfg, Error> {
+    pub fn from_template_folder(template_base: &Path) -> Result<TemplateCfg> {
         let cfg_path = template_base.join(TEMPLATE_CFG_FILENAME);
         if cfg_path.exists() {
-            let cfg_str = fs::read_to_string(cfg_path)?;
+            let cfg_str = fs::read_to_string(cfg_path).context(crate::Io {})?;
             Self::from_str(cfg_str)
         } else {
             TemplateCfg::default().post_load()
         }
     }
 
-    fn post_load(mut self) -> Result<Self, Error> {
+    fn post_load(mut self) -> Result<Self> {
         let cfg_pattern = PathPattern::from_str(TEMPLATE_CFG_FILENAME)?;
         self.ignores.push(cfg_pattern);
         Ok(self)
@@ -58,7 +59,7 @@ impl TemplateCfg {
 
 impl TransformsValues for TemplateCfg {
     /// transforms ignore, imports
-    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    fn transforms_values<F>(&self, render: &F) -> Result<Self>
     where
         F: Fn(&str) -> String,
     {

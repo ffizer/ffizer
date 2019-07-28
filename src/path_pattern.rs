@@ -1,7 +1,8 @@
 use crate::transform_values::TransformsValues;
-use failure::Error;
+use crate::Result;
 use globset::{Glob, GlobMatcher};
 use serde_plain::derive_deserialize_from_str;
+use snafu::ResultExt;
 use std::cmp::PartialEq;
 use std::str::FromStr;
 
@@ -12,9 +13,11 @@ pub struct PathPattern {
 }
 
 impl FromStr for PathPattern {
-    type Err = globset::Error;
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let g = Glob::new(value)?;
+    type Err = crate::Error;
+    fn from_str(value: &str) -> Result<Self> {
+        let g = Glob::new(value).context(crate::ParsePathPattern {
+            value: value.to_owned(),
+        })?;
         Ok(PathPattern {
             raw: value.to_owned(),
             matcher: g.compile_matcher(),
@@ -37,7 +40,7 @@ impl PathPattern {
 }
 
 impl TransformsValues for PathPattern {
-    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    fn transforms_values<F>(&self, render: &F) -> Result<Self>
     where
         F: Fn(&str) -> String,
     {

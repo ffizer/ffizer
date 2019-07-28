@@ -1,8 +1,8 @@
 use crate::git;
 use crate::source_uri::SourceUri;
 use crate::transform_values::TransformsValues;
-use failure::format_err;
-use failure::Error;
+use crate::Result;
+use snafu::ResultExt;
 use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -24,7 +24,7 @@ pub struct SourceLoc {
 }
 
 impl SourceLoc {
-    pub fn as_local_path(&self) -> Result<PathBuf, Error> {
+    pub fn as_local_path(&self) -> Result<PathBuf> {
         let mut path = match self.uri.host {
             None => self.uri.path.clone(),
             Some(_) => self.remote_as_local()?,
@@ -35,10 +35,10 @@ impl SourceLoc {
         Ok(path)
     }
 
-    fn remote_as_local(&self) -> Result<PathBuf, Error> {
+    fn remote_as_local(&self) -> Result<PathBuf> {
         let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
         let project_dirs = directories::ProjectDirs::from("com", "github", &app_name)
-            .ok_or_else(|| format_err!("Home directory not found"))?;
+            .ok_or(crate::Error::ApplicationPathNotFound {})?;
         let cache_base = project_dirs.cache_dir();
         let cache_uri = cache_base
             .join("git")
@@ -54,27 +54,25 @@ impl SourceLoc {
         Ok(cache_uri)
     }
 
-    pub fn download(&self, offline: bool) -> Result<PathBuf, Error> {
+    pub fn download(&self, offline: bool) -> Result<PathBuf> {
         let path = self.as_local_path()?;
         if !offline && self.uri.host.is_some() {
             let remote_folder = self.remote_as_local()?;
             if let Err(v) = git::retrieve(&remote_folder, &self.uri.raw, &self.rev) {
                 if path.exists() {
-                    fs::remove_dir_all(remote_folder)?;
+                    fs::remove_dir_all(remote_folder).context(crate::RemoveFolder {
+                        path: path.to_path_buf(),
+                    })?;
                 }
                 return Err(v);
             }
         }
         if !path.exists() {
-            Err(format_err!(
-                "local path not found {} for {}{}",
-                path.to_str().unwrap_or("(empty)"),
-                &self.uri.raw,
-                self.subfolder
-                    .clone()
-                    .and_then(|s| s.to_str().map(|v| format!(" and subfolder {}", v)))
-                    .unwrap_or_else(|| "".to_owned()) //path.to_str().unwrap_or("??")
-            ))
+            Err(crate::Error::LocalPathNotFound {
+                path: path.into(),
+                uri: self.uri.raw.clone(),
+                subfolder: self.subfolder.clone(),
+            })
         } else {
             Ok(path)
         }
@@ -83,7 +81,7 @@ impl SourceLoc {
 
 impl TransformsValues for SourceLoc {
     /// transforms default_value & ignore
-    fn transforms_values<F>(&self, render: &F) -> Result<SourceLoc, Error>
+    fn transforms_values<F>(&self, render: &F) -> Result<SourceLoc>
     where
         F: Fn(&str) -> String,
     {
@@ -109,7 +107,7 @@ impl TransformsValues for SourceLoc {
 //     use std::str::FromStr;
 
 //     #[test]
-//     fn as_local_path_on_git() -> Result<(), Error> {
+//     fn as_local_path_on_git() -> Result<()> {
 //         let sut = SourceLoc {
 //             uri: SourceUri::from_str("git@github.com:ffizer/ffizer.git")?,
 //             rev: "master".to_owned(),

@@ -1,6 +1,5 @@
 use crate::source_loc::SourceLoc;
-use failure::format_err;
-use failure::Error;
+use crate::Error;
 use std::path::PathBuf;
 use std::str::FromStr;
 use structopt::StructOpt;
@@ -87,9 +86,11 @@ impl FromStr for AskConfirmation {
             "never" => Ok(AskConfirmation::Never),
             "always" => Ok(AskConfirmation::Always),
             "auto" => Ok(AskConfirmation::Auto),
-            _ => Err(format_err!(
-                "should be 'never', 'always' or 'auto' (default)"
-            )),
+            _ => Err(Error::StringValueNotIn {
+                value_name: "ask_confirmation".to_owned(),
+                value: s.to_owned(),
+                accepted: vec!["never".to_owned(), "always".to_owned(), "auto".to_owned()],
+            }),
         }
     }
 }

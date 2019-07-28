@@ -1,7 +1,8 @@
-use failure::Error;
+use crate::Error;
 use git2::build::{CheckoutBuilder, RepoBuilder};
 use git2::{FetchOptions, Repository};
 use git2_credentials;
+use snafu::ResultExt;
 use std::path::Path;
 
 /// clone a repository at a rev to a directory
@@ -12,11 +13,23 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
-    let mut fo = make_fetch_options()?;
     let dst = dst.as_ref();
+    let mut fo = make_fetch_options().context(crate::GitRetrieve {
+        dst: dst.to_path_buf(),
+        url: url.as_ref().to_owned(),
+        rev: rev.as_ref().to_owned(),
+    })?;
     if dst.exists() {
-        checkout(dst, &rev)?;
-        pull(dst, rev, &mut fo)?;
+        checkout(dst, &rev).context(crate::GitRetrieve {
+            dst: dst.to_path_buf(),
+            url: url.as_ref().to_owned(),
+            rev: rev.as_ref().to_owned(),
+        })?;
+        pull(dst, &rev, &mut fo).context(crate::GitRetrieve {
+            dst: dst.to_path_buf(),
+            url: url.as_ref().to_owned(),
+            rev: rev.as_ref().to_owned(),
+        })?;
     //until pull is fixed and work as expected
     // let mut tmp = dst.to_path_buf().clone();
     // tmp.set_extension("part");
@@ -28,8 +41,12 @@ where
     // std::fs::remove_dir_all(&dst)?;
     // std::fs::rename(&tmp, &dst)?;
     } else {
-        clone(&dst, url, "master", fo)?;
-        checkout(&dst, rev)?;
+        clone(&dst, &url, "master", fo)?;
+        checkout(&dst, &rev).context(crate::GitRetrieve {
+            dst: dst.to_path_buf(),
+            url: url.as_ref().to_owned(),
+            rev: rev.as_ref().to_owned(),
+        })?;
     }
     Ok(())
 }
@@ -37,7 +54,7 @@ where
 /// a best attempt effort is made to authenticate
 /// requests when required to support private
 /// git repositories
-fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, Error> {
+fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, git2::Error> {
     let mut cb = git2::RemoteCallbacks::new();
     let git_config = git2::Config::open_default()?;
     let mut ch = git2_credentials::CredentialHandler::new(git_config);
@@ -56,16 +73,23 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
-    std::fs::create_dir_all(&dst.as_ref())?;
+    std::fs::create_dir_all(&dst.as_ref()).context(crate::CreateFolder {
+        path: dst.as_ref().to_path_buf(),
+    })?;
     RepoBuilder::new()
         .branch(rev.as_ref())
         .fetch_options(fo)
-        .clone(url.as_ref(), dst.as_ref())?;
+        .clone(url.as_ref(), dst.as_ref())
+        .context(crate::GitRetrieve {
+            dst: dst.as_ref().to_path_buf(),
+            url: url.as_ref().to_owned(),
+            rev: rev.as_ref().to_owned(),
+        })?;
     Ok(())
 }
 
 //FIXME doesn't work like "git pull"
-fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), Error>
+fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,
@@ -87,7 +111,7 @@ where
     Ok(())
 }
 
-fn checkout<P, R>(dst: P, rev: R) -> Result<(), Error>
+fn checkout<P, R>(dst: P, rev: R) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,

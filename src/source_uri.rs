@@ -1,8 +1,8 @@
 use crate::transform_values::TransformsValues;
-use failure::format_err;
-use failure::Error;
+use crate::Result;
 use regex::Regex;
 use serde_plain::derive_deserialize_from_str;
+use snafu::ResultExt;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -20,18 +20,24 @@ pub struct SourceUri {
 derive_deserialize_from_str!(SourceUri, "source uri");
 
 impl FromStr for SourceUri {
-    type Err = Error;
+    type Err = crate::Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         let url_re = Regex::new(
             r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$",
-        )?;
+        ).context(crate::ParseGitUri{value: s.to_owned()})?;
         let url_re2 = Regex::new(
             r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
-        )?;
+        ).context(crate::ParseGitUri{value: s.to_owned()})?;
         let git_re =
-            Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")?;
-        let git_re2 = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")?;
+            Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")
+                .context(crate::ParseGitUri {
+                    value: s.to_owned(),
+                })?;
+        let git_re2 = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")
+            .context(crate::ParseGitUri {
+                value: s.to_owned(),
+            })?;
         git_re
             .captures(s)
             .or_else(|| git_re2.captures(s))
@@ -49,7 +55,9 @@ impl FromStr for SourceUri {
                     host: None,
                 })
             })
-            .ok_or_else(|| format_err!("failed to parse source uri"))
+            .ok_or(crate::Error::Any {
+                msg: "failed to parse source uri".to_owned(),
+            })
     }
 }
 
@@ -64,7 +72,7 @@ impl Default for SourceUri {
 }
 
 impl TransformsValues for SourceUri {
-    fn transforms_values<F>(&self, render: &F) -> Result<Self, Error>
+    fn transforms_values<F>(&self, render: &F) -> Result<Self>
     where
         F: Fn(&str) -> String,
     {

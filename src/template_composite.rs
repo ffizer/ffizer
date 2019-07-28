@@ -6,8 +6,8 @@ use crate::template_cfg::Variable;
 use crate::transform_values::TransformsValues;
 use crate::ChildPath;
 use crate::Ctx;
+use crate::Result;
 use crate::Variables;
-use failure::Error;
 use handlebars_misc_helpers::new_hbs;
 use hashbrown::HashMap;
 use hashbrown::HashSet;
@@ -23,7 +23,7 @@ impl TemplateComposite {
         variables: &Variables,
         offline: bool,
         src: &SourceLoc,
-    ) -> Result<TemplateComposite, Error> {
+    ) -> Result<TemplateComposite> {
         let mut templates = HashMap::new();
         deep_download(ctx, variables, offline, src, &mut templates)?;
         let layers = templates
@@ -51,7 +51,7 @@ impl TemplateComposite {
         back
     }
 
-    pub fn find_childpaths(&self) -> Result<Vec<ChildPath>, Error> {
+    pub fn find_childpaths(&self) -> Result<Vec<ChildPath>> {
         let mut back = vec![];
         let mut relatives = HashSet::new();
         for layer in &self.layers {
@@ -91,7 +91,7 @@ fn deep_download(
     offline: bool,
     src: &SourceLoc,
     templates: &mut HashMap<SourceLoc, TemplateCfg>,
-) -> Result<(), Error> {
+) -> Result<()> {
     if !templates.contains_key(src) {
         let template_base_path = &src.download(offline)?;
         // update cfg with variables defined by user
@@ -116,8 +116,8 @@ fn render_cfg(
     template_cfg: &TemplateCfg,
     variables: &Variables,
     log_warning: bool,
-) -> Result<TemplateCfg, Error> {
-    let handlebars = new_hbs()?;
+) -> Result<TemplateCfg> {
+    let handlebars = new_hbs();
     let render = |v: &str| {
         let r = handlebars.render_template(v, variables);
         match r {

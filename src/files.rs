@@ -1,6 +1,6 @@
 use crate::path_pattern::PathPattern;
-use failure::format_err;
-use failure::Error;
+use crate::Error;
+use crate::Result;
 use std::path::Path;
 use std::path::PathBuf;
 use walkdir::WalkDir;
@@ -28,17 +28,23 @@ pub fn is_ffizer_handlebars(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
-pub fn remove_special_suffix(path: &Path) -> Result<PathBuf, Error> {
+pub fn remove_special_suffix(path: &Path) -> Result<PathBuf> {
     match path.file_name().and_then(|s| s.to_str()) {
         None => Ok(path.to_path_buf()),
         Some(v) => {
             let file_name = if v.ends_with(FILEEXT_HANDLEBARS) {
-                v.get(..v.len() - FILEEXT_HANDLEBARS.len()).ok_or_else(|| {
-                    format_err!("failed to remove {} from file_name", FILEEXT_HANDLEBARS)
-                })?
+                v.get(..v.len() - FILEEXT_HANDLEBARS.len()).ok_or(
+                    Error::FailToRemoveFromFileName {
+                        fragment: FILEEXT_HANDLEBARS.to_owned(),
+                        file_name: v.to_owned(),
+                    },
+                )?
             } else if v.ends_with(FILEEXT_RAW) {
                 v.get(..v.len() - FILEEXT_RAW.len())
-                    .ok_or_else(|| format_err!("failed to remove {} from file_name", FILEEXT_RAW))?
+                    .ok_or(Error::FailToRemoveFromFileName {
+                        fragment: FILEEXT_RAW.to_owned(),
+                        file_name: v.to_owned(),
+                    })?
             } else {
                 v
             };

@@ -35,7 +35,15 @@ pub fn ask_variables(
         // TODO optimize to reduce clones
         for variable in list_variables.iter().cloned() {
             let name = variable.name;
-            let value: String = {
+            let value: String = if variable.hidden {
+                if let Some(default_value) = variable.default_value {
+                    handlebars
+                        .render_template(&default_value, &variables)
+                        .context(crate::Handlebars {})?
+                } else {
+                    "".to_owned()
+                }
+            } else {
                 let mut input = Input::new();
                 if let Some(default_value) = variable.default_value {
                     let default = handlebars

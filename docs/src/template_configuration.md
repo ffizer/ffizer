@@ -22,9 +22,10 @@ ignores:
 List the variables usable into the `.ffizer.hbs` template file.
 Variables are defined by:
 
-- `name`: (required) the name of the variable
-- `default_value`: a suggested value, the value is a string and support `hbs` templating
-- `ask`: the sentence use to prompt user to set the value of the variable
+- `name`: (required) the name of the variable.
+- `default_value`: a suggested value, the value is a string and support `hbs` templating.
+- `ask`: the sentence use to prompt user to set the value of the variable.
+- `hidden`: the variable is not shown to the user, the value is set to default_value. Could be useful to cache shared (structured) value. (default to false)
 
 Variables definition are prompt in the order of the list, and with the prompt defined by `ask` (if defined, else `name`)
 

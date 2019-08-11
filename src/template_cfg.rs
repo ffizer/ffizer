@@ -28,6 +28,8 @@ pub struct Variable {
     pub default_value: Option<String>,
     /// sentence to ask the value (default to the name on variable)
     pub ask: Option<String>,
+    /// is the variable hidden to the user (could be usefull to cache shared variable/data)
+    pub hidden: bool,
 }
 
 impl TemplateCfg {

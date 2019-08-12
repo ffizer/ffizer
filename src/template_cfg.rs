@@ -30,6 +30,22 @@ pub struct Variable {
     pub ask: Option<String>,
     /// is the variable hidden to the user (could be usefull to cache shared variable/data)
     pub hidden: bool,
+    /// if non-empty then the value should selected into the list of value
+    pub select_in_values: ValuesForSelection,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(untagged)]
+pub enum ValuesForSelection {
+    Empty,
+    Sequence(Vec<String>),
+    String(String),
+}
+
+impl Default for ValuesForSelection {
+    fn default() -> Self {
+        ValuesForSelection::Empty
+    }
 }
 
 impl TemplateCfg {
@@ -115,6 +131,54 @@ mod tests {
         });
         expected.variables.push(Variable {
             name: "k3".to_owned(),
+            ..Default::default()
+        });
+        let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
+        assert_that!(&actual.variables).is_equal_to(&expected.variables);
+        assert_that!(&actual.use_template_dir).is_false();
+    }
+
+    #[test]
+    fn test_deserialize_cfg_yaml_select() {
+        let cfg_str = r#"
+        variables:
+            - name: k2
+              select_in_values:
+                - vk21
+                - vk22
+            - name: k1
+              select_in_values: [ "vk11", "vk12" ]
+            - name: k3
+              select_in_values: '[ "vk31", "vk32" ]'
+            - name: k4
+              select_in_values: '{{ do_stuff }}'
+        "#;
+
+        let mut expected = TemplateCfg::default();
+        expected.variables.push(Variable {
+            name: "k2".to_owned(),
+            select_in_values: ValuesForSelection::Sequence(vec![
+                "vk21".to_owned(),
+                "vk22".to_owned(),
+            ]),
+            ..Default::default()
+        });
+        expected.variables.push(Variable {
+            name: "k1".to_owned(),
+            select_in_values: ValuesForSelection::Sequence(vec![
+                "vk11".to_owned(),
+                "vk12".to_owned(),
+            ]),
+            ..Default::default()
+        });
+        expected.variables.push(Variable {
+            name: "k3".to_owned(),
+            select_in_values: ValuesForSelection::String("[ \"vk31\", \"vk32\" ]".to_owned()),
+            ..Default::default()
+        });
+        expected.variables.push(Variable {
+            name: "k4".to_owned(),
+            select_in_values: ValuesForSelection::String("{{ do_stuff }}".to_owned()),
             ..Default::default()
         });
         let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();

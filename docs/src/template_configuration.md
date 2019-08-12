@@ -26,6 +26,21 @@ Variables are defined by:
 - `default_value`: a suggested value, the value is a string and support `hbs` templating.
 - `ask`: the sentence use to prompt user to set the value of the variable.
 - `hidden`: the variable is not shown to the user, the value is set to default_value. Could be useful to cache shared (structured) value. (default to false)
+- `select_in_values`: for non-empty list, ask the user to select a value in the list. The list can be a regular yaml list or a string (evaluated as a yaml list of string). `default_value` could be combined to pre-select a value in the list. After selection a second variable with same name plus suffix `__idx` is set with the index of the selected value in the list.
+
+  ```yaml
+          variables:
+            - name: k2
+              select_in_values:
+                - vk21
+                - vk22
+            - name: k1
+              select_in_values: [ "vk11", "vk12" ]
+            - name: k3
+              select_in_values: '[ "vk31", "vk32" ]'
+            - name: k4
+              select_in_values: '{{ do_stuff }}'
+  ```
 
 Variables definition are prompt in the order of the list, and with the prompt defined by `ask` (if defined, else `name`)
 

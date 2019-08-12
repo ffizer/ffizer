@@ -1,4 +1,5 @@
 use crate::cli_opt::*;
+use crate::template_cfg::ValuesForSelection;
 use crate::template_cfg::Variable;
 use crate::Result;
 use crate::{Action, Ctx, Variables};
@@ -6,6 +7,7 @@ use console::Style;
 use console::Term;
 use dialoguer::Confirmation;
 use dialoguer::Input;
+use dialoguer::Select;
 use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use slog::debug;
@@ -22,6 +24,17 @@ fn write_title(s: &str) -> Result<()> {
     Ok(())
 }
 
+pub struct VariableResponse {
+    value: String,
+    idx: Option<usize>,
+}
+
+pub struct VariableRequest {
+    prompt: String,
+    default_value: Option<VariableResponse>,
+    values: Vec<String>,
+}
+
 pub fn ask_variables(
     ctx: &Ctx,
     list_variables: &[Variable],
@@ -30,57 +43,97 @@ pub fn ask_variables(
     let mut variables = Variables::new();
     variables.append(&mut init);
     let handlebars = new_hbs();
-    if !ctx.cmd_opt.x_always_default_value {
-        write_title("Configure variables")?;
-        // TODO optimize to reduce clones
-        for variable in list_variables.iter().cloned() {
-            let name = variable.name;
-            let value: String = if variable.hidden {
-                if let Some(default_value) = variable.default_value {
-                    handlebars
-                        .render_template(&default_value, &variables)
-                        .context(crate::Handlebars {})?
-                } else {
-                    "".to_owned()
-                }
-            } else {
-                let mut input = Input::new();
-                if let Some(default_value) = variable.default_value {
-                    let default = handlebars
-                        .render_template(&default_value, &variables)
-                        .context(crate::Handlebars {})?;
-                    input.default(default);
-                }
-                let prompt = if variable.ask.is_some() {
-                    let ask = variable.ask.expect("variable ask should defined");
-                    handlebars
-                        .render_template(&ask, &variables)
-                        .context(crate::Handlebars {})?
-                } else {
-                    name.clone()
-                };
-                // TODO manage error
-                input
-                    .with_prompt(&prompt)
-                    .interact()
-                    .context(crate::Io {})?
-            };
-            variables.insert(name, value);
-        }
-    } else {
-        for variable in list_variables {
-            let name = variable.name.clone();
-            let value = if let Some(default_value) = &variable.default_value {
+    write_title("Configure variables")?;
+    // TODO optimize to reduce clones
+    for variable in list_variables.iter().cloned() {
+        let name = variable.name;
+        let request = {
+            let prompt = if variable.ask.is_some() {
+                let ask = variable.ask.expect("variable ask should defined");
                 handlebars
-                    .render_template(&default_value, &variables)
+                    .render_template(&ask, &variables)
                     .context(crate::Handlebars {})?
             } else {
-                "".to_owned()
+                name.clone()
             };
-            variables.insert(name, value);
+            let values: Vec<String> = match variable.select_in_values {
+                ValuesForSelection::Empty => vec![],
+                ValuesForSelection::Sequence(v) => v.clone(),
+                ValuesForSelection::String(s) => {
+                    let s_evaluated = handlebars
+                        .render_template(&s, &variables)
+                        .context(crate::Handlebars {})?;
+                    let s_values: Vec<String> =
+                        serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
+                    //dbg!(&s_values);
+                    s_values
+                }
+            };
+            let default_value = variable
+                .default_value
+                .and_then(|default_value| {
+                    handlebars
+                        .render_template(&default_value, &variables)
+                        //TODO better manage error
+                        .context(crate::Handlebars {})
+                        .ok()
+                })
+                .map(|value| {
+                    let idx = values
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(i, v)| if v == &value { Some(i) } else { None })
+                        .nth(0);
+                    VariableResponse { value, idx }
+                });
+            VariableRequest {
+                prompt,
+                values,
+                default_value,
+            }
+        };
+        let resp = if variable.hidden || ctx.cmd_opt.x_always_default_value {
+            request.default_value.unwrap_or(VariableResponse {
+                value: "".to_owned(),
+                idx: None,
+            })
+        } else {
+            ask_variable_value(request)?
+        };
+        if let Some(idx) = resp.idx {
+            variables.insert(format!("{}__idx", name), idx.to_string());
         }
+        variables.insert(name, resp.value);
     }
     Ok(variables)
+}
+
+pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
+    if req.values.is_empty() {
+        let mut input = Input::new();
+        if let Some(default_value) = req.default_value {
+            input.default(default_value.value);
+        }
+        let value = input
+            .with_prompt(&req.prompt)
+            .interact()
+            .context(crate::Io {})?;
+        Ok(VariableResponse { value, idx: None })
+    } else {
+        let mut input = Select::new();
+        input
+            .with_prompt(&req.prompt)
+            .items(&req.values)
+            .paged(true);
+        if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
+            input.default(default_value.clone());
+        }
+        let idx = input.interact().context(crate::Io {})?;
+        Ok(VariableResponse {
+            value: req.values[idx].clone(),
+            idx: Some(idx),
+        })
+    }
 }
 
 //TODO add flag to filter display: all, changes, none

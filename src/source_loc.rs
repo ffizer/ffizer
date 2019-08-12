@@ -69,7 +69,7 @@ impl SourceLoc {
         }
         if !path.exists() {
             Err(crate::Error::LocalPathNotFound {
-                path: path.into(),
+                path,
                 uri: self.uri.raw.clone(),
                 subfolder: self.subfolder.clone(),
             })

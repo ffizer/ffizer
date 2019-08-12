@@ -126,7 +126,7 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
             .items(&req.values)
             .paged(true);
         if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
-            input.default(default_value.clone());
+            input.default(default_value);
         }
         let idx = input.interact().context(crate::Io {})?;
         Ok(VariableResponse {

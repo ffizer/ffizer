@@ -4,8 +4,6 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Built-in Variables - ffizer</title>
-        
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,7 +56,7 @@
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script type="text/javascript">
             var theme;
-            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = default_theme; }
             document.body.className = theme;
             document.querySelector('html').className = theme + ' js';
@@ -77,10 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li><a href="template_authoring.html"><strong aria-hidden="true">1.</strong> Template Authoring</a></li><li><ol class="section"><li><a href="template_in_5min.html"><strong aria-hidden="true">1.1.</strong> 5 minutes tutorial</a></li><li><a href="template_configuration.html"><strong aria-hidden="true">1.2.</strong> Configuration</a></li><li><a href="builtin_variables.html" class="active"><strong aria-hidden="true">1.3.</strong> Built-in Variables</a></li><li><a href="builtin_functions.html"><strong aria-hidden="true">1.4.</strong> Built-in Functions</a></li></ol></li></ol>
-            </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <ol class="chapter"><li><a href="template_authoring.html"><strong aria-hidden="true">1.</strong> Template Authoring</a></li><li><ol class="section"><li><a href="template_in_5min.html"><strong aria-hidden="true">1.1.</strong> 5 minutes tutorial</a></li><li><a href="template_configuration.html"><strong aria-hidden="true">1.2.</strong> Configuration</a></li><li><a href="builtin_variables.html" class="active"><strong aria-hidden="true">1.3.</strong> Built-in Variables</a></li><li><a href="builtin_functions.html"><strong aria-hidden="true">1.4.</strong> Built-in Functions</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -110,7 +105,7 @@
                             
                         </div>
 
-                        <h1 class="menu-title">ffizer</h1>
+                        <h1 class="menu-title">ffizer</h1> 
 
                         <div class="right-buttons">
                             <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -145,7 +140,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#the-predefined-variables" id="the-predefined-variables">The predefined variables</a></h1>
+                        <a class="header" href="#the-predefined-variables" id="the-predefined-variables"><h1>The predefined variables</h1></a>
 <p>Some variables are predefined and they can be used into <code>.ffizer.yaml</code> into the <code>ignores</code> section or <code>default_value</code> via handlebars expression.</p>
 <ul>
 <li><code>ffizer_dst_folder</code> contains the value from cli arg <code>--destination</code></li>
@@ -195,21 +190,6 @@
 
         </div>
 
-        
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            var socket = new WebSocket("ws://localhost:3001");
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload(true); // force reload from server (not from cache)
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
         
 
         

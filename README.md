@@ -1,108 +1,77 @@
-# ffizer
+# ffizer <!-- omit in toc -->
 
 <!-- copy badges from:
-- [repostatus.org](https://www.repostatus.org/#active)
-- [Shields.io: Quality metadata badges for open source projects](https://shields.io/#/)
+- [`repostatus.org`](https://www.repostatus.org/#active)
+- [`Shields.io`: Quality metadata badges for open source projects](https://shields.io/#/)
 -->
 
-[![Crates.io](https://img.shields.io/crates/l/ffizer.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
-[![Crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
+[![crates.io](https://img.shields.io/crates/l/ffizer.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
+[![crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Build Status](https://dev.azure.com/ffizer/ffizer/_apis/build/status/ffizer.ffizer)](https://dev.azure.com/ffizer/ffizer/_build/latest)
 [![codecov](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
-
 
 [![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
 ![GitHub All Releases](https://img.shields.io/github/downloads/ffizer/ffizer/total.svg)
 
 ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
 
-keywords: file generator, project template, project scaffolding, quickstart, project initializer, project skeleton
+keywords: file generator, project template, project scaffolding, quick start, project initializer, project skeleton
 
-<!-- TOC -->
+- [Features](#features)
+- [Usages](#usages)
+  - [Install](#install)
+    - [via homebrew](#via-homebrew)
+    - [via github releases](#via-github-releases)
+    - [via cargo](#via-cargo)
+  - [Run](#run)
+    - [Self upgrade the executable](#self-upgrade-the-executable)
+    - [Apply a template](#apply-a-template)
+  - [Authoring a template](#authoring-a-template)
+- [Templates](#templates)
+- [Build](#build)
+- [Alternatives](#alternatives)
+  - [Generic](#generic)
+  - [Specialized](#specialized)
 
-- [ffizer](#ffizer)
-  - [Motivations](#motivations)
-    - [Main features](#main-features)
-    - [Sub features](#sub-features)
-  - [Limitations](#limitations)
-  - [Usages](#usages)
-    - [Install](#install)
-      - [via homebrew](#via-homebrew)
-      - [via github releases](#via-github-releases)
-      - [via cargo](#via-cargo)
-    - [Run](#run)
-      - [Self upgrade the executable](#self-upgrade-the-executable)
-      - [Apply a template](#apply-a-template)
-    - [Authoring a template](#authoring-a-template)
-  - [Templates](#templates)
-  - [Build](#build)
-  - [Alternatives](#alternatives)
-    - [Generic](#generic)
-    - [Specialized](#specialized)
+## Features
 
-<!-- /TOC -->
+- A native executable (cli)
+  - Install via download a standalone single file on system (no pre-requirements like `python`, `ruby`, `nodejs`, `java`, ...).
+  - Run as fast enough project generator.
+  - Run with dry mode (useful to test).
+  - Support self-upgrade.
+- A rust library
+  - Can be included into other tool
+- Templates Authoring
+  - Can be used for any file & folder generation (no specialization to one ecosystem).
+  - Can start as simple as a folder to copy "as is".
+  - Can use the [Handlebars] template syntax for file content, extended with functions:
+    - To transform strings (toUpperCase, toLowerCase, Capitalize,...)
+    - To retrieve content via http get (eg `gitignore` from [`gitignore.io`](https://gitignore.io), license from spdx)
+    - ...
+  - Can replace variables part in file and folder's name
+  - Can be composed of other templates (applied as layer)
+  - Can ignore file / folder under conditions
+  - Can store the content at the root of the folder or under the subfolder `template`
+- Templates Hosting[X] template hosted as
+  - On a local folder
+  - On a hosted git repository (public / private, github / bitbucket/ gitlab / ...)
+    - At the root of the repository
+    - In a subfolder of the repository
+    - In any revision (branch, tag, commit)
 
-<a id="markdown-motivations" name="motivations"></a>
-## Motivations
+[Suggestions are welcomes](https://github.com/ffizer/ffizer/issues/) ;-)
 
-<a id="markdown-main-features" name="main-features"></a>
-### Main features
-
-- [X] project generator as a standalone executable (no shared/system dependencies (so no python + pip + ...))
-- [X] a simple and generic project template (no specialisation to one ecosystem)
-- [X] template as simple as possible, like a
-  - [X] copy or clone with file/folder renames without overwrite
-  - [X] few search and replace into file
-- [X] template hosted as a local folder on the file system
-- [X] template hosted as a git repository on any host (not only public github)
-  - [X] at root of the repository
-  - [X] in subfolder of the repository
-  - [X] in any revision (branch, tag, commit)
-- [X] template composed of other template
-  - [X] composite template are regular standalone template
-  - [X] composite template can be apply at root folder
-- [X] a fast enough project generator
-
-<a id="markdown-sub-features" name="sub-features"></a>
-### Sub features
-
-- [X] dry mode (usefull to test)
-- [ ] chain commands (eg: 'git init') (like a post-hook)
-  - [ ] raw command
-- [ ] composite template include under conditions
-- [X] file / folder ignored under conditions (ignores'item in ffizer.yaml are defined as handlerbar expression)
-- [X] template's content can be stored under the subfolder `template`
-- [X] handlebars helpers
-  - [X] transform strings (toUpperCase, toLowerCase, Capitelize,...)
-  - [X] render content of GET url
-  - [X] render content from https://gitignore.io
-- [ ] ability to update / diff / overwrite existing file
-- [X] can be used as a cli or as a lib
-- [ ] suggestions welcomes ;-)
-
-<a id="markdown-limitations" name="limitations"></a>
-## Limitations
-
-Some of the following limitations could change in the future (depends on gain/loss):
-
-- no conditionals file or folder creation
-- no framework X dedicated features
-- no plugin and not extensible (without change the code)
-- handlebars is the only template language supported (support for other is welcome)
-
-<a id="markdown-usages" name="usages"></a>
 ## Usages
 
-<a id="markdown-install" name="install"></a>
 ### Install
 
 ```sh
 curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | sh
 ```
 
-<a id="markdown-via-homebrew" name="via-homebrew"></a>
 #### via homebrew
 
 ```sh
@@ -111,19 +80,16 @@ brew install ffizer-bin
 ffizer upgrade
 ```
 
-<a id="markdown-via-github-releases" name="via-github-releases"></a>
 #### via github releases
 
 Download the binary for your platform from [github releases](https://github.com/ffizer/ffizer/releases), then unarchive it and place it your PATH.
 
-<a id="markdown-via-cargo" name="via-cargo"></a>
 #### via cargo
 
 ```sh
 cargo install ffizer
 ```
 
-<a id="markdown-run" name="run"></a>
 ### Run
 
 ```txt
@@ -147,7 +113,6 @@ SUBCOMMANDS:
     upgrade    Self upgrade ffizer executable
 ```
 
-<a id="markdown-self-upgrade-the-executable" name="self-upgrade-the-executable"></a>
 #### Self upgrade the executable
 
 ```sh
@@ -165,7 +130,6 @@ FLAGS:
     -V, --version    Prints version information
 ```
 
-<a id="markdown-apply-a-template" name="apply-a-template"></a>
 #### Apply a template
 
 ```sh
@@ -229,12 +193,10 @@ OPTIONS:
       - copyraw "my_project/file_6.hbs"
     ```
   
-<a id="markdown-authoring-a-template" name="authoring-a-template"></a>
 ### Authoring a template
 
 see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_authoring.html) *WIP*
 
-<a id="markdown-templates" name="templates"></a>
 ## Templates
 
 - [ffizer/templates_default: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
@@ -247,7 +209,6 @@ templates_default)
   - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
   - [ffizer/template_sample: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
 
-<a id="markdown-build" name="build"></a>
 ## Build
 
 ```sh
@@ -255,7 +216,7 @@ cargo install cargo-make --force
 cargo make ci-flow
 ```
 
-Update [CHANGELOG.md](./CHANGELOG.md)
+Update [`CHANGELOG.md`](./CHANGELOG.md)
 
 ```sh
 cargo make update-changelog
@@ -270,10 +231,8 @@ cargo make publish -- patch --dry-run
 cargo make publish -- patch
 ```
 
-<a id="markdown-alternatives" name="alternatives"></a>
 ## Alternatives
 
-<a id="markdown-generic" name="generic"></a>
 ### Generic
 
 - [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
@@ -283,7 +242,6 @@ cargo make publish -- patch
 - [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
 - [porteurbars](https://crates.io/crates/porteurbars), very similar but I discovered it too late.
 
-<a id="markdown-specialized" name="specialized"></a>
 ### Specialized
 
 specialized to a platform, build tool,...
@@ -291,6 +249,6 @@ specialized to a platform, build tool,...
 - [The web's scaffolding tool for modern webapps | Yeoman](http://yeoman.io/), nodejs ecosystem
 - [JHipster - Generate your Spring Boot + Angular/React applications!](https://www.jhipster.tech/) require java, dedicated to java web ecosystem, optionnated template (not generic)
 - [Giter8](http://www.foundweekends.org/giter8/) require java + [Conscript](http://www.foundweekends.org/conscript/index.html)
-- [Typesafe activator](https://developer.lightbend.com/start/), require java, target scala ecosystem
+- [Typesafe activator](https://developer.lightbend.com/start/), require java, target Scala ecosystem
 - [Maven – Archetypes](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, target maven ecosystem
 - [cargo-generate](https://github.com/ashleygwilliams/cargo-generate), limited capabilities, target rust/cargo ecosystem

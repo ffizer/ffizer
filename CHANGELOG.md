@@ -3,6 +3,161 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+### Added
+- ✨  add support of select (combobox) for variable's value
+- ✨  (variables) allow variable to be hidden
+
+### Changed
+- 👽  update code to match change in self_update
+- ⬆️  Bump self_update from 0.5.1 to 0.6.0
+- ⬆️  Bump hashbrown from 0.5.0 to 0.6.0
+- ⬆️  Bump libc from 0.2.60 to 0.2.61
+- 🚨  (clippy) apply some suggestion
+- ⬆️  Bump handlebars_misc_helpers from 0.3.0 to 0.5.0
+- ⬆️  Bump snafu from 0.4.3 to 0.4.4
+- ⬆️  Bump regex from 1.2.0 to 1.2.1
+- ⬆️  Bump test-generator from 0.2.2 to 0.3.0
+- ⬆️  Bump git2 from 0.9.1 to 0.9.2
+- ⬆️  Bump slog from 2.5.1 to 2.5.2
+- ⬆️  Bump regex from 1.1.9 to 1.2.0
+- ⬆️  Bump openssl from 0.10.23 to 0.10.24
+
+### Breaking changes
+- 💥  change error handling, move from `failure` to  `std::error::Error` and `snafu`
+
+### Fixed
+- ✏️  README fix syntax to be readable by crates.io
+
+### Miscellaneous
+- 📝  (README) rework the features section
+- 📝  (crates) update categories
+- 🚧  (cargo-release) start next development iteration 1.2.1-dev
+
+<a name="1.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.2.0
+
+### Added
+- ✨  allow template content to be into a subfolder `template` #79
+- ➕  use hashbrown (like handlebars) to replace std BTreeMap, HashMap, HashSet
+
+### Changed
+- ♻️  use handlebars helpers externalized into handlebars_misc_helpers
+- ♻️  move handlebars/hbs into a module folder and split into submodules
+- 🚨  remove unused code
+- 🔧  limit dependencies only used by cli
+- ⬆️  Bump libc from 0.2.59 to 0.2.60
+- ⬆️  Bump serde from 1.0.94 to 1.0.97
+- ⬆️  Bump handlebars from 2.0.0 to 2.0.1
+- ⬆️  Bump slog from 2.4.1 to 2.5.1
+- ⬆️  Bump slog-term from 2.4.0 to 2.4.1
+
+### Fixed
+- 🐛  adjust version of dependencies to existing value
+- ✏️  fix typo in badge
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.2.0
+- 📝  update book
+- 📝  README update list of templates
+- 🚧  (cargo-release) start next development iteration 1.1.1-dev
+
+<a name="1.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.1.0
+
+### Changed
+- ⬆️  Bump git2 from 0.8.0 to 0.9.1 &amp; git2_credentials from 0.2.0 to 0.3.0
+- ⬆️  Bump libc from 0.2.58 to 0.2.59
+- ⬆️  :lock: Bump libflate from 0.1.21 to 0.1.25
+- ⬆️  Bump regex from 1.1.8 to 1.1.9
+- ⬆️  Bump regex from 1.1.7 to 1.1.8
+- ⬆️  :lock: Bump smallvec from 0.6.9 to 0.6.10
+- ⬆️  Bump handlebars from 2.0.0-beta.3 to 2.0.0
+- ⬆️  Bump tempfile from 3.0.9 to 3.1.0
+- ⬆️  Bump tempfile from 3.0.8 to 3.0.9
+- ⬆️  Bump serde from 1.0.93 to 1.0.94
+- ⬆️  Bump globset from 0.4.3 to 0.4.4
+- ⬆️  Bump structopt from 0.2.17 to 0.2.18
+- ⬆️  Bump handlebars from 2.0.0-beta.2 to 2.0.0-beta.3
+- ⬆️  Bump serde from 1.0.92 to 1.0.93
+- ⬆️  Bump console from 0.7.6 to 0.7.7
+- ⬆️  Bump console from 0.7.5 to 0.7.6
+- ⬆️  Bump regex from 1.1.6 to 1.1.7
+- ⬆️  Bump walkdir from 2.2.7 to 2.2.8
+- ⬆️  Bump reqwest from 0.9.17 to 0.9.18
+- ⬆️  Bump serde from 1.0.91 to 1.0.92
+- ⬆️  Bump structopt from 0.2.16 to 0.2.17
+- ⬆️  Bump libc from 0.2.55 to 0.2.58
+- ⬆️  Bump directories from 2.0.0 to 2.0.1
+- ⬆️  Bump structopt from 0.2.15 to 0.2.16
+- ⬆️  Bump directories from 1.0.2 to 2.0.0
+- ⬆️  Bump tempfile from 3.0.7 to 3.0.8
+- ⬆️  Bump openssl from 0.10.22 to 0.10.23
+- ⬆️  Bump libc from 0.2.54 to 0.2.55
+- ⬆️  Bump dialoguer from 0.3.0 to 0.4.0
+- ⬆️  Bump reqwest from 0.9.16 to 0.9.17
+- ⬆️  Bump openssl from 0.10.21 to 0.10.22
+
+### Fixed
+- 🐛  fix Cargo warning about exclude
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.1.0
+- 🚧  (cargo-release) start next development iteration 1.0.1-dev
+
+<a name="1.0.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.0.0
+
+### Added
+- ➕  use git2_credentials (extract of existing code)
+- ✅  (ci) enable test_remote on ci build
+
+### Changed
+- ⬆️  Bump serde from 1.0.90 to 1.0.91
+- ⬆️  Bump git2_credentials from 0.1.1 to 0.2.0
+- ⬆️  Bump openssl from 0.10.20 to 0.10.21
+- ⬆️  Bump reqwest from 0.9.15 to 0.9.16
+- ⬆️  Bump serde_yaml from 0.8.8 to 0.8.9
+- ⬆️  Bump libc from 0.2.53 to 0.2.54
+- ⬆️  Bump libc from 0.2.51 to 0.2.53
+- ⬆️  Bump regex from 1.1.5 to 1.1.6
+- ⬆️  Bump globset from 0.4.2 to 0.4.3
+- ⬆️  Bump reqwest from 0.9.14 to 0.9.15
+- ⬆️  Bump reqwest from 0.9.13 to 0.9.14
+- ⬆️  Bump handlebars from 2.0.0-beta.1 to 2.0.0-beta.2
+- ⬆️  Bump serde from 1.0.89 to 1.0.90
+- ⬆️  Bump reqwest from 0.9.12 to 0.9.13
+- ⬆️  Bump regex from 1.1.2 to 1.1.5
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.0.0
+- 🚧  (build) prepare 1.0.0
+- 📝  (README) update build instruction
+- 🚧  (cargo-release) start next development iteration 0.12.2-dev
+
+<a name="0.12.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.12.1
+
+### Changed
+- ⬆️  Bump assert_cmd from 0.11.0 to 0.11.1
+
+### Removed
+- 🔇  remove xdb! call
+- 🔥  (ci) remove travis configuration
+- 🔇  (ci) remove verbose mode during github-upload-flow
+
+### Fixed
+- ✏️  fix typo in log
+- 🐛  report error (instead of crash) when error during computation of rendered path
+- 🐛  fix the folder use to clone when subfolder is defined (cause by refactor)
+
+### Miscellaneous
+- 🚀  (cargo-release) version 0.12.1
+- 📝  (docs) add information about template_configuration
+- 🚧  (cargo-release) start next development iteration 0.12.1-dev
+
+<a name="0.12.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 0.12.0
+
 ### Changed
 - ⬆️  Bump reqwest from 0.9.11 to 0.9.12
 
@@ -10,6 +165,8 @@
 - 🐛  (git) fix authentication via ssh, https
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 0.12.0
+- 📝  (CHANGELOG) update
 - ⚗  (ci) update github-upload task to not failed on error during release creation
 - 🚧  (cargo-release) start next development iteration 0.11.4-dev
 

@@ -23,9 +23,9 @@ fn init_log(level_min: slog::Level) -> slog::Logger {
 }
 
 fn upgrade(logger: slog::Logger) -> Result<(), Box<dyn Error>> {
-    let target = self_update::get_target()?;
+    let target = self_update::get_target();
     // TODO extract repo info from CARGO_PKG_REPOSITORY
-    let status = self_update::backends::github::Update::configure()?
+    let status = self_update::backends::github::Update::configure()
         .repo_owner("ffizer")
         .repo_name("ffizer")
         .target(&target)

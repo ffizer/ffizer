@@ -87,7 +87,7 @@ Download the binary for your platform from [github releases](https://github.com/
 #### via cargo
 
 ```sh
-cargo install ffizer
+cargo install ffizer --force --features cli
 ```
 
 ### Run

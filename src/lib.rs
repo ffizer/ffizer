@@ -152,7 +152,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
 
     let pb = ProgressBar::new(actions.len() as u64);
     let handlebars = new_hbs();
-    debug!(ctx.logger, "execute"; "variables" => format!("{:?}", variables));
+    debug!(ctx.logger, "execute"; "variables" => ?&variables);
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {

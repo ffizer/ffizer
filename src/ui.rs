@@ -139,7 +139,7 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
 //TODO add flag to filter display: all, changes, none
 pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
     write_title("Plan to execute")?;
-    debug!(ctx.logger, "plan"; "actions" => format!("{:?}", actions));
+    debug!(ctx.logger, "plan"; "actions" => ?actions);
     for a in actions {
         let s = format!(
             "   - {} {:?}",

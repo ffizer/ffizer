@@ -93,7 +93,7 @@ fn deep_download(
     templates: &mut HashMap<SourceLoc, TemplateCfg>,
 ) -> Result<()> {
     if !templates.contains_key(src) {
-        let template_base_path = &src.download(offline)?;
+        let template_base_path = &src.download(ctx, offline)?;
         // update cfg with variables defined by user
         let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
         // update cfg with variables defined by cli (use to update default_value)
@@ -124,7 +124,7 @@ fn render_cfg(
             Ok(s) => s,
             Err(e) => {
                 if log_warning {
-                    warn!(ctx.logger, "failed to convert"; "input" => v, "error" => format!("{:?}", e))
+                    warn!(ctx.logger, "failed to convert"; "input" => ?v, "error" => ?e)
                 }
                 v.into()
             }

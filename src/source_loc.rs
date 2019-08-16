@@ -6,6 +6,8 @@ use snafu::ResultExt;
 use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use crate::Ctx;
+use slog::warn;
 
 #[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
@@ -54,13 +56,13 @@ impl SourceLoc {
         Ok(cache_uri)
     }
 
-    pub fn download(&self, offline: bool) -> Result<PathBuf> {
+    pub fn download(&self, ctx: &Ctx, offline: bool) -> Result<PathBuf> {
         let path = self.as_local_path()?;
         if !offline && self.uri.host.is_some() {
-            let remote_folder = self.remote_as_local()?;
-            if let Err(v) = git::retrieve(&remote_folder, &self.uri.raw, &self.rev) {
+            if let Err(v) = git::retrieve(&path, &self.uri.raw, &self.rev) {
+                warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&path, "error" => ?&v);
                 if path.exists() {
-                    fs::remove_dir_all(remote_folder).context(crate::RemoveFolder {
+                    fs::remove_dir_all(&path).context(crate::RemoveFolder {
                         path: path.to_path_buf(),
                     })?;
                 }

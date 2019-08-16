@@ -4,7 +4,7 @@ use ffizer::Command;
 use ffizer::Ctx;
 use self_update;
 use slog::Drain;
-use slog::{debug, info, o, trace};
+use slog::{debug, info, o, trace, error};
 use std::error::Error;
 use structopt::StructOpt;
 
@@ -35,7 +35,7 @@ fn upgrade(logger: slog::Logger) -> Result<(), Box<dyn Error>> {
         .current_version(env!("CARGO_PKG_VERSION"))
         .build()?
         .update()?;
-    info!(logger, "upgrade"; "status" => status.version());
+    info!(logger, "success"; "status" => status.version());
     Ok(())
 }
 
@@ -45,16 +45,19 @@ fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>>
     Ok(())
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() {
     human_panic::setup_panic!();
     let cli_opts = CliOpts::from_args();
 
     let log_level = slog::Level::from_usize(3 + cli_opts.verbose).unwrap_or(slog::Level::Warning);
     let logger = init_log(log_level);
-    debug!(logger, "parsed args"; "cmd" => format!("{:?}", &cli_opts));
+    debug!(logger, "parsed args"; "cmd" => ?&cli_opts);
 
-    match cli_opts.cmd {
-        Command::Apply(g) => apply(logger, g),
-        Command::Upgrade => upgrade(logger),
+    let r = match &cli_opts.cmd {
+        Command::Apply(g) => apply(logger.new(o!("sub-cmd" => "apply")), g.clone()),
+        Command::Upgrade => upgrade(logger.new(o!("sub-cmd" => "upgrade"))),
+    };
+    if let Err(e) = r {
+        error!(logger, "failed"; "error" => ?&e, "cmd" => ?&cli_opts);
     }
 }

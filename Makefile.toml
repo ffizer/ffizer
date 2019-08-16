@@ -17,6 +17,7 @@ OPENSSL_STATIC="1"
 # OPENSSL_LIB_DIR="/usr/lib64"
 # OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 GITHUB_RELEASE_VERSION="v0.7.2"
+COMMIT_MSG=":memo: pre-publish update book, changelog, bom"
 
 [env.linux]
 GITHUB_RELEASE_PATH="target/bin/linux/amd64"
@@ -91,6 +92,13 @@ script = [
   "gitmoji-changelog -r x.y.z-dev -o CHANGELOG.md .",
 ]
 
+[tasks.update-bom]
+category="Publish"
+install_crate = { crate_name = "cargo-bom", binary = "cargo", test_arg = "bom"}
+script = [
+  "cargo bom > BOM.txt",
+]
+
 [tasks.update-book]
 category="Publish"
 install_crate = {crate_name="mdbook", binary = "mdbook", test_arg = "--help"}
@@ -100,10 +108,14 @@ script = [
   "mdbook build",
 ]
 
-# [tasks.pre-publish]
-# dependencies = [
-#   "update-changelog"
-# ]
+[tasks.pre-publish]
+dependencies = [
+  "update-book",
+  "update-changelog",
+  "update-bom",
+  "git-add",
+  "git-commit-message",
+]
 
 [tasks.publish]
 command = "cargo"

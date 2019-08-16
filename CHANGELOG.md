@@ -3,11 +3,33 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+### Miscellaneous
+- 🔊  add log, refactor call, use log for Err in main
+- 🚧  (cargo-release) start next development iteration 1.3.2-dev
+
+<a name="1.3.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.3.1
+
+### Changed
+- ⬆️  Bump libc from 0.2.61 to 0.2.62
+
+### Fixed
+- 🐛  (README) fix instruction for installation via cargo.
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.3.1
+- 📦  to generate archive without &quot;./&quot; as prefix (to workaround an issue in self_update)
+- 🚧  (cargo-release) start next development iteration 1.3.1-dev
+
+<a name="1.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.3.0
+
 ### Added
 - ✨  add support of select (combobox) for variable's value
 - ✨  (variables) allow variable to be hidden
 
 ### Changed
+- ⬆️  Bump directories from 2.0.1 to 2.0.2
 - 👽  update code to match change in self_update
 - ⬆️  Bump self_update from 0.5.1 to 0.6.0
 - ⬆️  Bump hashbrown from 0.5.0 to 0.6.0
@@ -29,6 +51,9 @@
 - ✏️  README fix syntax to be readable by crates.io
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 1.3.0
+- 📝  (book) update
+- 📝  (CHANGELOG) update
 - 📝  (README) rework the features section
 - 📝  (crates) update categories
 - 🚧  (cargo-release) start next development iteration 1.2.1-dev

@@ -37,6 +37,7 @@ impl SourceLoc {
         Ok(path)
     }
 
+    // the remote_as_local ignore subfolder
     fn remote_as_local(&self) -> Result<PathBuf> {
         let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
         let project_dirs = directories::ProjectDirs::from("com", "github", &app_name)
@@ -57,18 +58,19 @@ impl SourceLoc {
     }
 
     pub fn download(&self, ctx: &Ctx, offline: bool) -> Result<PathBuf> {
-        let path = self.as_local_path()?;
         if !offline && self.uri.host.is_some() {
-            if let Err(v) = git::retrieve(&path, &self.uri.raw, &self.rev) {
-                warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&path, "error" => ?&v);
-                if path.exists() {
-                    fs::remove_dir_all(&path).context(crate::RemoveFolder {
-                        path: path.to_path_buf(),
+            let remote_path = self.remote_as_local()?;
+            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev) {
+                warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
+                if remote_path.exists() {
+                    fs::remove_dir_all(&remote_path).context(crate::RemoveFolder {
+                        path: remote_path.to_path_buf(),
                     })?;
                 }
                 return Err(v);
             }
         }
+        let path = self.as_local_path()?;
         if !path.exists() {
             Err(crate::Error::LocalPathNotFound {
                 path,

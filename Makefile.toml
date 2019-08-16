@@ -67,7 +67,7 @@ script = [
   "strip ${DIST_PATH}/${CARGO_MAKE_CRATE_NAME}",
   # "cp README.md LICENSE* ${OUTPUT_NAME}/",
   # "zip -r ${OUTPUT_NAME}.zip ${OUTPUT_NAME}",
-  "tar -czvf ${DIST_PATH}.${DIST_EXT} -C ${DIST_PATH} ."
+  "tar -czvf ${DIST_PATH}.${DIST_EXT} -C ${DIST_PATH} ${CARGO_MAKE_CRATE_NAME}"
 ]
 
 [tasks.zip-release-binary-for-target.windows]

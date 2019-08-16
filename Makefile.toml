@@ -17,7 +17,6 @@ OPENSSL_STATIC="1"
 # OPENSSL_LIB_DIR="/usr/lib64"
 # OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 GITHUB_RELEASE_VERSION="v0.7.2"
-COMMIT_MSG=":memo: pre-publish update book, changelog, bom"
 
 [env.linux]
 GITHUB_RELEASE_PATH="target/bin/linux/amd64"
@@ -109,6 +108,10 @@ script = [
 ]
 
 [tasks.pre-publish]
+env ={ COMMIT_MSG=":memo: pre-publish update book, changelog, bom" }
+run_task= "update-docs"
+
+[tasks.update-docs]
 dependencies = [
   "update-book",
   "update-changelog",

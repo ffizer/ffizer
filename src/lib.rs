@@ -169,7 +169,10 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                 let dst = fs::File::create(PathBuf::from(&a.dst_path)).context(Io {})?;
                 handlebars
                     .render_template_to_write(&src, variables, dst)
-                    .context(crate::Handlebars {})?;
+                    .context(crate::Handlebars {
+                        when: format!("define content for '{:?}'", &a),
+                        template: src.clone(),
+                    })?;
             }
             _ => (),
         };
@@ -189,7 +192,10 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             let handlebars = new_hbs();
             let p = handlebars
                 .render_template(&s, variables)
-                .context(crate::Handlebars {})?;
+                .context(crate::Handlebars {
+                    when: format!("define path for '{:?}'", src),
+                    template: s.clone(),
+                })?;
             Ok(PathBuf::from(p))
         })?;
     let relative = files::remove_special_suffix(&rendered_relative)?;

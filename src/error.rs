@@ -80,6 +80,8 @@ pub enum Error {
     },
     //HACK
     Handlebars {
+        when: String,
+        template: String,
         source: handlebars::TemplateRenderError,
     },
     //HACK

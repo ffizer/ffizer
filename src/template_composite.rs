@@ -11,7 +11,7 @@ use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
 use hashbrown::HashMap;
 use hashbrown::HashSet;
-use slog::warn;
+use slog::{debug,warn};
 
 pub struct TemplateComposite {
     layers: Vec<(SourceLoc, TemplateCfg)>,
@@ -34,6 +34,7 @@ impl TemplateComposite {
                 (k, v)
             })
             .collect::<Vec<_>>();
+        debug!(ctx.logger, "templates"; "layers" => ?layers.iter().map(|kv| &kv.0).collect::<Vec<_>>());
         Ok(TemplateComposite { layers })
     }
 

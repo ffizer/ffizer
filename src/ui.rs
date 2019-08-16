@@ -52,7 +52,10 @@ pub fn ask_variables(
                 let ask = variable.ask.expect("variable ask should defined");
                 handlebars
                     .render_template(&ask, &variables)
-                    .context(crate::Handlebars {})?
+                    .context(crate::Handlebars {
+                        when: format!("define prompt for '{}'", &name),
+                        template: ask.clone(),
+                    })?
             } else {
                 name.clone()
             };
@@ -62,7 +65,10 @@ pub fn ask_variables(
                 ValuesForSelection::String(s) => {
                     let s_evaluated = handlebars
                         .render_template(&s, &variables)
-                        .context(crate::Handlebars {})?;
+                        .context(crate::Handlebars {
+                            when: format!("define values for '{}'", &name),
+                            template: s.clone(),
+                        })?;
                     let s_values: Vec<String> =
                         serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
                     //dbg!(&s_values);
@@ -75,7 +81,10 @@ pub fn ask_variables(
                     handlebars
                         .render_template(&default_value, &variables)
                         //TODO better manage error
-                        .context(crate::Handlebars {})
+                        .context(crate::Handlebars {
+                            when: format!("define default_value for '{}'", &name),
+                            template: default_value.clone(),
+                        })
                         .ok()
                 })
                 .map(|value| {

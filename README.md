@@ -15,9 +15,9 @@
 [![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
 ![GitHub All Releases](https://img.shields.io/github/downloads/ffizer/ffizer/total.svg)
 
-ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
+`ffizer` is a **f**iles and **f**olders initial**izer** / generator. Create any kind (or part) of project from template(s).
 
-keywords: file generator, project template, project scaffolding, quick start, project initializer, project skeleton
+keywords: file generator, project template, project scaffolding, quick start, project bootstrap, project skeleton
 
 - [Features](#features)
 - [Usages](#usages)
@@ -38,7 +38,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 ## Features
 
 - A native executable (cli)
-  - Install via download a standalone single file on system (no pre-requirements like `python`, `ruby`, `nodejs`, `java`, ...).
+  - Install via download a standalone single file on system (no requirements like `python`, `ruby`, `nodejs`, `java`, ...).
   - Run as fast enough project generator.
   - Run with dry mode (useful to test).
   - Support self-upgrade.
@@ -49,17 +49,17 @@ keywords: file generator, project template, project scaffolding, quick start, pr
   - Can start as simple as a folder to copy "as is".
   - Can use the [Handlebars] template syntax for file content, extended with functions:
     - To transform strings (toUpperCase, toLowerCase, Capitalize,...)
-    - To retrieve content via http get (eg `gitignore` from [`gitignore.io`](https://gitignore.io), license from spdx)
+    - To retrieve content via http get (like `.gitignore` from [`gitignore.io`](https://gitignore.io), license from spdx)
     - ...
   - Can replace variables part in file and folder's name
   - Can be composed of other templates (applied as layer)
   - Can ignore file / folder under conditions
-  - Can store the content at the root of the folder or under the subfolder `template`
-- Templates Hosting[X] template hosted as
+  - Can store the content at the root of the folder or under the sub-folder `template`
+- Templates Hosting
   - On a local folder
-  - On a hosted git repository (public / private, github / bitbucket/ gitlab / ...)
+  - On a hosted git repository (public / private, `github` / `bitbucket`/ `gitlab` / ...)
     - At the root of the repository
-    - In a subfolder of the repository
+    - In a sub-folder of the repository
     - In any revision (branch, tag, commit)
 
 [Suggestions are welcomes](https://github.com/ffizer/ffizer/issues/) ;-)
@@ -82,7 +82,7 @@ ffizer upgrade
 
 #### via github releases
 
-Download the binary for your platform from [github releases](https://github.com/ffizer/ffizer/releases), then unarchive it and place it your PATH.
+Download the binary for your platform from [github releases](https://github.com/ffizer/ffizer/releases), then un-archive it and place it your PATH.
 
 #### via cargo
 
@@ -199,15 +199,15 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
 
 ## Templates
 
-- [ffizer/templates_default: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
-- [davidB31 / cg-starter-multi-rust · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
-- [davidB/templates: repository to host the my collections of templates to used with ffizer.](https://github.com/davidB/templates)
-- github repo tagged [ffizer-template](https://github.com/topics/ffizer-template)
+- [`ffizer/templates_default`: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
+- [`davidB31 / cg-starter-multi-rust` · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
+- [`davidB/templates`: repository to host the my collections of templates to used with ffizer.](https://github.com/davidB/templates)
+- github repo tagged [`ffizer-template`](https://github.com/topics/ffizer-template)
 - samples (used for test, demo)
 templates_default)
   - [test_1](tests/test_1/template)
   - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
-  - [ffizer/template_sample: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
+  - [`ffizer/template_sample`: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
 
 ## Build
 

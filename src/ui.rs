@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+use crate::FileOperation;
 use crate::cli_opt::*;
 use crate::template_cfg::ValuesForSelection;
 use crate::template_cfg::Variable;
@@ -145,15 +147,30 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
     }
 }
 
+fn format_operation(op: &FileOperation) -> Cow<'static, str> {
+    let s = match op {
+        FileOperation::Nothing =>      "do nothing",
+        FileOperation::Ignore =>       "ignore",
+        FileOperation::Keep =>         "keep existing",
+        FileOperation::MkDir =>        "make dir",
+        FileOperation::CopyRaw =>      "copy",
+        FileOperation::CopyRender =>   "render",
+    };
+    console::pad_str(s, 15, console::Alignment::Left, Some("..."))
+}
+
 //TODO add flag to filter display: all, changes, none
 pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
     write_title("Plan to execute")?;
     debug!(ctx.logger, "plan"; "actions" => ?actions);
     for a in actions {
+        let p = a.dst_path.base.join(&a.dst_path.relative);
         let s = format!(
-            "   - {} {:?}",
-            format!("{:?}", a.operation).to_lowercase(),
-            a.dst_path.base.join(&a.dst_path.relative)
+            "   - {} \x1B[38;2;{};{};{}m{}/\x1B[0m{}",
+            format_operation(&a.operation),
+            80,80,80,
+            p.parent().and_then(|v| v.to_str()).unwrap_or(""),
+            p.file_name().and_then(|v| v.to_str()).unwrap_or(""),
         );
         TERM.write_line(&s).context(crate::Io {})?;
     }

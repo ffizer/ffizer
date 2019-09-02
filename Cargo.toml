@@ -31,8 +31,8 @@ serde = { version = "1.0", features = [ "derive"] }
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
 slog = { version = "2.5.2", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
-slog-async = "2.3.0"
-slog-term = "2.4.1"
+slog-async = { version = "2.3.0", optional = true }
+slog-term = { version = "2.4.1", optional = true }
 snafu = "0.5.0"
 structopt = "0.2.18"
 walkdir = "2.2.9"
@@ -68,4 +68,4 @@ codegen-units = 1
 
 [features]
 test_remote = [] # feature has no explicit dependencies
-cli = ["self_update", "human-panic"]
+cli = ["self_update", "human-panic", "slog-async", "slog-term"]

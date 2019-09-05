@@ -3,6 +3,7 @@ use crate::Error;
 use std::path::PathBuf;
 use std::str::FromStr;
 use structopt::StructOpt;
+use structopt::clap::AppSettings;
 
 #[derive(StructOpt, Debug, Clone)]
 // #[structopt(
@@ -10,6 +11,10 @@ use structopt::StructOpt;
 //     rename_all = "kebab-case",
 //     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
 // )]
+#[structopt(
+    global_settings(&[AppSettings::ColoredHelp, AppSettings::VersionlessSubcommands]),
+    author = env!("CARGO_PKG_HOMEPAGE"), about
+)]
 pub struct CliOpts {
     // The number of occurences of the `v/verbose` flag
     /// Verbose mode (-v, -vv (very verbose / level debug), -vvv)
@@ -22,25 +27,12 @@ pub struct CliOpts {
 }
 
 #[derive(StructOpt, Debug, Clone)]
-// #[structopt(
-//     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-//     rename_all = "kebab-case",
-//     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
-// )]
 pub enum Command {
     /// Apply a template into a target directory
-    // #[structopt(
-    //     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-    //     rename_all = "kebab-case",
-    //     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
-    // )]
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"), about)]
     Apply(ApplyOpts),
     /// Self upgrade ffizer executable
-    // #[structopt(
-    //     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-    //     rename_all = "kebab-case",
-    //     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
-    // )]
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"), about)]
     Upgrade,
 }
 

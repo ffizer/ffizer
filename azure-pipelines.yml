@@ -36,21 +36,21 @@ steps:
   inputs:
     key: cargo | $(Agent.OS)
     path: $(CARGO_HOME)
-  displayName: Cargo user home cache
+  displayName: Cache cargo home
 
 # Linux
 - bash: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
     echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
   condition: eq( variables['Agent.OS'], 'Linux' )
-  displayName: install rustup
+  displayName: Install rustup linux
 
 # macOS
 - bash: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
     echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
   condition: eq( variables['Agent.OS'], 'Darwin' )
-  displayName: install rustup
+  displayName: Install rustup mac os x
 
 # Windows
 - script: |
@@ -59,30 +59,30 @@ steps:
     set PATH=%PATH%;%USERPROFILE%\.cargo\bin
     echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: install rustup
+  displayName: Install rustup windows
 
 # All platforms.
 - script: cargo install cargo-make || echo "cargo-make already installed"
-  displayName: install cargo-make
+  displayName: Install cargo-make
 
 - script: |
       rustup -V
       rustc -V
       cargo -V
       cargo make --version
-  displayName: query versions
+  displayName: Query versions
 
 - script: |
     cargo make --profile $(PROFILE) ci-flow
-  displayName: ci-flow
+  displayName: Make ci-flow
 
 - script: |
     cargo make --profile $(PROFILE) zip-release-ci-flow
-  displayName: zip-release-ci-flow
+  displayName: Make zip-release-ci-flow
 
 - script: |
     cargo make --profile $(PROFILE) github-upload-flow
-  displayName: upload to gitHub release
+  displayName: Upload to gitHub release
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   env:
     GITHUB_TOKEN: $(GITHUB_TOKEN)

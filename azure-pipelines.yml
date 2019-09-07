@@ -73,15 +73,15 @@ steps:
   displayName: Query versions
 
 - script: |
-    cargo make --profile $(PROFILE) ci-flow
+    cargo make --disable-check-for-updates --profile $(PROFILE) ci-flow
   displayName: Make ci-flow
 
 - script: |
-    cargo make --profile $(PROFILE) zip-release-ci-flow
+    cargo make --disable-check-for-updates --profile $(PROFILE) zip-release-ci-flow
   displayName: Make zip-release-ci-flow
 
 - script: |
-    cargo make --profile $(PROFILE) github-upload-flow
+    cargo make --disable-check-for-updates --profile $(PROFILE) github-upload-flow
   displayName: Upload to gitHub release
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   env:

@@ -29,8 +29,14 @@ variables:
   RUSTUP_TOOLCHAIN: stable
   CARGO_MAKE_CI: TRUE
   # CARGO_MAKE_RUN_CODECOV: true
+  CARGO_USER_HOME: $(Pipeline.Workspace)/.cargo
 
 steps:
+- task: CacheBeta@0
+  inputs:
+    key: cargo | $(Agent.OS)
+    path: $(CARGO_USER_HOME)
+  displayName: Cargo user home cache
 
 # Linux
 - bash: |

@@ -38,19 +38,17 @@ steps:
     path: $(CARGO_HOME)
   displayName: Cache cargo home
 
-# Linux
+# Linux & Mac
 - bash: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
     echo "##vso[task.setvariable variable=PATH;]$PATH:$CARGO_HOME/bin"
-  condition: eq( variables['Agent.OS'], 'Linux' )
-  displayName: Install rustup linux
+  condition: ne( variables['Agent.OS'], 'Linux' )
+  displayName: Install rustup linux & max
 
-# macOS
-- bash: |
-    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
-    echo "##vso[task.setvariable variable=PATH;]$PATH:$CARGO_HOME/bin"
-  condition: eq( variables['Agent.OS'], 'Darwin' )
-  displayName: Install rustup mac os x
+- script: |
+    (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
+  condition: ne( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Install cargo-make (not windows)
 
 # Windows
 - script: |
@@ -61,10 +59,15 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install rustup windows
 
-# All platforms.
 - script: |
-    cargo install --force cargo-make
-  displayName: Install cargo-make
+    $CargoMakeVersion = cargo make --version
+    if ($CargoMakeVersion -ne "cargo-make 0.22.1") {
+      cargo install --version 0.22.1 --force cargo-make
+    }
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Install cargo-make windows
+
+# All platforms.
 
 - script: |
       rustup -V

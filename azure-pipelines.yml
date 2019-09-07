@@ -59,11 +59,12 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install rustup windows
 
+    # $CargoMakeVersion = cargo make --version
+    # if ($CargoMakeVersion -ne "cargo-make 0.22.1") {
+    #   cargo install --version 0.22.1 --force cargo-make
+    # }
 - script: |
-    $CargoMakeVersion = cargo make --version
-    if ($CargoMakeVersion -ne "cargo-make 0.22.1") {
-      cargo install --version 0.22.1 --force cargo-make
-    }
+    (cargo make --version) -Or (cargo install --version 0.22.1 --force cargo-make)
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install cargo-make windows
 

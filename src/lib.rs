@@ -194,7 +194,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
                 .render_template(&s, variables)
                 .context(crate::Handlebars {
                     when: format!("define path for '{:?}'", src),
-                    template: s.clone(),
+                    template: s,
                 })?;
             Ok(PathBuf::from(p))
         })?;

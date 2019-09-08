@@ -40,12 +40,20 @@ steps:
   displayName: Cache cargo home
 
 # rust & rustup are pre-installed on Microsoft Hosted VM (see https://github.com/microsoft/azure-pipelines-image-generation/tree/master/images)
-# So more need to download and install rustup,... (for the 3 platforms)
+# So more need to download and install rustup,... (for the 2 platforms: Linux & Windows)
 - script: |
     rustup update $(RUSTUP_TOOLCHAIN)
+  condition: ne( variables['Agent.OS'], 'Darwin' )
   displayName: Update rust toolchain
 
-# powershell is available on the 3 platforms (vs bash no longer found/available on windows vm)
+# Linux & Mac
+- bash: |
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
+    echo "##vso[task.setvariable variable=PATH;]$PATH:$CARGO_HOME/bin"
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+  displayName: Install rustup Mac
+
+# powershell is available on the 3 platforms
 - powershell: |
     $CargoMakeVersion = & cargo make --version
     if ($CargoMakeVersion -ne "cargo-make $(CARGO_MAKE_VERSION)") {

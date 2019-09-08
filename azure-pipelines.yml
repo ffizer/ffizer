@@ -45,7 +45,7 @@ steps:
   condition: ne( variables['Agent.OS'], 'Linux' )
   displayName: Install rustup linux & max
 
-- script: |
+- bash: |
     (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
   condition: ne( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install cargo-make (not windows)
@@ -59,11 +59,8 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install rustup windows
 
-- script: |
-    $CargoMakeVersion = & cargo make --version
-    if ($CargoMakeVersion -ne "cargo-make 0.22.1") {
-      cargo install --version 0.22.1 --force cargo-make
-    }
+- bash: |
+    (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install cargo-make windows
 

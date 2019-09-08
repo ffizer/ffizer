@@ -30,6 +30,7 @@ variables:
   CARGO_MAKE_CI: TRUE
   # CARGO_MAKE_RUN_CODECOV: true
   CARGO_HOME: $(Pipeline.Workspace)/.cargo
+  CARGO_MAKE_VERSION: "0.22.1"
 
 steps:
 - task: CacheBeta@0
@@ -38,36 +39,19 @@ steps:
     path: $(CARGO_HOME)
   displayName: Cache cargo home
 
-# Linux & Mac
-# - bash: |
-#     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
-#     echo "##vso[task.setvariable variable=PATH;]$PATH:$CARGO_HOME/bin"
-#   condition: ne( variables['Agent.OS'], 'Linux' )
-#   displayName: Install rustup linux & max
-
+# rust & rustup are pre-installed on Microsoft Hosted VM (see https://github.com/microsoft/azure-pipelines-image-generation/tree/master/images)
+# So more need to download and install rustup,... (for the 3 platforms)
 - script: |
-    ls $(CARGO_HOME)/bin
-    (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
-  condition: ne( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Install cargo-make (not windows)
+    rustup update $(RUSTUP_TOOLCHAIN)
+  displayName: Update rust toolchain
 
-# Windows
-# - script: |
-#     rustup update
-#     curl -sSf -o rustup-init.exe https://win.rustup.rs
-#     rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
-#     set PATH=%PATH%;%CARGO_HOME%\bin
-#     echo "##vso[task.setvariable variable=PATH;]%PATH%;%CARGO_HOME%\bin"
-#   condition: eq( variables['Agent.OS'], 'Windows_NT' )
-#   displayName: Install rustup windows
-
+# powershell is available on the 3 platforms (vs bash no longer found/available on windows vm)
 - powershell: |
     $CargoMakeVersion = & cargo make --version
-    if ($CargoMakeVersion -ne "cargo-make 0.22.1") {
-      cargo install --version 0.22.1 --force cargo-make
+    if ($CargoMakeVersion -ne "cargo-make $(CARGO_MAKE_VERSION)") {
+      cargo install --version $(CARGO_MAKE_VERSION) --force cargo-make
     }
-
-# All platforms.
+  displayName: Install cargo-make
 
 - script: |
       rustup -V

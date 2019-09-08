@@ -10,15 +10,15 @@ trigger:
 strategy:
   matrix:
     linux:
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-latest'
       TARGET: x86_64-unknown-linux-gnu
       PROFILE: linux
     macos:
-      imageName: 'macos-10.13'
+      imageName: 'macOS-latest'
       TARGET: x86_64-apple-darwin
       PROFILE: mac
     windows:
-      imageName: 'vs2017-win2016'
+      imageName: 'windows-latest'
       TARGET: x86_64-pc-windows-msvc
       PROFILE: windows
 

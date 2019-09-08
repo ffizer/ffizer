@@ -59,7 +59,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install rustup windows
 
-- bash: |
+- script: |
     (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install cargo-make windows

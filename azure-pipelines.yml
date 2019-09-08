@@ -51,7 +51,7 @@ steps:
   displayName: Install cargo-make (not windows)
 
 # Windows
-- script: |
+- bash: |
     curl -sSf -o rustup-init.exe https://win.rustup.rs
     rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
     set PATH=%PATH%;%CARGO_HOM%\bin
@@ -59,7 +59,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install rustup windows
 
-- script: |
+- bash: |
     (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install cargo-make windows

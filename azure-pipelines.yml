@@ -39,11 +39,11 @@ steps:
   displayName: Cache cargo home
 
 # Linux & Mac
-- bash: |
-    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
-    echo "##vso[task.setvariable variable=PATH;]$PATH:$CARGO_HOME/bin"
-  condition: ne( variables['Agent.OS'], 'Linux' )
-  displayName: Install rustup linux & max
+# - bash: |
+#     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
+#     echo "##vso[task.setvariable variable=PATH;]$PATH:$CARGO_HOME/bin"
+#   condition: ne( variables['Agent.OS'], 'Linux' )
+#   displayName: Install rustup linux & max
 
 - script: |
     ls $(CARGO_HOME)/bin
@@ -52,16 +52,20 @@ steps:
   displayName: Install cargo-make (not windows)
 
 # Windows
-- script: |
-    curl -sSf -o rustup-init.exe https://win.rustup.rs
-    rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
-    set PATH=%PATH%;%CARGO_HOME%\bin
-    echo "##vso[task.setvariable variable=PATH;]%PATH%;%CARGO_HOME%\bin"
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Install rustup windows
+# - script: |
+#     rustup update
+#     curl -sSf -o rustup-init.exe https://win.rustup.rs
+#     rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
+#     set PATH=%PATH%;%CARGO_HOME%\bin
+#     echo "##vso[task.setvariable variable=PATH;]%PATH%;%CARGO_HOME%\bin"
+#   condition: eq( variables['Agent.OS'], 'Windows_NT' )
+#   displayName: Install rustup windows
 
-- bash: |
-    (cargo make --version | grep "cargo-make 0.22.1" ) || cargo install --version 0.22.1 --force cargo-make
+- powershell: |
+    $CargoMakeVersion = & cargo make --version
+    if ($CargoMakeVersion -ne "cargo-make 0.22.1") {
+      cargo install --version 0.22.1 --force cargo-make
+    }
 
 # All platforms.
 

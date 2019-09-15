@@ -92,7 +92,7 @@ cargo install ffizer --force --features cli
 
 ### Run
 
-[![asciicast: ffizer demo on template amethyst-starter-2d v0](https://ffizer.github.io/ffizer/book/images/262987.gif)](https://asciinema.org/a/262987)
+[![asciicast: ffizer demo](https://ffizer.github.io/ffizer/book/images/demo.gif)](https://asciinema.org/a/gIMUwo4H9X0EK0t6xhZ6ce6WZ)
 
 ```txt
 ➜  ffizer --help

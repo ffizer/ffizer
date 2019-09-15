@@ -92,7 +92,7 @@ cargo install ffizer --force --features cli
 
 ### Run
 
-[![asciicast: ffizer demo](https://ffizer.github.io/ffizer/book/images/demo.gif)](https://asciinema.org/a/gIMUwo4H9X0EK0t6xhZ6ce6WZ)
+[![asciicast: ffizer demo](https://raw.githubusercontent.com/ffizer/ffizer/master/docs/src/images/demo.gif)](https://asciinema.org/a/gIMUwo4H9X0EK0t6xhZ6ce6WZ)
 
 ```txt
 ➜  ffizer --help

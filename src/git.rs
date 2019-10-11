@@ -88,26 +88,25 @@ where
     Ok(())
 }
 
-//FIXME doesn't work like "git pull"
+// see https://stackoverflow.com/questions/54100789/how-is-git-pull-done-with-the-git2-rs-rust-crate
 fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,
 {
     let repository = Repository::discover(dst.as_ref())?;
+
+    // fetch
     let revref = rev.as_ref();
-    // assert!(Reference::is_valid_name(&revref));
     let mut remote = repository.find_remote("origin")?;
     remote.fetch(&[revref], Some(fo), None)?;
-    repository.set_head("FETCH_HEAD")?;
-    // // remote.update_tips(None, true, AutotagOption::Unspecified, None)?;
-    // // remote.disconnect();
-    // let mut co = CheckoutBuilder::new();
-    // co.force().remove_ignored(true);
-    // let reference = repository.find_reference(&revref)?;
-    // repository.set_head(&revref)?;
-    // repository.checkout_head(Some(&mut co))?;
-    checkout(dst, rev)?;
+
+    // merge
+    let reference = repository.find_reference("FETCH_HEAD")?;
+    let fetch_head_commit = repository.reference_to_annotated_commit(&reference)?;
+    repository.merge(&[&fetch_head_commit], None, None)?;
+    repository.cleanup_state()?;
+
     Ok(())
 }
 
@@ -119,8 +118,83 @@ where
     let rev = rev.as_ref();
     let repository = Repository::discover(dst.as_ref())?;
     let mut co = CheckoutBuilder::new();
-    co.force().remove_ignored(true);
+    co
+    .force()
+    .remove_ignored(true)
+    .remove_untracked(true)
+    ;
     let treeish = repository.revparse_single(rev)?;
     repository.checkout_tree(&treeish, Some(&mut co))?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::tempdir;
+    use std::fs;
+    use run_script;
+
+    #[cfg(not(target_os = "windows"))]
+    #[test]
+    fn retrieve_should_update_existing_template() -> Result<(), Box<dyn std::error::Error>>{
+        let tmp_dir = tempdir()?;
+
+        // template v1
+        let src_path = tmp_dir.path().join("src");
+        let options = run_script::ScriptOptions::new();
+        let args = vec![];
+        let (code, _output, _error) = run_script::run(
+            &format!(r#"
+            mkdir {}
+            cd {}
+            git init
+            echo "v1: Lorem ipsum" > foo.txt
+            git add foo.txt
+            git commit -m "add foo.txt"
+            "#, src_path.to_str().unwrap(), src_path.to_str().unwrap()),
+            &args,
+            &options
+        )?;
+        assert_eq!(code, 0);
+
+        let dst_path = tmp_dir.path().join("dst");
+        retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
+        assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v1: Lorem ipsum\n");
+
+        // template v2
+            let (code, _output, _error) = run_script::run(
+            &format!(r#"
+            cd {}
+            echo "v2: Hello" > foo.txt
+            git add foo.txt
+            git commit -m "add foo.txt"
+            "#, src_path.to_str().unwrap()),
+            &args,
+            &options
+        )?;
+        assert_eq!(code, 0);
+
+        retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
+        assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v2: Hello\n");
+
+        // template v3
+            let (code, _output, _error) = run_script::run(
+            &format!(r#"
+            cd {}
+            echo "v3: Hourra" > foo.txt
+            git add foo.txt
+            git commit -m "add foo.txt"
+            "#, src_path.to_str().unwrap()),
+            &args,
+            &options
+        )?;
+        assert_eq!(code, 0);
+
+        retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
+        assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v3: Hourra\n");
+        //TODO always remove
+        fs::remove_dir_all(tmp_dir)?;
+        Ok(())
+    }
 }

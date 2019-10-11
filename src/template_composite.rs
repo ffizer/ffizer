@@ -9,8 +9,8 @@ use crate::Ctx;
 use crate::Result;
 use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
-use hashbrown::HashMap;
-use hashbrown::HashSet;
+use std::collections::HashMap;
+use std::collections::HashSet;
 use slog::{debug,warn};
 
 pub struct TemplateComposite {

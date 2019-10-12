@@ -3,7 +3,92 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+### Added
+- 👷  init github-action
+
+### Changed
+- ⬆️  update Cargo.lock
+- ⬆️  Bump structopt from 0.3.2 to 0.3.3
+- ⬆️  Bump hashbrown from 0.6.0 to 0.6.1
+- ⬆️  Bump serde_yaml from 0.8.9 to 0.8.11
+- ⬆️  Bump openssl from 0.10.24 to 0.10.25
+- ⬆️  Bump handlebars_misc_helpers from 0.5.1 to 0.5.2
+- ⬆️  Bump structopt from 0.3.1 to 0.3.2
+- ⬆️  Bump serde from 1.0.100 to 1.0.101
+- 🍱  add an asciicast + update book
+- ⬆️  Bump git2 from 0.10.0 to 0.10.1
+- ⬆️  Bump self_update from 0.6.0 to 0.7.0
+- ⬆️  Bump console from 0.8.0 to 0.9.0
+- ⬆️  Bump serde from 1.0.99 to 1.0.100
+- ⬆️  Bump indicatif from 0.11.0 to 0.12.0
+- ⬆️  (ci) upgrade to latest the vmImages used for build
+- 🔧  (ci) disables the update check during startup of cargo make
+- 🚨  remove 1 clone
+- ⬆️  Bump structopt from 0.3.0 to 0.3.1
+- ⬆️  Bump git2 from 0.9.2 to 0.10.0
+- ⬆️  Bump handlebars_misc_helpers from 0.5.0 to 0.5.1
+- ⬆️  Bump handlebars from 2.0.1 to 2.0.2
+- 👽  restore the behavior of `--help`
+- ⬆️  Bump regex from 1.3.0 to 1.3.1
+- ⬆️  Bump regex from 1.2.1 to 1.3.0
+- 📌  `cargo update`
+- ⬆️  Bump winapi from 0.3.7 to 0.3.8
+- ⬆️  Bump console from 0.7.7 to 0.8.0
+- ⬆️  Bump structopt from 0.2.18 to 0.3.0
+- ⬆️  Bump lazy_static from 1.3.0 to 1.4.0
+- ⬆️  :lock: Bump spin from 0.5.0 to 0.5.2
+- ⬆️  Bump snafu from 0.4.4 to 0.5.0
+- ⬆️  Bump serde from 1.0.98 to 1.0.99
+
+### Breaking changes
+- 💥  prepare upgrade to structopt 0.3.0
+
+### Removed
+- ➖  remove direct dependency to hashbrown
+
+### Fixed
+- ✏️  fix typo in commit-message
+- 🐛  (git) add missing call to disconnect after fetch
+- 🐛  (git) fix the &quot;git pull&quot; to update previously cloned &amp; cached template
+- ✏️  fix markdown typo
+- 🐛  try fix the cargo home cache
+- ✏️  (README) typo
+- 🐛  move dependencies only for cli
+
 ### Miscellaneous
+- 📝  update screencast (3)
+- 📝  update screencast (2)
+- 📝  update screencast
+- ⚗  (ci) fix rustup is not pre-installed on MacOs image
+- ⚗  (ci) try a cross platform setup
+- ⚗  (ci) experiment if rust is preinstalled and powershell on every platform
+- ⚗  (ci) try setup windows
+- ⚗  (ci) try bash sript on windows (like allowed from https://docs.microsoft.com/en-us/azure/devops/pipelines/scripts/cross-platform-scripting?view=azure-devops&amp;tabs=yaml#consider-bash-or-pwsh (3)
+- ⚗  (ci) :alembic: (ci) try bash sript on windows (like allowed from https://docs.microsoft.com/en-us/azure/devops/pipelines/scripts/cross-platform-scripting?view=azure-devops&amp;tabs=yaml#consider-bash-or-pwsh (2)
+- ⚗  (ci) try bash sript on windows (like allowed from https://docs.microsoft.com/en-us/azure/devops/pipelines/scripts/cross-platform-scripting?view=azure-devops&amp;tabs=yaml#consider-bash-or-pwsh
+- ⚗  (ci) try conditional install of cargo-make (3)
+- ⚗  (ci) try conditional install of cargo-make (2)
+- ⚗  (ci) try conditional install of cargo-make
+- ⚗  (ci) try setup cargo cache
+- ⚗  (ci) try to fix path issue with cargo and cache
+- typo  update label of Azure Task
+- ⚗  try to enable cache for cargo on CI
+- 🚧  (cargo-release) start next development iteration 1.4.1-dev
+
+<a name="1.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.4.0
+
+### Changed
+- 🚸  display &quot;plan to execute&quot; in as a colorized table (more readable)
+- 🔧  change the way to commit update of doc (env is set after dependencies task)
+
+### Fixed
+- 🐛  restore the behavior to use the remote_path ignoring subfolder when retrieve git repo
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.4.0
+- 🔊  add more info on handlebars error
+- 📝  pre-publish update book, changelog, bom
 - 🔊  add log, refactor call, use log for Err in main
 - 🚧  (cargo-release) start next development iteration 1.3.2-dev
 

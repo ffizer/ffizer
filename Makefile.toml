@@ -3,11 +3,14 @@
 [env]
 RUST_TEST_THREADS = "1"
 CARGO_MAKE_TEST_COVERAGE_BINARY_FILTER = "cli-[a-z0-9]*$\\|makers-[a-z0-9]*$\\|${CARGO_MAKE_TEST_COVERAGE_DEFAULT_BINARY_FILTER}"
-GITHUB_REPO="ffizer"
-GITHUB_USER="ffizer"
+# GITHUB_REPOSITORY=
 # GITHUB_TOKEN=
-#TARGET is  {arch}-{vendor}-{sys}-{abi} the output of rustc --print target-list
-DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${CARGO_MAKE_CRATE_VERSION}-${TARGET}"
+
+# TARGET is  {arch}-{vendor}-{sys}-{abi} the output of rustc --print target-list
+# TARGET = "${CARGO_MAKE_RUST_TARGET_ARCH}-${CARGO_MAKE_RUST_TARGET_VENDOR}-${CARGO_MAKE_RUST_TARGET_OS}-${CARGO_MAKE_RUST_TARGET_ENV}"
+DIST_VERSION="${CARGO_MAKE_CRATE_VERSION}"
+# DIST_VERSION="${GITHUB_REF}"
+DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${DIST_VERSION}-${TARGET}"
 DIST_EXT="tar.gz"
 DIST_PATH="target/dist/${DIST_NAME}"
 LIBZ_SYS_STATIC="1"
@@ -31,6 +34,18 @@ DIST_PATH="target\\dist\\${DIST_NAME}"
 DIST_EXT="zip"
 GITHUB_RELEASE_PATH="target\\bin\\windows\\amd64"
 GITHUB_RELEASE_PATH_REV="..\\..\\..\\..\\"
+
+[tasks.debug]
+script_runner = "@shell"
+script = [
+  'echo "FILE=${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"',
+  'echo "TARGET=${TARGET}"',
+  'echo "DIST_VERSION=${DIST_VERSION}"',
+  'echo "TAG=${TAG}"',
+  'echo "GITHUB_REPOSITORY=${GITHUB_REPOSITORY}"',
+  'echo "GITHUB_REF=${GITHUB_REF}"',
+  'echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}',
+]
 
 [tasks.zip-release-ci-flow]
 description = "Compiles the binary in release mode and zips it up"
@@ -126,7 +141,7 @@ args = ["release", "${@}"]
 
 [tasks.github-upload-flow]
 description = "Upload dist on githup release"
-condition = { env_set = [ "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"], channels = ["stable"] }
+condition = { env_set = [ "GITHUB_REPOSITORY", "GITHUB_TOKEN", "DIST_NAME", "DIST_PATH", "DIST_EXT"], channels = ["stable"] }
 dependencies = [
   "github-release-install",
   "github-upload",
@@ -171,33 +186,30 @@ Expand-Archive -LiteralPath $output -Destination .
 ]
 
 [tasks.github-upload]
-condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
+# github-release use env variable GITHUB_TOKEN, GITHUB_REPO, GITHUB_USER
+condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_REPOSITORY", "GITHUB_TOKEN", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
 script_runner = "@shell"
 script= [
-# multi-line command with \ at EOL doesn't work on windows
-#  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
 '''
 cd ${GITHUB_RELEASE_PATH}
-./github-release release --tag "${CARGO_MAKE_CRATE_VERSION}" || echo "skip"
-./github-release upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
+export GITHUB_USER=$(dirname $GITHUB_REPOSITORY)
+export GITHUB_REPO=$(basename $GITHUB_REPOSITORY)
+./github-release release --tag "${DIST_VERSION}" || echo "ignore error"
+./github-release upload --tag "${DIST_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
 ''',
 ]
 
 [tasks.github-upload.windows]
-condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_TOKEN", "GITHUB_REPO", "GITHUB_USER", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
-script_runner = "@shell"
+# github-release use env variable GITHUB_TOKEN, GITHUB_REPO, GITHUB_USER
+condition = { env_set = [ "GITHUB_RELEASE_PATH", "GITHUB_REPOSITORY", "GITHUB_TOKEN", "DIST_NAME", "DIST_PATH", "DIST_EXT"] }
+script_runner = "powershell"
+script_extension = "ps1"
 script= [
 # multi-line command with \ at EOL doesn't work on windows
-#  github-release upload --user "${GITHUB_USER}" --repo "${GITHUB_REPO}" --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "../../../${DIST_PATH}.${DIST_EXT}"
 '''
 cd ${GITHUB_RELEASE_PATH}
-github-release.exe release --tag "${CARGO_MAKE_CRATE_VERSION}" || echo "skip"
-github-release.exe upload --tag "${CARGO_MAKE_CRATE_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
+$GITHUB_USER,$GITHUB_REPO=$GITHUB_REPOSITORY.split("/")
+github-release.exe release --tag "${DIST_VERSION}" -ErrorAction SilentlyContinue
+github-release.exe upload --tag "${DIST_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
 ''',
-]
-
-[tasks.echo]
-script_runner = "@shell"
-script=[
-  "echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}",
 ]

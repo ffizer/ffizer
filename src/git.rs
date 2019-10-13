@@ -150,9 +150,9 @@ mod tests {
         let src_path = tmp_dir.path().join("src");
         let options = run_script::ScriptOptions::new();
         let args = vec![];
-        let (code, _output, _error) = run_script::run(
+        let (code, output, error) = run_script::run(
             &format!(r#"
-            mkdir {}
+            mkdir -p {}
             cd {}
             git init
             echo "v1: Lorem ipsum" > foo.txt
@@ -162,6 +162,9 @@ mod tests {
             &args,
             &options
         )?;
+        if code != 0 {
+            eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
+        }
         assert_eq!(code, 0);
 
         let dst_path = tmp_dir.path().join("dst");
@@ -169,7 +172,7 @@ mod tests {
         assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v1: Lorem ipsum\n");
 
         // template v2
-            let (code, _output, _error) = run_script::run(
+        let (code, output, error) = run_script::run(
             &format!(r#"
             cd {}
             echo "v2: Hello" > foo.txt
@@ -179,13 +182,16 @@ mod tests {
             &args,
             &options
         )?;
+        if code != 0 {
+            eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
+        }
         assert_eq!(code, 0);
 
         retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
         assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v2: Hello\n");
 
         // template v3
-            let (code, _output, _error) = run_script::run(
+        let (code, output, error) = run_script::run(
             &format!(r#"
             cd {}
             echo "v3: Hourra" > foo.txt
@@ -195,6 +201,9 @@ mod tests {
             &args,
             &options
         )?;
+        if code != 0 {
+            eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
+        }
         assert_eq!(code, 0);
 
         retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;

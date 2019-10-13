@@ -26,6 +26,14 @@ pub struct SourceLoc {
 }
 
 impl SourceLoc {
+    pub fn find_remote_cache_folder() -> Result<PathBuf> {
+        let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
+        let project_dirs = directories::ProjectDirs::from("com", "github", &app_name)
+            .ok_or(crate::Error::ApplicationPathNotFound {})?;
+        let cache_base = project_dirs.cache_dir();
+        Ok(cache_base.join("git"))
+    }
+
     pub fn as_local_path(&self) -> Result<PathBuf> {
         let mut path = match self.uri.host {
             None => self.uri.path.clone(),
@@ -39,12 +47,7 @@ impl SourceLoc {
 
     // the remote_as_local ignore subfolder
     fn remote_as_local(&self) -> Result<PathBuf> {
-        let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
-        let project_dirs = directories::ProjectDirs::from("com", "github", &app_name)
-            .ok_or(crate::Error::ApplicationPathNotFound {})?;
-        let cache_base = project_dirs.cache_dir();
-        let cache_uri = cache_base
-            .join("git")
+        let cache_uri = Self::find_remote_cache_folder()?
             .join(
                 &self
                     .uri

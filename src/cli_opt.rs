@@ -29,11 +29,14 @@ pub struct CliOpts {
 #[derive(StructOpt, Debug, Clone)]
 pub enum Command {
     /// Apply a template into a target directory
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"), about)]
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
     Apply(ApplyOpts),
     /// Self upgrade ffizer executable
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"), about)]
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
     Upgrade,
+    /// Inspect configuration, caches,... (wip)
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    Inspect,
 }
 
 #[derive(StructOpt, Debug, Default, Clone)]

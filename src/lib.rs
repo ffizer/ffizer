@@ -16,6 +16,8 @@ mod ui;
 
 pub use crate::cli_opt::*;
 pub use crate::error::*;
+pub use crate::source_loc::SourceLoc;
+
 use crate::files::is_ffizer_handlebars;
 use crate::files::ChildPath;
 use crate::template_composite::TemplateComposite;

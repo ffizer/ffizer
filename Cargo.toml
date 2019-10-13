@@ -67,5 +67,6 @@ opt-level = 'z'  # Optimize for size.
 codegen-units = 1
 
 [features]
+default = ["cli"]
 test_remote = [] # feature has no explicit dependencies
 cli = ["self_update", "human-panic", "slog-async", "slog-term"]

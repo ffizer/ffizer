@@ -154,9 +154,9 @@ mod tests {
             &format!(r#"
             mkdir -p {}
             cd {}
+            git init
             git config user.email "test@example.com"
             git config user.name "Test Name"
-            git init
             echo "v1: Lorem ipsum" > foo.txt
             git add foo.txt
             git commit -m "add foo.txt"

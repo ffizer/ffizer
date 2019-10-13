@@ -139,6 +139,11 @@ mod tests {
     #[cfg(not(target_os = "windows"))]
     #[test]
     fn retrieve_should_update_existing_template() -> Result<(), Box<dyn std::error::Error>>{
+        if std::process::Command::new("git").arg("version").output().is_err() {
+            eprintln!("skip the test because `git` is not installed");
+            return Ok(())
+        }
+
         let tmp_dir = tempdir()?;
 
         // template v1

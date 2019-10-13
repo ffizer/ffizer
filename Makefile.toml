@@ -3,7 +3,8 @@
 [env]
 RUST_TEST_THREADS = "1"
 CARGO_MAKE_TEST_COVERAGE_BINARY_FILTER = "cli-[a-z0-9]*$\\|makers-[a-z0-9]*$\\|${CARGO_MAKE_TEST_COVERAGE_DEFAULT_BINARY_FILTER}"
-# GITHUB_REPOSITORY=
+
+GITHUB_REPOSITORY="ffizer/ffizer"
 # GITHUB_TOKEN=
 
 # TARGET is  {arch}-{vendor}-{sys}-{abi} the output of rustc --print target-list

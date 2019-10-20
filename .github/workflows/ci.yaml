@@ -39,4 +39,7 @@ jobs:
         version: 0.22.2
     - uses: actions/checkout@v1
     - name: Run tests
-      run: cargo make --disable-check-for-updates --profile ${{ matrix.os.profile }} --env TARGET=${{matrix.os.target}} ci-flow
+      run: cargo make --profile ci-static-code-analysis-tasks --env TARGET=${{matrix.os.target}} ci-flow
+      env:
+        CARGO_MAKE_RUN_CODECOV: "true"
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

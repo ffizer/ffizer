@@ -2,8 +2,8 @@ use crate::source_loc::SourceLoc;
 use crate::Error;
 use std::path::PathBuf;
 use std::str::FromStr;
-use structopt::StructOpt;
 use structopt::clap::AppSettings;
+use structopt::StructOpt;
 
 #[derive(StructOpt, Debug, Clone)]
 // #[structopt(

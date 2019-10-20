@@ -119,11 +119,7 @@ where
     let rev = rev.as_ref();
     let repository = Repository::discover(dst.as_ref())?;
     let mut co = CheckoutBuilder::new();
-    co
-    .force()
-    .remove_ignored(true)
-    .remove_untracked(true)
-    ;
+    co.force().remove_ignored(true).remove_untracked(true);
     let treeish = repository.revparse_single(rev)?;
     repository.checkout_tree(&treeish, Some(&mut co))?;
     Ok(())
@@ -132,16 +128,20 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tempfile::tempdir;
-    use std::fs;
     use run_script;
+    use std::fs;
+    use tempfile::tempdir;
 
     #[cfg(not(target_os = "windows"))]
     #[test]
-    fn retrieve_should_update_existing_template() -> Result<(), Box<dyn std::error::Error>>{
-        if std::process::Command::new("git").arg("version").output().is_err() {
+    fn retrieve_should_update_existing_template() -> Result<(), Box<dyn std::error::Error>> {
+        if std::process::Command::new("git")
+            .arg("version")
+            .output()
+            .is_err()
+        {
             eprintln!("skip the test because `git` is not installed");
-            return Ok(())
+            return Ok(());
         }
 
         let tmp_dir = tempdir()?;
@@ -151,7 +151,8 @@ mod tests {
         let options = run_script::ScriptOptions::new();
         let args = vec![];
         let (code, output, error) = run_script::run(
-            &format!(r#"
+            &format!(
+                r#"
             mkdir -p {}
             cd {}
             git init
@@ -160,9 +161,12 @@ mod tests {
             echo "v1: Lorem ipsum" > foo.txt
             git add foo.txt
             git commit -m "add foo.txt"
-            "#, src_path.to_str().unwrap(), src_path.to_str().unwrap()),
+            "#,
+                src_path.to_str().unwrap(),
+                src_path.to_str().unwrap()
+            ),
             &args,
-            &options
+            &options,
         )?;
         if code != 0 {
             eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
@@ -171,18 +175,24 @@ mod tests {
 
         let dst_path = tmp_dir.path().join("dst");
         retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
-        assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v1: Lorem ipsum\n");
+        assert_eq!(
+            fs::read_to_string(&dst_path.join("foo.txt"))?,
+            "v1: Lorem ipsum\n"
+        );
 
         // template v2
         let (code, output, error) = run_script::run(
-            &format!(r#"
+            &format!(
+                r#"
             cd {}
             echo "v2: Hello" > foo.txt
             git add foo.txt
             git commit -m "add foo.txt"
-            "#, src_path.to_str().unwrap()),
+            "#,
+                src_path.to_str().unwrap()
+            ),
             &args,
-            &options
+            &options,
         )?;
         if code != 0 {
             eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
@@ -190,18 +200,24 @@ mod tests {
         assert_eq!(code, 0);
 
         retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
-        assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v2: Hello\n");
+        assert_eq!(
+            fs::read_to_string(&dst_path.join("foo.txt"))?,
+            "v2: Hello\n"
+        );
 
         // template v3
         let (code, output, error) = run_script::run(
-            &format!(r#"
+            &format!(
+                r#"
             cd {}
             echo "v3: Hourra" > foo.txt
             git add foo.txt
             git commit -m "add foo.txt"
-            "#, src_path.to_str().unwrap()),
+            "#,
+                src_path.to_str().unwrap()
+            ),
             &args,
-            &options
+            &options,
         )?;
         if code != 0 {
             eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
@@ -209,7 +225,10 @@ mod tests {
         assert_eq!(code, 0);
 
         retrieve(&dst_path, src_path.to_str().unwrap(), "master")?;
-        assert_eq!(fs::read_to_string(&dst_path.join("foo.txt"))?, "v3: Hourra\n");
+        assert_eq!(
+            fs::read_to_string(&dst_path.join("foo.txt"))?,
+            "v3: Hourra\n"
+        );
         //TODO always remove
         fs::remove_dir_all(tmp_dir)?;
         Ok(())

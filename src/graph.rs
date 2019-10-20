@@ -78,5 +78,4 @@ mod tests {
         ];
         assert_that!(&(g.find_edges_ordered_by_depth(&"k1".to_owned()))).is_equal_to(&expected);
     }
-
 }

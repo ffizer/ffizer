@@ -9,9 +9,9 @@ use crate::Ctx;
 use crate::Result;
 use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
+use slog::{debug, warn};
 use std::collections::HashMap;
 use std::collections::HashSet;
-use slog::{debug,warn};
 
 pub struct TemplateComposite {
     layers: Vec<(SourceLoc, TemplateCfg)>,

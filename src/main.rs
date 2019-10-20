@@ -5,7 +5,7 @@ use ffizer::Ctx;
 use ffizer::SourceLoc;
 use self_update;
 use slog::Drain;
-use slog::{debug, info, o, trace, error};
+use slog::{debug, error, info, o, trace};
 use std::error::Error;
 use structopt::StructOpt;
 
@@ -47,7 +47,10 @@ fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>>
 }
 
 fn inspect(_logger: slog::Logger) -> Result<(), Box<dyn Error>> {
-    println!("remote cache folder: {}", SourceLoc::find_remote_cache_folder()?.to_string_lossy());
+    println!(
+        "remote cache folder: {}",
+        SourceLoc::find_remote_cache_folder()?.to_string_lossy()
+    );
     Ok(())
 }
 

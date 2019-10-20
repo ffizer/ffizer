@@ -1,8 +1,8 @@
-use std::borrow::Cow;
-use crate::FileOperation;
 use crate::cli_opt::*;
 use crate::template_cfg::ValuesForSelection;
 use crate::template_cfg::Variable;
+use crate::tree;
+use crate::FileOperation;
 use crate::Result;
 use crate::{Action, Ctx, Variables};
 use console::Style;
@@ -14,7 +14,7 @@ use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use slog::debug;
 use snafu::ResultExt;
-use crate::tree;
+use std::borrow::Cow;
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -66,12 +66,13 @@ pub fn ask_variables(
                 ValuesForSelection::Empty => vec![],
                 ValuesForSelection::Sequence(v) => v.clone(),
                 ValuesForSelection::String(s) => {
-                    let s_evaluated = handlebars
-                        .render_template(&s, &variables)
-                        .context(crate::Handlebars {
-                            when: format!("define values for '{}'", &name),
-                            template: s.clone(),
-                        })?;
+                    let s_evaluated =
+                        handlebars
+                            .render_template(&s, &variables)
+                            .context(crate::Handlebars {
+                                when: format!("define values for '{}'", &name),
+                                template: s.clone(),
+                            })?;
                     let s_values: Vec<String> =
                         serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
                     //dbg!(&s_values);
@@ -150,12 +151,12 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
 
 fn format_operation(op: &FileOperation) -> Cow<'static, str> {
     let s = match op {
-        FileOperation::Nothing =>      "do nothing",
-        FileOperation::Ignore =>       "ignore",
-        FileOperation::Keep =>         "keep existing",
-        FileOperation::MkDir =>        "make dir",
-        FileOperation::CopyRaw =>      "copy",
-        FileOperation::CopyRender =>   "render",
+        FileOperation::Nothing => "do nothing",
+        FileOperation::Ignore => "ignore",
+        FileOperation::Keep => "keep existing",
+        FileOperation::MkDir => "make dir",
+        FileOperation::CopyRaw => "copy",
+        FileOperation::CopyRender => "render",
     };
     console::pad_str(s, 15, console::Alignment::Left, Some("..."))
 }
@@ -164,7 +165,7 @@ fn format_operation(op: &FileOperation) -> Cow<'static, str> {
 pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
     write_title("Plan to execute")?;
     debug!(ctx.logger, "plan"; "actions" => ?actions);
-    let prefixes = tree::provide_prefix(actions, |parent, item|{
+    let prefixes = tree::provide_prefix(actions, |parent, item| {
         Some(parent.dst_path.relative.as_path()) == item.dst_path.relative.parent()
     });
     for (a, prefix) in actions.iter().zip(prefixes.iter()) {
@@ -172,7 +173,9 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
         let s = format!(
             "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}",
             format_operation(&a.operation),
-            80,80,80,
+            80,
+            80,
+            80,
             prefix,
             p.file_name().and_then(|v| v.to_str()).unwrap_or("???"),
         );

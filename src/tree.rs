@@ -105,16 +105,7 @@ mod tests {
 
     #[test]
     fn test_() {
-        let items = vec![
-            "1/2",
-            "1/2/3",
-            "1/2/3/4",
-            "1/2/5",
-            "6",
-            "7",
-            "7/8",
-            "7/9",
-        ];
+        let items = vec!["1/2", "1/2/3", "1/2/3/4", "1/2/5", "6", "7", "7/8", "7/9"];
 
         let prefixes = provide_prefix(&items, |parent, item| {
             let pi = item.split("/");
@@ -123,9 +114,10 @@ mod tests {
         });
 
         let mut actual = String::new();
-        prefixes.iter().zip(items).for_each(|(p, i)|
-            actual.push_str(&format!("{} {}\n", p, i))
-        );
+        prefixes
+            .iter()
+            .zip(items)
+            .for_each(|(p, i)| actual.push_str(&format!("{} {}\n", p, i)));
 
         let expected = r#" 1/2
  ├─ 1/2/3

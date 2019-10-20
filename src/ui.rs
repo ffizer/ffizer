@@ -14,6 +14,7 @@ use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use slog::debug;
 use snafu::ResultExt;
+use crate::tree;
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -163,14 +164,17 @@ fn format_operation(op: &FileOperation) -> Cow<'static, str> {
 pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
     write_title("Plan to execute")?;
     debug!(ctx.logger, "plan"; "actions" => ?actions);
-    for a in actions {
+    let prefixes = tree::provide_prefix(actions, |parent, item|{
+        Some(parent.dst_path.relative.as_path()) == item.dst_path.relative.parent()
+    });
+    for (a, prefix) in actions.iter().zip(prefixes.iter()) {
         let p = a.dst_path.base.join(&a.dst_path.relative);
         let s = format!(
-            "   - {} \x1B[38;2;{};{};{}m{}/\x1B[0m{}",
+            "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}",
             format_operation(&a.operation),
             80,80,80,
-            p.parent().and_then(|v| v.to_str()).unwrap_or(""),
-            p.file_name().and_then(|v| v.to_str()).unwrap_or(""),
+            prefix,
+            p.file_name().and_then(|v| v.to_str()).unwrap_or("???"),
         );
         TERM.write_line(&s).context(crate::Io {})?;
     }

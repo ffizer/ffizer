@@ -13,6 +13,7 @@ mod template_cfg;
 mod template_composite;
 mod transform_values;
 mod ui;
+mod tree;
 
 pub use crate::cli_opt::*;
 pub use crate::error::*;

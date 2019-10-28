@@ -31,7 +31,7 @@ serde_plain = "0.3.0"
 serde_yaml = "0.8"
 slog = { version = "2.5.2", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
 slog-async = { version = "2.3.0", optional = true }
-slog-term = { version = "2.4.1", optional = true }
+slog-term = { version = "2.4.2", optional = true }
 snafu = "0.5.0"
 structopt = "0.3.3"
 walkdir = "2.2.9"

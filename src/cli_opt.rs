@@ -41,11 +41,11 @@ pub enum Command {
 #[derive(StructOpt, Debug, Default, Clone)]
 pub struct ApplyOpts {
     /// ask for plan confirmation
-    #[structopt(long = "confirm", default_value = "Never", possible_values = &AskConfirmation::variants(), case_insensitive = true)]
+    #[structopt(long, default_value = "Never", possible_values = &AskConfirmation::variants(), case_insensitive = true)]
     pub confirm: AskConfirmation,
 
     /// mode to update existing file
-    #[structopt(long = "update-mode", default_value = "Ask", possible_values = &UpdateMode::variants(), case_insensitive = true)]
+    #[structopt(long, default_value = "Ask", possible_values = &UpdateMode::variants(), case_insensitive = true)]
     pub update_mode: UpdateMode,
 
     /// should not ask for valiables values, always use defautl value or empty (experimental)

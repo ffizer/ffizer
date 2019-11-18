@@ -69,5 +69,6 @@ fn main() {
     };
     if let Err(e) = r {
         error!(logger, "failed"; "error" => ?&e, "cmd" => ?&cli_opts);
+        std::process::exit(1)
     }
 }

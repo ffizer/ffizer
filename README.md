@@ -9,7 +9,7 @@
 [![crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Build Status](https://dev.azure.com/ffizer/ffizer/_apis/build/status/ffizer.ffizer)](https://dev.azure.com/ffizer/ffizer/_build/latest)
+[![Actions Status](https://github.com/ffizer/ffizer/workflows/ci-flow/badge.svg)](https://github.com/ffizer/ffizer/actions)
 [![codecov](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
 
 [![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)

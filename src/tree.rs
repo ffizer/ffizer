@@ -1,3 +1,44 @@
+//! module to make tree-table or tree from a list,
+//! by computing the string prefix that contains line of to link item of the list
+//! like a tree (multi-root)
+//!
+//! ```rust
+//! let items = vec![
+//!     "1/2",
+//!     "1/2/3",
+//!     "1/2/3/4",
+//!     "1/2/5",
+//!     "6",
+//!     "7",
+//!     "7/8",
+//!     "7/9",
+//! ];
+//!
+//! let prefixes = provide_prefix(&items, |parent, item| {
+//!     let pi = item.split("/");
+//!     let pp = parent.split("/");
+//!     (pi.count() == pp.count() + 1) && item.starts_with(parent)
+//! });
+//!
+//! let mut actual = String::new();
+//! prefixes.iter().zip(items).for_each(|(p, i)|
+//!     actual.push_str(&format!("{} {}\n", p, i))
+//! );
+//!
+//! let expected = r#" 1/2
+//!  ├─ 1/2/3
+//!  │  └─ 1/2/3/4
+//!  └─ 1/2/5
+//!  6
+//!  7
+//!  ├─ 7/8
+//!  └─ 7/9
+//! "#;
+//! //dbg!(&actual);
+//! assert_eq!(actual, expected);
+//! ```
+//!
+
 #[derive(Debug, Clone)]
 struct TreeNode {
     parent: Option<usize>,
@@ -5,29 +46,22 @@ struct TreeNode {
     children: Vec<usize>,
 }
 
-fn level_to_string(level: &Vec<bool>) -> String {
+fn level_to_string(level: &[bool]) -> String {
     const EMPTY: &str = "   ";
     const EDGE: &str = " └─";
     const PIPE: &str = " │ ";
     const BRANCH: &str = " ├─";
 
     let mut prefix = String::new();
-    if level.len() > 0 {
+    if !level.is_empty() {
         let last_col = level.len() - 1;
         for (col, is_last_child) in level.iter().enumerate() {
             let is_last_col = col == last_col;
-            let s = if *is_last_child {
-                if !is_last_col {
-                    EMPTY
-                } else {
-                    EDGE
-                }
-            } else {
-                if !is_last_col {
-                    PIPE
-                } else {
-                    BRANCH
-                }
+            let s = match (*is_last_child, is_last_col) {
+                (true, false) => EMPTY,
+                (true, true) => EDGE,
+                (false, false) => PIPE,
+                (false, true) => BRANCH,
             };
             prefix.push_str(s);
         }
@@ -58,10 +92,7 @@ where
     let mut nodes: Vec<TreeNode> = vec![];
     for (i, item) in items.iter().enumerate() {
         while current.is_some() && !is_parent_of(&items[current.unwrap()], item) {
-            current = nodes
-                .get_mut(current.unwrap())
-                .and_then(|n| n.parent)
-                .clone();
+            current = nodes.get_mut(current.unwrap()).and_then(|n| n.parent);
         }
         let treenode = TreeNode {
             parent: current,

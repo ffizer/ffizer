@@ -216,7 +216,7 @@ where
     let mut input = Select::new();
     input
         .with_prompt(&format!("Modification of {:?}", local.as_ref()))
-        .items(&values.iter().map(|v| format!("{}", v)).collect::<Vec<_>>())
+        .items(&values.iter().map(|v| v.to_string()).collect::<Vec<_>>())
         .default(0)
         .paged(false);
     let idx = input.interact().context(crate::Io {})?;

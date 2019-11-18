@@ -10,6 +10,7 @@ use std::path::PathBuf;
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug, Snafu)]
+#[allow(clippy::large_enum_variant)] // warn to restore to default
 #[snafu(visibility = "pub(crate)")]
 pub enum Error {
     #[snafu(display("{}", msg))]

@@ -222,12 +222,12 @@ where
     let dest_full_path = files::add_suffix(dest_full_path_target, dest_suffix_ext)?;
     if !is_ffizer_handlebars(src_full_path) {
         fs::copy(&src_full_path, &dest_full_path).context(CopyFile {
-            src: src_full_path.clone(),
+            src: src_full_path,
             dst: dest_full_path.clone(),
         })?;
     } else {
         let src = fs::read_to_string(&src_full_path).context(ReadFile {
-            path: src_full_path.clone(),
+            path: src_full_path,
         })?;
         let dst = fs::File::create(&dest_full_path).context(CreateFile {
             path: dest_full_path.clone(),
@@ -261,17 +261,17 @@ where
             }
             UpdateMode::Override => {
                 fs::remove_file(&local).context(RemoveFile {
-                    path: local.clone(),
+                    path: local,
                 })?;
                 fs::rename(&remote, &local).context(RenameFile {
-                    src: remote.clone(),
-                    dst: local.clone(),
+                    src: remote,
+                    dst: local,
                 })?;
                 break;
             }
             UpdateMode::Keep => {
                 fs::remove_file(&remote).context(RemoveFile {
-                    path: remote.clone(),
+                    path: remote,
                 })?;
                 break;
             }
@@ -284,12 +284,12 @@ where
                 // backup existing as .LOCAL
                 let new_local = files::add_suffix(&local, ".LOCAL")?;
                 fs::rename(&local, &new_local).context(RenameFile {
-                    src: local.clone(),
+                    src: local,
                     dst: new_local.clone(),
                 })?;
                 fs::rename(&remote, &local).context(RenameFile {
-                    src: remote.clone(),
-                    dst: local.clone(),
+                    src: remote,
+                    dst: local,
                 })?;
                 break;
             } // UpdateMode::Merge => {

@@ -1,7 +1,6 @@
 use crate::source_loc::SourceLoc;
-use crate::Error;
 use std::path::PathBuf;
-use std::str::FromStr;
+use structopt::clap::arg_enum;
 use structopt::clap::AppSettings;
 use structopt::StructOpt;
 
@@ -41,9 +40,13 @@ pub enum Command {
 
 #[derive(StructOpt, Debug, Default, Clone)]
 pub struct ApplyOpts {
-    /// ask confirmation 'never' or 'always'
-    #[structopt(long = "confirm", default_value = "never")]
+    /// ask for plan confirmation
+    #[structopt(long = "confirm", default_value = "Never", possible_values = &AskConfirmation::variants(), case_insensitive = true)]
     pub confirm: AskConfirmation,
+
+    /// mode to update existing file
+    #[structopt(long = "update-mode", default_value = "Ask", possible_values = &UpdateMode::variants(), case_insensitive = true)]
+    pub update_mode: UpdateMode,
 
     /// should not ask for valiables values, always use defautl value or empty (experimental)
     #[structopt(long = "x-always_default_value")]
@@ -66,32 +69,44 @@ pub struct ApplyOpts {
     pub dst_folder: PathBuf,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum AskConfirmation {
-    Auto,
-    Always,
-    Never,
-}
-
-impl FromStr for AskConfirmation {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "never" => Ok(AskConfirmation::Never),
-            "always" => Ok(AskConfirmation::Always),
-            "auto" => Ok(AskConfirmation::Auto),
-            _ => Err(Error::StringValueNotIn {
-                value_name: "ask_confirmation".to_owned(),
-                value: s.to_owned(),
-                accepted: vec!["never".to_owned(), "always".to_owned(), "auto".to_owned()],
-            }),
-        }
+arg_enum! {
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    pub enum AskConfirmation {
+        Auto,
+        Always,
+        Never,
     }
 }
 
 impl Default for AskConfirmation {
     fn default() -> Self {
         AskConfirmation::Auto
+    }
+}
+
+arg_enum! {
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    /// mode to process update of existing local file
+    pub enum UpdateMode {
+        // ask what to do
+        Ask,
+        // keep existing local file (ignore template)
+        Keep,
+        // override local file with file from template
+        Override,
+        // keep existing local file, add template with extension .REMOTE
+        UpdateAsRemote,
+        // rename existing local file with extension .LOCAL, add template file
+        CurrentAsLocal,
+        // show diff then ask
+        ShowDiff,
+        // // try to merge existing local with remote template via merge tool (defined in the git's configuration)
+        // Merge,
+    }
+}
+
+impl Default for UpdateMode {
+    fn default() -> Self {
+        UpdateMode::Ask
     }
 }

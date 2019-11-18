@@ -53,6 +53,17 @@ pub fn remove_special_suffix(path: &Path) -> Result<PathBuf> {
     }
 }
 
+pub fn add_suffix<P>(path: P, suffix: &str) -> Result<PathBuf>
+where
+    P: AsRef<Path>,
+{
+    Ok(PathBuf::from(format!(
+        "{}{}",
+        path.as_ref().to_string_lossy(),
+        suffix
+    )))
+}
+
 pub fn find_childpaths<P>(base: P, ignores: &[PathPattern]) -> Vec<ChildPath>
 where
     P: AsRef<Path>,
@@ -98,5 +109,14 @@ mod tests {
 
         assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs"))).is_true();
         assert_that!(is_ffizer_handlebars(&PathBuf::from("bar/foo.ffizer.hbs"))).is_true();
+    }
+
+    #[test]
+    fn test_add_suffix() -> Result<(), Box<dyn std::error::Error>> {
+        assert_that!(add_suffix(&PathBuf::from("foo.ext1"), "")?)
+            .is_equal_to(&PathBuf::from("foo.ext1"));
+        assert_that!(add_suffix(&PathBuf::from("foo.ext1"), ".REMOTE")?)
+            .is_equal_to(&PathBuf::from("foo.ext1.REMOTE"));
+        Ok(())
     }
 }

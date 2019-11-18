@@ -51,10 +51,9 @@ impl Default for Ctx {
 pub enum FileOperation {
     Nothing,
     Ignore,
-    Keep,
     MkDir,
-    CopyRaw,
-    CopyRender,
+    AddFile,
+    UpdateFile,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -159,26 +158,146 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
+            FileOperation::Nothing => (),
+            FileOperation::Ignore => (),
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => {
-                fs::create_dir_all(&PathBuf::from(&a.dst_path)).context(Io {})?
+                let path = PathBuf::from(&a.dst_path);
+                fs::create_dir_all(&path).context(CreateFolder { path })?
             }
-            FileOperation::CopyRaw => {
-                fs::copy(&PathBuf::from(&a.src_path), &PathBuf::from(&a.dst_path))
-                    .context(Io {})?;
+            FileOperation::AddFile => {
+                mk_file_on_action(&handlebars, variables, &a, "").map(|_| ())?
             }
-            FileOperation::CopyRender => {
-                let src = fs::read_to_string(&PathBuf::from(&a.src_path)).context(Io {})?;
-                let dst = fs::File::create(PathBuf::from(&a.dst_path)).context(Io {})?;
-                handlebars
-                    .render_template_to_write(&src, variables, dst)
-                    .context(crate::Handlebars {
-                        when: format!("define content for '{:?}'", &a),
-                        template: src.clone(),
-                    })?;
+            FileOperation::UpdateFile => {
+                //TODO what to do if .LOCAL, .REMOTE already exist ?
+                let (local, remote) = mk_file_on_action(&handlebars, variables, &a, ".REMOTE")?;
+                let local_digest = md5::compute(fs::read(&local).context(ReadFile {
+                    path: local.clone(),
+                })?);
+                let remote_digest = md5::compute(fs::read(&remote).context(ReadFile {
+                    path: remote.clone(),
+                })?);
+                if local_digest == remote_digest {
+                    fs::remove_file(&remote).context(RemoveFile {
+                        path: remote.clone(),
+                    })?
+                } else {
+                    update_file(&local, &remote, &ctx.cmd_opt.update_mode)?
+                }
             }
-            _ => (),
-        };
+        }
+    }
+    Ok(())
+}
+
+fn mk_file_on_action(
+    handlebars: &handlebars::Handlebars,
+    variables: &Variables,
+    a: &Action,
+    dest_suffix_ext: &str,
+) -> Result<(PathBuf, PathBuf)> {
+    let src_full_path = PathBuf::from(&a.src_path);
+    let dest_full_path_target = PathBuf::from(&a.dst_path);
+    mk_file(
+        handlebars,
+        variables,
+        src_full_path,
+        dest_full_path_target,
+        dest_suffix_ext,
+    )
+}
+
+fn mk_file<P>(
+    handlebars: &handlebars::Handlebars,
+    variables: &Variables,
+    src_full_path: P,
+    dest_full_path_target: P,
+    dest_suffix_ext: &str,
+) -> Result<(PathBuf, PathBuf)>
+where
+    P: AsRef<std::path::Path>,
+{
+    let src_full_path = src_full_path.as_ref();
+    let dest_full_path_target = dest_full_path_target.as_ref();
+    let dest_full_path = files::add_suffix(dest_full_path_target, dest_suffix_ext)?;
+    if !is_ffizer_handlebars(src_full_path) {
+        fs::copy(&src_full_path, &dest_full_path).context(CopyFile {
+            src: src_full_path.clone(),
+            dst: dest_full_path.clone(),
+        })?;
+    } else {
+        let src = fs::read_to_string(&src_full_path).context(ReadFile {
+            path: src_full_path.clone(),
+        })?;
+        let dst = fs::File::create(&dest_full_path).context(CreateFile {
+            path: dest_full_path.clone(),
+        })?;
+        handlebars
+            .render_template_to_write(&src, variables, dst)
+            .context(crate::Handlebars {
+                when: format!("define content for '{:?}'", dest_full_path),
+                template: src.clone(),
+            })?;
+    }
+    Ok((PathBuf::from(&dest_full_path_target), dest_full_path))
+}
+
+fn update_file<P>(local: P, remote: P, mode_init: &UpdateMode) -> Result<()>
+where
+    P: AsRef<std::path::Path>,
+{
+    let mut mode = mode_init.clone();
+    let remote = remote.as_ref();
+    let local = local.as_ref();
+    loop {
+        match mode {
+            UpdateMode::Ask => {
+                mode = ui::ask_update_mode(&local)?;
+            }
+            UpdateMode::ShowDiff => {
+                // show diff (then re-ask)
+                ui::show_difference(&local, &remote)?;
+                mode = UpdateMode::Ask;
+            }
+            UpdateMode::Override => {
+                fs::remove_file(&local).context(RemoveFile {
+                    path: local.clone(),
+                })?;
+                fs::rename(&remote, &local).context(RenameFile {
+                    src: remote.clone(),
+                    dst: local.clone(),
+                })?;
+                break;
+            }
+            UpdateMode::Keep => {
+                fs::remove_file(&remote).context(RemoveFile {
+                    path: remote.clone(),
+                })?;
+                break;
+            }
+            UpdateMode::UpdateAsRemote => {
+                // store generated as .REMOTE
+                // nothing todo
+                break;
+            }
+            UpdateMode::CurrentAsLocal => {
+                // backup existing as .LOCAL
+                let new_local = files::add_suffix(&local, ".LOCAL")?;
+                fs::rename(&local, &new_local).context(RenameFile {
+                    src: local.clone(),
+                    dst: new_local.clone(),
+                })?;
+                fs::rename(&remote, &local).context(RenameFile {
+                    src: remote.clone(),
+                    dst: local.clone(),
+                })?;
+                break;
+            } // UpdateMode::Merge => {
+              //     // merge tool (if defined in gitconfig)
+              //     mode = UpdateMode::Ask;
+              //     // break;
+              // }
+        }
     }
     Ok(())
 }
@@ -222,29 +341,25 @@ fn select_operation(
         || actions
             .iter()
             .any(|a| a.dst_path.relative == dst_path.relative)
-    // optim: propably the last
     {
-        FileOperation::Keep
-    // } else if src_path
-    //     .relative
-    //     .to_str()
-    //     .map(|s| cfg.ignores.iter().any(|f| f.is_match(s)))
-    //     .unwrap_or(false)
-    // {
-    //     FileOperation::Ignore
+        if dest_full_path.is_dir() {
+            FileOperation::Nothing
+        } else {
+            FileOperation::UpdateFile
+        }
     } else if src_full_path.is_dir() {
         FileOperation::MkDir
-    } else if is_ffizer_handlebars(&src_full_path) {
-        FileOperation::CopyRender
     } else {
-        FileOperation::CopyRaw
+        FileOperation::AddFile
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    pub use crate::cli_opt::*;
     use spectral::prelude::*;
+    use tempfile::TempDir;
 
     #[test]
     fn test_cmp_path_for_plan() {
@@ -387,4 +502,118 @@ mod tests {
         assert_that!(PathBuf::from("foo.ext2.ext1").extension())
             .is_equal_to(&Some(OsStr::new("ext1")));
     }
+
+    #[test]
+    fn test_mk_file_by_copy() {
+        // Create a directory inside of `std::env::temp_dir()`
+        let tmp_dir = TempDir::new().expect("create a temp dir");
+
+        let src_path = tmp_dir.path().join("src.txt");
+        fs::write(&src_path, "src {{ prj }}").expect("create local file");
+
+        let dst_path = tmp_dir.path().join("dst.txt");
+        let handlebars = new_hbs();
+        let mut variables = BTreeMap::new();
+        variables.insert("prj".to_owned(), "myprj".to_owned());
+
+        mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
+        assert_that!(&dst_path).exists();
+        assert_that!(fs::read_to_string(&dst_path).unwrap())
+            .is_equal_to("src {{ prj }}".to_owned());
+    }
+
+    #[test]
+    fn test_mk_file_by_render() {
+        // Create a directory inside of `std::env::temp_dir()`
+        let tmp_dir = TempDir::new().expect("create a temp dir");
+
+        let src_path = tmp_dir.path().join("src.txt.ffizer.hbs");
+        fs::write(&src_path, "src {{ prj }}").expect("create local file");
+
+        let dst_path = tmp_dir.path().join("dst.txt");
+        let handlebars = new_hbs();
+        let mut variables = BTreeMap::new();
+        variables.insert("prj".to_owned(), "myprj".to_owned());
+
+        mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
+        assert_that!(&dst_path).exists();
+        assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to("src myprj".to_owned());
+    }
+
+    const CONTENT_LOCAL: &str = "local";
+    const CONTENT_REMOTE: &str = "remote";
+
+    fn setup_for_test_update() -> (TempDir, PathBuf, PathBuf) {
+        // Create a directory inside of `std::env::temp_dir()`
+        let tmp_dir = TempDir::new().expect("create a temp dir");
+
+        let local_path = tmp_dir.path().join("file.txt");
+        fs::write(&local_path, CONTENT_LOCAL).expect("create local file");
+
+        let remote_path = tmp_dir.path().join("file.txt.REMOTE");
+        fs::write(&remote_path, CONTENT_REMOTE).expect("create remote file");
+
+        (tmp_dir, local_path, remote_path)
+    }
+
+    #[test]
+    fn test_update_file_override() {
+        // grab _tmp_dir, because Drop will delete it and its files
+        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
+        update_file(&local_path, &remote_path, &UpdateMode::Override)
+            .expect("update without error");
+        assert_that!(&local_path).exists();
+        assert_that!(fs::read_to_string(&local_path).unwrap())
+            .is_equal_to(CONTENT_REMOTE.to_owned());
+        assert_that!(&remote_path).does_not_exist();
+    }
+
+    #[test]
+    fn test_update_file_keep() {
+        // grab _tmp_dir, because Drop will delete it and its files
+        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
+        update_file(&local_path, &remote_path, &UpdateMode::Keep).expect("update without error");
+        assert_that!(&local_path).exists();
+        assert_that!(fs::read_to_string(&local_path).unwrap())
+            .is_equal_to(CONTENT_LOCAL.to_owned());
+        assert_that!(&remote_path).does_not_exist();
+    }
+
+    #[test]
+    fn test_update_file_update_as_remote() {
+        // grab _tmp_dir, because Drop will delete it and its files
+        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
+        update_file(&local_path, &remote_path, &UpdateMode::UpdateAsRemote)
+            .expect("update without error");
+        assert_that!(&local_path).exists();
+        assert_that!(fs::read_to_string(&local_path).unwrap())
+            .is_equal_to(CONTENT_LOCAL.to_owned());
+        assert_that!(&remote_path).exists();
+        assert_that!(fs::read_to_string(&remote_path).unwrap())
+            .is_equal_to(CONTENT_REMOTE.to_owned());
+    }
+
+    #[test]
+    fn test_update_file_current_as_local() {
+        // grab _tmp_dir, because Drop will delete it and its files
+        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
+        update_file(&local_path, &remote_path, &UpdateMode::CurrentAsLocal)
+            .expect("update without error");
+        assert_that!(&local_path).exists();
+        assert_that!(fs::read_to_string(&local_path).unwrap())
+            .is_equal_to(CONTENT_REMOTE.to_owned());
+        assert_that!(&remote_path).does_not_exist();
+        let dot_local_path = files::add_suffix(&local_path, ".LOCAL").unwrap();
+        assert_that!(&dot_local_path).exists();
+        assert_that!(fs::read_to_string(&dot_local_path).unwrap())
+            .is_equal_to(CONTENT_LOCAL.to_owned());
+    }
+
+    // #[test]
+    // fn test_update_file_show_diff() {
+    //     // grab _tmp_dir, because Drop will delete it and its files
+    //     let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
+    //     update_file(&local_path, &remote_path, &UpdateMode::ShowDiff)
+    //         .expect("update without error");
+    // }
 }

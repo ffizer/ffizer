@@ -15,6 +15,7 @@ use lazy_static::lazy_static;
 use slog::debug;
 use snafu::ResultExt;
 use std::borrow::Cow;
+use std::str::FromStr;
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -153,10 +154,9 @@ fn format_operation(op: &FileOperation) -> Cow<'static, str> {
     let s = match op {
         FileOperation::Nothing => "do nothing",
         FileOperation::Ignore => "ignore",
-        FileOperation::Keep => "keep existing",
         FileOperation::MkDir => "make dir",
-        FileOperation::CopyRaw => "copy",
-        FileOperation::CopyRender => "render",
+        FileOperation::AddFile => "add file",
+        FileOperation::UpdateFile => "update file",
     };
     console::pad_str(s, 15, console::Alignment::Left, Some("..."))
 }
@@ -191,4 +191,35 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
         true
     };
     Ok(r)
+}
+
+pub fn show_difference<P>(local: P, remote: P) -> Result<()>
+where
+    P: AsRef<std::path::Path>,
+{
+    use crate::error::*;
+    use difference::Changeset;
+    use std::fs;
+    let local_str = fs::read_to_string(&local).context(Io {})?;
+    let remote_str = fs::read_to_string(&remote).context(Io {})?;
+    let changeset = Changeset::new(&local_str, &remote_str, "\n");
+    println!("{}", changeset);
+    Ok(())
+}
+
+pub fn ask_update_mode<P>(local: P) -> Result<UpdateMode>
+where
+    P: AsRef<std::path::Path>,
+{
+    let values = UpdateMode::variants();
+    // let values = vec![UpdateMode::ShowDiff, UpdateMode::Keep];
+    let mut input = Select::new();
+    input
+        .with_prompt(&format!("Modification of {:?}", local.as_ref()))
+        .items(&values.iter().map(|v| format!("{}", v)).collect::<Vec<_>>())
+        .default(0)
+        .paged(false);
+    let idx = input.interact().context(crate::Io {})?;
+
+    UpdateMode::from_str(values[idx]).map_err(|s| crate::error::Error::Any { msg: s })
 }

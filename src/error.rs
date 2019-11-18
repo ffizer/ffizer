@@ -48,7 +48,33 @@ pub enum Error {
         path: PathBuf,
         source: std::io::Error,
     },
-
+    #[snafu(display("create file {:?}", path))]
+    CreateFile {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    #[snafu(display("rename file from {:?} to {:?} ", src, dst))]
+    RenameFile {
+        src: PathBuf,
+        dst: PathBuf,
+        source: std::io::Error,
+    },
+    #[snafu(display("copy file from {:?} to {:?} ", src, dst))]
+    CopyFile {
+        src: PathBuf,
+        dst: PathBuf,
+        source: std::io::Error,
+    },
+    #[snafu(display("read file {:?}", path))]
+    ReadFile {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    #[snafu(display("remove file {:?}", path))]
+    RemoveFile {
+        path: PathBuf,
+        source: std::io::Error,
+    },
     ParsePathPattern {
         value: String,
         source: globset::Error,

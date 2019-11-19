@@ -100,8 +100,8 @@ arg_enum! {
         CurrentAsLocal,
         // show diff then ask
         ShowDiff,
-        // // try to merge existing local with remote template via merge tool (defined in the git's configuration)
-        // Merge,
+        // try to merge existing local with remote template via merge tool (defined in the git's configuration)
+        Merge,
     }
 }
 

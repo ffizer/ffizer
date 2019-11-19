@@ -182,7 +182,12 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                         path: remote.clone(),
                     })?
                 } else {
-                    update_file(&local, &remote, &ctx.cmd_opt.update_mode)?
+                    update_file(
+                        &PathBuf::from(&a.src_path),
+                        &local,
+                        &remote,
+                        &ctx.cmd_opt.update_mode,
+                    )?
                 }
             }
         }
@@ -242,13 +247,14 @@ where
     Ok((PathBuf::from(&dest_full_path_target), dest_full_path))
 }
 
-fn update_file<P>(local: P, remote: P, mode_init: &UpdateMode) -> Result<()>
+fn update_file<P>(src: P, local: P, remote: P, mode_init: &UpdateMode) -> Result<()>
 where
     P: AsRef<std::path::Path>,
 {
     let mut mode = mode_init.clone();
     let remote = remote.as_ref();
     let local = local.as_ref();
+    let src = src.as_ref();
     loop {
         match mode {
             UpdateMode::Ask => {
@@ -260,9 +266,7 @@ where
                 mode = UpdateMode::Ask;
             }
             UpdateMode::Override => {
-                fs::remove_file(&local).context(RemoveFile {
-                    path: local,
-                })?;
+                fs::remove_file(&local).context(RemoveFile { path: local })?;
                 fs::rename(&remote, &local).context(RenameFile {
                     src: remote,
                     dst: local,
@@ -270,9 +274,7 @@ where
                 break;
             }
             UpdateMode::Keep => {
-                fs::remove_file(&remote).context(RemoveFile {
-                    path: remote,
-                })?;
+                fs::remove_file(&remote).context(RemoveFile { path: remote })?;
                 break;
             }
             UpdateMode::UpdateAsRemote => {
@@ -292,13 +294,46 @@ where
                     dst: local,
                 })?;
                 break;
-            } // UpdateMode::Merge => {
-              //     // merge tool (if defined in gitconfig)
-              //     mode = UpdateMode::Ask;
-              //     // break;
-              // }
+            }
+            UpdateMode::Merge => match merge_file(src, local, remote) {
+                Ok(_) => {
+                    fs::remove_file(&remote).context(RemoveFile { path: remote })?;
+                    break;
+                }
+                Err(_) => mode = UpdateMode::Ask,
+            },
         }
     }
+    Ok(())
+}
+
+fn merge_file<P>(src: P, local: P, remote: P) -> Result<()>
+where
+    P: AsRef<std::path::Path>,
+{
+    let remote = remote.as_ref();
+    let local = local.as_ref();
+    let src = src.as_ref();
+    let merge_cmd = git::find_cmd_tool("merge").context(GitFindConfig { key: "merge" })?;
+    let new_local = files::add_suffix(&local, ".LOCAL")?;
+    fs::copy(&local, &new_local).context(CopyFile {
+        src: local,
+        dst: new_local.clone(),
+    })?;
+    let cmd_all = merge_cmd
+        .replace("$REMOTE", &remote.to_string_lossy())
+        .replace("$LOCAL", &new_local.to_string_lossy())
+        .replace("$BASE", &src.to_string_lossy())
+        .replace("$MERGED", &local.to_string_lossy());
+    let cmd = cmd_all.split(' ').collect::<Vec<_>>();
+    //dbg!(&cmd);
+    std::process::Command::new(cmd[0])
+        .args(&cmd[1..])
+        // .stdin(std::process::Stdio::piped())
+        // .stdout(std::process::Stdio::piped())
+        .output()
+        .context(RunCommand { cmd: cmd_all })?;
+    fs::remove_file(&new_local).context(RemoveFile { path: new_local })?;
     Ok(())
 }
 
@@ -503,13 +538,17 @@ mod tests {
             .is_equal_to(&Some(OsStr::new("ext1")));
     }
 
+    const CONTENT_BASE: &str = "{{ base }}";
+    const CONTENT_LOCAL: &str = "local";
+    const CONTENT_REMOTE: &str = "remote";
+
     #[test]
     fn test_mk_file_by_copy() {
         // Create a directory inside of `std::env::temp_dir()`
         let tmp_dir = TempDir::new().expect("create a temp dir");
 
         let src_path = tmp_dir.path().join("src.txt");
-        fs::write(&src_path, "src {{ prj }}").expect("create local file");
+        fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
         let dst_path = tmp_dir.path().join("dst.txt");
         let handlebars = new_hbs();
@@ -518,8 +557,7 @@ mod tests {
 
         mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
-        assert_that!(fs::read_to_string(&dst_path).unwrap())
-            .is_equal_to("src {{ prj }}".to_owned());
+        assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_BASE.to_owned());
     }
 
     #[test]
@@ -528,24 +566,24 @@ mod tests {
         let tmp_dir = TempDir::new().expect("create a temp dir");
 
         let src_path = tmp_dir.path().join("src.txt.ffizer.hbs");
-        fs::write(&src_path, "src {{ prj }}").expect("create local file");
+        fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
         let dst_path = tmp_dir.path().join("dst.txt");
         let handlebars = new_hbs();
         let mut variables = BTreeMap::new();
-        variables.insert("prj".to_owned(), "myprj".to_owned());
+        variables.insert("base".to_owned(), "remote".to_owned());
 
         mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
-        assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to("src myprj".to_owned());
+        assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_REMOTE.to_owned());
     }
 
-    const CONTENT_LOCAL: &str = "local";
-    const CONTENT_REMOTE: &str = "remote";
-
-    fn setup_for_test_update() -> (TempDir, PathBuf, PathBuf) {
+    fn setup_for_test_update() -> (TempDir, PathBuf, PathBuf, PathBuf) {
         // Create a directory inside of `std::env::temp_dir()`
         let tmp_dir = TempDir::new().expect("create a temp dir");
+
+        let src_path = tmp_dir.path().join("src.txt.ffizer.hbs");
+        fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
         let local_path = tmp_dir.path().join("file.txt");
         fs::write(&local_path, CONTENT_LOCAL).expect("create local file");
@@ -553,14 +591,14 @@ mod tests {
         let remote_path = tmp_dir.path().join("file.txt.REMOTE");
         fs::write(&remote_path, CONTENT_REMOTE).expect("create remote file");
 
-        (tmp_dir, local_path, remote_path)
+        (tmp_dir, local_path, remote_path, src_path)
     }
 
     #[test]
     fn test_update_file_override() {
         // grab _tmp_dir, because Drop will delete it and its files
-        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
-        update_file(&local_path, &remote_path, &UpdateMode::Override)
+        let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
+        update_file(&src_path, &local_path, &remote_path, &UpdateMode::Override)
             .expect("update without error");
         assert_that!(&local_path).exists();
         assert_that!(fs::read_to_string(&local_path).unwrap())
@@ -571,8 +609,9 @@ mod tests {
     #[test]
     fn test_update_file_keep() {
         // grab _tmp_dir, because Drop will delete it and its files
-        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
-        update_file(&local_path, &remote_path, &UpdateMode::Keep).expect("update without error");
+        let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
+        update_file(&src_path, &local_path, &remote_path, &UpdateMode::Keep)
+            .expect("update without error");
         assert_that!(&local_path).exists();
         assert_that!(fs::read_to_string(&local_path).unwrap())
             .is_equal_to(CONTENT_LOCAL.to_owned());
@@ -582,9 +621,14 @@ mod tests {
     #[test]
     fn test_update_file_update_as_remote() {
         // grab _tmp_dir, because Drop will delete it and its files
-        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
-        update_file(&local_path, &remote_path, &UpdateMode::UpdateAsRemote)
-            .expect("update without error");
+        let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
+        update_file(
+            &src_path,
+            &local_path,
+            &remote_path,
+            &UpdateMode::UpdateAsRemote,
+        )
+        .expect("update without error");
         assert_that!(&local_path).exists();
         assert_that!(fs::read_to_string(&local_path).unwrap())
             .is_equal_to(CONTENT_LOCAL.to_owned());
@@ -596,9 +640,14 @@ mod tests {
     #[test]
     fn test_update_file_current_as_local() {
         // grab _tmp_dir, because Drop will delete it and its files
-        let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
-        update_file(&local_path, &remote_path, &UpdateMode::CurrentAsLocal)
-            .expect("update without error");
+        let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
+        update_file(
+            &src_path,
+            &local_path,
+            &remote_path,
+            &UpdateMode::CurrentAsLocal,
+        )
+        .expect("update without error");
         assert_that!(&local_path).exists();
         assert_that!(fs::read_to_string(&local_path).unwrap())
             .is_equal_to(CONTENT_REMOTE.to_owned());
@@ -609,11 +658,11 @@ mod tests {
             .is_equal_to(CONTENT_LOCAL.to_owned());
     }
 
-    // #[test]
-    // fn test_update_file_show_diff() {
-    //     // grab _tmp_dir, because Drop will delete it and its files
-    //     let (_tmp_dir, local_path, remote_path) = setup_for_test_update();
-    //     update_file(&local_path, &remote_path, &UpdateMode::ShowDiff)
-    //         .expect("update without error");
-    // }
+    #[test]
+    fn test_update_file_show_diff() {
+        // grab _tmp_dir, because Drop will delete it and its files
+        let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
+        update_file(&src_path, &local_path, &remote_path, &UpdateMode::ShowDiff)
+            .expect("update without error");
+    }
 }

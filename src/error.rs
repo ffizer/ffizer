@@ -38,6 +38,11 @@ pub enum Error {
         rev: String,
         source: git2::Error,
     },
+    #[snafu(display("try to find git config '{:?}'", key))]
+    GitFindConfig {
+        key: String,
+        source: git2::Error,
+    },
 
     #[snafu(display("create folder {:?}", path))]
     CreateFolder {
@@ -74,6 +79,11 @@ pub enum Error {
     #[snafu(display("remove file {:?}", path))]
     RemoveFile {
         path: PathBuf,
+        source: std::io::Error,
+    },
+    #[snafu(display("run command '{:?}'", cmd))]
+    RunCommand {
+        cmd: String,
         source: std::io::Error,
     },
     ParsePathPattern {

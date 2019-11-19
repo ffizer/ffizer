@@ -1,6 +1,6 @@
 use crate::Error;
 use git2::build::{CheckoutBuilder, RepoBuilder};
-use git2::{FetchOptions, Repository};
+use git2::{Config, FetchOptions, Repository};
 use git2_credentials;
 use snafu::ResultExt;
 use std::path::Path;
@@ -123,6 +123,13 @@ where
     let treeish = repository.revparse_single(rev)?;
     repository.checkout_tree(&treeish, Some(&mut co))?;
     Ok(())
+}
+
+/// kind can be "merge" or "diff"
+pub fn find_cmd_tool(kind: &str) -> Result<String, git2::Error> {
+    let config = Config::open_default()?;
+    let tool = config.get_string(&format!("{}.tool", kind))?;
+    config.get_string(&format!("{}tool.{}.cmd", kind, tool))
 }
 
 #[cfg(test)]

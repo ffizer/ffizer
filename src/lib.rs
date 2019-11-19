@@ -658,11 +658,11 @@ mod tests {
             .is_equal_to(CONTENT_LOCAL.to_owned());
     }
 
-    #[test]
-    fn test_update_file_show_diff() {
-        // grab _tmp_dir, because Drop will delete it and its files
-        let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
-        update_file(&src_path, &local_path, &remote_path, &UpdateMode::ShowDiff)
-            .expect("update without error");
-    }
+    // #[test]
+    // fn test_update_file_show_diff() {
+    //     // grab _tmp_dir, because Drop will delete it and its files
+    //     let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
+    //     update_file(&src_path, &local_path, &remote_path, &UpdateMode::ShowDiff)
+    //         .expect("update without error");
+    // }
 }

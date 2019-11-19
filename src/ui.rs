@@ -15,7 +15,6 @@ use lazy_static::lazy_static;
 use slog::debug;
 use snafu::ResultExt;
 use std::borrow::Cow;
-use std::str::FromStr;
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -211,15 +210,31 @@ pub fn ask_update_mode<P>(local: P) -> Result<UpdateMode>
 where
     P: AsRef<std::path::Path>,
 {
-    let values = UpdateMode::variants();
-    // let values = vec![UpdateMode::ShowDiff, UpdateMode::Keep];
+    // let values = UpdateMode::variants();
+    let values = vec![
+                //("ask what to do", UpdateMode::Ask),
+                ("show diff then ask", UpdateMode::ShowDiff),
+                ("keep existing local file (ignore template)", UpdateMode::Keep),
+                ("override local file with file from template", UpdateMode::Override),
+                ("keep existing local file, add template with extension .REMOTE", UpdateMode::UpdateAsRemote),
+                ("rename existing local file with extension .LOCAL, add template file", UpdateMode::CurrentAsLocal),
+                ("try to merge existing local with remote template via merge tool (defined in the git's configuration)", UpdateMode::Merge),
+    ];
     let mut input = Select::new();
     input
-        .with_prompt(&format!("Modification of {:?}", local.as_ref()))
-        .items(&values.iter().map(|v| v.to_string()).collect::<Vec<_>>())
+        .with_prompt(&format!(
+            "Modification of {:?} (use arrow + return to select option)",
+            local.as_ref()
+        ))
+        .items(
+            &values
+                .iter()
+                .map(|v| format!("{} - {}", v.1.to_string(), v.0))
+                .collect::<Vec<_>>(),
+        )
         .default(0)
         .paged(false);
     let idx = input.interact().context(crate::Io {})?;
 
-    UpdateMode::from_str(values[idx]).map_err(|s| crate::error::Error::Any { msg: s })
+    Ok(values[idx].1.clone())
 }

@@ -5,14 +5,14 @@
 - [`Shields.io`: Quality metadata badges for open source projects](https://shields.io/#/)
 -->
 
-[![crates.io](https://img.shields.io/crates/l/ffizer.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
-[![crates.io](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
+[![crates license](https://img.shields.io/crates/l/ffizer.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
+[![crate version](https://img.shields.io/crates/v/ffizer.svg)](https://crates.io/crates/ffizer)
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Actions Status](https://github.com/ffizer/ffizer/workflows/ci-flow/badge.svg)](https://github.com/ffizer/ffizer/actions)
-[![codecov](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
+[![test coverage](https://codecov.io/gh/ffizer/ffizer/branch/master/graph/badge.svg)](https://codecov.io/gh/ffizer/ffizer)
 
-[![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
+[![crates download](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
 ![GitHub All Releases](https://img.shields.io/github/downloads/ffizer/ffizer/total.svg)
 
 `ffizer` is a **f**iles and **f**olders initial**izer** / generator. It creates or updates any kind (or part) of project from template(s).
@@ -234,12 +234,12 @@ cargo make publish -- patch
 
 ### Generic
 
-- [Cookiecutter](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
-- [Cookiecutter — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
-- [sethyuan/fgen](https://github.com/sethyuan/fgen): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
+- [`Cookiecutter`](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
+- [`Cookiecutter` — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
+- [`sethyuan/fgen`](https://github.com/sethyuan/fgen): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
 - [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only) I could contributes but I have incompatible requirements.
-- [skeleton](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
-- [porteurbars](https://crates.io/crates/porteurbars), very similar but I discovered it too late.
+- [`skeleton`](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
+- [`porteurbars`](https://crates.io/crates/porteurbars), very similar but I discovered it too late.
 
 ### Specialized
 
@@ -247,7 +247,7 @@ specialized to a platform, build tool,...
 
 - [The web's scaffolding tool for modern webapps | Yeoman](http://yeoman.io/), nodejs ecosystem
 - [JHipster - Generate your Spring Boot + Angular/React applications!](https://www.jhipster.tech/) require java, dedicated to java web ecosystem, optionnated template (not generic)
-- [Giter8](http://www.foundweekends.org/giter8/) require java + [Conscript](http://www.foundweekends.org/conscript/index.html)
-- [Typesafe activator](https://developer.lightbend.com/start/), require java, target Scala ecosystem
-- [Maven – Archetypes](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, target maven ecosystem
+- [`Giter8`](http://www.foundweekends.org/giter8/) require java + [Conscript](http://www.foundweekends.org/conscript/index.html)
+- [`Typesafe activator`](https://developer.lightbend.com/start/), require java, target Scala ecosystem
+- [`Maven – Archetypes`](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, target maven ecosystem
 - [cargo-generate](https://github.com/ashleygwilliams/cargo-generate), limited capabilities, target rust/cargo ecosystem

@@ -228,13 +228,15 @@ condition = { env_set = [ "SNAPCRAFT_TOKEN", "SNAPCRAFT_CHANNEL"] }
 script_runner = "bash"
 script= [
 '''
-snap install snapcraft --classic
-snap install multipass --classic --beta
+lsb_release -a
+sudo snap install snapcraft --classic
+# sudo snap install multipass --classic --beta
+sudo chown root:root /
 hash -r
-# sudo chown root:root /
 echo "${SNAPCRAFT_TOKEN}" | snapcraft login --with -
-snapcraft
-snapcraft push --release ${SNAPCRAFT_CHANNEL} *.snap
-rm -f *.snap
+# multipass can not run on ubuntu-18.04 vm of github action
+sudo snapcraft --destructive-mode
+sudo snapcraft push --release ${SNAPCRAFT_CHANNEL} *.snap
+sudo rm -f *.snap
 ''',
 ]

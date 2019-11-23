@@ -1,24 +1,24 @@
-extern crate assert_cmd;
-extern crate ffizer;
-extern crate tempfile;
-extern crate test_generator;
-
 use assert_cmd::prelude::*;
 use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use tempfile::tempdir;
+use test_generator::test_resources;
 
 mod dir_diff;
 
-test_generator::test_expand_paths! { test_local_sample; "tests/test_*" }
-
-fn test_local_sample(dir_name: &str) {
-    assert!(test_local_sample_impl(dir_name).is_ok());
+#[test_resources("tests/test_*")]
+fn test_local_sample_keep(dir_name: &str) {
+    assert!(test_local_sample_impl(dir_name, "keep").is_ok());
 }
 
-fn test_local_sample_impl(dir_name: &str) -> Result<(), Box<dyn Error>> {
+#[test_resources("tests/test_*")]
+fn test_local_sample_override(dir_name: &str) {
+    assert!(test_local_sample_impl(dir_name, "override").is_ok());
+}
+
+fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let sample_path = PathBuf::from(dir_name);
     let template_path = sample_path.join("template");
@@ -31,7 +31,7 @@ fn test_local_sample_impl(dir_name: &str) -> Result<(), Box<dyn Error>> {
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
-        .arg("keep")
+        .arg(update_mode)
         .arg("--destination")
         .arg(actual_path.to_str().unwrap())
         .arg("--source")

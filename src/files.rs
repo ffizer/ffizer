@@ -15,6 +15,16 @@ pub struct ChildPath {
     pub is_symlink: bool,
 }
 
+impl ChildPath {
+    pub fn new(base: &str, relative: &str) -> ChildPath {
+        ChildPath {
+            relative: PathBuf::from(relative),
+            base: PathBuf::from(base),
+            is_symlink: false,
+        }
+    }
+}
+
 impl<'a> From<&'a ChildPath> for PathBuf {
     fn from(v: &ChildPath) -> Self {
         v.base.join(&v.relative)

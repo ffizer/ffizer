@@ -111,8 +111,8 @@ fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<V
             })
         })
         .collect::<Result<Vec<_>>>()?;
-    // TODO sort input_paths by priority (*.ffizer(.*) first, alphabetical)
     actions.sort_by(cmp_path_for_plan);
+    actions.dedup_by(|a, b| PathBuf::from(&a.dst_path) == PathBuf::from(&b.dst_path));
     let actions_count = actions.len();
     actions = actions
         .into_iter()
@@ -396,32 +396,38 @@ mod tests {
     use spectral::prelude::*;
     use tempfile::TempDir;
 
+    const DST_FOLDER_STR: &str = "test/dst";
+    const CONTENT_BASE: &str = "{{ base }}";
+    const CONTENT_LOCAL: &str = "local";
+    const CONTENT_REMOTE: &str = "remote";
+
+    fn new_ctx_for_test() -> Ctx {
+        Ctx {
+            cmd_opt: ApplyOpts {
+                dst_folder: PathBuf::from(DST_FOLDER_STR),
+                ..Default::default()
+            },
+            ..Default::default()
+        }
+    }
+
+    fn new_variables_for_test() -> Variables {
+        let mut variables = BTreeMap::new();
+        variables.insert("prj".to_owned(), "myprj".to_owned());
+        variables.insert("base".to_owned(), "remote".to_owned());
+        variables
+    }
+
     #[test]
     fn test_cmp_path_for_plan() {
         let a = Action {
-            src_path: ChildPath {
-                relative: PathBuf::from("file_2.txt"),
-                base: PathBuf::from("./tests/test_1/template"),
-                is_symlink: false,
-            },
-            dst_path: ChildPath {
-                relative: PathBuf::from("file_2.txt"),
-                base: PathBuf::from("/tmp/.tmpYPoYTW"),
-                is_symlink: false,
-            },
+            src_path: ChildPath::new("./tests/test_1/template", "file_2.txt"),
+            dst_path: ChildPath::new("/tmp/.tmpYPoYTW", "file_2.txt"),
             operation: FileOperation::Nothing,
         };
         let b = Action {
-            src_path: ChildPath {
-                relative: PathBuf::from("file_2.txt.ffizer.hbs"),
-                base: PathBuf::from("./tests/test_1/template"),
-                is_symlink: false,
-            },
-            dst_path: ChildPath {
-                relative: PathBuf::from("file_2.txt"),
-                base: PathBuf::from("/tmp/.tmpYPoYTW"),
-                is_symlink: false,
-            },
+            src_path: ChildPath::new("./tests/test_1/template", "file_2.txt.ffizer.hbs"),
+            dst_path: ChildPath::new("/tmp/.tmpYPoYTW", "file_2.txt"),
             operation: FileOperation::Nothing,
         };
         assert_that!(cmp_path_for_plan(&a, &b)).is_equal_to(&Ordering::Greater);
@@ -430,101 +436,42 @@ mod tests {
 
     #[test]
     fn test_compute_dst_path_asis() {
-        let ctx = Ctx {
-            cmd_opt: ApplyOpts {
-                dst_folder: PathBuf::from("test/dst"),
-                ..Default::default()
-            },
-            ..Default::default()
-        };
-        let variables = BTreeMap::new();
-        let src = ChildPath {
-            relative: PathBuf::from("hello/sample.txt"),
-            base: PathBuf::from("test/src"),
-            is_symlink: false,
-        };
-        let expected = ChildPath {
-            relative: PathBuf::from("hello/sample.txt"),
-            base: ctx.cmd_opt.dst_folder.clone(),
-            is_symlink: false,
-        };
+        let ctx = new_ctx_for_test();
+        let variables = new_variables_for_test();
+        let src = ChildPath::new("test/src", "hello/sample.txt");
+        let expected = ChildPath::new(DST_FOLDER_STR, "hello/sample.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
     }
 
     #[test]
     fn test_compute_dst_path_ffizer_handlebars() {
-        let ctx = Ctx {
-            cmd_opt: ApplyOpts {
-                dst_folder: PathBuf::from("test/dst"),
-                ..Default::default()
-            },
-            ..Default::default()
-        };
-        let variables = BTreeMap::new();
-
-        let src = ChildPath {
-            relative: PathBuf::from("hello/sample.txt.ffizer.hbs"),
-            base: PathBuf::from("test/src"),
-            is_symlink: false,
-        };
-        let expected = ChildPath {
-            relative: PathBuf::from("hello/sample.txt"),
-            base: ctx.cmd_opt.dst_folder.clone(),
-            is_symlink: false,
-        };
+        let ctx = new_ctx_for_test();
+        let variables = new_variables_for_test();
+        let src = ChildPath::new("test/src", "hello/sample.txt.ffizer.hbs");
+        let expected = ChildPath::new(DST_FOLDER_STR, "hello/sample.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
     }
 
     #[test]
     fn test_compute_dst_path_rendered_filename() {
-        let ctx = Ctx {
-            cmd_opt: ApplyOpts {
-                dst_folder: PathBuf::from("test/dst"),
-                ..Default::default()
-            },
-            ..Default::default()
-        };
-        let mut variables = BTreeMap::new();
-        variables.insert("prj".to_owned(), "myprj".to_owned());
+        let ctx = new_ctx_for_test();
+        let variables = new_variables_for_test();
 
-        let src = ChildPath {
-            relative: PathBuf::from("hello/{{ prj }}.txt"),
-            base: PathBuf::from("test/src"),
-            is_symlink: false,
-        };
-        let expected = ChildPath {
-            relative: PathBuf::from("hello/myprj.txt"),
-            base: ctx.cmd_opt.dst_folder.clone(),
-            is_symlink: false,
-        };
+        let src = ChildPath::new("test/src", "hello/{{ prj }}.txt");
+        let expected = ChildPath::new(DST_FOLDER_STR, "hello/myprj.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
     }
 
     #[test]
     fn test_compute_dst_path_rendered_folder() {
-        let ctx = Ctx {
-            cmd_opt: ApplyOpts {
-                dst_folder: PathBuf::from("test/dst"),
-                ..Default::default()
-            },
-            ..Default::default()
-        };
-        let mut variables = BTreeMap::new();
-        variables.insert("prj".to_owned(), "myprj".to_owned());
+        let ctx = new_ctx_for_test();
+        let variables = new_variables_for_test();
 
-        let src = ChildPath {
-            relative: PathBuf::from("hello/{{ prj }}/sample.txt"),
-            base: PathBuf::from("test/src"),
-            is_symlink: false,
-        };
-        let expected = ChildPath {
-            relative: PathBuf::from("hello/myprj/sample.txt"),
-            base: ctx.cmd_opt.dst_folder.clone(),
-            is_symlink: false,
-        };
+        let src = ChildPath::new("test/src", "hello/{{ prj }}/sample.txt");
+        let expected = ChildPath::new(DST_FOLDER_STR, "hello/myprj/sample.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
         assert_that!(&actual).is_equal_to(&expected);
     }
@@ -538,9 +485,35 @@ mod tests {
             .is_equal_to(&Some(OsStr::new("ext1")));
     }
 
-    const CONTENT_BASE: &str = "{{ base }}";
-    const CONTENT_LOCAL: &str = "local";
-    const CONTENT_REMOTE: &str = "remote";
+    #[test]
+    fn test_plan_with_empty() -> Result<(), Box<dyn std::error::Error>> {
+        let ctx = new_ctx_for_test();
+        let variables = new_variables_for_test();
+
+        let src_paths: Vec<ChildPath> = vec![];
+        let actions = plan(&ctx, src_paths, &variables)?;
+        assert_that!(&actions).is_empty();
+        Ok(())
+    }
+
+    #[test]
+    fn test_plan_with_duplicate() -> Result<(), Box<dyn std::error::Error>> {
+        let ctx = new_ctx_for_test();
+        let variables = new_variables_for_test();
+
+        let src_paths: Vec<ChildPath> = vec![
+            ChildPath::new("test/src1", "hello/file1.txt"),
+            ChildPath::new("test/src2", "hello/file1.txt"),
+        ];
+        let actions = plan(&ctx, src_paths, &variables)?;
+        let expected = vec![Action {
+            src_path: ChildPath::new("test/src1", "hello/file1.txt"),
+            dst_path: ChildPath::new(DST_FOLDER_STR, "hello/file1.txt"),
+            operation: FileOperation::AddFile,
+        }];
+        assert_that!(&actions).is_equal_to(&expected);
+        Ok(())
+    }
 
     #[test]
     fn test_mk_file_by_copy() {
@@ -552,8 +525,7 @@ mod tests {
 
         let dst_path = tmp_dir.path().join("dst.txt");
         let handlebars = new_hbs();
-        let mut variables = BTreeMap::new();
-        variables.insert("prj".to_owned(), "myprj".to_owned());
+        let variables = new_variables_for_test();
 
         mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
@@ -570,8 +542,7 @@ mod tests {
 
         let dst_path = tmp_dir.path().join("dst.txt");
         let handlebars = new_hbs();
-        let mut variables = BTreeMap::new();
-        variables.insert("base".to_owned(), "remote".to_owned());
+        let variables = new_variables_for_test();
 
         mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();

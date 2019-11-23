@@ -4,9 +4,63 @@
 ## Version x.y.z-dev
 
 ### Added
+- ✨  allow to use merge tool (as defined in git config) to merge updates
+- ✨  support several rules for the update of existing files (ask, override, keep, current-as-local, update-as-remote, show-diff)
+- 👷  try enable kcov+codecov  report on github-actions
+
+### Changed
+- 💄  add description of update's option in selector
+- 🚨  fix some code practice (thx clippy)
+- ⬆️  Bump structopt from 0.3.3 to 0.3.4
+- ⬆️  Bump self_update from 0.7.0 to 0.8.0
+- ⬆️  Bump snafu from 0.5.0 to 0.6.0
+- ⬆️  Bump indicatif from 0.12.0 to 0.13.0
+- ⬆️  Bump dialoguer from 0.4.0 to 0.5.0
+- ⬆️  Bump console from 0.9.0 to 0.9.1
+- ⬆️  Bump slog-term from 2.4.1 to 2.4.2
+- ⬆️  Bump serde from 1.0.101 to 1.0.102
+- ⬆️  Bump libc from 0.2.64 to 0.2.65
+- 🎨  reformat code
+- 💄  display &quot;plan to execute&quot; with a tree and lines
+- ⬆️  Bump libc from 0.2.62 to 0.2.64
+
+### Removed
+- 🔥  (cli) remove useless conf
+
+### Fixed
+- 🐛  on error the exit status should be non-zero
+- 🐛  fix url to retrieve the latest version
+
+### Miscellaneous
+- pencil  (README) update badge for CI
+- 🚧  (cargo-release) start next development iteration 1.5.2-dev
+
+<a name="1.5.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.5.1
+
+### Changed
+- 👽  cargo-release change the default value of tag-name to include a v :-(
+
+### Fixed
+- 🐛  (ci) missing GITHUB_REPOSITORY on azure-pipeline so the tarball was not build &amp; uploaded
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.5.1
+- 🚧  (cargo-release) start next development iteration 1.5.1-dev
+
+<a name="v1.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version v1.5.0
+
+<a name="1.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.5.0
+
+### Added
+- ✅  skip the git test if git is not in the path
 - 👷  init github-action
 
 ### Changed
+- 🔧  (test) try to fix setup of git
+- 🔧  enable feature &quot;cli&quot; by default to work friendly with `cargo install` and  `topgrade`
 - ⬆️  update Cargo.lock
 - ⬆️  Bump structopt from 0.3.2 to 0.3.3
 - ⬆️  Bump hashbrown from 0.6.0 to 0.6.1
@@ -47,6 +101,7 @@
 - ➖  remove direct dependency to hashbrown
 
 ### Fixed
+- 💚  (ci) try to fix azure-pipelines by downgrade image vm + disable cache
 - ✏️  fix typo in commit-message
 - 🐛  (git) add missing call to disconnect after fetch
 - 🐛  (git) fix the &quot;git pull&quot; to update previously cloned &amp; cached template
@@ -56,6 +111,13 @@
 - 🐛  move dependencies only for cli
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 1.5.0
+- 🚧  add sub-command èinspectè to provide information about ffizer (cache, configuration)
+- ⚗  (test) try to please the setup of azure/linux
+- 🔊  (test)  add info when test git'script fail
+- pencil  (README) move demo to the top
+- ⚗  (ci) restore installation of rustup on every platform
+- pencil  pre-publish update book, changelog, bom
 - 📝  update screencast (3)
 - 📝  update screencast (2)
 - 📝  update screencast

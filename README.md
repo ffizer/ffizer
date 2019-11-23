@@ -15,7 +15,7 @@
 [![Crates.io](https://img.shields.io/crates/d/ffizer.svg)](https://crates.io/crates/ffizer)
 ![GitHub All Releases](https://img.shields.io/github/downloads/ffizer/ffizer/total.svg)
 
-`ffizer` is a **f**iles and **f**olders initial**izer** / generator. Create any kind (or part) of project from template(s).
+`ffizer` is a **f**iles and **f**olders initial**izer** / generator. It creates or updates any kind (or part) of project from template(s).
 
 keywords: file generator, project template, project scaffolding, quick start, project bootstrap, project skeleton
 
@@ -29,7 +29,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
     - [via cargo](#via-cargo)
   - [Run](#run)
     - [Self upgrade the executable](#self-upgrade-the-executable)
-    - [Apply a template](#apply-a-template)
+    - [Apply a template (to create or update)](#apply-a-template-to-create-or-update)
   - [Authoring a template](#authoring-a-template)
 - [Templates](#templates)
 - [Build](#build)
@@ -39,6 +39,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 
 ## Features
 
+- *Create or update* files and folder from one (or several) template(s).
 - A native executable (cli)
   - Install via download a standalone single file on system (no requirements like `python`, `ruby`, `nodejs`, `java`, ...).
   - Run as fast enough project generator.
@@ -97,9 +98,10 @@ cargo install ffizer --force --features cli
 ```txt
 ➜  ffizer --help
 
-ffizer 1.2.0
+ffizer 1.6.0
 https://github.com/ffizer/ffizer
-ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template.
+ffizer is a files and folders initializer / generator.
+It creates or updates any kind (or part) of project from template(s)
 
 USAGE:
     ffizer [FLAGS] <SUBCOMMAND>
@@ -112,50 +114,43 @@ FLAGS:
 SUBCOMMANDS:
     apply      Apply a template into a target directory
     help       Prints this message or the help of the given subcommand(s)
+    inspect    Inspect configuration, caches,... (wip)
     upgrade    Self upgrade ffizer executable
 ```
 
 #### Self upgrade the executable
 
 ```sh
-➜  ffizer upgrade --help
-
-ffizer-upgrade 1.2.0
-https://github.com/ffizer/ffizer
-Self upgrade ffizer executable
-
-USAGE:
-    ffizer upgrade
-
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+➜  ffizer upgrade
 ```
 
-#### Apply a template
+#### Apply a template (to create or update)
 
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 1.2.0
+ffizer-apply 1.6.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
 USAGE:
-    ffizer apply [FLAGS] [OPTIONS] --destination <dst_folder> --source <uri>
+    ffizer apply [FLAGS] [OPTIONS] --destination <dst-folder> --source <uri>
 
 FLAGS:
     -h, --help                      Prints help information
         --offline                   in offline, only local templates or cached templates are used
-    -V, --version                   Prints version information
         --x-always_default_value    should not ask for valiables values, always use defautl value or empty
                                     (experimental)
 
 OPTIONS:
-        --confirm <confirm>               ask confirmation 'never' or 'always' [default: never]
-    -d, --destination <dst_folder>        destination folder (created if doesn't exist)
+        --confirm <confirm>               ask for plan confirmation [default: Never]  [possible values:
+                                          Auto, Always, Never]
+    -d, --destination <dst-folder>        destination folder (created if doesn't exist)
         --rev <rev>                       git revision of the template [default: master]
         --source-subfolder <subfolder>    path of the folder under the source uri to use for template
+        --update-mode <update-mode>       mode to update existing file [default: Ask]  [possible values:
+                                          Ask, Keep, Override, UpdateAsRemote,
+                                          CurrentAsLocal, ShowDiff, Merge]
     -s, --source <uri>                    uri / path of the template
 ```
 
@@ -201,15 +196,17 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
 
 ## Templates
 
-- [`ffizer/templates_default`: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
-- [`davidB31 / cg-starter-multi-rust` · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
-- [`davidB/templates`: repository to host the my collections of templates to used with ffizer.](https://github.com/davidB/templates)
-- github repo tagged [`ffizer-template`](https://github.com/topics/ffizer-template)
-- samples (used for test, demo)
-templates_default)
-  - [test_1](tests/test_1/template)
-  - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
-  - [`ffizer/template_sample`: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
+- Any git repositories (in this case ffizer is like `git clone ...`)
+- Parametrized (with variables) templates:
+  - [`ffizer/templates_default`: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
+  - [`davidB31 / cg-starter-multi-rust` · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.
+  - [`davidB/templates`: repository to host the my collections of templates to used with ffizer.](https://github.com/davidB/templates)
+  - github repo tagged [`ffizer-template`](https://github.com/topics/ffizer-template)
+  - samples (used for test, demo)
+  templates_default)
+    - [test_1](tests/test_1/template)
+    - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
+    - [`ffizer/template_sample`: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
 
 ## Build
 

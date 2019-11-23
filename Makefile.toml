@@ -124,10 +124,15 @@ script = [
 ]
 
 [tasks.pre-publish]
-env ={ COMMIT_MSG=":pencil: pre-publish update book, changelog, bom" }
-run_task= "update-docs"
+dependencies = [
+  "update-docs"
+]
 
 [tasks.update-docs]
+env ={ COMMIT_MSG=":pencil: pre-publish update book, changelog, bom" }
+run_task = "_update-docs-do"
+
+[tasks._update-docs-do]
 dependencies = [
   "update-book",
   "update-changelog",

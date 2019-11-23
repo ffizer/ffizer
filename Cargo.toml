@@ -2,7 +2,8 @@
 name = "ffizer"
 version = "1.5.2-dev"
 authors = ["David Bernard"]
-description = "ffizer is a files and folders initializer / generator. Create any kind (or part) of project from template."
+description = """ffizer is a files and folders initializer / generator.
+It creates or updates any kind (or part) of project from template(s)"""
 readme = "README.md"
 license = "CC0-1.0"
 keywords = ["project", "generator", "template", "skeleton"]

@@ -61,7 +61,10 @@ fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, git2::Error> {
     cb.credentials(move |url, username, allowed| ch.try_next_credential(url, username, allowed));
 
     let mut fo = FetchOptions::new();
-    fo.remote_callbacks(cb)
+    let mut proxy_options = git2::ProxyOptions::new();
+    proxy_options.auto();
+    fo.proxy_options(proxy_options)
+        .remote_callbacks(cb)
         .download_tags(git2::AutotagOption::All)
         .update_fetchhead(true);
     Ok(fo)

@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - master
-      - 'releases/*'
+      - "releases/*"
     # tags-ignore:
     #   - "[0-9]+.[0-9]+.[0-9]+*"
 
@@ -19,27 +19,32 @@ jobs:
           - imageName: ubuntu-18.04
             target: x86_64-unknown-linux-gnu
             profile: linux
-          - imageName: 'macOS-10.14'
+          - imageName: "macOS-latest"
             target: x86_64-apple-darwin
             profile: mac
-          - imageName: 'windows-2019'
+          - imageName: "windows-2019"
             target: x86_64-pc-windows-msvc
             profile: windows
 
     steps:
-    # - uses: hecrj/setup-rust-action@v1
-    #   with:
-    #     rust-version: ${{ matrix.rust_toolchain }}
-    - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.rust_toolchain }}
-        override: true
-    - uses: davidB/rust-cargo-make@v1
-      with:
-        version: 0.22.2
-    - uses: actions/checkout@v1
-    - name: Run tests
-      run: cargo make --profile ci-static-code-analysis-tasks --env TARGET=${{matrix.os.target}} ci-flow
-      env:
-        CARGO_MAKE_RUN_CODECOV: "true"
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      # - uses: hecrj/setup-rust-action@v1
+      #   with:
+      #     rust-version: ${{ matrix.rust_toolchain }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust_toolchain }}
+          override: true
+      - uses: davidB/rust-cargo-make@v1
+        with:
+          version: 0.22.2
+      - uses: actions/checkout@v1
+      - name: Run tests
+        run: cargo make --profile ci-static-code-analysis-tasks --env TARGET=${{matrix.os.target}} ci-flow
+        env:
+          CARGO_MAKE_RUN_CODECOV: "true"
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Update snapcraft
+        run: cargo make snapcraft-push
+        env:
+          SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
+          SNAPCRAFT_CHANNEL: edge

@@ -219,3 +219,20 @@ github-release.exe release --tag "${DIST_VERSION}" -ErrorAction SilentlyContinue
 github-release.exe upload --tag "${DIST_VERSION}" --name "${DIST_NAME}.${DIST_EXT}" --file "${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
 ''',
 ]
+
+[tasks.snapcraft-push]
+
+[tasks.snapcraft-push.linux]
+# to create SNAPCRAFT_TOKEN `snapcraft export-login --snaps $SNAP_NAME --channels edge,beta,candidate -`
+condition = { env_set = [ "SNAPCRAFT_TOKEN", "SNAPCRAFT_CHANNEL"] }
+script_runner = "bash"
+script= [
+'''
+sudo snap install snapcraft --classic
+# sudo chown root:root /
+echo "${SNAPCRAFT_TOKEN}" | snapcraft login --with -
+snapcraft
+snapcraft push --release ${SNAPCRAFT_CHANNEL} *.snap
+rm -f *.snap
+''',
+]

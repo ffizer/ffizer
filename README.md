@@ -25,6 +25,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 - [Usages](#usages)
   - [Install](#install)
     - [via homebrew](#via-homebrew)
+    - [via snap](#via-snap)
     - [via github releases](#via-github-releases)
     - [via cargo](#via-cargo)
   - [Run](#run)
@@ -81,6 +82,13 @@ curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh
 brew tap ffizer/ffizer
 brew install ffizer-bin
 ffizer upgrade
+```
+
+#### via snap
+
+```sh
+# experimental, feedback welcome
+sudo snap install ffizer --edge
 ```
 
 #### via github releases

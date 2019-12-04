@@ -15,31 +15,24 @@ jobs:
       matrix:
         rust_toolchain: ["stable"]
         os:
-          - imageName: ubuntu-18.04
-            target: x86_64-unknown-linux-gnu
-            profile: linux
+          - imageName: ubuntu-latest
           - imageName: "macOS-latest"
-            target: x86_64-apple-darwin
-            profile: mac
-          - imageName: "windows-2019"
-            target: x86_64-pc-windows-msvc
-            profile: windows
-    env:
-      TARGET: ${{matrix.os.target}}
+          - imageName: "windows-latest"
 
     steps:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust_toolchain }}
           override: true
+          profile: minimal
       - uses: davidB/rust-cargo-make@v1
-        with:
-          version: 0.22.2
       - uses: actions/checkout@v1
       - name: Make zip-release-ci-flow
-        run: cargo make --disable-check-for-updates --profile ${{ matrix.os.profile }} zip-release-ci-flow
+        run: cargo make zip-release-ci-flow
+        # env:
+        #   DEVELOPER_DIR: "/Applications/Xcode_11.app/Contents/Developer"
       - name: Upload to gitHub release
-        run: cargo make --disable-check-for-updates --profile ${{ matrix.os.profile }} github-upload-flow
+        run: cargo make github-upload-flow
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref }}

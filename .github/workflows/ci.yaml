@@ -16,35 +16,35 @@ jobs:
       matrix:
         rust_toolchain: ["stable"]
         os:
-          - imageName: ubuntu-18.04
-            target: x86_64-unknown-linux-gnu
-            profile: linux
+          - imageName: ubuntu-latest
+            profile_rustup: default
+            profile_ci_flow: ci-static-code-analysis-tasks
           - imageName: "macOS-latest"
-            target: x86_64-apple-darwin
-            profile: mac
-          - imageName: "windows-2019"
-            target: x86_64-pc-windows-msvc
-            profile: windows
+            profile_rustup: minimal
+            profile_ci_flow: none
+          - imageName: windows-latest
+            profile_rustup: minimal
+            profile_ci_flow: none
 
     steps:
-      # - uses: hecrj/setup-rust-action@v1
-      #   with:
-      #     rust-version: ${{ matrix.rust_toolchain }}
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust_toolchain }}
           override: true
+          profile: ${{matrix.os.profile_rustup}}
       - uses: davidB/rust-cargo-make@v1
-        with:
-          version: 0.22.2
       - uses: actions/checkout@v1
       - name: Run tests
-        run: cargo make --profile ci-static-code-analysis-tasks --env TARGET=${{matrix.os.target}} ci-flow
+        run: cargo make --profile "${{matrix.os.profile_ci_flow}}" ci-flow
         env:
+          # for list of xcode sdk see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners#xcode
+          # DEVELOPER_DIR: "/Applications/Xcode_11.app/Contents/Developer"
           CARGO_MAKE_RUN_CODECOV: "true"
+          # to have CODECOV_TOKEN go to https://codecov.io/gh/${GITHUB_USER}/${GITHUB_REPO}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Update snapcraft
         run: cargo make snapcraft-push
         env:
+          # to have SNAPCRAFT_TOKEN call `snapcraft export-login --snaps ${SNAP_NAME} --channels edge,beta,candidate -`
           SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
           SNAPCRAFT_CHANNEL: edge

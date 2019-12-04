@@ -82,7 +82,8 @@ impl TransformsValues for TemplateCfg {
         F: Fn(&str) -> String,
     {
         let variables = self.variables.clone();
-        let ignores = self.ignores.transforms_values(render)?;
+        let mut ignores = self.ignores.transforms_values(render)?;
+        ignores.retain(|x| !x.raw.trim().is_empty());
         let imports = self.imports.transforms_values(render)?;
         Ok(TemplateCfg {
             variables,

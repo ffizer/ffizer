@@ -40,7 +40,7 @@ structopt = "0.3.5"
 walkdir = "2.2.9"
 
 [dev-dependencies]
-assert_cmd = "0.11.1"
+assert_cmd = "0.12.0"
 # rexpect = "0.3"
 spectral = "0.6.0"
 tempfile = "3.1.0"

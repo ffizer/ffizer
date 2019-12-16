@@ -63,10 +63,15 @@ openssl = { version = "0.10", features = ["vendored"] }
 kernel32-sys = "0.2"
 winapi = "0.3"
 
+# see https://github.com/johnthagen/min-sized-rust
 [profile.release]
+# Enables link time optimizations which tells the compiler to optimize code generation at link time and can result in dropping code that is not used.
 lto = true
+# Stops Rust generating a helpful stack trace and panic message when it panics. With this optimization it will be much harder to figure out what went wrong when the program crashes.
 panic = 'abort'
-opt-level = 'z'  # Optimize for size.
+# Tells the compiler to optimize for minimal code size. This will make the code less performant but it will take up less space.
+opt-level = 'z'
+# Tells the compiler to use only one code generator instead of running several in parallel. Disabling parallel code generation makes the compilation slower but makes all optimizations possible.
 codegen-units = 1
 
 [features]

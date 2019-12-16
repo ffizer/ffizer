@@ -153,7 +153,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
-    let handlebars = new_hbs();
+    let mut handlebars = new_hbs();
     debug!(ctx.logger, "execute"; "variables" => ?&variables);
 
     for a in pb.wrap_iter(actions.iter()) {
@@ -166,11 +166,11 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                 fs::create_dir_all(&path).context(CreateFolder { path })?
             }
             FileOperation::AddFile => {
-                mk_file_on_action(&handlebars, variables, &a, "").map(|_| ())?
+                mk_file_on_action(&mut handlebars, variables, &a, "").map(|_| ())?
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
-                let (local, remote) = mk_file_on_action(&handlebars, variables, &a, ".REMOTE")?;
+                let (local, remote) = mk_file_on_action(&mut handlebars, variables, &a, ".REMOTE")?;
                 let local_digest = md5::compute(fs::read(&local).context(ReadFile {
                     path: local.clone(),
                 })?);
@@ -196,7 +196,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
 }
 
 fn mk_file_on_action(
-    handlebars: &handlebars::Handlebars,
+    handlebars: &mut handlebars::Handlebars,
     variables: &Variables,
     a: &Action,
     dest_suffix_ext: &str,
@@ -213,7 +213,7 @@ fn mk_file_on_action(
 }
 
 fn mk_file<P>(
-    handlebars: &handlebars::Handlebars,
+    handlebars: &mut handlebars::Handlebars,
     variables: &Variables,
     src_full_path: P,
     dest_full_path_target: P,
@@ -231,17 +231,30 @@ where
             dst: dest_full_path.clone(),
         })?;
     } else {
-        let src = fs::read_to_string(&src_full_path).context(ReadFile {
-            path: src_full_path,
-        })?;
+        let src_name = &src_full_path.to_string_lossy();
         let dst = fs::File::create(&dest_full_path).context(CreateFile {
             path: dest_full_path.clone(),
         })?;
         handlebars
-            .render_template_to_write(&src, variables, dst)
+            .register_template_file(&src_name, &src_full_path)
+            .map_err(|e| match e {
+                handlebars::TemplateFileError::TemplateError(err) => {
+                    handlebars::TemplateRenderError::from(err)
+                }
+                handlebars::TemplateFileError::IOError(err, msg) => {
+                    handlebars::TemplateRenderError::IOError(err, msg)
+                }
+            })
+            .context(crate::Handlebars {
+                when: format!("load content of template '{:?}'", src_full_path),
+                template: src_name.clone(),
+            })?;
+        handlebars
+            .render_to_write(&src_name, variables, dst)
+            .map_err(handlebars::TemplateRenderError::from)
             .context(crate::Handlebars {
                 when: format!("define content for '{:?}'", dest_full_path),
-                template: src.clone(),
+                template: src_name.clone(),
             })?;
     }
     Ok((PathBuf::from(&dest_full_path_target), dest_full_path))
@@ -524,10 +537,10 @@ mod tests {
         fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
         let dst_path = tmp_dir.path().join("dst.txt");
-        let handlebars = new_hbs();
+        let mut handlebars = new_hbs();
         let variables = new_variables_for_test();
 
-        mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
+        mk_file(&mut handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
         assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_BASE.to_owned());
     }
@@ -541,10 +554,10 @@ mod tests {
         fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
         let dst_path = tmp_dir.path().join("dst.txt");
-        let handlebars = new_hbs();
+        let mut handlebars = new_hbs();
         let variables = new_variables_for_test();
 
-        mk_file(&handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
+        mk_file(&mut handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
         assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_REMOTE.to_owned());
     }

@@ -300,7 +300,7 @@ where
                 let new_local = files::add_suffix(&local, ".LOCAL")?;
                 fs::rename(&local, &new_local).context(RenameFile {
                     src: local,
-                    dst: new_local.clone(),
+                    dst: new_local,
                 })?;
                 fs::rename(&remote, &local).context(RenameFile {
                     src: remote,

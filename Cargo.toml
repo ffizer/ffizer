@@ -21,7 +21,7 @@ directories = "2.0.2"
 git2 = "0.11.0"
 git2_credentials = "0.4.0"
 globset = "0.4.4"
-handlebars = "2.0.2"
+handlebars = "2.0.4"
 handlebars_misc_helpers = "0.6.0"
 human-panic = { version = "1.0.1", optional = true}
 indicatif = "0.13.0"

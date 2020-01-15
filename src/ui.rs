@@ -114,9 +114,9 @@ pub fn ask_variables(
             ask_variable_value(request)?
         };
         if let Some(idx) = resp.idx {
-            variables.insert(format!("{}__idx", name), idx.to_string());
+            variables.insert(format!("{}__idx", name), idx)?;
         }
-        variables.insert(name, resp.value);
+        variables.insert(name, resp.value)?;
     }
     Ok(variables)
 }

@@ -14,6 +14,7 @@ mod template_composite;
 mod transform_values;
 mod tree;
 mod ui;
+mod variables;
 
 pub use crate::cli_opt::*;
 pub use crate::error::*;
@@ -22,15 +23,13 @@ pub use crate::source_loc::SourceLoc;
 use crate::files::is_ffizer_handlebars;
 use crate::files::ChildPath;
 use crate::template_composite::TemplateComposite;
+use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o};
 use snafu::ResultExt;
 use std::cmp::Ordering;
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
-
-pub type Variables = BTreeMap<String, String>;
 
 #[derive(Debug, Clone)]
 pub struct Ctx {
@@ -87,15 +86,14 @@ pub fn process(ctx: &Ctx) -> Result<()> {
 pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
     let mut variables = Variables::new();
     variables.insert(
-        "ffizer_dst_folder".to_owned(),
+        "ffizer_dst_folder",
         ctx.cmd_opt
             .dst_folder
             .to_str()
-            .expect("dst_folder to converted via to_str")
-            .to_owned(),
-    );
-    variables.insert("ffizer_src_uri".to_owned(), ctx.cmd_opt.src.uri.raw.clone());
-    variables.insert("ffizer_src_rev".to_owned(), ctx.cmd_opt.src.rev.clone());
+            .expect("dst_folder to converted via to_str"),
+    )?;
+    variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
+    variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
     Ok(variables)
 }
 
@@ -425,9 +423,9 @@ mod tests {
     }
 
     fn new_variables_for_test() -> Variables {
-        let mut variables = BTreeMap::new();
-        variables.insert("prj".to_owned(), "myprj".to_owned());
-        variables.insert("base".to_owned(), "remote".to_owned());
+        let mut variables = Variables::new();
+        variables.insert("prj", "myprj").expect("insert prj");
+        variables.insert("base", "remote").expect("insert base");
         variables
     }
 

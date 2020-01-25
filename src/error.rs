@@ -71,6 +71,12 @@ pub enum Error {
         dst: PathBuf,
         source: std::io::Error,
     },
+    #[snafu(display("copy permission from {:?} to {:?} ", src, dst))]
+    CopyFilePermission {
+        src: PathBuf,
+        dst: PathBuf,
+        source: std::io::Error,
+    },
     #[snafu(display("read file {:?}", path))]
     ReadFile {
         path: PathBuf,

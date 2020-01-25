@@ -79,3 +79,6 @@ codegen-units = 1
 default = ["cli"]
 test_remote = [] # feature has no explicit dependencies
 cli = ["self_update", "human-panic", "slog-stdlog", "slog-term"]
+
+[patch.crates-io]
+jmespath = { git = 'https://github.com/yrashk/jmespath.rs', branch = 'json-syntax-error' }

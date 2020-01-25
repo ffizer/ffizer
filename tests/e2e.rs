@@ -1,4 +1,5 @@
 use assert_cmd::prelude::*;
+use predicates::prelude::*;
 use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
@@ -187,5 +188,30 @@ fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
         .success();
 
     dir_diff::is_same(&actual_path, &expected_path)?;
+    Ok(())
+}
+
+// reproduce https://github.com/ffizer/ffizer/issues/195
+#[test]
+fn log_should_report_error() -> Result<(), Box<dyn Error>> {
+    let tmp_dir = tempdir()?;
+    let sample_path = PathBuf::from("tests/log_error");
+    let template_path = sample_path.join("template");
+    let actual_path = tmp_dir.path().join("my-project").to_path_buf();
+
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        .arg("apply")
+        .arg("--x-always_default_value")
+        .arg("--confirm")
+        .arg("never")
+        .arg("--destination")
+        .arg(actual_path.to_str().unwrap())
+        .arg("--source")
+        .arg(template_path.to_str().unwrap())
+        .assert()
+        .stderr(predicate::str::contains(
+            "source: TemplateError(TemplateError { reason: InvalidSyntax",
+        ))
+        .failure();
     Ok(())
 }

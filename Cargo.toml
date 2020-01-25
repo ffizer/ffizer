@@ -33,8 +33,8 @@ serde = { version = "1.0", features = [ "derive"] }
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
 slog = { version = "2.5.2", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
-slog-async = { version = "2.3.0", optional = true }
 slog-term = { version = "2.4.2", optional = true }
+slog-stdlog = { version = "4.0.0", optional = true }
 snafu = "0.6.2"
 structopt = "0.3.8"
 walkdir = "2.3.1"
@@ -46,6 +46,7 @@ spectral = "0.6.0"
 tempfile = "3.1.0"
 test-generator = "0.3.0"
 run_script = "0.6.0"
+predicates = "1.0.2"
 
 [[bin]]
 name = "ffizer"
@@ -77,4 +78,4 @@ codegen-units = 1
 [features]
 default = ["cli"]
 test_remote = [] # feature has no explicit dependencies
-cli = ["self_update", "human-panic", "slog-async", "slog-term"]
+cli = ["self_update", "human-panic", "slog-stdlog", "slog-term"]

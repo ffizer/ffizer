@@ -10,13 +10,13 @@ use std::error::Error;
 use structopt::StructOpt;
 
 fn init_log(level_min: slog::Level) -> slog::Logger {
-    let drain = slog_term::TermDecorator::new().build();
-    let drain = slog_term::FullFormat::new(drain).build().fuse();
-    let drain = slog_async::Async::new(drain)
+    let drain = slog_term::PlainSyncDecorator::new(std::io::stderr());
+    let drain = slog_term::FullFormat::new(drain)
         .build()
         .filter_level(level_min)
         .fuse();
     let log = slog::Logger::root(drain, o!());
+    let _log_guard = slog_stdlog::init().unwrap();
     info!(log, "start"; "version" => env!("CARGO_PKG_VERSION"));
     debug!(log, "debug enabled");
     trace!(log, "trace enabled");

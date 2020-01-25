@@ -539,7 +539,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "ffizer"
-version = "1.7.1"
+version = "1.7.2-dev"
 dependencies = [
  "assert_cmd 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "console 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",

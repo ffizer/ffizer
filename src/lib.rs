@@ -548,19 +548,43 @@ mod tests {
         Ok(())
     }
 
+    #[cfg(unix)]
+    #[test]
+    fn test_copy_file_permissions() {
+        use std::os::unix::fs::PermissionsExt;
+        // Create a directory inside of `std::env::temp_dir()`
+        let tmp_dir = TempDir::new().expect("create a temp dir");
+        let src_path = tmp_dir.path().join("src.txt");
+        fs::write(&src_path, CONTENT_BASE).expect("create src file");
+        let dst_path = tmp_dir.path().join("dst.txt");
+        fs::write(&dst_path, CONTENT_BASE).expect("create dst file");
+
+        let mut src_perms = fs::metadata(&src_path).unwrap().permissions();
+        assert_that(&(src_perms.mode() & 0o100)).is_equal_to(0);
+        src_perms.set_mode(src_perms.mode() | 0o100);
+        assert_that(&(src_perms.mode() & 0o100)).is_equal_to(0o100);
+        fs::set_permissions(&src_path, src_perms).expect("to set permissions");
+
+        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
+            .is_not_equal_to(fs::metadata(&src_path).unwrap().permissions());
+
+        let dst_perms = fs::metadata(&dst_path).unwrap().permissions();
+        assert_that(&(dst_perms.mode() & 0o100)).is_equal_to(0);
+        copy_file_permissions(&src_path, &dst_path).expect("copy file permissions");
+        let dst_perms = fs::metadata(&dst_path).unwrap().permissions();
+        assert_that(&(dst_perms.mode() & 0o100)).is_equal_to(0o100);
+
+        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
+            .is_equal_to(fs::metadata(&src_path).unwrap().permissions());
+    }
+
     #[test]
     fn test_mk_file_by_copy() {
-        use std::os::unix::fs::PermissionsExt;
         // Create a directory inside of `std::env::temp_dir()`
         let tmp_dir = TempDir::new().expect("create a temp dir");
 
         let src_path = tmp_dir.path().join("src.txt");
         fs::write(&src_path, CONTENT_BASE).expect("create src file");
-        let mut perms = fs::metadata(&src_path).unwrap().permissions();
-        assert_that(&(perms.mode() & 0o100)).is_equal_to(0);
-        perms.set_mode(0o744);
-        assert_that(&(perms.mode() & 0o100)).is_equal_to(0o100);
-        fs::set_permissions(&src_path, perms).expect("to set permissions");
 
         let dst_path = tmp_dir.path().join("dst.txt");
         let mut handlebars = new_hbs();
@@ -571,8 +595,6 @@ mod tests {
         assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_BASE.to_owned());
         assert_that!(fs::metadata(&dst_path).unwrap().permissions())
             .is_equal_to(fs::metadata(&src_path).unwrap().permissions());
-        assert_that!((fs::metadata(&dst_path).unwrap().permissions().mode() & 0o100))
-            .is_equal_to(0o100);
     }
 
     #[test]
@@ -590,6 +612,8 @@ mod tests {
         mk_file(&mut handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
         assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_REMOTE.to_owned());
+        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
+            .is_equal_to(fs::metadata(&src_path).unwrap().permissions());
     }
 
     fn setup_for_test_update() -> (TempDir, PathBuf, PathBuf, PathBuf) {

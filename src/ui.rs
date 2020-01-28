@@ -12,6 +12,7 @@ use dialoguer::Input;
 use dialoguer::Select;
 use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
+use serde_yaml::Value;
 use slog::debug;
 use snafu::ResultExt;
 use std::borrow::Cow;
@@ -81,14 +82,20 @@ pub fn ask_variables(
             };
             let default_value = variable
                 .default_value
-                .and_then(|default_value| {
+                .and_then(|default_value| match default_value {
+                    Value::String(ref v) => Some(format!("\"{}\"", v)),
+                    Value::Bool(ref v) => Some(format!("{}", v)),
+                    Value::Number(ref v) => Some(format!("{}", v)),
+                    _ => None,
+                })
+                .and_then(|tmpl| {
                     handlebars
-                        .render_template(&default_value, &variables)
+                        .render_template(&tmpl, &variables)
                         //TODO better manage error
-                        .context(crate::Handlebars {
-                            when: format!("define default_value for '{}'", &name),
-                            template: default_value.clone(),
-                        })
+                        // .context(crate::Handlebars {
+                        //     when: format!("define default_value for '{}'", &name),
+                        //     template: tmpl,
+                        // })
                         .ok()
                 })
                 .map(|value| {
@@ -116,7 +123,7 @@ pub fn ask_variables(
         if let Some(idx) = resp.idx {
             variables.insert(format!("{}__idx", name), idx)?;
         }
-        variables.insert(name, resp.value)?;
+        variables.insert(name, Variables::to_value(&resp.value)?)?;
     }
     Ok(variables)
 }

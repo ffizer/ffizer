@@ -25,7 +25,7 @@ pub struct Variable {
     /// name of variable used in the template
     pub name: String,
     /// optionnal default value
-    pub default_value: Option<String>,
+    pub default_value: Option<serde_yaml::Value>,
     /// sentence to ask the value (default to the name on variable)
     pub ask: Option<String>,
     /// is the variable hidden to the user (could be usefull to cache shared variable/data)
@@ -108,6 +108,15 @@ mod tests {
     //         let actual = TemplateCfg::from_str(cfg_str).unwrap();
     //         assert_that!(&actual).is_equal_to(&expected);
     //     }
+    #[test]
+    fn various_assert_equals() {
+        let v1_0 = Some(serde_yaml::to_value("v1").expect("yaml parsed"));
+        let v1_1 = Some(serde_yaml::to_value("v1").expect("yaml parsed"));
+        let v2_0 = Some(serde_yaml::to_value("v2").expect("yaml parsed"));
+        assert_that!(&v1_0).is_equal_to(&v1_0);
+        assert_that!(&v1_1).is_equal_to(&v1_0);
+        assert_that!(&v2_0).is_not_equal_to(&v1_0);
+    }
 
     #[test]
     fn test_deserialize_cfg_yaml() {
@@ -122,12 +131,12 @@ mod tests {
         let mut expected = TemplateCfg::default();
         expected.variables.push(Variable {
             name: "k2".to_owned(),
-            default_value: Some("v2".to_owned()),
+            default_value: Some(serde_yaml::to_value("v2").expect("yaml parsed")),
             ..Default::default()
         });
         expected.variables.push(Variable {
             name: "k1".to_owned(),
-            default_value: Some("V1".to_owned()),
+            default_value: Some(serde_yaml::to_value("V1").expect("yaml parsed")),
             ..Default::default()
         });
         expected.variables.push(Variable {

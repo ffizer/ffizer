@@ -1,0 +1,7 @@
+variables:
+  - name: var_bool_true
+    default_value: true
+  - name: var_bool_false
+    default_value: false
+  - name: var_string_true
+    default_value: "true"

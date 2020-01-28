@@ -22,4 +22,29 @@ impl Variables {
         );
         Ok(())
     }
+
+    pub fn to_value(s: &str) -> Result<serde_yaml::Value> {
+        //serde_yaml::to_value(value).context(crate::SerdeYaml {})
+        serde_yaml::from_str::<serde_yaml::Value>(s).context(crate::SerdeYaml {})
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use spectral::prelude::*;
+
+    #[test]
+    fn test_to_value() {
+        assert_that!(&Variables::to_value("v1").unwrap())
+            .is_equal_to(&serde_yaml::Value::String("v1".to_owned()));
+        assert_that!(&Variables::to_value("true").unwrap())
+            .is_equal_to(&serde_yaml::Value::Bool(true));
+        assert_that!(&Variables::to_value("false").unwrap())
+            .is_equal_to(&serde_yaml::Value::Bool(false));
+        assert_that!(&Variables::to_value("\"true\"").unwrap())
+            .is_equal_to(&serde_yaml::Value::String("true".to_owned()));
+        assert_that!(&Variables::to_value("42").unwrap())
+            .is_equal_to(&serde_yaml::to_value(42).unwrap());
+    }
 }

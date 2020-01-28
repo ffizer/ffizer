@@ -1,0 +1,3 @@
+- var_bool_true: is bool true
+- var_bool_false: is bool false
+- var_string_true: is string true

@@ -33,7 +33,7 @@ serde = { version = "1.0", features = [ "derive"] }
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
 slog = { version = "2.5.2", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
-slog-term = { version = "2.4.2", optional = true }
+slog-term = { version = "2.5.0", optional = true }
 slog-stdlog = { version = "4.0.0", optional = true }
 snafu = "0.6.2"
 structopt = "0.3.8"

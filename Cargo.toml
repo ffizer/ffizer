@@ -21,8 +21,8 @@ directories = "2.0.2"
 git2 = "0.11.0"
 git2_credentials = "0.4.0"
 globset = "0.4.4"
-handlebars = "2.0.4"
-handlebars_misc_helpers = "0.6.0"
+handlebars = "3.0.1"
+handlebars_misc_helpers = "0.7.0"
 human-panic = { version = "1.0.1", optional = true}
 indicatif = "0.14.0"
 lazy_static ="1.4.0"
@@ -79,6 +79,3 @@ codegen-units = 1
 default = ["cli"]
 test_remote = [] # feature has no explicit dependencies
 cli = ["self_update", "human-panic", "slog-stdlog", "slog-term"]
-
-[patch.crates-io]
-jmespath = { git = 'https://github.com/yrashk/jmespath.rs', branch = 'json-syntax-error' }

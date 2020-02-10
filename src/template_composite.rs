@@ -13,8 +13,16 @@ use slog::{debug, warn};
 use std::collections::HashMap;
 use std::collections::HashSet;
 
+#[derive(Debug, Clone)]
+pub struct TemplateLayer {
+    order: usize,
+    loc: SourceLoc,
+    cfg: TemplateCfg,
+}
+
+#[derive(Debug, Clone)]
 pub struct TemplateComposite {
-    layers: Vec<(SourceLoc, TemplateCfg)>,
+    layers: Vec<TemplateLayer>,
 }
 
 impl TemplateComposite {
@@ -29,12 +37,17 @@ impl TemplateComposite {
         let layers = templates
             .find_edges_ordered_by_depth(src)
             .into_iter()
-            .map(|k| {
+            .enumerate()
+            .map(|(i, k)| {
                 let v = templates.get(&k).expect("should exist").clone();
-                (k, v)
+                TemplateLayer {
+                    order: i,
+                    loc: k,
+                    cfg: v,
+                }
             })
             .collect::<Vec<_>>();
-        debug!(ctx.logger, "templates"; "layers" => ?layers.iter().map(|kv| &kv.0).collect::<Vec<_>>());
+        debug!(ctx.logger, "templates"; "layers" => ?layers);
         Ok(TemplateComposite { layers })
     }
 
@@ -42,7 +55,7 @@ impl TemplateComposite {
         let mut back = vec![];
         let mut names = HashSet::new();
         for layer in &self.layers {
-            for variable in &layer.1.variables {
+            for variable in &layer.cfg.variables {
                 if !names.contains(&variable.name) {
                     names.insert(variable.name.clone());
                     back.push(variable.clone());
@@ -56,13 +69,13 @@ impl TemplateComposite {
         let mut back = vec![];
         let mut relatives = HashSet::new();
         for layer in &self.layers {
-            let ignores = &layer.1.ignores;
-            let template_dir = if layer.1.use_template_dir {
+            let ignores = &layer.cfg.ignores;
+            let template_dir = if layer.cfg.use_template_dir {
                 "template"
             } else {
                 ""
             };
-            let path = layer.0.as_local_path()?.join(template_dir);
+            let path = layer.loc.as_local_path()?.join(template_dir);
             for childpath in files::find_childpaths(path, ignores) {
                 if !relatives.contains(&childpath.relative) {
                     relatives.insert(childpath.relative.clone());

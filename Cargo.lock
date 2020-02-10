@@ -1784,9 +1784,9 @@ dependencies = [
 
 [[package]]
 name = "run_script"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2dfbbb48b9c7ee71baadd968640f81ca4bc930c1a2029441eede96a6933275ac"
+checksum = "80a217951e2afacc57d3129bd52aeddc550559f5a82f57529a31fc5675bd6621"
 dependencies = [
  "rand 0.7.3",
  "users",

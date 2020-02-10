@@ -65,19 +65,25 @@ pub struct Action {
 }
 
 pub fn process(ctx: &Ctx) -> Result<()> {
+    debug!(ctx.logger, "extracting variables from cli");
     let variables_from_cli = extract_variables(&ctx)?;
+    debug!(ctx.logger, "compositing templates");
     let template_composite = TemplateComposite::from_src(
         &ctx,
         &variables_from_cli,
         ctx.cmd_opt.offline,
         &ctx.cmd_opt.src,
     )?;
+    debug!(ctx.logger, "asking variables");
     let variables = ui::ask_variables(&ctx, &template_composite.variables(), variables_from_cli)?;
     // update cfg with variables defined by user (use to update ignore)
     //TODO template_cfg = render_cfg(&ctx, &template_cfg, &variables, true)?;
+    debug!(ctx.logger, "listing files from templates");
     let input_paths = template_composite.find_childpaths()?;
+    debug!(ctx.logger, "defining plan of rendering");
     let actions = plan(ctx, input_paths, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
+        debug!(ctx.logger, "executing plan of rendering");
         execute(ctx, &actions, &variables)
     } else {
         Ok(())

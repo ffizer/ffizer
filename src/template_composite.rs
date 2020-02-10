@@ -2,8 +2,8 @@ use crate::files;
 use crate::graph::Graph;
 use crate::source_loc::SourceLoc;
 use crate::template_cfg::TemplateCfg;
-use crate::template_cfg::Variable;
 use crate::transform_values::TransformsValues;
+use crate::variable_def::VariableDef;
 use crate::ChildPath;
 use crate::Ctx;
 use crate::Result;
@@ -38,7 +38,7 @@ impl TemplateComposite {
         Ok(TemplateComposite { layers })
     }
 
-    pub fn variables(&self) -> Vec<Variable> {
+    pub fn variables(&self) -> Vec<VariableDef> {
         let mut back = vec![];
         let mut names = HashSet::new();
         for layer in &self.layers {

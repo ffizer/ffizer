@@ -1,6 +1,7 @@
 use crate::path_pattern::PathPattern;
 use crate::source_loc::SourceLoc;
 use crate::transform_values::TransformsValues;
+use crate::variable_def::VariableDef;
 use crate::Result;
 use snafu::ResultExt;
 use std::fs;
@@ -12,40 +13,11 @@ const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
-    pub variables: Vec<Variable>,
+    pub variables: Vec<VariableDef>,
     pub ignores: Vec<PathPattern>,
     pub imports: Vec<SourceLoc>,
     // set to true if the template content is under a `template` folder (not mixed with metadata)
     pub use_template_dir: bool,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
-#[serde(deny_unknown_fields, default)]
-pub struct Variable {
-    /// name of variable used in the template
-    pub name: String,
-    /// optionnal default value
-    pub default_value: Option<serde_yaml::Value>,
-    /// sentence to ask the value (default to the name on variable)
-    pub ask: Option<String>,
-    /// is the variable hidden to the user (could be usefull to cache shared variable/data)
-    pub hidden: bool,
-    /// if non-empty then the value should selected into the list of value
-    pub select_in_values: ValuesForSelection,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(untagged)]
-pub enum ValuesForSelection {
-    Empty,
-    Sequence(Vec<String>),
-    String(String),
-}
-
-impl Default for ValuesForSelection {
-    fn default() -> Self {
-        ValuesForSelection::Empty
-    }
 }
 
 impl TemplateCfg {
@@ -97,6 +69,7 @@ impl TransformsValues for TemplateCfg {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::variable_def::ValuesForSelection;
     use spectral::prelude::*;
 
     // TODO provide a PR for https://github.com/dtolnay/serde-yaml/issues/86
@@ -129,17 +102,17 @@ mod tests {
             - name: k3
         "#;
         let mut expected = TemplateCfg::default();
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k2".to_owned(),
             default_value: Some(serde_yaml::to_value("v2").expect("yaml parsed")),
             ..Default::default()
         });
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k1".to_owned(),
             default_value: Some(serde_yaml::to_value("V1").expect("yaml parsed")),
             ..Default::default()
         });
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k3".to_owned(),
             ..Default::default()
         });
@@ -165,7 +138,7 @@ mod tests {
         "#;
 
         let mut expected = TemplateCfg::default();
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k2".to_owned(),
             select_in_values: ValuesForSelection::Sequence(vec![
                 "vk21".to_owned(),
@@ -173,7 +146,7 @@ mod tests {
             ]),
             ..Default::default()
         });
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k1".to_owned(),
             select_in_values: ValuesForSelection::Sequence(vec![
                 "vk11".to_owned(),
@@ -181,12 +154,12 @@ mod tests {
             ]),
             ..Default::default()
         });
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k3".to_owned(),
             select_in_values: ValuesForSelection::String("[ \"vk31\", \"vk32\" ]".to_owned()),
             ..Default::default()
         });
-        expected.variables.push(Variable {
+        expected.variables.push(VariableDef {
             name: "k4".to_owned(),
             select_in_values: ValuesForSelection::String("{{ do_stuff }}".to_owned()),
             ..Default::default()

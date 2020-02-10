@@ -1,7 +1,7 @@
 use crate::cli_opt::*;
-use crate::template_cfg::ValuesForSelection;
-use crate::template_cfg::Variable;
 use crate::tree;
+use crate::variable_def::ValuesForSelection;
+use crate::variable_def::VariableDef;
 use crate::FileOperation;
 use crate::Result;
 use crate::{Action, Ctx, Variables};
@@ -41,7 +41,7 @@ pub struct VariableRequest {
 
 pub fn ask_variables(
     ctx: &Ctx,
-    list_variables: &[Variable],
+    list_variables: &[VariableDef],
     mut init: Variables,
 ) -> Result<Variables> {
     let mut variables = Variables::new();

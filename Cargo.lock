@@ -770,13 +770,12 @@ dependencies = [
 
 [[package]]
 name = "git2_credentials"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7907def132bb0b3b1f4912322a3e31beedbac3aa6f9995bcae41d3e5e465bc01"
+checksum = "5be752467776fecfecc19b7213d3215d3d98d838d552bef1a0ee0f6ea1262b03"
 dependencies = [
  "dialoguer",
  "dirs",
- "failure",
  "git2",
 ]
 

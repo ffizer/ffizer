@@ -7,6 +7,7 @@ mod files;
 mod git;
 mod graph;
 mod path_pattern;
+mod source_file;
 mod source_loc;
 mod source_uri;
 mod template_cfg;
@@ -23,12 +24,12 @@ pub use crate::source_loc::SourceLoc;
 
 use crate::files::is_ffizer_handlebars;
 use crate::files::ChildPath;
+use crate::source_file::SourceFile;
 use crate::template_composite::TemplateComposite;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o};
 use snafu::ResultExt;
-use std::cmp::Ordering;
 use std::fs;
 use std::path::PathBuf;
 
@@ -58,7 +59,7 @@ pub enum FileOperation {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Action {
-    pub src_path: ChildPath,
+    pub src: Vec<SourceFile>,
     pub dst_path: ChildPath,
     // template: TemplateDef,
     pub operation: FileOperation,
@@ -79,9 +80,9 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     // update cfg with variables defined by user (use to update ignore)
     //TODO template_cfg = render_cfg(&ctx, &template_cfg, &variables, true)?;
     debug!(ctx.logger, "listing files from templates");
-    let input_paths = template_composite.find_childpaths()?;
+    let source_files = template_composite.find_sourcefiles()?;
     debug!(ctx.logger, "defining plan of rendering");
-    let actions = plan(ctx, input_paths, &variables)?;
+    let actions = plan(ctx, source_files, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
         debug!(ctx.logger, "executing plan of rendering");
         execute(ctx, &actions, &variables)
@@ -105,52 +106,48 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
 }
 
 /// list actions to execute
-fn plan(ctx: &Ctx, src_paths: Vec<ChildPath>, variables: &Variables) -> Result<Vec<Action>> {
-    let mut actions = src_paths
+fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Result<Vec<Action>> {
+    // TODO create a map (dst_path, Vec<src_path>) src_path keep the order of application (from template layer)
+    // TODO change Action into enum ?
+    // TODO AddFile/UpdateFile can support a list of src_path
+    let list_dst_and_src = source_files
         .into_iter()
-        .map(|src_path| {
-            compute_dst_path(ctx, &src_path, variables).map(|dst_path| Action {
-                src_path,
-                dst_path,
-                operation: FileOperation::Nothing,
-            })
+        .map(|source_file| {
+            compute_dst_path(ctx, &source_file.childpath(), variables)
+                .map(|dst_path| (dst_path, source_file))
         })
         .collect::<Result<Vec<_>>>()?;
-    actions.sort_by(cmp_path_for_plan);
-    actions.dedup_by(|a, b| PathBuf::from(&a.dst_path) == PathBuf::from(&b.dst_path));
-    let actions_count = actions.len();
-    actions = actions
-        .into_iter()
-        .fold(Vec::with_capacity(actions_count), |mut acc, e| {
-            let operation = select_operation(ctx, &e.src_path, &e.dst_path, &acc);
-            acc.push(Action { operation, ..e });
+    // group by destination
+    let srcs_by_dst = list_dst_and_src.into_iter().fold(
+        std::collections::HashMap::<ChildPath, Vec<SourceFile>>::new(),
+        |mut acc, l| {
+            if let Some(x) = acc.get_mut(&l.0) {
+                x.push(l.1);
+            } else {
+                acc.insert(l.0, vec![l.1]);
+            }
             acc
-        });
+        },
+    );
+    //actions.dedup_by(|a, b| PathBuf::from(&a.dst_path) == PathBuf::from(&b.dst_path));
+    let mut actions = srcs_by_dst
+        .into_iter()
+        .map(|(dst_path, mut src)| {
+            source_file::optimize_sourcefiles(&mut src);
+            let operation = select_operation(ctx, &src, &dst_path);
+            Action {
+                //TODO reduce src (remove useless source) + test
+                //TODO add SourceFile of existing file
+                //TODO select the right operation
+                dst_path,
+                src,
+                operation,
+            }
+        })
+        .collect::<Vec<_>>();
+    // sort to have folder before files inside it (and mkdir berfore create file)
+    actions.sort_by_key(|a| a.dst_path.relative.clone());
     Ok(actions)
-}
-
-// TODO add test
-// TODO add priority for generated file name / folder name
-// TODO document priority (via test ?)
-fn cmp_path_for_plan(a: &Action, b: &Action) -> Ordering {
-    let cmp_dst = a.dst_path.relative.cmp(&b.dst_path.relative);
-    if cmp_dst != Ordering::Equal {
-        cmp_dst
-    } else if a
-        .src_path
-        .relative
-        .to_str()
-        .map(|s| s.contains("{{"))
-        .unwrap_or(false)
-    {
-        Ordering::Greater
-    } else if is_ffizer_handlebars(&a.src_path.relative) {
-        Ordering::Less
-    } else if is_ffizer_handlebars(&b.src_path.relative) {
-        Ordering::Greater
-    } else {
-        a.src_path.relative.cmp(&b.src_path.relative)
-    }
 }
 
 //TODO accumulate Result (and error)
@@ -169,7 +166,10 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             FileOperation::MkDir => {
                 let path = PathBuf::from(&a.dst_path);
                 fs::create_dir_all(&path).context(CreateFolder { path })?;
-                copy_file_permissions(PathBuf::from(&a.src_path), PathBuf::from(&a.dst_path))?
+                copy_file_permissions(
+                    PathBuf::from(a.src[0].childpath()),
+                    PathBuf::from(&a.dst_path),
+                )?
             }
             FileOperation::AddFile => {
                 mk_file_on_action(&mut handlebars, variables, &a, "").map(|_| ())?
@@ -189,7 +189,8 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                     })?
                 } else {
                     update_file(
-                        &PathBuf::from(&a.src_path),
+                        //FIXME to use all the source
+                        &PathBuf::from(a.src[0].childpath()),
                         &local,
                         &remote,
                         &ctx.cmd_opt.update_mode,
@@ -207,7 +208,8 @@ fn mk_file_on_action(
     a: &Action,
     dest_suffix_ext: &str,
 ) -> Result<(PathBuf, PathBuf)> {
-    let src_full_path = PathBuf::from(&a.src_path);
+    //FIXME to use all the source
+    let src_full_path = PathBuf::from(a.src[0].childpath());
     let dest_full_path_target = PathBuf::from(&a.dst_path);
     mk_file(
         handlebars,
@@ -386,12 +388,12 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             msg: "failed to stringify path".to_owned(),
         })
         .and_then(|s| {
-            let handlebars = new_hbs();
+                let handlebars = new_hbs();
             let p = handlebars
-                .render_template(&s, variables)
-                .context(crate::Handlebars {
-                    when: format!("define path for '{:?}'", src),
-                    template: s,
+                    .render_template(&s, variables)
+                    .context(crate::Handlebars {
+                        when: format!("define path for '{:?}'", src),
+                        template: s,
                 })?;
             Ok(PathBuf::from(p))
         })?;
@@ -400,23 +402,14 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
     Ok(ChildPath {
         base: ctx.cmd_opt.dst_folder.clone(),
         relative,
-        is_symlink: src.is_symlink,
     })
 }
 
-fn select_operation(
-    _ctx: &Ctx,
-    src_path: &ChildPath,
-    dst_path: &ChildPath,
-    actions: &[Action],
-) -> FileOperation {
-    let src_full_path = PathBuf::from(src_path);
+fn select_operation(_ctx: &Ctx, sources: &Vec<SourceFile>, dst_path: &ChildPath) -> FileOperation {
+    //FIXME to use all the sources
+    let src_full_path = PathBuf::from(sources[0].childpath());
     let dest_full_path = PathBuf::from(dst_path);
-    if dest_full_path.exists()
-        || actions
-            .iter()
-            .any(|a| a.dst_path.relative == dst_path.relative)
-    {
+    if dest_full_path.exists() {
         if dest_full_path.is_dir() {
             FileOperation::Nothing
         } else {
@@ -456,22 +449,6 @@ mod tests {
         variables.insert("prj", "myprj").expect("insert prj");
         variables.insert("base", "remote").expect("insert base");
         variables
-    }
-
-    #[test]
-    fn test_cmp_path_for_plan() {
-        let a = Action {
-            src_path: ChildPath::new("./tests/test_1/template", "file_2.txt"),
-            dst_path: ChildPath::new("/tmp/.tmpYPoYTW", "file_2.txt"),
-            operation: FileOperation::Nothing,
-        };
-        let b = Action {
-            src_path: ChildPath::new("./tests/test_1/template", "file_2.txt.ffizer.hbs"),
-            dst_path: ChildPath::new("/tmp/.tmpYPoYTW", "file_2.txt"),
-            operation: FileOperation::Nothing,
-        };
-        assert_that!(cmp_path_for_plan(&a, &b)).is_equal_to(&Ordering::Greater);
-        assert_that!(cmp_path_for_plan(&b, &a)).is_equal_to(&Ordering::Less);
     }
 
     #[test]
@@ -530,24 +507,27 @@ mod tests {
         let ctx = new_ctx_for_test();
         let variables = new_variables_for_test();
 
-        let src_paths: Vec<ChildPath> = vec![];
-        let actions = plan(&ctx, src_paths, &variables)?;
+        let sources: Vec<SourceFile> = vec![];
+        let actions = plan(&ctx, sources, &variables)?;
         assert_that!(&actions).is_empty();
         Ok(())
     }
 
     #[test]
-    fn test_plan_with_duplicate() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_plan_with_duplicate_from_2_templates() -> Result<(), Box<dyn std::error::Error>> {
         let ctx = new_ctx_for_test();
         let variables = new_variables_for_test();
 
-        let src_paths: Vec<ChildPath> = vec![
-            ChildPath::new("test/src1", "hello/file1.txt"),
-            ChildPath::new("test/src2", "hello/file1.txt"),
+        let sources: Vec<SourceFile> = vec![
+            SourceFile::from((ChildPath::new("test/src1", "hello/file1.txt"), 1)),
+            SourceFile::from((ChildPath::new("test/src2", "hello/file1.txt"), 2)),
         ];
-        let actions = plan(&ctx, src_paths, &variables)?;
+        let actions = plan(&ctx, sources, &variables)?;
         let expected = vec![Action {
-            src_path: ChildPath::new("test/src1", "hello/file1.txt"),
+            src: vec![SourceFile::from((
+                ChildPath::new("test/src1", "hello/file1.txt"),
+                1,
+            ))],
             dst_path: ChildPath::new(DST_FOLDER_STR, "hello/file1.txt"),
             operation: FileOperation::AddFile,
         }];

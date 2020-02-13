@@ -1,10 +1,10 @@
 use crate::files;
 use crate::graph::Graph;
+use crate::source_file::SourceFile;
 use crate::source_loc::SourceLoc;
 use crate::template_cfg::TemplateCfg;
 use crate::transform_values::TransformsValues;
 use crate::variable_def::VariableDef;
-use crate::ChildPath;
 use crate::Ctx;
 use crate::Result;
 use crate::Variables;
@@ -65,9 +65,8 @@ impl TemplateComposite {
         back
     }
 
-    pub fn find_childpaths(&self) -> Result<Vec<ChildPath>> {
+    pub fn find_sourcefiles(&self) -> Result<Vec<SourceFile>> {
         let mut back = vec![];
-        let mut relatives = HashSet::new();
         for layer in &self.layers {
             let ignores = &layer.cfg.ignores;
             let template_dir = if layer.cfg.use_template_dir {
@@ -77,10 +76,7 @@ impl TemplateComposite {
             };
             let path = layer.loc.as_local_path()?.join(template_dir);
             for childpath in files::find_childpaths(path, ignores) {
-                if !relatives.contains(&childpath.relative) {
-                    relatives.insert(childpath.relative.clone());
-                    back.push(childpath);
-                }
+                back.push(SourceFile::from((childpath, layer.order)));
             }
         }
         Ok(back)

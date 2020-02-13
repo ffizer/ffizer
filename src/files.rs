@@ -8,11 +8,10 @@ use walkdir::WalkDir;
 pub const FILEEXT_HANDLEBARS: &str = ".ffizer.hbs";
 pub const FILEEXT_RAW: &str = ".ffizer.raw";
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Hash, Ord, PartialOrd)]
 pub struct ChildPath {
     pub relative: PathBuf,
     pub base: PathBuf,
-    pub is_symlink: bool,
 }
 
 impl ChildPath {
@@ -20,7 +19,6 @@ impl ChildPath {
         ChildPath {
             relative: PathBuf::from(relative),
             base: PathBuf::from(base),
-            is_symlink: false,
         }
     }
 }
@@ -95,7 +93,6 @@ where
         .filter_map(|e| e.ok())
         .map(|entry| ChildPath {
             base: base.to_path_buf(),
-            is_symlink: entry.path_is_symlink(),
             relative: entry
                 .into_path()
                 .strip_prefix(base)

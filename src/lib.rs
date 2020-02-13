@@ -379,7 +379,7 @@ where
     Ok(())
 }
 
-//TODO optimise / bench to avoid creation and rendering of path handlebars
+//TODO optimize / bench to avoid re-creation of handlebars at each call
 fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result<ChildPath> {
     let rendered_relative = src
         .relative
@@ -388,13 +388,17 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             msg: "failed to stringify path".to_owned(),
         })
         .and_then(|s| {
+            let p = if !s.contains('{') {
+                s.to_owned()
+            } else {
                 let handlebars = new_hbs();
-            let p = handlebars
+                handlebars
                     .render_template(&s, variables)
                     .context(crate::Handlebars {
                         when: format!("define path for '{:?}'", src),
                         template: s,
-                })?;
+                    })?
+            };
             Ok(PathBuf::from(p))
         })?;
     let relative = files::remove_special_suffix(&rendered_relative)?;

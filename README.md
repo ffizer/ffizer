@@ -73,7 +73,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 ### Install
 
 ```sh
-curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | sh
+curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | bash
 ```
 
 #### via homebrew

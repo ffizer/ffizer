@@ -11,15 +11,14 @@ OPENSSL_STATIC = "1"
 # OPENSSL_LIB_DIR="/usr/lib64"
 # OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 
-[init]
-mac_alias = "init_mac"
-
-[init_mac.env]
+[tasks.init.mac.env]
 # workaround for "____chkstk_darwin ... which was built for Mac OS X 10.15 /usr/lib/libSystem.B.dylib"
 # see https://github.com/sharkdp/bat/issues/680
 # if DevelopmentTools.clang_build_version >= 1010
-CFLAGS = "$CFLAGS -fno-stack-check"
-RUSTFLAGS = "-Clink-args=-Wl,-bind_at_load"
+CFLAGS = "-fno-stack-check"
+#RUSTFLAGS = "-Clink-args=-Wl,-bind_at_load"
+# XCode  --mmacosx-version-min=10.9 ?
+MACOSX_DEPLOYMENT_TARGET="10.9"
 
 [tasks.dist_env.env]
 DIST_VERSION = "${CARGO_MAKE_CRATE_VERSION}"
@@ -38,6 +37,7 @@ script_runner = "@shell"
 script = [
   '''
   echo "PROFILE=${PROFILE}"
+  echo "MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}"
   echo "FILE=${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
   echo "TARGET=${TARGET}"
   echo "DIST_VERSION=${DIST_VERSION}"

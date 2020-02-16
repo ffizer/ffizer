@@ -15,10 +15,14 @@ pub struct ChildPath {
 }
 
 impl ChildPath {
-    pub fn new(base: &str, relative: &str) -> ChildPath {
+    pub fn new<P1, P2>(base: P1, relative: P2) -> ChildPath
+    where
+        P1: AsRef<Path>,
+        P2: AsRef<Path>,
+    {
         ChildPath {
-            relative: PathBuf::from(relative),
-            base: PathBuf::from(base),
+            relative: PathBuf::from(relative.as_ref()),
+            base: PathBuf::from(base.as_ref()),
         }
     }
 }

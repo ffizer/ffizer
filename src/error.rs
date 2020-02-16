@@ -82,6 +82,11 @@ pub enum Error {
         path: PathBuf,
         source: std::io::Error,
     },
+    #[snafu(display("write file {:?}", path))]
+    WriteFile {
+        path: PathBuf,
+        source: std::io::Error,
+    },
     #[snafu(display("remove file {:?}", path))]
     RemoveFile {
         path: PathBuf,

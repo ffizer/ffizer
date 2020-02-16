@@ -36,9 +36,9 @@ impl PartialOrd for SourceFileMetadata {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SourceFile {
-    childpath: ChildPath,
-    layer_order: usize,
-    metadata: SourceFileMetadata,
+    pub childpath: ChildPath,
+    pub layer_order: usize,
+    pub metadata: SourceFileMetadata,
 }
 
 impl Ord for SourceFile {

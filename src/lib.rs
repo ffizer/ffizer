@@ -22,9 +22,8 @@ pub use crate::cli_opt::*;
 pub use crate::error::*;
 pub use crate::source_loc::SourceLoc;
 
-use crate::files::is_ffizer_handlebars;
 use crate::files::ChildPath;
-use crate::source_file::SourceFile;
+use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::template_composite::TemplateComposite;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
@@ -144,6 +143,7 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
                 operation,
             }
         })
+        .filter(|a| a.src.len() > 0)
         .collect::<Vec<_>>();
     // sort to have folder before files inside it (and mkdir berfore create file)
     actions.sort_by_key(|a| a.dst_path.relative.clone());
@@ -208,64 +208,73 @@ fn mk_file_on_action(
     a: &Action,
     dest_suffix_ext: &str,
 ) -> Result<(PathBuf, PathBuf)> {
-    //FIXME to use all the source
-    let src_full_path = PathBuf::from(a.src[0].childpath());
+    let mut variables = variables.clone();
     let dest_full_path_target = PathBuf::from(&a.dst_path);
-    mk_file(
-        handlebars,
-        variables,
-        src_full_path,
-        dest_full_path_target,
-        dest_suffix_ext,
-    )
-}
-
-fn mk_file<P>(
-    handlebars: &mut handlebars::Handlebars,
-    variables: &Variables,
-    src_full_path: P,
-    dest_full_path_target: P,
-    dest_suffix_ext: &str,
-) -> Result<(PathBuf, PathBuf)>
-where
-    P: AsRef<std::path::Path>,
-{
-    let src_full_path = src_full_path.as_ref();
-    let dest_full_path_target = dest_full_path_target.as_ref();
-    let dest_full_path = files::add_suffix(dest_full_path_target, dest_suffix_ext)?;
-    if !is_ffizer_handlebars(src_full_path) {
-        fs::copy(&src_full_path, &dest_full_path).context(CopyFile {
-            src: src_full_path,
-            dst: dest_full_path.clone(),
-        })?;
-    } else {
-        let src_name = &src_full_path.to_string_lossy();
-        let dst = fs::File::create(&dest_full_path).context(CreateFile {
-            path: dest_full_path.clone(),
-        })?;
-        handlebars
-            .register_template_file(&src_name, &src_full_path)
-            .map_err(|e| match e {
-                handlebars::TemplateFileError::TemplateError(err) => {
-                    handlebars::TemplateRenderError::from(err)
+    let dest_full_path = files::add_suffix(&dest_full_path_target, dest_suffix_ext)?;
+    let mut srcs = a.src.clone();
+    srcs.reverse();
+    let mut input_content: Vec<u8> = Vec::with_capacity(0);
+    let index_latest = srcs.len() - 1;
+    // based of the fact that list of source_files follow one of this configuration
+    // - [RawFile]
+    // - [RenderableFile+,RawFile{0,1}]
+    for (i, source_file) in srcs.into_iter().enumerate() {
+        let src_full_path = PathBuf::from(&source_file.childpath);
+        match source_file.metadata {
+            SourceFileMetadata::RawFile => {
+                if i == index_latest {
+                    fs::copy(&src_full_path, &dest_full_path).context(CopyFile {
+                        src: src_full_path.clone(),
+                        dst: dest_full_path.clone(),
+                    })?;
+                } else {
+                    input_content = fs::read(&src_full_path).context(ReadFile {
+                        path: src_full_path.clone(),
+                    })?;
                 }
-                handlebars::TemplateFileError::IOError(err, msg) => {
-                    handlebars::TemplateRenderError::IOError(err, msg)
+            }
+            SourceFileMetadata::RenderableFile { .. } => {
+                if i == 0 && dest_full_path_target.exists() {
+                    input_content = fs::read(&dest_full_path_target).context(ReadFile {
+                        path: dest_full_path_target.clone(),
+                    })?;
                 }
-            })
-            .context(crate::Handlebars {
-                when: format!("load content of template '{:?}'", src_full_path),
-                template: src_name.clone(),
-            })?;
-        handlebars
-            .render_to_write(&src_name, variables, dst)
-            .map_err(handlebars::TemplateRenderError::from)
-            .context(crate::Handlebars {
-                when: format!("define content for '{:?}'", dest_full_path),
-                template: src_name.clone(),
-            })?;
+                variables.insert("input_content", String::from_utf8_lossy(&input_content))?;
+                let src_name = &src_full_path.to_string_lossy();
+                handlebars
+                    .register_template_file(&src_name, &src_full_path)
+                    .map_err(|e| match e {
+                        handlebars::TemplateFileError::TemplateError(err) => {
+                            handlebars::TemplateRenderError::from(err)
+                        }
+                        handlebars::TemplateFileError::IOError(err, msg) => {
+                            handlebars::TemplateRenderError::IOError(err, msg)
+                        }
+                    })
+                    .context(crate::Handlebars {
+                        when: format!("load content of template '{:?}'", &src_full_path),
+                        template: src_name.clone(),
+                    })?;
+                input_content.clear(); //vec![u8] writer appends content if not clear
+                handlebars
+                    .render_to_write(&src_name, &variables, &mut input_content)
+                    .map_err(handlebars::TemplateRenderError::from)
+                    .context(crate::Handlebars {
+                        when: format!("define content for '{:?}'", &dest_full_path),
+                        template: src_name.clone(),
+                    })?;
+                if i == index_latest {
+                    fs::write(&dest_full_path, &input_content).context(crate::WriteFile {
+                        path: dest_full_path.clone(),
+                    })?;
+                }
+            }
+            _ => (), // TODO return error,
+        }
+        if i == index_latest {
+            copy_file_permissions(&src_full_path, &dest_full_path)?;
+        }
     }
-    copy_file_permissions(&src_full_path, &dest_full_path)?;
     Ok((PathBuf::from(&dest_full_path_target), dest_full_path))
 }
 
@@ -574,14 +583,23 @@ mod tests {
         // Create a directory inside of `std::env::temp_dir()`
         let tmp_dir = TempDir::new().expect("create a temp dir");
 
-        let src_path = tmp_dir.path().join("src.txt");
+        let src = ChildPath::new(tmp_dir.path(), "src.txt");
+        let src_path = PathBuf::from(&src);
         fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
-        let dst_path = tmp_dir.path().join("dst.txt");
+        let dst = ChildPath::new(tmp_dir.path(), "dst.txt");
+        let dst_path = PathBuf::from(&dst);
+
+        let action = Action {
+            dst_path: dst,
+            src: vec![SourceFile::from((ChildPath::from(src), 0))],
+            operation: FileOperation::AddFile,
+        };
+
         let mut handlebars = new_hbs();
         let variables = new_variables_for_test();
 
-        mk_file(&mut handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
+        mk_file_on_action(&mut handlebars, &variables, &action, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
         assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_BASE.to_owned());
         assert_that!(fs::metadata(&dst_path).unwrap().permissions())
@@ -593,14 +611,23 @@ mod tests {
         // Create a directory inside of `std::env::temp_dir()`
         let tmp_dir = TempDir::new().expect("create a temp dir");
 
-        let src_path = tmp_dir.path().join("src.txt.ffizer.hbs");
+        let src = ChildPath::new(tmp_dir.path(), "src.txt.ffizer.hbs");
+        let src_path = PathBuf::from(&src);
         fs::write(&src_path, CONTENT_BASE).expect("create src file");
 
-        let dst_path = tmp_dir.path().join("dst.txt");
+        let dst = ChildPath::new(tmp_dir.path(), "dst.txt");
+        let dst_path = PathBuf::from(&dst);
+
+        let action = Action {
+            dst_path: dst,
+            src: vec![SourceFile::from((ChildPath::from(src), 0))],
+            operation: FileOperation::AddFile,
+        };
+
         let mut handlebars = new_hbs();
         let variables = new_variables_for_test();
 
-        mk_file(&mut handlebars, &variables, &src_path, &dst_path, "").expect("mk_file is ok");
+        mk_file_on_action(&mut handlebars, &variables, &action, "").expect("mk_file is ok");
         assert_that!(&dst_path).exists();
         assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_REMOTE.to_owned());
         assert_that!(fs::metadata(&dst_path).unwrap().permissions())

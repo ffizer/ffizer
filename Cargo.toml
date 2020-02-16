@@ -38,13 +38,6 @@ snafu = "0.6.2"
 structopt = "0.3.8"
 walkdir = "2.3.1"
 
-[target.'cfg(windows)'.dependencies]
-self_update = { version = "0.12.0", optional = true, features = ["archive-tar", "compression-flate2"]}
-
-[target.'cfg(unix)'.dependencies]
-# self_update = { version = "0.12.0", optional = true, features = ["archive-zip", "compression-zip-deflate"]}
-self_update = { version = "0.12.0", optional = true, features = ["archive-zip"]}
-
 [dev-dependencies]
 assert_cmd = "0.12.0"
 # rexpect = "0.3"
@@ -65,10 +58,13 @@ required-features = ["cli"]
 [target.'cfg(all(unix, not(target_os = "redox")))'.dependencies]
 libc = "0.2"
 openssl = { version = "0.10", features = ["vendored"] }
+# self_update = { version = "0.12.0", optional = true, features = ["archive-zip", "compression-zip-deflate"]}
+self_update = { version = "0.12.0", optional = true, features = ["archive-zip"]}
 
 [target.'cfg(windows)'.dependencies]
 kernel32-sys = "0.2"
 winapi = "0.3"
+self_update = { version = "0.12.0", optional = true, features = ["archive-tar", "compression-flate2"]}
 
 # see https://github.com/johnthagen/min-sized-rust
 [profile.release]

@@ -240,29 +240,7 @@ fn mk_file_on_action(
                     })?;
                 }
                 variables.insert("input_content", String::from_utf8_lossy(&input_content))?;
-                let src_name = &src_full_path.to_string_lossy();
-                handlebars
-                    .register_template_file(&src_name, &src_full_path)
-                    .map_err(|e| match e {
-                        handlebars::TemplateFileError::TemplateError(err) => {
-                            handlebars::TemplateRenderError::from(err)
-                        }
-                        handlebars::TemplateFileError::IOError(err, msg) => {
-                            handlebars::TemplateRenderError::IOError(err, msg)
-                        }
-                    })
-                    .context(crate::Handlebars {
-                        when: format!("load content of template '{:?}'", &src_full_path),
-                        template: src_name.clone(),
-                    })?;
-                input_content.clear(); //vec![u8] writer appends content if not clear
-                handlebars
-                    .render_to_write(&src_name, &variables, &mut input_content)
-                    .map_err(handlebars::TemplateRenderError::from)
-                    .context(crate::Handlebars {
-                        when: format!("define content for '{:?}'", &dest_full_path),
-                        template: src_name.clone(),
-                    })?;
+                render_template(handlebars, &variables, &src_full_path, &mut input_content)?;
                 if i == index_latest {
                     fs::write(&dest_full_path, &input_content).context(crate::WriteFile {
                         path: dest_full_path.clone(),
@@ -276,6 +254,38 @@ fn mk_file_on_action(
         }
     }
     Ok((PathBuf::from(&dest_full_path_target), dest_full_path))
+}
+
+fn render_template(
+    handlebars: &mut handlebars::Handlebars,
+    variables: &Variables,
+    src_full_path: &PathBuf,
+    output: &mut Vec<u8>,
+) -> Result<()> {
+    let src_name = &src_full_path.to_string_lossy();
+    handlebars
+        .register_template_file(&src_name, &src_full_path)
+        .map_err(|e| match e {
+            handlebars::TemplateFileError::TemplateError(err) => {
+                handlebars::TemplateRenderError::from(err)
+            }
+            handlebars::TemplateFileError::IOError(err, msg) => {
+                handlebars::TemplateRenderError::IOError(err, msg)
+            }
+        })
+        .context(crate::Handlebars {
+            when: format!("load content of template '{:?}'", &src_full_path),
+            template: src_name.clone(),
+        })?;
+    output.clear(); //vec![u8] writer appends content if not clear
+    handlebars
+        .render_to_write(&src_name, &variables, output)
+        .map_err(handlebars::TemplateRenderError::from)
+        .context(crate::Handlebars {
+            when: "render template into buffer",
+            template: src_name.clone(),
+        })?;
+    Ok(())
 }
 
 fn copy_file_permissions<P1, P2>(src: P1, dest: P2) -> Result<()>

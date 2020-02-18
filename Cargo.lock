@@ -645,6 +645,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 
 [[package]]
+name = "fsio"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1217979e06fd99c54f98a798e2535318af2fce2d3ea25fad84cb6682cbf27cf5"
+dependencies = [
+ "rand 0.7.3",
+ "users",
+]
+
+[[package]]
 name = "fuchsia-cprng"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1763,12 +1773,11 @@ dependencies = [
 
 [[package]]
 name = "run_script"
-version = "0.6.1"
+version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80a217951e2afacc57d3129bd52aeddc550559f5a82f57529a31fc5675bd6621"
+checksum = "9527b8b68ef929243a3e8ad7471a2d80f6ac23b810aafd3df4a2e5212d8dacc1"
 dependencies = [
- "rand 0.7.3",
- "users",
+ "fsio",
 ]
 
 [[package]]

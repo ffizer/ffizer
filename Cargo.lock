@@ -574,7 +574,8 @@ dependencies = [
  "predicates",
  "regex",
  "run_script",
- "self_update",
+ "self_update 0.12.0",
+ "self_update 0.13.0",
  "serde",
  "serde_plain",
  "serde_yaml",
@@ -1057,9 +1058,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.66"
+version = "0.2.67"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d515b1f41455adea1313a4a2ac8a8a477634fbae63cc6100e3aebb207ce61558"
+checksum = "eb147597cdf94ed43ab7a9038716637d2d1bf2bc571da995d0028dec06bd3018"
 
 [[package]]
 name = "libgit2-sys"
@@ -1884,9 +1885,9 @@ dependencies = [
 
 [[package]]
 name = "self_update"
-version = "0.13.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c505727b982d8c85ea1b3345a3a3c2712ba3d8417708ebacc960e4f8f84e3dbc"
+checksum = "5f06df2adbab093a412eac9794797366ee0aa378961dba2b8461f517993e6270"
 dependencies = [
  "either",
  "flate2",
@@ -1898,6 +1899,22 @@ dependencies = [
  "semver",
  "serde_json",
  "tar",
+ "tempdir",
+]
+
+[[package]]
+name = "self_update"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c505727b982d8c85ea1b3345a3a3c2712ba3d8417708ebacc960e4f8f84e3dbc"
+dependencies = [
+ "hyper-old-types",
+ "indicatif 0.13.0",
+ "quick-xml",
+ "regex",
+ "reqwest",
+ "semver",
+ "serde_json",
  "tempdir",
  "zip",
 ]

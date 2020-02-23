@@ -34,9 +34,6 @@ keywords: file generator, project template, project scaffolding, quick start, pr
   - [Authoring a template](#authoring-a-template)
 - [Templates](#templates)
 - [Build](#build)
-- [Alternatives](#alternatives)
-  - [Generic](#generic)
-  - [Specialized](#specialized)
 
 ## Features
 
@@ -67,6 +64,8 @@ keywords: file generator, project template, project scaffolding, quick start, pr
     - In any revision (branch, tag, commit)
 
 [Suggestions are welcomes](https://github.com/ffizer/ffizer/issues/) ;-)
+
+A list of alternatives is available on the [wiki](https://github.com/ffizer/ffizer/wiki/Alternatives), feel free to complete / correct.
 
 ## Usages
 
@@ -237,25 +236,3 @@ Release a new version by bump `patch` (or `minor`or `major`)
 cargo make publish -- patch --dry-run
 cargo make publish -- patch
 ```
-
-## Alternatives
-
-### Generic
-
-- [`Cookiecutter`](https://cookiecutter.readthedocs.io/), lot of templates, require python + pip + install dependencies on system (automatic)
-- [`Cookiecutter` — Similar projects](https://cookiecutter.readthedocs.io/en/latest/readme.html#similar-projects)
-- [`sethyuan/fgen`](https://github.com/sethyuan/fgen): A file generator library to be used to generate project structures, file templates and/or snippets. Templates are based on mustache. require nodejs
-- [project_init](https://crates.io/crates/project_init) in rust, use mustache for templating but I have some issues with it (project template creation not obvious, github only) I could contributes but I have incompatible requirements.
-- [`skeleton`](https://crates.io/crates/skeleton), good idea but no template file, more like a script.
-- [`porteurbars`](https://crates.io/crates/porteurbars), very similar but I discovered it too late.
-
-### Specialized
-
-specialized to a platform, build tool,...
-
-- [The web's scaffolding tool for modern webapps | Yeoman](http://yeoman.io/), nodejs ecosystem
-- [JHipster - Generate your Spring Boot + Angular/React applications!](https://www.jhipster.tech/) require java, dedicated to java web ecosystem, optionnated template (not generic)
-- [`Giter8`](http://www.foundweekends.org/giter8/) require java + [Conscript](http://www.foundweekends.org/conscript/index.html)
-- [`Typesafe activator`](https://developer.lightbend.com/start/), require java, target Scala ecosystem
-- [`Maven – Archetypes`](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html) require java + maven, target maven ecosystem
-- [cargo-generate](https://github.com/ashleygwilliams/cargo-generate), limited capabilities, target rust/cargo ecosystem

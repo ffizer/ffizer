@@ -1,3 +1,7 @@
 variables:
   - name: project_name
     default_value: "{{ file_name ffizer_dst_folder }}"
+
+scripts:
+  - cmd: |
+      echo "foo" > file2.txt

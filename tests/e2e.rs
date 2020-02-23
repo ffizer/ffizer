@@ -1,9 +1,8 @@
-use assert_cmd::prelude::*;
+use assert_cmd::Command;
 use predicates::prelude::*;
 use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
-use std::process::{Command, Stdio};
 use tempfile::tempdir;
 use test_generator::test_resources;
 
@@ -28,7 +27,7 @@ fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<d
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
@@ -37,8 +36,6 @@ fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<d
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg(template_path.to_str().unwrap())
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -58,7 +55,7 @@ fn empty_template() -> Result<(), Box<dyn Error>> {
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
@@ -67,8 +64,6 @@ fn empty_template() -> Result<(), Box<dyn Error>> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg(template_path.to_str().unwrap())
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -86,7 +81,7 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
@@ -97,8 +92,6 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
         .arg(template_path.to_str().unwrap())
         .arg("--source-subfolder")
         .arg(source_subfolder)
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -115,7 +108,7 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
@@ -142,7 +135,7 @@ fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
@@ -171,7 +164,7 @@ fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--update-mode")
@@ -201,7 +194,7 @@ fn log_should_report_error() -> Result<(), Box<dyn Error>> {
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")
-        .arg("--x-always_default_value")
+        .arg("--no-interaction")
         .arg("--confirm")
         .arg("never")
         .arg("--destination")

@@ -136,4 +136,9 @@ pub enum Error {
     SerdeYaml {
         source: serde_yaml::Error,
     },
+    //HACK
+    ScriptError {
+        script: String,
+        source: run_script::ScriptError,
+    },
 }

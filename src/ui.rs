@@ -112,7 +112,7 @@ pub fn ask_variables(
                 default_value,
             }
         };
-        let resp = if variable.hidden || ctx.cmd_opt.x_always_default_value {
+        let resp = if variable.hidden || ctx.cmd_opt.no_interaction {
             request.default_value.unwrap_or(VariableResponse {
                 value: "".to_owned(),
                 idx: None,
@@ -244,4 +244,34 @@ where
     let idx = input.interact().context(crate::Io {})?;
 
     Ok(values[idx].1.clone())
+}
+
+pub fn confirm_run_script(
+    ctx: &Ctx,
+    template_name: impl std::fmt::Display,
+    script: impl std::fmt::Display,
+) -> Result<bool> {
+    // let s = format!(
+    //     "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}",
+    //     format_operation(&a.operation),
+    //     80,
+    //     80,
+    //     80,
+    //     prefix,
+    //     p.file_name().and_then(|v| v.to_str()).unwrap_or("???"),
+    // );
+    // TERM.write_line(&s).context(crate::Io {})?;
+
+    println!(
+        "\n command to run:\n\t from template: {}\n\t commands:\n{}",
+        template_name, script
+    );
+    if ctx.cmd_opt.no_interaction {
+        Ok(true)
+    } else {
+        Confirmation::new()
+            .with_text("Do you want to run the commands ?")
+            .interact()
+            .context(crate::Io {})
+    }
 }

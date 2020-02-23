@@ -7,6 +7,7 @@ mod files;
 mod git;
 mod graph;
 mod path_pattern;
+mod scripts;
 mod source_file;
 mod source_loc;
 mod source_uri;
@@ -27,7 +28,7 @@ use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::template_composite::TemplateComposite;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
-use slog::{debug, o};
+use slog::{debug, o, warn};
 use snafu::ResultExt;
 use std::fs;
 use std::path::PathBuf;
@@ -83,11 +84,30 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     debug!(ctx.logger, "defining plan of rendering");
     let actions = plan(ctx, source_files, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
-        debug!(ctx.logger, "executing plan of rendering");
-        execute(ctx, &actions, &variables)
-    } else {
-        Ok(())
+        do_in_folder(&ctx.cmd_opt.dst_folder, || {
+            debug!(ctx.logger, "executing plan of rendering");
+            execute(ctx, &actions, &variables)?;
+            debug!(ctx.logger, "running scripts");
+            run_scripts(ctx, &template_composite)?;
+            Ok(())
+        })?;
     }
+    Ok(())
+}
+
+fn do_in_folder<F, R>(folder: &PathBuf, f: F) -> Result<R>
+where
+    F: FnOnce() -> Result<R>,
+{
+    fs::create_dir_all(&folder).context(CreateFolder {
+        path: folder.clone(),
+    })?;
+    let current_dir = std::env::current_dir().context(Io {})?;
+    std::env::set_current_dir(&folder).context(Io {})?;
+    // let res = apply_plan(&ctx, &actions, &variables, &template_composite);
+    let res = f();
+    let _ = std::env::set_current_dir(&current_dir).context(Io {});
+    res
 }
 
 pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
@@ -443,6 +463,19 @@ fn select_operation(_ctx: &Ctx, sources: &Vec<SourceFile>, dst_path: &ChildPath)
     } else {
         FileOperation::AddFile
     }
+}
+
+fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> {
+    for (loc, scripts) in template_composite.scripts() {
+        for script in scripts {
+            if ui::confirm_run_script(ctx, loc, script)? {
+                if let Err(err) = script.run() {
+                    warn!(ctx.logger, ""; "err" => format!("{:#?}",err));
+                }
+            }
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]

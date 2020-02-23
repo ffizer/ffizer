@@ -48,9 +48,9 @@ pub struct ApplyOpts {
     #[structopt(long, default_value = "Ask", possible_values = &UpdateMode::variants(), case_insensitive = true)]
     pub update_mode: UpdateMode,
 
-    /// should not ask for valiables values, always use defautl value or empty (experimental)
-    #[structopt(long = "x-always_default_value")]
-    pub x_always_default_value: bool,
+    /// should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
+    #[structopt(short = "y", long = "no-interaction")]
+    pub no_interaction: bool,
 
     /// in offline, only local templates or cached templates are used
     #[structopt(long = "offline")]

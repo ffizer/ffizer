@@ -5,6 +5,7 @@ use crate::Ctx;
 use crate::Result;
 use slog::warn;
 use snafu::ResultExt;
+use std::fmt;
 use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -36,7 +37,7 @@ impl SourceLoc {
 
     pub fn as_local_path(&self) -> Result<PathBuf> {
         let mut path = match self.uri.host {
-            None => self.uri.path.clone(),
+            None => self.uri.path.canonicalize().context(crate::error::Io {})?,
             Some(_) => self.remote_as_local()?,
         };
         if let Some(f) = &self.subfolder {
@@ -105,6 +106,20 @@ impl TransformsValues for SourceLoc {
     }
 }
 
+impl fmt::Display for SourceLoc {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} (rev: {}{})",
+            self.uri.raw,
+            self.rev,
+            self.subfolder
+                .as_ref()
+                .map(|s| format!(", subfolder: {}", s.to_string_lossy()))
+                .unwrap_or("".to_string())
+        )
+    }
+}
 // #[cfg(test)]
 // mod tests {
 //     use super::*;

@@ -1,4 +1,5 @@
 use crate::path_pattern::PathPattern;
+use crate::scripts::Script;
 use crate::source_loc::SourceLoc;
 use crate::transform_values::TransformsValues;
 use crate::variable_def::VariableDef;
@@ -16,6 +17,7 @@ pub struct TemplateCfg {
     pub variables: Vec<VariableDef>,
     pub ignores: Vec<PathPattern>,
     pub imports: Vec<SourceLoc>,
+    pub scripts: Vec<Script>,
     // set to true if the template content is under a `template` folder (not mixed with metadata)
     pub use_template_dir: bool,
 }
@@ -57,10 +59,12 @@ impl TransformsValues for TemplateCfg {
         let mut ignores = self.ignores.transforms_values(render)?;
         ignores.retain(|x| !x.raw.trim().is_empty());
         let imports = self.imports.transforms_values(render)?;
+        let scripts = self.scripts.transforms_values(render)?;
         Ok(TemplateCfg {
             variables,
             ignores,
             imports,
+            scripts,
             use_template_dir: self.use_template_dir,
         })
     }

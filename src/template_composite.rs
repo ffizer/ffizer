@@ -1,5 +1,6 @@
 use crate::files;
 use crate::graph::Graph;
+use crate::scripts::Script;
 use crate::source_file::SourceFile;
 use crate::source_loc::SourceLoc;
 use crate::template_cfg::TemplateCfg;
@@ -80,6 +81,13 @@ impl TemplateComposite {
             }
         }
         Ok(back)
+    }
+
+    pub fn scripts<'a>(&'a self) -> impl Iterator<Item = (&'a SourceLoc, &'a Vec<Script>)> {
+        self.layers
+            .iter()
+            .map(|t| (&t.loc, &t.cfg.scripts))
+            .into_iter()
     }
 }
 

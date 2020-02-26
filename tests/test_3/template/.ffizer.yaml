@@ -4,4 +4,8 @@ variables:
 
 scripts:
   - cmd: |
-      echo "foo" > file2.txt
+      {{#if (eq (env "OS") "windows") }}
+      echo Hello World > file2.txt
+      {{else}}
+      echo -e "Hello World\n" > file2.txt
+      {{/if}}

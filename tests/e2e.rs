@@ -117,8 +117,6 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -146,8 +144,6 @@ fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
         .arg("a476767b3ea4cde604d28761c4a2f8e4a31198e0")
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .assert()
         .success();
 
@@ -175,8 +171,6 @@ fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
         .arg("1.1.0")
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .assert()
         .success();
 

@@ -1,12 +1,24 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
+use pretty_assertions::assert_eq;
 use std::error::Error;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tempfile::tempdir;
 use test_generator::test_resources;
+mod dir_diff_list;
 
-mod dir_diff;
+/// Are the contents of two directories same?
+pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
+    actual_base: A,
+    expected_base: B,
+) -> Result<(), Box<dyn Error>> {
+    assert_eq!(
+        dir_diff_list::search_diff(actual_base, expected_base)?,
+        vec![]
+    );
+    Ok(())
+}
 
 #[test_resources("tests/data/test_*")]
 fn test_local_sample_keep(dir_name: &str) {
@@ -38,9 +50,7 @@ fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<d
         .arg(template_path.to_str().unwrap())
         .assert()
         .success();
-
-    dir_diff::is_same(&actual_path, &expected_path)?;
-    Ok(())
+    assert_is_same(&actual_path, &expected_path)
 }
 
 #[test]
@@ -66,9 +76,7 @@ fn empty_template() -> Result<(), Box<dyn Error>> {
         .arg(template_path.to_str().unwrap())
         .assert()
         .success();
-
-    dir_diff::is_same(&actual_path, &expected_path)?;
-    Ok(())
+    assert_is_same(&actual_path, &expected_path)
 }
 
 #[test]
@@ -94,9 +102,7 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
         .arg(source_subfolder)
         .assert()
         .success();
-
-    dir_diff::is_same(&actual_path, &expected_path)?;
-    Ok(())
+    assert_is_same(&actual_path, &expected_path)
 }
 
 #[cfg(feature = "test_remote")]
@@ -119,9 +125,7 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
         .arg("https://github.com/ffizer/template_sample.git")
         .assert()
         .success();
-
-    dir_diff::is_same(&actual_path, &expected_path)?;
-    Ok(())
+    assert_is_same(&actual_path, &expected_path)
 }
 
 #[cfg(feature = "test_remote")]
@@ -146,9 +150,7 @@ fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
         .arg("a476767b3ea4cde604d28761c4a2f8e4a31198e0")
         .assert()
         .success();
-
-    dir_diff::is_same(&actual_path, &expected_path)?;
-    Ok(())
+    assert_is_same(&actual_path, &expected_path)
 }
 
 #[cfg(feature = "test_remote")]
@@ -173,9 +175,7 @@ fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
         .arg("1.1.0")
         .assert()
         .success();
-
-    dir_diff::is_same(&actual_path, &expected_path)?;
-    Ok(())
+    assert_is_same(&actual_path, &expected_path)
 }
 
 // reproduce https://github.com/ffizer/ffizer/issues/195

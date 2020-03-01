@@ -1,0 +1,13 @@
+variables:
+  - name: project_name
+    default_value: "{{ file_name ffizer_dst_folder }}"
+
+scripts:
+  - cmd: |
+      echo "$(pwd) {{ env "OS" }}"> file2.txt
+
+#       {{#if (eq (env "OS") "macos") }}
+# echo Hello World {{env "OS"}}> file2.txt
+# {{else}}
+# echo -e "Hello World {{env "OS"}}\n" > file2.txt
+# {{/if}}

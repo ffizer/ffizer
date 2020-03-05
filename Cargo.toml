@@ -46,7 +46,7 @@ spectral = "0.6.0"
 tempfile = "3.1.0"
 test-generator = "0.3.0"
 run_script = "0.6.2"
-predicates = "1.0.2"
+predicates = "1.0.4"
 
 [[bin]]
 name = "ffizer"

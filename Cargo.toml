@@ -22,7 +22,7 @@ git2 = "0.11.0"
 git2_credentials = "0.5.0"
 globset = "0.4.4"
 handlebars = "3.0.1"
-handlebars_misc_helpers = "0.7.0"
+handlebars_misc_helpers = "0.8.0"
 human-panic = { version = "1.0.1", optional = true}
 indicatif = "0.14.0"
 lazy_static ="1.4.0"

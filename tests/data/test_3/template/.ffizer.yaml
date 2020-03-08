@@ -7,7 +7,7 @@ variables:
 scripts:
   - cmd: |
       {{#if (eq (env_var "OS") "windows") }}
-      echo Hello {{ who }} > file2.txt
+      echo Hello {{ who }}> file2.txt
       del file_to_delete.txt
       {{else}}
       echo "Hello {{ who }}" > file2.txt

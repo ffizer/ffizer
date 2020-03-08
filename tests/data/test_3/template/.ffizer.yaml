@@ -6,8 +6,8 @@ variables:
 
 scripts:
   - cmd: |
-      {{#if (eq (env_var "OS") "macos") }}
-      echo "Hello {{ who }}" > file2.txt
-      {{else}}
+      {{#if (eq (env_var "OS") "windows") }}
       echo -e "Hello {{ who }}\n" > file2.txt
+      {{else}}
+      echo "Hello {{ who }}" > file2.txt
       {{/if}}

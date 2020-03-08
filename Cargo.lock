@@ -831,9 +831,9 @@ dependencies = [
 
 [[package]]
 name = "handlebars_misc_helpers"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8de6e8d2f0ec1cb7113a7d55158a0704da6c45518628c8cc6ddb86e8cd6ceb7f"
+checksum = "ee86f15d3dc2f442b79a4ed3e93b6b1bc26dc471f0af889e85637dbcff630d03"
 dependencies = [
  "Inflector",
  "attohttpc",
@@ -842,6 +842,7 @@ dependencies = [
  "lazy_static",
  "log",
  "serde",
+ "serde-transcode",
  "serde_json",
  "serde_yaml",
  "snafu",
@@ -1959,6 +1960,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "414115f25f818d7dfccec8ee535d76949ae78584fc4f79a6f45a904bf8ab4449"
 dependencies = [
  "serde_derive",
+]
+
+[[package]]
+name = "serde-transcode"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97528f0dfcf8ce2d51d995cb513a103b9cd301dc3f387a9cae5ef974381d4e1c"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

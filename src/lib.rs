@@ -26,6 +26,7 @@ pub use crate::source_loc::SourceLoc;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::template_composite::TemplateComposite;
+use crate::transform_values::TransformsValues;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o, warn};
@@ -69,7 +70,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     debug!(ctx.logger, "extracting variables from cli");
     let variables_from_cli = extract_variables(&ctx)?;
     debug!(ctx.logger, "compositing templates");
-    let template_composite = TemplateComposite::from_src(
+    let mut template_composite = TemplateComposite::from_src(
         &ctx,
         &variables_from_cli,
         ctx.cmd_opt.offline,
@@ -77,8 +78,8 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     )?;
     debug!(ctx.logger, "asking variables");
     let variables = ui::ask_variables(&ctx, &template_composite.variables(), variables_from_cli)?;
-    // update cfg with variables defined by user (use to update ignore)
-    //TODO template_cfg = render_cfg(&ctx, &template_cfg, &variables, true)?;
+    // update cfg(s) with variables defined by user (use to update ignore, scripts,...)
+    template_composite = render_composite(&ctx, &template_composite, &variables, true)?;
     debug!(ctx.logger, "listing files from templates");
     let source_files = template_composite.find_sourcefiles()?;
     debug!(ctx.logger, "defining plan of rendering");
@@ -93,6 +94,28 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         })?;
     }
     Ok(())
+}
+
+fn render_composite(
+    ctx: &Ctx,
+    template_composite: &TemplateComposite,
+    variables: &Variables,
+    log_warning: bool,
+) -> Result<TemplateComposite> {
+    let handlebars = new_hbs();
+    let render = |v: &str| {
+        let r = handlebars.render_template(v, variables);
+        match r {
+            Ok(s) => s,
+            Err(e) => {
+                if log_warning {
+                    warn!(ctx.logger, "failed to convert"; "input" => ?v, "error" => ?e)
+                }
+                v.into()
+            }
+        }
+    };
+    template_composite.transforms_values(&render)
 }
 
 fn do_in_folder<F, R>(folder: &PathBuf, f: F) -> Result<R>

@@ -12,11 +12,13 @@ mod dir_diff_list;
 pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     actual_base: A,
     expected_base: B,
+    output: &std::process::Output,
 ) -> Result<(), Box<dyn Error>> {
-    assert_eq!(
-        dir_diff_list::search_diff(actual_base, expected_base)?,
-        vec![]
-    );
+    let diffs = dir_diff_list::search_diff(actual_base, expected_base)?;
+    if !diffs.is_empty() {
+        dbg!(output);
+    }
+    assert_eq!(diffs, vec![]);
     Ok(())
 }
 
@@ -37,11 +39,13 @@ fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<d
     let expected_path = sample_path.join("expected");
     let existing_path = sample_path.join("existing");
     let actual_path = tmp_dir.path().join("my-project").to_path_buf();
+    assert_eq!(false, actual_path.exists());
 
     if existing_path.exists() {
         copy(&existing_path, &actual_path)?;
     }
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let mut process = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    process
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")
@@ -51,10 +55,9 @@ fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<d
         .arg("--destination")
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
-        .arg(template_path.to_str().unwrap())
-        .assert()
-        .success();
-    assert_is_same(&actual_path, &expected_path)
+        .arg(template_path.to_str().unwrap());
+    process.assert().success();
+    assert_is_same(&actual_path, &expected_path, &process.output()?)
 }
 
 #[test]
@@ -67,7 +70,8 @@ fn empty_template() -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(&template_path)?;
     fs::create_dir_all(&expected_path)?;
 
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let mut process = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    process
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")
@@ -77,10 +81,9 @@ fn empty_template() -> Result<(), Box<dyn Error>> {
         .arg("--destination")
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
-        .arg(template_path.to_str().unwrap())
-        .assert()
-        .success();
-    assert_is_same(&actual_path, &expected_path)
+        .arg(template_path.to_str().unwrap());
+    process.assert().success();
+    assert_is_same(&actual_path, &expected_path, &process.output()?)
 }
 
 #[test]
@@ -91,7 +94,8 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
     let expected_path = PathBuf::from("./tests/data/test_1/expected").join(source_subfolder);
     let actual_path = tmp_dir.path().to_path_buf();
 
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let mut process = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    process
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")
@@ -103,10 +107,9 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
         .arg("--source")
         .arg(template_path.to_str().unwrap())
         .arg("--source-subfolder")
-        .arg(source_subfolder)
-        .assert()
-        .success();
-    assert_is_same(&actual_path, &expected_path)
+        .arg(source_subfolder);
+    process.assert().success();
+    assert_is_same(&actual_path, &expected_path, &process.output()?)
 }
 
 #[cfg(feature = "test_remote")]
@@ -116,7 +119,8 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
     let expected_path = PathBuf::from("./tests/data/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();
 
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let mut process = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    process
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")
@@ -126,10 +130,9 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
         .arg("--destination")
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
-        .arg("https://github.com/ffizer/template_sample.git")
-        .assert()
-        .success();
-    assert_is_same(&actual_path, &expected_path)
+        .arg("https://github.com/ffizer/template_sample.git");
+    process.assert().success();
+    assert_is_same(&actual_path, &expected_path, &process.output()?)
 }
 
 #[cfg(feature = "test_remote")]
@@ -139,7 +142,8 @@ fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
     let expected_path = PathBuf::from("./tests/data/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();
 
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let mut process = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    process
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")
@@ -151,10 +155,9 @@ fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("a476767b3ea4cde604d28761c4a2f8e4a31198e0")
-        .assert()
-        .success();
-    assert_is_same(&actual_path, &expected_path)
+        .arg("a476767b3ea4cde604d28761c4a2f8e4a31198e0");
+    process.assert().success();
+    assert_is_same(&actual_path, &expected_path, &process.output()?)
 }
 
 #[cfg(feature = "test_remote")]
@@ -164,7 +167,8 @@ fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
     let expected_path = PathBuf::from("./tests/data/test_1/expected");
     let actual_path = tmp_dir.path().to_path_buf();
 
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let mut process = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    process
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")
@@ -176,10 +180,9 @@ fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("1.1.0")
-        .assert()
-        .success();
-    assert_is_same(&actual_path, &expected_path)
+        .arg("1.1.0");
+    process.assert().success();
+    assert_is_same(&actual_path, &expected_path, &process.output()?)
 }
 
 // reproduce https://github.com/ffizer/ffizer/issues/195

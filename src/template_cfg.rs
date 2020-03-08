@@ -11,7 +11,7 @@ use std::str::FromStr;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 
-#[derive(Deserialize, Debug, Default, Clone)]
+#[derive(Deserialize, Debug, Default, Clone, PartialEq)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
     pub variables: Vec<VariableDef>,
@@ -74,6 +74,7 @@ impl TransformsValues for TemplateCfg {
 mod tests {
     use super::*;
     use crate::variable_def::ValuesForSelection;
+    use pretty_assertions::assert_eq;
     use spectral::prelude::*;
 
     // TODO provide a PR for https://github.com/dtolnay/serde-yaml/issues/86
@@ -185,6 +186,8 @@ mod tests {
             - name: k1
               default_value: to_transform
             - name: k3
+        scripts:
+            - cmd: hello to_transform
         "#;
         let cfg_expected_str = r#"
         ignores:
@@ -196,21 +199,14 @@ mod tests {
             - name: k1
               default_value: to_transform
             - name: k3
+        scripts:
+            - cmd: hello transformed
         "#;
         let cfg_in = TemplateCfg::from_str(&cfg_in_str).unwrap();
         let expected = TemplateCfg::from_str(&cfg_expected_str).unwrap();
-        let render = |v: &str| {
-            if v == "to_transform" {
-                "transformed".to_owned()
-            } else {
-                v.to_string()
-            }
-        };
+        let render = |v: &str| v.replace("to_transform", "transformed");
         let actual = cfg_in.transforms_values(&render).unwrap();
-        // variables are transformed on-demand
-        assert_that!(&actual.variables).is_equal_to(&expected.variables);
-        assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
-        //assert_that!(&actual.ignores).is_equal_to(&expected.ignores);
+        assert_eq!(&actual, &expected);
     }
 
     #[test]

@@ -21,6 +21,20 @@ pub struct TemplateLayer {
     cfg: TemplateCfg,
 }
 
+impl TransformsValues for TemplateLayer {
+    fn transforms_values<F>(&self, render: &F) -> Result<Self>
+    where
+        F: Fn(&str) -> String,
+    {
+        let cfg = self.cfg.transforms_values(render)?;
+        Ok(TemplateLayer {
+            order: self.order.clone(),
+            loc: self.loc.clone(),
+            cfg,
+        })
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TemplateComposite {
     layers: Vec<TemplateLayer>,
@@ -127,6 +141,17 @@ fn deep_download(
         }
     }
     Ok(())
+}
+
+impl TransformsValues for TemplateComposite {
+    /// transforms ignore, imports
+    fn transforms_values<F>(&self, render: &F) -> Result<Self>
+    where
+        F: Fn(&str) -> String,
+    {
+        let layers = self.layers.transforms_values(render)?;
+        Ok(TemplateComposite { layers })
+    }
 }
 
 fn render_cfg(

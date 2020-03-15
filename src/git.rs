@@ -103,7 +103,7 @@ where
     let revref = rev.as_ref();
     let mut remote = repository.find_remote("origin")?;
     remote.fetch(&[revref], Some(fo), None)?;
-    remote.disconnect();
+    remote.disconnect()?;
 
     // merge
     let reference = repository.find_reference("FETCH_HEAD")?;

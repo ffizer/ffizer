@@ -73,9 +73,9 @@ dependencies = [
 
 [[package]]
 name = "attohttpc"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac9fd7bdf8ff0a1b9d73b41f95cb189d77528110295c80e3c858bf343db24fa3"
+checksum = "de33d017f0add8b019c6d98c3132c82c8815ca96bbed8e8006e7402c840562b3"
 dependencies = [
  "flate2",
  "http",
@@ -732,6 +732,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "gcc"
+version = "0.3.55"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f5f3913fa0bfe7ee1fd8248b6b9f42a5af4b9d65ec2dd2c3c26132b950ecfc2"
+
+[[package]]
 name = "generic-array"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -831,14 +837,15 @@ dependencies = [
 
 [[package]]
 name = "handlebars_misc_helpers"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee86f15d3dc2f442b79a4ed3e93b6b1bc26dc471f0af889e85637dbcff630d03"
+checksum = "69d68caa8152172dfbb103252df5a753f2cd0c459453acbd766de90543e80704"
 dependencies = [
  "Inflector",
  "attohttpc",
  "enquote",
  "handlebars",
+ "jsonnet-rs",
  "lazy_static",
  "log",
  "serde",
@@ -1040,6 +1047,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7889c7c36282151f6bf465be4700359318aef36baa951462382eae49e9577cf9"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "jsonnet-rs"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dea3859e42541d9ecee82613c105234d2af74e1794c255af2d155d1e7ad57558"
+dependencies = [
+ "jsonnet-sys",
+ "libc",
+]
+
+[[package]]
+name = "jsonnet-sys"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2948bf138e186428476eaea072b4b07ef3cd8e6bcaeab941a65ec783a927e6ef"
+dependencies = [
+ "gcc",
+ "libc",
 ]
 
 [[package]]

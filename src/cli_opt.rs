@@ -38,7 +38,10 @@ pub enum Command {
     Inspect,
 }
 
-#[derive(StructOpt, Debug, Default, Clone)]
+#[derive(StructOpt, Debug, Default, Clone, Builder)]
+#[builder(default)]
+#[builder(field(private))]
+#[builder(setter(into, strip_option))]
 pub struct ApplyOpts {
     /// ask for plan confirmation
     #[structopt(long, default_value = "Never", possible_values = &AskConfirmation::variants(), case_insensitive = true)]
@@ -67,6 +70,10 @@ pub struct ApplyOpts {
         //default_value = "."
     )]
     pub dst_folder: PathBuf,
+}
+
+impl ApplyOpts {
+    pub fn builder() -> ApplyOptsBuilder { ApplyOptsBuilder::default() }
 }
 
 arg_enum! {

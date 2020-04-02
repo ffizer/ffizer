@@ -10,8 +10,11 @@ use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-#[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord, Builder)]
 #[serde(deny_unknown_fields, default)]
+#[builder(default)]
+#[builder(field(private))]
+#[builder(setter(into, strip_option))]
 pub struct SourceLoc {
     /// uri / path of the template
     #[structopt(short = "s", long = "source")]
@@ -27,6 +30,8 @@ pub struct SourceLoc {
 }
 
 impl SourceLoc {
+    pub fn builder() -> SourceLocBuilder { SourceLocBuilder::default() }
+
     pub fn find_remote_cache_folder() -> Result<PathBuf> {
         let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
         let project_dirs = directories::ProjectDirs::from("", &app_name, &app_name)

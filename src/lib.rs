@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate serde;
+#[macro_use]
+extern crate derive_builder;
 
 mod cli_opt;
 mod error;
@@ -22,6 +24,7 @@ mod variables;
 pub use crate::cli_opt::*;
 pub use crate::error::*;
 pub use crate::source_loc::SourceLoc;
+pub use crate::source_uri::SourceUri;
 
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
@@ -34,10 +37,17 @@ use snafu::ResultExt;
 use std::fs;
 use std::path::PathBuf;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Builder)]
+#[builder(default)]
+#[builder(field(private))]
+#[builder(setter(into, strip_option))]
 pub struct Ctx {
     pub logger: slog::Logger,
     pub cmd_opt: ApplyOpts,
+}
+
+impl Ctx {
+    pub fn builder() -> CtxBuilder {CtxBuilder::default()}
 }
 
 impl Default for Ctx {

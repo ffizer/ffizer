@@ -10,7 +10,9 @@ use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-#[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord, Builder)]
+#[derive(
+    StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord, Builder,
+)]
 #[serde(deny_unknown_fields, default)]
 #[builder(default)]
 #[builder(field(private))]
@@ -30,7 +32,9 @@ pub struct SourceLoc {
 }
 
 impl SourceLoc {
-    pub fn builder() -> SourceLocBuilder { SourceLocBuilder::default() }
+    pub fn builder() -> SourceLocBuilder {
+        SourceLocBuilder::default()
+    }
 
     pub fn find_remote_cache_folder() -> Result<PathBuf> {
         let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());

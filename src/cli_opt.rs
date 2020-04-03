@@ -73,7 +73,9 @@ pub struct ApplyOpts {
 }
 
 impl ApplyOpts {
-    pub fn builder() -> ApplyOptsBuilder { ApplyOptsBuilder::default() }
+    pub fn builder() -> ApplyOptsBuilder {
+        ApplyOptsBuilder::default()
+    }
 }
 
 arg_enum! {

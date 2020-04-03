@@ -47,7 +47,9 @@ pub struct Ctx {
 }
 
 impl Ctx {
-    pub fn builder() -> CtxBuilder {CtxBuilder::default()}
+    pub fn builder() -> CtxBuilder {
+        CtxBuilder::default()
+    }
 }
 
 impl Default for Ctx {

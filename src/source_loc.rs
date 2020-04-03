@@ -26,6 +26,13 @@ pub struct SourceLoc {
     #[structopt(long = "rev", default_value = "master")]
     pub rev: String,
 
+    /// git user
+    #[structopt(short = "u", long = "user")]
+    pub usr: Option<String>,
+    /// git password
+    #[structopt(short = "p", long = "password")]
+    pub pwd: Option<String>,
+
     /// path of the folder under the source uri to use for template
     #[structopt(long = "source-subfolder", parse(from_os_str))]
     pub subfolder: Option<PathBuf>,
@@ -73,7 +80,8 @@ impl SourceLoc {
     pub fn download(&self, ctx: &Ctx, offline: bool) -> Result<PathBuf> {
         if !offline && self.uri.host.is_some() {
             let remote_path = self.remote_as_local()?;
-            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev) {
+            let creds = self.usr.as_ref().map_or(None, |u| self.pwd.as_ref().map_or(None, |p| Some((u.as_str(), p.as_str()))));
+            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev, creds) {
                 warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
                 if remote_path.exists() {
                     fs::remove_dir_all(&remote_path)
@@ -109,6 +117,8 @@ impl TransformsValues for SourceLoc {
             .and_then(|f| f.transforms_values(render).ok());
         Ok(SourceLoc {
             uri,
+            usr: self.usr.clone(),
+            pwd: self.pwd.clone(),
             rev,
             subfolder,
         })

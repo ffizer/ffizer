@@ -1,13 +1,18 @@
 use crate::Error;
 use git2::build::{CheckoutBuilder, RepoBuilder};
-use git2::{Config, FetchOptions, Repository, Cred};
+use git2::{Config, Cred, FetchOptions, Repository};
 use git2_credentials;
 use snafu::ResultExt;
 use std::path::Path;
 
 /// clone a repository at a rev to a directory
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
-pub fn retrieve<P, U, R>(dst: P, url: U, rev: R, credentials: Option<(&str,&str)>) -> Result<(), Error>
+pub fn retrieve<P, U, R>(
+    dst: P,
+    url: U,
+    rev: R,
+    credentials: Option<(&str, &str)>,
+) -> Result<(), Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,
@@ -54,24 +59,26 @@ where
 /// a best attempt effort is made to authenticate
 /// requests when required to support private
 /// git repositories
-fn make_fetch_options<'a>(credentials: Option<(&'a str, &'a str)>) -> Result<FetchOptions<'a>, git2::Error> {
+fn make_fetch_options<'a>(
+    credentials: Option<(&'a str, &'a str)>,
+) -> Result<FetchOptions<'a>, git2::Error> {
     let mut cb = git2::RemoteCallbacks::new();
 
     match credentials {
         Some(creds) => {
             cb.credentials(move |_, _, _| {
-                let credentials =
-                    Cred::userpass_plaintext(creds.0, creds.1)?;
+                let credentials = Cred::userpass_plaintext(creds.0, creds.1)?;
                 Ok(credentials)
             });
-        },
+        }
         None => {
             let git_config = git2::Config::open_default()?;
             let mut ch = git2_credentials::CredentialHandler::new(git_config);
-            cb.credentials(move |url, username, allowed| ch.try_next_credential(url, username, allowed));
+            cb.credentials(move |url, username, allowed| {
+                ch.try_next_credential(url, username, allowed)
+            });
         }
     }
-
 
     let mut fo = FetchOptions::new();
     let mut proxy_options = git2::ProxyOptions::new();
@@ -89,7 +96,11 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
-    println!("dst: {}, url: {}", dst.as_ref().to_str().unwrap(), url.as_ref());
+    println!(
+        "dst: {}, url: {}",
+        dst.as_ref().to_str().unwrap(),
+        url.as_ref()
+    );
     std::fs::create_dir_all(&dst.as_ref()).context(crate::CreateFolder {
         path: dst.as_ref().to_path_buf(),
     })?;

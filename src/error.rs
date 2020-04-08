@@ -31,7 +31,13 @@ pub enum Error {
         file_name: String,
     },
 
-    #[snafu(display("git retreive {:?} (rev: {:?}) into folder {:?} - source:{:?}", url, rev, dst, source))]
+    #[snafu(display(
+        "git retreive {:?} (rev: {:?}) into folder {:?} - source:{:?}",
+        url,
+        rev,
+        dst,
+        source
+    ))]
     GitRetrieve {
         dst: PathBuf,
         url: String,

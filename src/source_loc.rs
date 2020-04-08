@@ -88,8 +88,19 @@ impl SourceLoc {
     pub fn download(&self, ctx: &Ctx, offline: bool) -> Result<PathBuf> {
         if !offline && self.uri.host.is_some() {
             let remote_path = self.remote_as_local()?;
-            let creds = self.usr.as_ref().map_or(None, |u| self.pwd.as_ref().map_or(None, |p| Some((u.as_str(), p.as_str()))));
-            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev, creds, !self.unsecure_certificate, !self.disable_proxy_options) {
+            let creds = self.usr.as_ref().map_or(None, |u| {
+                self.pwd
+                    .as_ref()
+                    .map_or(None, |p| Some((u.as_str(), p.as_str())))
+            });
+            if let Err(v) = git::retrieve(
+                &remote_path,
+                &self.uri.raw,
+                &self.rev,
+                creds,
+                !self.unsecure_certificate,
+                !self.disable_proxy_options,
+            ) {
                 warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
                 if remote_path.exists() {
                     fs::remove_dir_all(&remote_path)

@@ -36,6 +36,14 @@ pub struct SourceLoc {
     /// path of the folder under the source uri to use for template
     #[structopt(long = "source-subfolder", parse(from_os_str))]
     pub subfolder: Option<PathBuf>,
+
+    /// use for self-signed certificate
+    #[structopt(short = "k")]
+    pub unsecure_certificate: bool,
+
+    /// use to disbale proxy options for git
+    #[structopt(short = "p")]
+    pub disable_proxy_options: bool,
 }
 
 impl SourceLoc {
@@ -81,7 +89,7 @@ impl SourceLoc {
         if !offline && self.uri.host.is_some() {
             let remote_path = self.remote_as_local()?;
             let creds = self.usr.as_ref().map_or(None, |u| self.pwd.as_ref().map_or(None, |p| Some((u.as_str(), p.as_str()))));
-            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev, creds) {
+            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev, creds, !self.unsecure_certificate, !self.disable_proxy_options) {
                 warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
                 if remote_path.exists() {
                     fs::remove_dir_all(&remote_path)
@@ -121,6 +129,8 @@ impl TransformsValues for SourceLoc {
             pwd: self.pwd.clone(),
             rev,
             subfolder,
+            unsecure_certificate: self.unsecure_certificate,
+            disable_proxy_options: self.disable_proxy_options,
         })
     }
 }

@@ -134,7 +134,7 @@ where
 }
 
 pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
-    let mut variables = Variables::new();
+    let mut variables = Variables::default();
     variables.insert(
         "ffizer_dst_folder",
         ctx.cmd_opt
@@ -186,7 +186,7 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
                 operation,
             }
         })
-        .filter(|a| a.src.len() > 0)
+        .filter(|a| !a.src.is_empty())
         .collect::<Vec<_>>();
     // sort to have folder before files inside it (and mkdir berfore create file)
     actions.sort_by_key(|a| a.dst_path.relative.clone());
@@ -331,23 +331,17 @@ fn render_template(
     Ok(())
 }
 
-fn copy_file_permissions<P1, P2>(src: P1, dest: P2) -> Result<()>
+fn copy_file_permissions<P1, P2>(src: P1, dst: P2) -> Result<()>
 where
     P1: AsRef<std::path::Path>,
     P2: AsRef<std::path::Path>,
 {
     let src = src.as_ref();
-    let dest = dest.as_ref();
+    let dst = dst.as_ref();
     let perms = fs::metadata(&src)
-        .context(crate::CopyFilePermission {
-            src: src,
-            dst: dest,
-        })?
+        .context(crate::CopyFilePermission { src, dst })?
         .permissions();
-    fs::set_permissions(&dest, perms).context(crate::CopyFilePermission {
-        src: src,
-        dst: dest,
-    })?;
+    fs::set_permissions(&dst, perms).context(crate::CopyFilePermission { src, dst })?;
     Ok(())
 }
 
@@ -471,7 +465,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
     })
 }
 
-fn select_operation(_ctx: &Ctx, sources: &Vec<SourceFile>, dst_path: &ChildPath) -> FileOperation {
+fn select_operation(_ctx: &Ctx, sources: &[SourceFile], dst_path: &ChildPath) -> FileOperation {
     //FIXME to use all the sources
     let src_full_path = PathBuf::from(sources[0].childpath());
     let dest_full_path = PathBuf::from(dst_path);
@@ -524,7 +518,7 @@ mod tests {
     }
 
     fn new_variables_for_test() -> Variables {
-        let mut variables = Variables::new();
+        let mut variables = Variables::default();
         variables.insert("prj", "myprj").expect("insert prj");
         variables.insert("base", "remote").expect("insert base");
         variables

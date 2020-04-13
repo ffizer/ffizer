@@ -3,14 +3,10 @@ use serde::Serialize;
 use snafu::ResultExt;
 use std::collections::BTreeMap;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Variables(BTreeMap<String, serde_yaml::Value>);
 
 impl Variables {
-    pub fn new() -> Self {
-        Variables(BTreeMap::new())
-    }
-
     pub fn append(&mut self, v: &mut Variables) {
         self.0.append(&mut v.0);
     }
@@ -23,7 +19,7 @@ impl Variables {
         Ok(())
     }
 
-    pub fn to_value(s: &str) -> Result<serde_yaml::Value> {
+    pub fn value_from_str(s: &str) -> Result<serde_yaml::Value> {
         //serde_yaml::to_value(value).context(crate::SerdeYaml {})
         serde_yaml::from_str::<serde_yaml::Value>(s).context(crate::SerdeYaml {})
     }
@@ -36,15 +32,15 @@ mod tests {
 
     #[test]
     fn test_to_value() {
-        assert_that!(&Variables::to_value("v1").unwrap())
+        assert_that!(&Variables::value_from_str("v1").unwrap())
             .is_equal_to(&serde_yaml::Value::String("v1".to_owned()));
-        assert_that!(&Variables::to_value("true").unwrap())
+        assert_that!(&Variables::value_from_str("true").unwrap())
             .is_equal_to(&serde_yaml::Value::Bool(true));
-        assert_that!(&Variables::to_value("false").unwrap())
+        assert_that!(&Variables::value_from_str("false").unwrap())
             .is_equal_to(&serde_yaml::Value::Bool(false));
-        assert_that!(&Variables::to_value("\"true\"").unwrap())
+        assert_that!(&Variables::value_from_str("\"true\"").unwrap())
             .is_equal_to(&serde_yaml::Value::String("true".to_owned()));
-        assert_that!(&Variables::to_value("42").unwrap())
+        assert_that!(&Variables::value_from_str("42").unwrap())
             .is_equal_to(&serde_yaml::to_value(42).unwrap());
     }
 }

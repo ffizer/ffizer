@@ -44,7 +44,7 @@ pub fn ask_variables(
     list_variables: &[VariableDef],
     mut init: Variables,
 ) -> Result<Variables> {
-    let mut variables = Variables::new();
+    let mut variables = Variables::default();
     variables.append(&mut init);
     let handlebars = new_hbs();
     write_title("Configure variables")?;
@@ -103,7 +103,7 @@ pub fn ask_variables(
                         .iter()
                         .enumerate()
                         .filter_map(|(i, v)| if v == &value { Some(i) } else { None })
-                        .nth(0);
+                        .next();
                     VariableResponse { value, idx }
                 });
             VariableRequest {
@@ -123,7 +123,7 @@ pub fn ask_variables(
         if let Some(idx) = resp.idx {
             variables.insert(format!("{}__idx", name), idx)?;
         }
-        variables.insert(name, Variables::to_value(&resp.value)?)?;
+        variables.insert(name, Variables::value_from_str(&resp.value)?)?;
     }
     Ok(variables)
 }

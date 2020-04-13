@@ -28,7 +28,7 @@ impl TransformsValues for TemplateLayer {
     {
         let cfg = self.cfg.transforms_values(render)?;
         Ok(TemplateLayer {
-            order: self.order.clone(),
+            order: self.order,
             loc: self.loc.clone(),
             cfg,
         })
@@ -97,11 +97,8 @@ impl TemplateComposite {
         Ok(back)
     }
 
-    pub fn scripts<'a>(&'a self) -> impl Iterator<Item = (&'a SourceLoc, &'a Vec<Script>)> {
-        self.layers
-            .iter()
-            .map(|t| (&t.loc, &t.cfg.scripts))
-            .into_iter()
+    pub fn scripts(&self) -> impl Iterator<Item = (&SourceLoc, &Vec<Script>)> {
+        self.layers.iter().map(|t| (&t.loc, &t.cfg.scripts))
     }
 }
 

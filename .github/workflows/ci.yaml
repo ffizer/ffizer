@@ -42,9 +42,9 @@ jobs:
           CARGO_MAKE_RUN_CODECOV: "true"
           # to have CODECOV_TOKEN go to https://codecov.io/gh/${GITHUB_USER}/${GITHUB_REPO}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      - name: Update snapcraft
-        run: cargo make snapcraft-push
-        env:
-          # to have SNAPCRAFT_TOKEN call `snapcraft export-login --snaps ${SNAP_NAME} --channels edge,beta,candidate -`
-          SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
-          SNAPCRAFT_CHANNEL: edge
+      # - name: Update snapcraft
+      #   run: cargo make snapcraft-push
+      #   env:
+      #     # to have SNAPCRAFT_TOKEN call `snapcraft export-login --snaps ${SNAP_NAME} --channels edge,beta,candidate -`
+      #     SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
+      #     SNAPCRAFT_CHANNEL: edge

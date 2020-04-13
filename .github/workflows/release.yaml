@@ -37,8 +37,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref }}
           # GITHUB_REPOSITORY: ${{ GITHUB_REPOSITORY }}
-      - name: Update snapcraft
-        run: cargo make snapcraft-push
-        env:
-          SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
-          SNAPCRAFT_CHANNEL: beta
+      # - name: Update snapcraft
+      #   run: cargo make snapcraft-push
+      #   env:
+      #     SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
+      #     SNAPCRAFT_CHANNEL: beta

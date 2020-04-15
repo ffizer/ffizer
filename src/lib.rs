@@ -85,13 +85,10 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     debug!(ctx.logger, "defining plan of rendering");
     let actions = plan(ctx, source_files, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
-        do_in_folder(&ctx.cmd_opt.dst_folder, || {
-            debug!(ctx.logger, "executing plan of rendering");
-            execute(ctx, &actions, &variables)?;
-            debug!(ctx.logger, "running scripts");
-            run_scripts(ctx, &template_composite)?;
-            Ok(())
-        })?;
+        debug!(ctx.logger, "executing plan of rendering");
+        execute(ctx, &actions, &variables)?;
+        debug!(ctx.logger, "running scripts");
+        run_scripts(ctx, &template_composite)?;
     }
     Ok(())
 }
@@ -489,16 +486,18 @@ fn select_operation(_ctx: &Ctx, sources: &Vec<SourceFile>, dst_path: &ChildPath)
 }
 
 fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> {
-    for (loc, scripts) in template_composite.scripts() {
-        for script in scripts {
-            if ui::confirm_run_script(ctx, loc, script)? {
-                if let Err(err) = script.run() {
-                    warn!(ctx.logger, ""; "err" => format!("{:#?}",err));
+    do_in_folder(&ctx.cmd_opt.dst_folder, || {
+        for (loc, scripts) in template_composite.scripts() {
+            for script in scripts {
+                if ui::confirm_run_script(ctx, loc, script)? {
+                    if let Err(err) = script.run() {
+                        warn!(ctx.logger, ""; "err" => format!("{:#?}",err));
+                    }
                 }
             }
         }
-    }
-    Ok(())
+        Ok(())
+    })
 }
 
 #[cfg(test)]

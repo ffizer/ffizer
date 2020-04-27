@@ -14,7 +14,7 @@ exclude = ["/azure-pipelines.yml", "/docs/**", "/scripts/**", ".gitignore", "/te
 edition = "2018"
 
 [dependencies]
-console = "0.10.0"
+console = "0.10.1"
 dialoguer = "0.5.0"
 difference = "2.0.0"
 directories = "2.0.2"

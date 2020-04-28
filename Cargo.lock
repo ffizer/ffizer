@@ -270,9 +270,9 @@ dependencies = [
 
 [[package]]
 name = "console"
-version = "0.10.1"
+version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "703dd7516d1a3e6483189c8d9a18a9af84877084630875ff9e922c201f9e0209"
+checksum = "dc793ef09b7887e63ed19f24b348be53b9c7e89e3feed4e0794c0b9f9d0c8344"
 dependencies = [
  "clicolors-control",
  "encode_unicode",
@@ -283,6 +283,23 @@ dependencies = [
  "termios",
  "unicode-width",
  "winapi 0.3.8",
+]
+
+[[package]]
+name = "console"
+version = "0.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6186a012aed6b3ab3b36015337ecbc30563961181868a31b6314e97e36e3c36e"
+dependencies = [
+ "encode_unicode",
+ "lazy_static",
+ "libc",
+ "regex",
+ "terminal_size",
+ "termios",
+ "unicode-width",
+ "winapi 0.3.8",
+ "winapi-util",
 ]
 
 [[package]]
@@ -403,7 +420,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8b5eb0fce3c4f955b8d8d864b131fb8863959138da962026c106ba7a2e3bf7a"
 dependencies = [
- "console",
+ "console 0.10.2",
  "lazy_static",
  "tempfile",
 ]
@@ -514,7 +531,7 @@ name = "ffizer"
 version = "2.0.0-beta.2"
 dependencies = [
  "assert_cmd",
- "console",
+ "console 0.11.1",
  "dialoguer",
  "difference",
  "directories",
@@ -948,7 +965,7 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8572bccfb0665e70b7faf44ee28841b8e0823450cd4ad562a76b5a3c4bf48487"
 dependencies = [
- "console",
+ "console 0.11.1",
  "lazy_static",
  "number_prefix",
  "regex",
@@ -960,7 +977,7 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49a68371cf417889c9d7f98235b7102ea7c54fc59bcbd22f3dea785be9d27e40"
 dependencies = [
- "console",
+ "console 0.11.1",
  "lazy_static",
  "number_prefix",
  "regex",

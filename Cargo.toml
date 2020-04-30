@@ -15,7 +15,7 @@ edition = "2018"
 
 [dependencies]
 console = "0.11.2"
-dialoguer = "0.5.1"
+dialoguer = "0.6.1"
 difference = "2.0.0"
 directories = "2.0.2"
 git2 = "0.13.5"

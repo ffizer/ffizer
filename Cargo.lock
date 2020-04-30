@@ -426,6 +426,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dialoguer"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ceed4036d8881a41295600663da2b2743b4c0db50088392cb7a4c2f26aabf29"
+dependencies = [
+ "console 0.11.2",
+ "lazy_static",
+ "tempfile",
+]
+
+[[package]]
 name = "difference"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -532,7 +543,7 @@ version = "2.0.0-beta.2"
 dependencies = [
  "assert_cmd",
  "console 0.11.2",
- "dialoguer",
+ "dialoguer 0.6.1",
  "difference",
  "directories",
  "git2",
@@ -747,7 +758,7 @@ version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac1fb05b04760ad0e642a12dd889a1b778becb12fbdb91306c72906ed9461b83"
 dependencies = [
- "dialoguer",
+ "dialoguer 0.5.1",
  "dirs",
  "git2",
 ]
@@ -965,7 +976,7 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8572bccfb0665e70b7faf44ee28841b8e0823450cd4ad562a76b5a3c4bf48487"
 dependencies = [
- "console 0.10.2",
+ "console 0.11.2",
  "lazy_static",
  "number_prefix",
  "regex",
@@ -977,7 +988,7 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49a68371cf417889c9d7f98235b7102ea7c54fc59bcbd22f3dea785be9d27e40"
 dependencies = [
- "console 0.10.2",
+ "console 0.11.2",
  "lazy_static",
  "number_prefix",
  "regex",

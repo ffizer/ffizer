@@ -226,4 +226,16 @@ mod tests {
         let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
         assert_that!(&actual.use_template_dir).is_true();
     }
+
+    #[test]
+    fn test_accept_ignores_with_values() {
+        let cfg_in_str = r#"
+        ignores:
+            - "{{foo}}"
+            - '{{#if (eq k1 "foo")}}foo{{/if}}'
+        variables:
+            - name: k1
+        "#;
+        TemplateCfg::from_str(&cfg_in_str).unwrap();
+    }
 }

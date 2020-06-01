@@ -2,26 +2,28 @@ use crate::transform_values::TransformsValues;
 use crate::Result;
 use globset::{Glob, GlobMatcher};
 use serde_plain::derive_deserialize_from_str;
-use snafu::ResultExt;
+// use snafu::ResultExt;
 use std::cmp::PartialEq;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct PathPattern {
     pub raw: String,
-    pub matcher: GlobMatcher,
+    pub matcher: Result<GlobMatcher, globset::Error>,
 }
 
 impl FromStr for PathPattern {
     type Err = crate::Error;
     fn from_str(value: &str) -> Result<Self> {
         let value = value.trim();
-        let g = Glob::new(value).context(crate::ParsePathPattern {
-            value: value.to_owned(),
-        })?;
+        let matcher = Glob::new(value)
+            // .context(crate::ParsePathPattern {
+            //     value: value.to_owned(),
+            // })
+            .map(|g| g.compile_matcher());
         Ok(PathPattern {
             raw: value.to_owned(),
-            matcher: g.compile_matcher(),
+            matcher,
         })
     }
 }
@@ -36,7 +38,10 @@ impl PartialEq for PathPattern {
 
 impl PathPattern {
     pub fn is_match(&self, value: &str) -> bool {
-        self.matcher.is_match(value)
+        self.matcher
+            .as_ref()
+            .map(|m| m.is_match(value))
+            .unwrap_or(false)
     }
 }
 
@@ -68,5 +73,12 @@ mod tests {
         let actual = PathPattern::from_str(" **/foo.bar").unwrap();
         let expected = PathPattern::from_str("**/foo.bar").unwrap();
         assert_that!(&actual.raw).is_equal_to(&expected.raw);
+    }
+
+    #[test]
+    fn test_pattern_to_render_later() {
+        let p = PathPattern::from_str(r#"""{{if (eq v "foo")}}foo{{/if}}"""#).unwrap();
+        assert_that!(p.is_match("hello")).is_false();
+        assert_that!(p.is_match("foo")).is_false();
     }
 }

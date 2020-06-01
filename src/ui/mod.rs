@@ -1,5 +1,6 @@
+mod tree;
+
 use crate::cli_opt::*;
-use crate::tree;
 use crate::variable_def::ValuesForSelection;
 use crate::variable_def::VariableDef;
 use crate::FileOperation;

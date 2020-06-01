@@ -14,7 +14,6 @@ mod source_uri;
 mod template_cfg;
 mod template_composite;
 mod transform_values;
-mod tree;
 mod ui;
 mod variable_def;
 mod variables;

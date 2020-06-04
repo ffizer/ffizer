@@ -67,9 +67,9 @@ dependencies = [
 
 [[package]]
 name = "attohttpc"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de33d017f0add8b019c6d98c3132c82c8815ca96bbed8e8006e7402c840562b3"
+checksum = "d5db1932a9d70d5091139d6b0e04ec6a4d9f9184041c15d71a5ef954cb3c5312"
 dependencies = [
  "flate2",
  "http",
@@ -817,9 +817,9 @@ dependencies = [
 
 [[package]]
 name = "handlebars_misc_helpers"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69d68caa8152172dfbb103252df5a753f2cd0c459453acbd766de90543e80704"
+checksum = "1e03f4d9ff6e43099d50b84882239b0fe18931db6bdf56973392e68c9914beb4"
 dependencies = [
  "Inflector",
  "attohttpc",

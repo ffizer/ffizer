@@ -1,6 +1,5 @@
 use crate::git;
 use crate::source_uri::SourceUri;
-use crate::transform_values::TransformsValues;
 use crate::Ctx;
 use crate::Result;
 use slog::warn;
@@ -83,26 +82,6 @@ impl SourceLoc {
         } else {
             Ok(path)
         }
-    }
-}
-
-impl TransformsValues for SourceLoc {
-    /// transforms default_value & ignore
-    fn transforms_values<F>(&self, render: &F) -> Result<SourceLoc>
-    where
-        F: Fn(&str) -> String,
-    {
-        let uri = self.uri.transforms_values(render)?;
-        let rev = render(&self.rev);
-        let subfolder = self
-            .subfolder
-            .clone()
-            .and_then(|f| f.transforms_values(render).ok());
-        Ok(SourceLoc {
-            uri,
-            rev,
-            subfolder,
-        })
     }
 }
 

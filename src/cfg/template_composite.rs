@@ -1,10 +1,10 @@
+use super::template_cfg::TemplateCfg;
+use super::transform_values::TransformsValues;
 use crate::files;
 use crate::graph::Graph;
 use crate::scripts::Script;
 use crate::source_file::SourceFile;
 use crate::source_loc::SourceLoc;
-use crate::template_cfg::TemplateCfg;
-use crate::transform_values::TransformsValues;
 use crate::variable_def::VariableDef;
 use crate::Ctx;
 use crate::Result;
@@ -66,24 +66,24 @@ impl TemplateComposite {
         Ok(TemplateComposite { layers })
     }
 
-    pub fn variables(&self) -> Vec<VariableDef> {
+    pub fn find_variabledefs(&self) -> Result<Vec<VariableDef>> {
         let mut back = vec![];
         let mut names = HashSet::new();
         for layer in &self.layers {
-            for variable in &layer.cfg.variables {
+            for variable in layer.cfg.find_variabledefs()? {
                 if !names.contains(&variable.name) {
                     names.insert(variable.name.clone());
                     back.push(variable.clone());
                 }
             }
         }
-        back
+        Ok(back)
     }
 
     pub fn find_sourcefiles(&self) -> Result<Vec<SourceFile>> {
         let mut back = vec![];
         for layer in &self.layers {
-            let ignores = &layer.cfg.ignores;
+            let ignores = &layer.cfg.find_ignores()?;
             let template_dir = if layer.cfg.use_template_dir {
                 "template"
             } else {
@@ -97,8 +97,11 @@ impl TemplateComposite {
         Ok(back)
     }
 
-    pub fn scripts(&self) -> impl Iterator<Item = (&SourceLoc, &Vec<Script>)> {
-        self.layers.iter().map(|t| (&t.loc, &t.cfg.scripts))
+    pub fn find_scripts(&self) -> Result<Vec<(&SourceLoc, Vec<Script>)>> {
+        self.layers
+            .iter()
+            .map(|t| t.cfg.find_scripts().map(|l| (&t.loc, l)))
+            .collect()
     }
 }
 
@@ -109,7 +112,8 @@ impl Graph for HashMap<SourceLoc, TemplateCfg> {
         self.get(k)
     }
     fn find_edges_direct(&self, v: &Self::V) -> Vec<Self::K> {
-        v.imports.clone()
+        v.find_sourcelocs()
+            .expect("TODO find_sourcelocs without error")
     }
 }
 
@@ -131,7 +135,7 @@ fn deep_download(
         variables_children.insert("ffizer_src_rev", src.rev.clone())?;
         //variables_children.insert("ffizer_src_subfolder".to_owned(), src.subfolder.clone());
         template_cfg = render_cfg(&ctx, &template_cfg, &variables_children, false)?;
-        let children = template_cfg.imports.clone();
+        let children = template_cfg.find_sourcelocs()?;
         templates.insert(src.clone(), template_cfg);
         for child in children {
             deep_download(ctx, &variables_children, offline, &child, templates)?;
@@ -151,7 +155,29 @@ impl TransformsValues for TemplateComposite {
     }
 }
 
-fn render_cfg(
+pub(crate) fn render_composite(
+    ctx: &Ctx,
+    template_composite: &TemplateComposite,
+    variables: &Variables,
+    log_warning: bool,
+) -> Result<TemplateComposite> {
+    let handlebars = new_hbs();
+    let render = |v: &str| {
+        let r = handlebars.render_template(v, variables);
+        match r {
+            Ok(s) => s,
+            Err(e) => {
+                if log_warning {
+                    warn!(ctx.logger, "failed to convert"; "input" => ?v, "error" => ?e)
+                }
+                v.into()
+            }
+        }
+    };
+    template_composite.transforms_values(&render)
+}
+
+pub(crate) fn render_cfg(
     ctx: &Ctx,
     template_cfg: &TemplateCfg,
     variables: &Variables,

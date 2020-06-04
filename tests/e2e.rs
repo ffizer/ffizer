@@ -24,7 +24,7 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     Ok(())
 }
 
-#[test_resources("tests/data/test_7*")]
+#[test_resources("tests/data/test_*")]
 fn test_local_sample_keep(dir_name: &str) {
     let t = test_local_sample_impl(dir_name, "keep");
     if let Err(e) = t {

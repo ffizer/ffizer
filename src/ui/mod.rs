@@ -193,7 +193,7 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
     }
     let r = if ctx.cmd_opt.confirm == AskConfirmation::Always {
         Confirm::new()
-            .with_text("Do you want to apply plan ?")
+            .with_prompt("Do you want to apply plan ?")
             .interact()
             .context(crate::Io {})?
     } else {
@@ -274,7 +274,7 @@ pub fn confirm_run_script(
         Ok(true)
     } else {
         Confirm::new()
-            .with_text("Do you want to run the commands ?")
+            .with_prompt("Do you want to run the commands ?")
             .interact()
             .context(crate::Io {})
     }

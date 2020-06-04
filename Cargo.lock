@@ -257,35 +257,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "clicolors-control"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90082ee5dcdd64dc4e9e0d37fbf3ee325419e39c0092191e0393df65518f741e"
-dependencies = [
- "atty",
- "lazy_static",
- "libc",
- "winapi 0.3.8",
-]
-
-[[package]]
-name = "console"
-version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc793ef09b7887e63ed19f24b348be53b9c7e89e3feed4e0794c0b9f9d0c8344"
-dependencies = [
- "clicolors-control",
- "encode_unicode",
- "lazy_static",
- "libc",
- "regex",
- "terminal_size",
- "termios",
- "unicode-width",
- "winapi 0.3.8",
-]
-
-[[package]]
 name = "console"
 version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -416,22 +387,11 @@ dependencies = [
 
 [[package]]
 name = "dialoguer"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8b5eb0fce3c4f955b8d8d864b131fb8863959138da962026c106ba7a2e3bf7a"
-dependencies = [
- "console 0.10.2",
- "lazy_static",
- "tempfile",
-]
-
-[[package]]
-name = "dialoguer"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f4aa86af7b19b40ef9cbef761ed411a49f0afa06b7b6dcd3dfe2f96a3c546138"
 dependencies = [
- "console 0.11.3",
+ "console",
  "lazy_static",
  "tempfile",
 ]
@@ -542,8 +502,8 @@ name = "ffizer"
 version = "2.0.0-beta.2"
 dependencies = [
  "assert_cmd",
- "console 0.11.3",
- "dialoguer 0.6.2",
+ "console",
+ "dialoguer",
  "difference",
  "directories",
  "git2",
@@ -754,11 +714,11 @@ dependencies = [
 
 [[package]]
 name = "git2_credentials"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac1fb05b04760ad0e642a12dd889a1b778becb12fbdb91306c72906ed9461b83"
+checksum = "17f3f10b0ddf91b9ee499346534a1a2a8f01b4b5ac9f0e40a1d5075b7f317c21"
 dependencies = [
- "dialoguer 0.5.1",
+ "dialoguer",
  "dirs",
  "git2",
 ]
@@ -976,7 +936,7 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8572bccfb0665e70b7faf44ee28841b8e0823450cd4ad562a76b5a3c4bf48487"
 dependencies = [
- "console 0.11.3",
+ "console",
  "lazy_static",
  "number_prefix",
  "regex",
@@ -988,7 +948,7 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49a68371cf417889c9d7f98235b7102ea7c54fc59bcbd22f3dea785be9d27e40"
 dependencies = [
- "console 0.11.3",
+ "console",
  "lazy_static",
  "number_prefix",
  "regex",

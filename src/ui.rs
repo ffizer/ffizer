@@ -7,7 +7,7 @@ use crate::Result;
 use crate::{Action, Ctx, Variables};
 use console::Style;
 use console::Term;
-use dialoguer::Confirmation;
+use dialoguer::Confirm;
 use dialoguer::Input;
 use dialoguer::Select;
 use handlebars_misc_helpers::new_hbs;
@@ -188,7 +188,7 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
         TERM.write_line(&s).context(crate::Io {})?;
     }
     let r = if ctx.cmd_opt.confirm == AskConfirmation::Always {
-        Confirmation::new()
+        Confirm::new()
             .with_text("Do you want to apply plan ?")
             .interact()
             .context(crate::Io {})?
@@ -269,7 +269,7 @@ pub fn confirm_run_script(
     if ctx.cmd_opt.no_interaction {
         Ok(true)
     } else {
-        Confirmation::new()
+        Confirm::new()
             .with_text("Do you want to run the commands ?")
             .interact()
             .context(crate::Io {})

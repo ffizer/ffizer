@@ -1,4 +1,3 @@
-use crate::transform_values::TransformsValues;
 use crate::Result;
 use regex::Regex;
 use serde_plain::derive_deserialize_from_str;
@@ -68,15 +67,6 @@ impl Default for SourceUri {
             path: PathBuf::from("."),
             host: None,
         }
-    }
-}
-
-impl TransformsValues for SourceUri {
-    fn transforms_values<F>(&self, render: &F) -> Result<Self>
-    where
-        F: Fn(&str) -> String,
-    {
-        SourceUri::from_str(&render(&self.raw))
     }
 }
 

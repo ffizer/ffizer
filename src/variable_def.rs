@@ -1,5 +1,4 @@
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
-#[serde(deny_unknown_fields, default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct VariableDef {
     /// name of variable used in the template
     pub name: String,
@@ -10,19 +9,5 @@ pub struct VariableDef {
     /// is the variable hidden to the user (could be usefull to cache shared variable/data)
     pub hidden: bool,
     /// if non-empty then the value should selected into the list of value
-    pub select_in_values: ValuesForSelection,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(untagged)]
-pub enum ValuesForSelection {
-    Empty,
-    Sequence(Vec<String>),
-    String(String),
-}
-
-impl Default for ValuesForSelection {
-    fn default() -> Self {
-        ValuesForSelection::Empty
-    }
+    pub select_in_values: Vec<serde_yaml::Value>,
 }

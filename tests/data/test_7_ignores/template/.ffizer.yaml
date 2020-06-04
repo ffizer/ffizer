@@ -1,0 +1,8 @@
+variables:
+  - name: v
+    default_value: fast
+ignores:
+  - .git # exclude .git of the template host
+  # - '{{#unless (eq v "fast")}}file3.txt{{/unles' #do not work
+  - "{{#if (eq v 'fast')}}file2.txt{{/if}}"
+  - "{{#if not (eq v 'fast')}}file1.txt{{/if}}"

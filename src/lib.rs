@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate serde;
 
+mod cfg;
 mod cli_opt;
 mod error;
 mod files;
@@ -11,10 +12,6 @@ mod scripts;
 mod source_file;
 mod source_loc;
 mod source_uri;
-mod template_cfg;
-mod template_composite;
-mod transform_values;
-mod tree;
 mod ui;
 mod variable_def;
 mod variables;
@@ -23,10 +20,9 @@ pub use crate::cli_opt::*;
 pub use crate::error::*;
 pub use crate::source_loc::SourceLoc;
 
+use crate::cfg::{render_composite, TemplateComposite};
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
-use crate::template_composite::TemplateComposite;
-use crate::transform_values::TransformsValues;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o, warn};
@@ -77,7 +73,11 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         &ctx.cmd_opt.src,
     )?;
     debug!(ctx.logger, "asking variables");
-    let variables = ui::ask_variables(&ctx, &template_composite.variables(), variables_from_cli)?;
+    let variables = ui::ask_variables(
+        &ctx,
+        &template_composite.find_variabledefs()?,
+        variables_from_cli,
+    )?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)
     template_composite = render_composite(&ctx, &template_composite, &variables, true)?;
     debug!(ctx.logger, "listing files from templates");
@@ -91,28 +91,6 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         run_scripts(ctx, &template_composite)?;
     }
     Ok(())
-}
-
-fn render_composite(
-    ctx: &Ctx,
-    template_composite: &TemplateComposite,
-    variables: &Variables,
-    log_warning: bool,
-) -> Result<TemplateComposite> {
-    let handlebars = new_hbs();
-    let render = |v: &str| {
-        let r = handlebars.render_template(v, variables);
-        match r {
-            Ok(s) => s,
-            Err(e) => {
-                if log_warning {
-                    warn!(ctx.logger, "failed to convert"; "input" => ?v, "error" => ?e)
-                }
-                v.into()
-            }
-        }
-    };
-    template_composite.transforms_values(&render)
 }
 
 fn do_in_folder<F, R>(folder: &PathBuf, f: F) -> Result<R>
@@ -481,8 +459,8 @@ fn select_operation(_ctx: &Ctx, sources: &[SourceFile], dst_path: &ChildPath) ->
 
 fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> {
     do_in_folder(&ctx.cmd_opt.dst_folder, || {
-        for (loc, scripts) in template_composite.scripts() {
-            for script in scripts {
+        for (loc, scripts) in template_composite.find_scripts()? {
+            for script in &scripts {
                 if ui::confirm_run_script(ctx, loc, script)? {
                     if let Err(err) = script.run() {
                         warn!(ctx.logger, ""; "err" => format!("{:#?}",err));

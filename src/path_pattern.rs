@@ -1,9 +1,7 @@
-use crate::transform_values::TransformsValues;
 use crate::Result;
 use globset::{Glob, GlobMatcher};
 use serde_plain::derive_deserialize_from_str;
 use snafu::ResultExt;
-use std::cmp::PartialEq;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
@@ -19,9 +17,10 @@ impl FromStr for PathPattern {
         let g = Glob::new(value).context(crate::ParsePathPattern {
             value: value.to_owned(),
         })?;
+        let matcher = g.compile_matcher();
         Ok(PathPattern {
             raw: value.to_owned(),
-            matcher: g.compile_matcher(),
+            matcher,
         })
     }
 }
@@ -37,16 +36,6 @@ impl PartialEq for PathPattern {
 impl PathPattern {
     pub fn is_match(&self, value: &str) -> bool {
         self.matcher.is_match(value)
-    }
-}
-
-impl TransformsValues for PathPattern {
-    fn transforms_values<F>(&self, render: &F) -> Result<Self>
-    where
-        F: Fn(&str) -> String,
-    {
-        let v = PathPattern::from_str(&render(&self.raw))?;
-        Ok(v)
     }
 }
 

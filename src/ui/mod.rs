@@ -1,6 +1,6 @@
+mod tree;
+
 use crate::cli_opt::*;
-use crate::tree;
-use crate::variable_def::ValuesForSelection;
 use crate::variable_def::VariableDef;
 use crate::FileOperation;
 use crate::Result;
@@ -63,23 +63,27 @@ pub fn ask_variables(
             } else {
                 name.clone()
             };
-            let values: Vec<String> = match variable.select_in_values {
-                ValuesForSelection::Empty => vec![],
-                ValuesForSelection::Sequence(v) => v.clone(),
-                ValuesForSelection::String(s) => {
-                    let s_evaluated =
-                        handlebars
-                            .render_template(&s, &variables)
-                            .context(crate::Handlebars {
-                                when: format!("define values for '{}'", &name),
-                                template: s.clone(),
-                            })?;
-                    let s_values: Vec<String> =
-                        serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
-                    //dbg!(&s_values);
-                    s_values
-                }
-            };
+            let values: Vec<String> = variable
+                .select_in_values
+                .iter()
+                .map(|v| serde_yaml::from_value(v.clone()).context(crate::SerdeYaml {}))
+                .collect::<Result<Vec<String>>>()?;
+            //TODO ValuesForSelection::Empty => vec![],
+            // ValuesForSelection::Sequence(v) => v.clone(),
+            // ValuesForSelection::String(s) => {
+            //     let s_evaluated =
+            //         handlebars
+            //             .render_template(&s, &variables)
+            //             .context(crate::Handlebars {
+            //                 when: format!("define values for '{}'", &name),
+            //                 template: s.clone(),
+            //             })?;
+            //     let s_values: Vec<String> =
+            //         serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
+            //     //dbg!(&s_values);
+            //     s_values
+            // }
+            // };
             let default_value = variable
                 .default_value
                 .and_then(|default_value| match default_value {

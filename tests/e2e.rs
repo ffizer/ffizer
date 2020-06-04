@@ -15,22 +15,28 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     output: &std::process::Output,
 ) -> Result<(), Box<dyn Error>> {
     let diffs = dir_diff_list::search_diff(actual_base, expected_base)?;
-    if !diffs.is_empty() {
+    dbg!(&output);
+    if !diffs.is_empty() || !output.status.success() {
         dbg!(output);
     }
     assert_eq!(diffs, vec![]);
+    assert_eq!(output.status.success(), true);
     Ok(())
 }
 
 #[test_resources("tests/data/test_*")]
 fn test_local_sample_keep(dir_name: &str) {
-    assert!(test_local_sample_impl(dir_name, "keep").is_ok());
+    let t = test_local_sample_impl(dir_name, "keep");
+    if let Err(e) = t {
+        dbg!(e);
+        assert!(false);
+    }
 }
 
-#[test_resources("tests/data/test_*")]
-fn test_local_sample_override(dir_name: &str) {
-    assert!(test_local_sample_impl(dir_name, "override").is_ok());
-}
+// #[test_resources("tests/data/test_*")]
+// fn test_local_sample_override(dir_name: &str) {
+//     assert!(test_local_sample_impl(dir_name, "override").is_ok());
+// }
 
 fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;

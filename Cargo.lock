@@ -513,7 +513,6 @@ dependencies = [
  "handlebars_misc_helpers",
  "human-panic",
  "indicatif 0.15.0",
- "kernel32-sys",
  "lazy_static",
  "libc",
  "md5",

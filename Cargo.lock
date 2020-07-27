@@ -521,8 +521,7 @@ dependencies = [
  "pretty_assertions",
  "regex",
  "run_script",
- "self_update 0.16.0",
- "self_update 0.17.0",
+ "self_update",
  "serde",
  "serde_plain",
  "serde_yaml",
@@ -1857,9 +1856,9 @@ dependencies = [
 
 [[package]]
 name = "self_update"
-version = "0.16.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a3666182ee5fe97155008147fee49366a995e1fa30cfa78325c9dde2140b08e"
+checksum = "8ad4f32cc38aac660a9a872b5553677d59f984139f3316f642989d8232be3e5c"
 dependencies = [
  "either",
  "flate2",
@@ -1872,23 +1871,6 @@ dependencies = [
  "semver",
  "serde_json",
  "tar",
- "tempfile",
-]
-
-[[package]]
-name = "self_update"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a92f474983e58f748880101ad403bb51df916121d8f5e1b913f959e9a9c499d9"
-dependencies = [
- "hyper-old-types",
- "indicatif 0.13.0",
- "log",
- "quick-xml",
- "regex",
- "reqwest",
- "semver",
- "serde_json",
  "tempfile",
  "zip",
 ]

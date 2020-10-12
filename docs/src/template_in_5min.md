@@ -1,12 +1,14 @@
 # A 5 minutes tutorial
 
 1. create the folder with the template
+
     ```sh
     mkdir my-template
     cd my-template
     ```
 
 1. add file that will be copied as is
+
     ```sh
     cat > file0.txt <<EOF
     I am file0.
@@ -24,6 +26,7 @@
     I am file1.txt of {{ project }}.
     EOF
     ```
+
 1. add a ffizer configuration file (**.ffizer.yaml**)
     - to list variables
     - to list pattern to ignore
@@ -36,6 +39,7 @@
     ignores:
       - .git # exclude .git of the template host
     ```
+
 1. add a file with a name that will be "rendered" by the handlebars engine
 
     - the file should have {{ variable }},

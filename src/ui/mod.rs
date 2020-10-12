@@ -250,6 +250,15 @@ where
     Ok(values[idx].1.clone())
 }
 
+pub fn show_message(
+    _ctx: &Ctx,
+    template_name: impl std::fmt::Display,
+    message: impl std::fmt::Display,
+) -> Result<()> {
+    println!("\n message from template: {}\n\t{}", template_name, message);
+    Ok(())
+}
+
 pub fn confirm_run_script(
     ctx: &Ctx,
     template_name: impl std::fmt::Display,

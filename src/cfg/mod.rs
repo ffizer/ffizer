@@ -41,7 +41,10 @@ impl template_cfg::TemplateCfg {
         Ok(self
             .scripts
             .iter()
-            .map(|v| Script { cmd: v.cmd.clone() })
+            .map(|v| Script {
+                message: v.message.clone().filter(|x| !x.is_empty()),
+                cmd: v.cmd.clone().filter(|x| !x.is_empty()),
+            })
             .collect())
     }
 

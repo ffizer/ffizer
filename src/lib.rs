@@ -461,9 +461,14 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
     do_in_folder(&ctx.cmd_opt.dst_folder, || {
         for (loc, scripts) in template_composite.find_scripts()? {
             for script in &scripts {
-                if ui::confirm_run_script(ctx, loc, script)? {
-                    if let Err(err) = script.run() {
-                        warn!(ctx.logger, ""; "err" => format!("{:#?}",err));
+                if let Some(message) = &script.message {
+                    ui::show_message(ctx, loc, message)?;
+                }
+                if let Some(cmd) = &script.cmd {
+                    if ui::confirm_run_script(ctx, loc, cmd)? {
+                        if let Err(err) = script.run() {
+                            warn!(ctx.logger, ""; "err" => format!("{:#?}",err));
+                        }
                     }
                 }
             }

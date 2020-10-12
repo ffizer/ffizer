@@ -3,7 +3,8 @@ use crate::Result;
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq)]
 pub(crate) struct ScriptCfg {
-    pub(crate) cmd: String,
+    pub(crate) message: Option<String>,
+    pub(crate) cmd: Option<String>,
 }
 
 impl TransformsValues for ScriptCfg {
@@ -12,7 +13,8 @@ impl TransformsValues for ScriptCfg {
     where
         F: Fn(&str) -> String,
     {
+        let message = self.message.transforms_values(render)?;
         let cmd = self.cmd.transforms_values(render)?;
-        Ok(ScriptCfg { cmd })
+        Ok(ScriptCfg { message, cmd })
     }
 }

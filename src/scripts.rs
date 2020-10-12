@@ -1,28 +1,23 @@
 use crate::error::*;
 use run_script::ScriptOptions;
 use snafu::ResultExt;
-use std::fmt;
+
 #[derive(Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
 pub struct Script {
-    pub cmd: String,
+    pub message: Option<String>,
+    pub cmd: Option<String>,
 }
 
 impl Script {
     pub(crate) fn run(&self) -> Result<()> {
-        if !self.cmd.is_empty() {
+        if let Some(cmd) = &self.cmd {
             let options = ScriptOptions::new();
             let args = vec![];
-            run_script::run(&self.cmd, &args, &options).context(ScriptError {
-                script: self.cmd.clone(),
+            run_script::run(&cmd, &args, &options).context(ScriptError {
+                script: cmd.clone(),
             })?;
         }
         Ok(())
-    }
-}
-
-impl fmt::Display for Script {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.cmd.fmt(f)
     }
 }

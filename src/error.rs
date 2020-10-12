@@ -25,12 +25,6 @@ pub enum Error {
         accepted: Vec<String>,
     },
 
-    #[snafu(display("failed to remove {:?} from file's name {:?}", fragment, file_name))]
-    FailToRemoveFromFileName {
-        fragment: String,
-        file_name: String,
-    },
-
     #[snafu(display("git retreive {:?} (rev: {:?}) into folder {:?}", url, rev, dst))]
     GitRetrieve {
         dst: PathBuf,

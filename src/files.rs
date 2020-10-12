@@ -1,5 +1,4 @@
 use crate::path_pattern::PathPattern;
-use crate::Error;
 use crate::Result;
 use std::path::Path;
 use std::path::PathBuf;
@@ -36,7 +35,7 @@ impl<'a> From<&'a ChildPath> for PathBuf {
 pub fn is_ffizer_handlebars(path: &Path) -> bool {
     path.file_name()
         .and_then(|s| s.to_str())
-        .map(|str| str.ends_with(FILEEXT_HANDLEBARS))
+        .map(|str| str.contains(FILEEXT_HANDLEBARS))
         .unwrap_or(false)
 }
 
@@ -44,24 +43,19 @@ pub fn remove_special_suffix(path: &Path) -> Result<PathBuf> {
     match path.file_name().and_then(|s| s.to_str()) {
         None => Ok(path.to_path_buf()),
         Some(v) => {
-            let file_name = if v.ends_with(FILEEXT_HANDLEBARS) {
-                v.get(..v.len() - FILEEXT_HANDLEBARS.len()).ok_or(
-                    Error::FailToRemoveFromFileName {
-                        fragment: FILEEXT_HANDLEBARS.to_owned(),
-                        file_name: v.to_owned(),
-                    },
-                )?
-            } else if v.ends_with(FILEEXT_RAW) {
-                v.get(..v.len() - FILEEXT_RAW.len())
-                    .ok_or(Error::FailToRemoveFromFileName {
-                        fragment: FILEEXT_RAW.to_owned(),
-                        file_name: v.to_owned(),
-                    })?
-            } else {
-                v
-            };
+            let file_name = remove_special_suffix_on_filename(v);
             Ok(path.with_file_name(file_name))
         }
+    }
+}
+
+fn remove_special_suffix_on_filename(v: &str) -> String {
+    if v.contains(FILEEXT_RAW) {
+        v.replacen(FILEEXT_RAW, "", 1)
+    } else if v.contains(FILEEXT_HANDLEBARS) {
+        v.replacen(FILEEXT_HANDLEBARS, "", 1)
+    } else {
+        v.to_owned()
     }
 }
 
@@ -120,6 +114,24 @@ mod tests {
 
         assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs"))).is_true();
         assert_that!(is_ffizer_handlebars(&PathBuf::from("bar/foo.ffizer.hbs"))).is_true();
+    }
+
+    #[test]
+    fn test_remove_special_suffix_on_filename() {
+        for (input, expected) in vec![
+            ("foo.hbs", "foo.hbs"),
+            ("foo.json.ffizer.hbs", "foo.json"),
+            ("foo.ffizer.hbs.json", "foo.json"),
+            ("foo.json.ffizer.raw", "foo.json"),
+            ("foo.ffizer.raw.json", "foo.json"),
+            ("foo.json.ffizer.raw", "foo.json"),
+            ("foo.ffizer.raw.ffizer.raw.json", "foo.ffizer.raw.json"),
+            ("foo.ffizer.raw.ffizer.hbs.json", "foo.ffizer.hbs.json"),
+            ("foo.json.ffizer.raw.ffizer.hbs", "foo.json.ffizer.hbs"),
+        ] {
+            assert_that!(remove_special_suffix_on_filename(input))
+                .is_equal_to(expected.to_string());
+        }
     }
 
     #[test]

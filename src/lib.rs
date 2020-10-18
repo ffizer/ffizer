@@ -119,6 +119,12 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
     )?;
     variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
     variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
+
+    ctx.cmd_opt
+        .key_value
+        .iter()
+        .map(|(k, v)| variables.insert(k, Variables::value_from_str(&v)?))
+        .collect::<Result<Vec<()>>>()?;
     Ok(variables)
 }
 

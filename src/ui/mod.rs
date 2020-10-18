@@ -51,6 +51,9 @@ pub fn ask_variables(
     // TODO optimize to reduce clones
     for variable in list_variables.iter().cloned() {
         let name = variable.name;
+        if variables.contains_key(&name) {
+            continue;
+        }
         let request = {
             let prompt = if variable.ask.is_some() {
                 let ask = variable.ask.expect("variable ask should defined");

@@ -1,0 +1,5 @@
+variables:
+  - name: k1
+    default_value: d1
+  - name: k2
+    default_value: d2

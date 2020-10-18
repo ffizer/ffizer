@@ -19,6 +19,10 @@ impl Variables {
         Ok(())
     }
 
+    pub fn contains_key<K: Into<String>>(&mut self, key: K) -> bool {
+        self.0.contains_key(&key.into())
+    }
+
     pub fn value_from_str(s: &str) -> Result<serde_yaml::Value> {
         //serde_yaml::to_value(value).context(crate::SerdeYaml {})
         serde_yaml::from_str::<serde_yaml::Value>(s).context(crate::SerdeYaml {})

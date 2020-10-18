@@ -67,6 +67,10 @@ pub struct ApplyOpts {
         //default_value = "."
     )]
     pub dst_folder: PathBuf,
+
+    /// set variable's value from cli ("key=value")
+    #[structopt(short = "v", long = "variables", parse(from_str=parse_keyvalue))]
+    pub key_value: Vec<(String, String)>,
 }
 
 arg_enum! {
@@ -108,5 +112,14 @@ arg_enum! {
 impl Default for UpdateMode {
     fn default() -> Self {
         UpdateMode::Ask
+    }
+}
+
+fn parse_keyvalue(src: &str) -> (String, String) {
+    let kv: Vec<&str> = src.splitn(2, "=").collect();
+    if kv.len() == 2 {
+        (kv[0].to_owned(), kv[1].to_owned())
+    } else {
+        (src.to_owned(), "".to_owned())
     }
 }

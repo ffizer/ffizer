@@ -61,6 +61,8 @@ fn test_local_sample_impl(dir_name: &str, update_mode: &str) -> Result<(), Box<d
         .arg(actual_path.to_str().unwrap())
         .arg("--source")
         .arg(template_path.to_str().unwrap())
+        .arg("-v")
+        .arg("k2=v2_from_cli")
         .ok()?;
     assert_is_same(&actual_path, &expected_path, &output)
 }

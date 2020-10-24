@@ -37,7 +37,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 
 ## Features
 
-- *Create or update* files and folder from one (or several) template(s).
+- _Create or update_ files and folder from one (or several) template(s).
 - A native executable (cli)
   - Install via download a standalone single file on system (no requirements like `python`, `ruby`, `nodejs`, `java`, ...).
   - Run as fast enough project generator.
@@ -105,7 +105,7 @@ cargo install ffizer --force --features cli
 ```txt
 ➜  ffizer --help
 
-ffizer 1.6.0
+ffizer 2.0.1-dev
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)
@@ -136,7 +136,7 @@ SUBCOMMANDS:
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 1.6.0
+ffizer-apply 2.0.1-dev
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
@@ -144,15 +144,16 @@ USAGE:
     ffizer apply [FLAGS] [OPTIONS] --destination <dst-folder> --source <uri>
 
 FLAGS:
-    -h, --help                      Prints help information
-        --offline                   in offline, only local templates or cached templates are used
-        --x-always_default_value    should not ask for valiables values, always use defautl value or empty
-                                    (experimental)
+    -h, --help              Prints help information
+    -y, --no-interaction    should not ask for confirmation (to use default value, to apply plan, to override, to run
+                            script,...)
+        --offline           in offline, only local templates or cached templates are used
 
 OPTIONS:
         --confirm <confirm>               ask for plan confirmation [default: Never]  [possible values:
                                           Auto, Always, Never]
     -d, --destination <dst-folder>        destination folder (created if doesn't exist)
+    -v, --variables <key-value>...        set variable's value from cli ("key=value")
         --rev <rev>                       git revision of the template [default: master]
         --source-subfolder <subfolder>    path of the folder under the source uri to use for template
         --update-mode <update-mode>       mode to update existing file [default: Ask]  [possible values:
@@ -163,43 +164,43 @@ OPTIONS:
 
 - use a local folder as template
 
-    ```sh
-    ffizer apply --source $HOME/my_templates/tmpl0 --destination my_project
-    ```
+  ```sh
+  ffizer apply --source $HOME/my_templates/tmpl0 --destination my_project
+  ```
 
 - use a remote git repository as template
 
-    ```sh
-    ffizer apply --source https://github.com/ffizer/template_sample.git --destination my_project
-    ```
+  ```sh
+  ffizer apply --source https://github.com/ffizer/template_sample.git --destination my_project
+  ```
 
-    output
+  output
 
-    ```sh
-    Configure variables
+  ```sh
+  Configure variables
 
-    project_name: my_project
+  project_name: my_project
 
 
-    Plan to execute
+  Plan to execute
 
-      - mkdir "my_project/"
-      - mkdir "my_project/dir_1"
-      - copyraw "my_project/dir_1/file_1_1.txt"
-      - mkdir "my_project/dir_2_my_project"
-      - copyraw "my_project/dir_2_my_project/file_1_2.txt"
-      - copyraw "my_project/file_1.txt"
-      - copyrender "my_project/file_2.txt"
-      - keep "my_project/file_2.txt"
-      - copyrender "my_project/file_3.txt"
-      - copyraw "my_project/file_4_my_project.txt"
-      - copyrender "my_project/file_5_my_project.txt"
-      - copyraw "my_project/file_6.hbs"
-    ```
-  
+    - mkdir "my_project/"
+    - mkdir "my_project/dir_1"
+    - copyraw "my_project/dir_1/file_1_1.txt"
+    - mkdir "my_project/dir_2_my_project"
+    - copyraw "my_project/dir_2_my_project/file_1_2.txt"
+    - copyraw "my_project/file_1.txt"
+    - copyrender "my_project/file_2.txt"
+    - keep "my_project/file_2.txt"
+    - copyrender "my_project/file_3.txt"
+    - copyraw "my_project/file_4_my_project.txt"
+    - copyrender "my_project/file_5_my_project.txt"
+    - copyraw "my_project/file_6.hbs"
+  ```
+
 ### Authoring a template
 
-see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_authoring.html) *WIP*
+see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_authoring.html) _WIP_
 
 ## Templates
 
@@ -210,10 +211,9 @@ see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_
   - [`davidB/templates`: repository to host the my collections of templates to used with ffizer.](https://github.com/davidB/templates)
   - github repo tagged [`ffizer-template`](https://github.com/topics/ffizer-template)
   - samples (used for test, demo)
-  templates_default)
-    - [test_1](tests/test_1/template)
-    - [test_2](tests/test_2/template) (demo of usage of gitignore.io)
+    templates_default)
     - [`ffizer/template_sample`: a simple template for ffizer used for demo and test](https://github.com/ffizer/template_sample)
+    - [`ffizer/tests/data` at master · ffizer/ffizer](https://github.com/ffizer/ffizer/tree/master/tests/data)
 
 ## Build
 

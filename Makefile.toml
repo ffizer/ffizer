@@ -131,7 +131,7 @@ script = [
 category = "Publish"
 script = [
   '''
-  cargo run -- show-json-schema > doc/ffizer.schema.json
+  cargo run -- show-json-schema > docs/ffizer.schema.json
   '''
 ]
 

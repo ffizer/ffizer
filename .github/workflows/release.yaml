@@ -26,7 +26,7 @@ jobs:
           override: true
           profile: minimal
       - uses: davidB/rust-cargo-make@v1
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2.3.3
       - name: Make zip-release-ci-flow
         run: cargo make zip-release-ci-flow
         # env:

@@ -116,15 +116,6 @@ script = [
   '''
 ]
 
-[tasks.update-bom]
-category = "Publish"
-install_crate = { crate_name = "cargo-bom", binary = "cargo", test_arg = "bom"}
-script = [
-  '''
-  cargo bom > BOM.txt
-  '''
-]
-
 [tasks.update-book]
 category = "Publish"
 install_crate = {crate_name = "mdbook", binary = "mdbook", test_arg = "--help"}
@@ -157,7 +148,6 @@ run_task = "_update-docs-do"
 dependencies = [
   "update-book",
   "update-changelog",
-  "update-bom",
   "update-json-schema",
   "git-add",
   "git-commit-message",

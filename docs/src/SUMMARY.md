@@ -5,3 +5,4 @@
   - [Configuration](./template_configuration.md)
   - [Built-in Variables](./builtin_variables.md)
   - [Built-in Functions](./builtin_functions.md)
+  - [Schema of `.ffizer.yaml`](./schema_of_ffizer_yaml.md)

@@ -136,6 +136,14 @@ script = [
   '''
 ]
 
+[tasks.update-json-schema]
+category = "Publish"
+script = [
+  '''
+  cargo run -- show-json-schema > doc/ffizer.schema.json
+  '''
+]
+
 [tasks.pre-publish]
 dependencies = [
   "update-docs"
@@ -150,6 +158,7 @@ dependencies = [
   "update-book",
   "update-changelog",
   "update-bom",
+  "update-json-schema",
   "git-add",
   "git-commit-message",
 ]

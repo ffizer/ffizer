@@ -141,7 +141,7 @@ dependencies = [
 ]
 
 [tasks.update-docs]
-env = { COMMIT_MSG = ":pencil: pre-publish update book, changelog, bom" }
+env = { COMMIT_MSG = ":pencil: pre-publish update book, changelog" }
 run_task = "_update-docs-do"
 
 [tasks._update-docs-do]

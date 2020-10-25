@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Built-in Functions - ffizer</title>
+        <title>Schema of .ffizer.yaml - ffizer</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="template_in_5min.html"><strong aria-hidden="true">2.1.</strong> 5 minutes tutorial</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.2.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.3.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.4.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html" class="active"><strong aria-hidden="true">2.5.</strong> Built-in Functions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="template_in_5min.html"><strong aria-hidden="true">2.1.</strong> 5 minutes tutorial</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.2.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html" class="active"><strong aria-hidden="true">2.3.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.4.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.5.</strong> Built-in Functions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,67 +163,161 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#template-helpers--functions" id="template-helpers--functions">Template Helpers / Functions</a></h1>
-<p>Helpers extend the template to generate or to transform content.</p>
-<p>The helpers from <a href="https://crates.io/crates/handlebars_misc_helpers">handlebars_misc_helpers</a> are included. But if you need more helpers, ask via an issue or a PR.</p>
-<p>To use an helper:</p>
-<pre><code class="language-handlebars">{{ helper_name argument}}
+                        <h1><a class="header" href="#the-schema-of-ffizeryaml" id="the-schema-of-ffizeryaml">The Schema of .ffizer.yaml</a></h1>
+<p>The json schema of the <code>.ffizer.yaml</code> is defined in <a href="https://ffizer.github.io/ffizer/ffizer.schema.json">ffizer.schema.json</a>.The schema could be used for validation and auto completion into your editor.</p>
+<pre><code class="language-json">{
+  &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+  &quot;title&quot;: &quot;TemplateCfg&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;properties&quot;: {
+    &quot;ignores&quot;: {
+      &quot;description&quot;: &quot;list of path from the current template to ignore&quot;,
+      &quot;default&quot;: [],
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;type&quot;: &quot;string&quot;
+      }
+    },
+    &quot;imports&quot;: {
+      &quot;description&quot;: &quot;list of template to import and to apply as part of this template&quot;,
+      &quot;default&quot;: [],
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/ImportCfg&quot;
+      }
+    },
+    &quot;scripts&quot;: {
+      &quot;description&quot;: &quot;list of the scripts to apply at end of generation&quot;,
+      &quot;default&quot;: [],
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/ScriptCfg&quot;
+      }
+    },
+    &quot;use_template_dir&quot;: {
+      &quot;description&quot;: &quot;set to true if the template content is under a `template` folder (not mixed with metadata)&quot;,
+      &quot;default&quot;: false,
+      &quot;type&quot;: &quot;boolean&quot;
+    },
+    &quot;variables&quot;: {
+      &quot;description&quot;: &quot;list of variables/parameters of the template&quot;,
+      &quot;default&quot;: [],
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/VariableCfg&quot;
+      }
+    }
+  },
+  &quot;additionalProperties&quot;: false,
+  &quot;definitions&quot;: {
+    &quot;AnyValue&quot;: true,
+    &quot;ImportCfg&quot;: {
+      &quot;description&quot;: &quot;define a template layer to import&quot;,
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;uri&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;rev&quot;: {
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ]
+        },
+        &quot;subfolder&quot;: {
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ]
+        },
+        &quot;uri&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      }
+    },
+    &quot;ScriptCfg&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;properties&quot;: {
+        &quot;cmd&quot;: {
+          &quot;description&quot;: &quot;command to execute&quot;,
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ]
+        },
+        &quot;message&quot;: {
+          &quot;description&quot;: &quot;message to display&quot;,
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ]
+        }
+      }
+    },
+    &quot;VariableCfg&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;name&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;ask&quot;: {
+          &quot;description&quot;: &quot;sentence to ask the value (default to the name on variable)&quot;,
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ]
+        },
+        &quot;default_value&quot;: {
+          &quot;description&quot;: &quot;optionnal default value&quot;,
+          &quot;anyOf&quot;: [
+            {
+              &quot;$ref&quot;: &quot;#/definitions/AnyValue&quot;
+            },
+            {
+              &quot;type&quot;: &quot;null&quot;
+            }
+          ]
+        },
+        &quot;hidden&quot;: {
+          &quot;description&quot;: &quot;is the variable hidden to the user (could be usefull to cache shared variable/data)&quot;,
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ]
+        },
+        &quot;name&quot;: {
+          &quot;description&quot;: &quot;name of variable used in the template&quot;,
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;select_in_values&quot;: {
+          &quot;description&quot;: &quot;if non-empty then the value should selected into the list of value&quot;,
+          &quot;anyOf&quot;: [
+            {
+              &quot;$ref&quot;: &quot;#/definitions/AnyValue&quot;
+            },
+            {
+              &quot;type&quot;: &quot;null&quot;
+            }
+          ]
+        }
+      }
+    }
+  }
+}
 </code></pre>
-<p>To chain helpers, use parenthesis:</p>
-<pre><code class="language-handlebars">{{ to_upper_case (to_singular &quot;Hello foo-bars&quot;) }}
-// -&gt; &quot;BAR&quot;
-</code></pre>
-<p>see <a href="https://handlebarsjs.com/">Handlebars templating language</a></p>
-<h2><a class="header" href="#string-transformation" id="string-transformation">String transformation</a></h2>
-<p>for the same input: <code>&quot;Hello foo-bars&quot;</code></p>
-<table><thead><tr><th>helper_name</th><th>example out</th></tr></thead><tbody>
-<tr><td><code>to_lower_case</code></td><td><code>&quot;hello foo-bars&quot;</code></td></tr>
-<tr><td><code>to_upper_case</code></td><td><code>&quot;HELLO FOO-BARS&quot;</code></td></tr>
-<tr><td><code>to_camel_case</code></td><td><code>&quot;helloFooBars&quot;</code></td></tr>
-<tr><td><code>to_pascal_case</code></td><td><code>&quot;HelloFooBars&quot;</code></td></tr>
-<tr><td><code>to_snake_case</code></td><td><code>&quot;hello_foo_bars&quot;</code></td></tr>
-<tr><td><code>to_screaming_snake_case</code></td><td><code>&quot;HELLO_FOO_BARS&quot;</code></td></tr>
-<tr><td><code>to_kebab_case</code></td><td><code>&quot;hello-foo-bars&quot;</code></td></tr>
-<tr><td><code>to_train_case</code></td><td><code>&quot;Hello-Foo-Bars&quot;</code></td></tr>
-<tr><td><code>to_sentence_case</code></td><td><code>&quot;Hello foo bars&quot;</code></td></tr>
-<tr><td><code>to_title_case</code></td><td><code>&quot;Hello Foo Bars&quot;</code></td></tr>
-<tr><td><code>to_class_case</code></td><td><code>&quot;HelloFooBar&quot;</code></td></tr>
-<tr><td><code>to_table_case</code></td><td><code>&quot;hello_foo_bars&quot;</code></td></tr>
-<tr><td><code>to_plural</code></td><td><code>&quot;bars&quot;</code></td></tr>
-<tr><td><code>to_singular</code></td><td><code>&quot;bar&quot;</code></td></tr>
-</tbody></table>
-<h2><a class="header" href="#http-content" id="http-content">Http content</a></h2>
-<p>Helper able to render body response from an http request.</p>
-<table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
-<tr><td><code>http_get</code></td><td><code>http_get &quot;http://hello/...&quot;</code></td></tr>
-<tr><td><code>gitignore_io</code></td><td><code>gitignore_io &quot;rust&quot;</code></td></tr>
-</tbody></table>
-<h2><a class="header" href="#path-extraction" id="path-extraction">Path extraction</a></h2>
-<p>Helper able to extract (or transform) path (defined as string).</p>
-<p>for the same input: <code>&quot;/hello/bar/foo.txt&quot;</code></p>
-<table><thead><tr><th>helper_name</th><th>sample output</th></tr></thead><tbody>
-<tr><td>file_name</td><td><code>&quot;foo.txt&quot;</code></td></tr>
-<tr><td>parent</td><td><code>&quot;/hello/bar&quot;</code></td></tr>
-<tr><td>extension</td><td><code>&quot;txt&quot;</code></td></tr>
-</tbody></table>
-<h2><a class="header" href="#environment-variable" id="environment-variable">Environment variable</a></h2>
-<p>Helper able to get environment variables.</p>
-<table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
-<tr><td>env_var</td><td><code>env_var &quot;HOME&quot;</code></td></tr>
-</tbody></table>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="builtin_variables.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="template_configuration.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="changelog.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="builtin_variables.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -235,13 +329,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="builtin_variables.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="template_configuration.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="changelog.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="builtin_variables.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

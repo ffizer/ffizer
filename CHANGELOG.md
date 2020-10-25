@@ -4,11 +4,274 @@
 ## Version x.y.z-dev
 
 ### Added
+- ✨  cli can show the json schema the of the `.ffizer.yaml`
+- ✨  (cli) allow to specify value of variables from cli
+- ✨  allow special suffix to located anywhere in the filename (no longer a suffix ;-) )
+- ✨  allow to display a message
+- ✅  update test to reflect change in gitignore.io
+
+### Changed
+- 🍱  regenerate doc
+
+### Removed
+- 🔥  remove credits and bom generation
+
+### Miscellaneous
+- pencil  add pages into book
+- pencil  update link to templates and help instruction
+- pencil  update doc (regenerate)
+- pencil  publish the json-schema of .ffizer.yaml
+- 🚧  (cargo-release) start next development iteration 2.0.1-dev
+
+<a name="2.0.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.0.0
+
+### Changed
+- ⬆️  update handlebars from 3.3 to 3.4
+- 👽  update configuration of release plugin
+- 👽  upgrade from dependabot v1 to v2 (aka github)
+- ⬆️  update directories from 2.0.2 to 3.0.1
+- ⬆️  Bump libc from 0.2.74 to 0.2.76
+- ⬆️  Bump git2 from 0.13.8 to 0.13.10
+- ⬆️  Bump structopt from 0.3.16 to 0.3.17
+- ⬆️  Bump serde from 1.0.114 to 1.0.115
+- ⬆️  Bump structopt from 0.3.15 to 0.3.16
+- ⬆️  Bump console from 0.11.3 to 0.12.0
+- ⬆️  Bump libc from 0.2.73 to 0.2.74
+- ⬆️  Bump self_update from 0.17.0 to 0.19.0
+- ⬆️  Bump git2 from 0.13.6 to 0.13.8
+- ⬆️  Bump libc from 0.2.72 to 0.2.73
+- ⬆️  Bump predicates from 1.0.4 to 1.0.5
+- ⬆️  Bump handlebars from 3.2.1 to 3.3.0
+- ⬆️  Bump self_update from 0.16.0 to 0.17.0
+- ⬆️  Bump libc from 0.2.71 to 0.2.72
+- ⬆️  Bump winapi from 0.3.8 to 0.3.9
+- ⬆️  Bump handlebars from 3.1.0 to 3.2.1
+- ⬆️  Bump openssl from 0.10.29 to 0.10.30
+- ⬆️  Bump serde from 1.0.112 to 1.0.114
+- ⬆️  Bump structopt from 0.3.14 to 0.3.15
+- ⬆️  Bump serde from 1.0.111 to 1.0.112
+- ⬆️  Bump indicatif from 0.14.0 to 0.15.0
+- ⬆️  Bump serde_yaml from 0.8.12 to 0.8.13
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.0.0
+
+<a name="2.0.0-beta.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.0.0-beta.3
+
+### Changed
+- 👽  update call to dialoguer API
+- ⬆️  Bump git2_credentials from 0.6.0 to 0.6.1
+- 👽  Bump handlebars_misc_helper from 0.9.0 to 0.9.1 to be able to bump handlebars to 3.1.0
+- ⬆️  Bump handlebars from 3.0.1 to 3.1.0
+- 👽  reflect change in dialoguer api
+- ⬆️  Bump dialoguer from 0.5.1 to 0.6.2
+- 👽  the output of gitignore.io has changed
+- 🏗  the evaluation of values in the configuration is on demand (previously on load + on demand)
+- 🚚  move files under module `ui`
+- ⬆️  Bump self_update from 0.15.0 to 0.16.0
+- ⬆️  Bump serde from 1.0.110 to 1.0.111
+- ⬆️  Bump slog-term from 2.5.0 to 2.6.0
+- ⬆️  Bump regex from 1.3.7 to 1.3.9
+- ⬆️  Bump libc from 0.2.70 to 0.2.71
+- ⬆️  Bump git2 from 0.13.5 to 0.13.6
+- ⬆️  Bump console from 0.11.2 to 0.11.3
+- ⬆️  Bump self_update from 0.14.0 to 0.15.0
+- ⬆️  Bump run_script from 0.6.2 to 0.6.3
+- ⬆️  Bump libc from 0.2.69 to 0.2.70
+- ⬆️  Bump snafu from 0.6.6 to 0.6.8
+- ⬆️  Bump serde from 1.0.106 to 1.0.110
+- ⬆️  Bump serde_yaml from 0.8.11 to 0.8.12
+- ⬆️  Bump console from 0.11.1 to 0.11.2
+- ⬆️  Bump console from 0.10.1 to 0.11.1
+- ⬆️  Bump git2 from 0.13.4 to 0.13.5
+- ⬆️  Bump dialoguer from 0.5.0 to 0.5.1
+- ⬆️  Bump console from 0.10.0 to 0.10.1
+- ⬆️  Bump git2 from 0.13.3 to 0.13.4
+- ⬆️  Bump git2 from 0.13.2 to 0.13.3
+- ⬆️  Bump structopt from 0.3.13 to 0.3.14
+- ⬆️  Bump regex from 1.3.6 to 1.3.7
+- ⬆️  Bump libc from 0.2.68 to 0.2.69
+- 🚨  apply clippy suggestion
+- ⬆️  upgrade dependencies
+- ⬆️  Bump git2 from 0.13.0 to 0.13.2
+- ⬆️  Bump structopt from 0.3.12 to 0.3.13
+- ⬆️  Bump openssl from 0.10.28 to 0.10.29
+- ⬆️  Bump serde from 1.0.105 to 1.0.106
+- ⬆️  Bump snafu from 0.6.3 to 0.6.6
+- ⬆️  Bump assert_cmd from 1.0.0 to 1.0.1
+- ⬆️  Bump assert_cmd from 0.12.1 to 1.0.0
+- ⬆️  Bump regex from 1.3.5 to 1.3.6
+- ⬆️  Bump assert_cmd from 0.12.0 to 0.12.1
+- ⬆️  Bump human-panic from 1.0.1 to 1.0.3
+- ⬆️  Bump snafu from 0.6.2 to 0.6.3
+- ⬆️  Bump serde from 1.0.104 to 1.0.105
+- ⬆️  Bump structopt from 0.3.11 to 0.3.12
+- ⬆️  Bump libc from 0.2.67 to 0.2.68
+
+### Fixed
+- 🐛  do not create folder in folder and crash on update
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.0.0-beta.3
+- poop  workaround to not failed if `ignores` is a not-evaluable path
+- 🚀  (cargo-release) version 2.0.0-beta.2
+- 📦  disable snapcraft (temporary ?)
+
+<a name="2.0.0-beta.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.0.0-beta.1
+
+### Added
+- 🎉  prepare 2.0.0 release
+- ✅  test e2e can now simulate run over an existing folder
+- ✨  shell `scripts` can be run after apply of templates
+- ✨  hbs template can be chained to transform content from existing file or from previous template layer
+
+### Changed
+- ⬆️  Bump globset from 0.4.4 to 0.4.5
+- ⬆️  Bump predicates from 1.0.3 to 1.0.4
+- ⬆️  Bump run_script from 0.6.1 to 0.6.2
+- ⬆️  Bump git2 from 0.12 to 0.13
+- ⬆️  Bump handlebars_misc_helpers from 0.8.0 to 0.9.0
+- ⬆️  Bump regex from 1.3.4 to 1.3.5
+- ⬆️  Bump console from 0.9.2 to 0.10.0
+- ⬆️  Bump handlebars_misc_helpers from 0.7.0 to 0.8.0
+- ♻️  change dir_diff into dir_diff_list
+- 🚚  moving every content of it tests under a `tests/data`
+- ⬆️  Bump predicates from 1.0.3 to 1.0.4
+- ⬆️  Bump self_update from 0.13.0 to 0.14.0
+- ⬆️  Bump structopt from 0.3.9 to 0.3.11
+- ⬆️  upgrade transitive deps
+- ⬆️  struct_opt from 0.3.8 to 0.3.9
+- ♻️  extract code from mk_file_on_action (too big)
+- ⬆️  Bump libc from 0.2.66 to 0.2.67
+- ⬆️  Bump run_script from 0.6.1 to 0.6.2
+- ⬆️  Bump self_update from 0.12.0 to 0.13.0
+- 👽  enable self_update features required for extracting archives of releases
+- ⬆️  Bump self_update from 0.11.1 to 0.12.0
+- 🚚  rename `test_4` into `test_4_compose`
+- ⚡️  avoid to render file name if no `{{`
+- ♻️  prepare to support pipeline of template to render a file
+- ♻️  use a struct TemplateLayer instead of a Tuple
+- 🚚  rename Variable into VariableDef
+- ⬆️  Bump git2_credentials from 0.4.0 to 0.5.0
+- ⬆️  Bump run_script from 0.6.0 to 0.6.1
+- ⬆️  Bump openssl from 0.10.27 to 0.10.28
+- ⬆️  upgrade handlebars_misc_helpers to work with handlebars 3.0.1
+- ⬆️  Bump handlebars from 2.0.4 to 3.0.1
+- ⬆️  `cargo update`
+- ⬆️  Bump indicatif from 0.13.0 to 0.14.0
+- ⬆️  Bump regex from 1.3.3 to 1.3.4
+- ⬆️  Bump slog-term from 2.4.2 to 2.5.0
+- ⬆️  Bump self_update from 0.11.0 to 0.11.1
+- ⬆️  Bump openssl from 0.10.26 to 0.10.27
+- ⬆️  Bump self_update from 0.10.0 to 0.11.0
+- ⬆️  Bump console from 0.9.1 to 0.9.2
+
+### Removed
+- 🔥  remove useless file
+
+### Fixed
+- 🏁  try to fix test_3
+- 🏁  try to fix test_3 to show mutli-os cmd
+- 🐧  fix e2e test3 for linux
+- 🐛  test e2e ran twice, caused issue with override test
+- 🐛  (scripts) render scripts before run
+- 🏁  try to fix test on windows
+- 💚  update remote_test (due to change in usage of assert_cmd)
+- 🐛  fix syntax of Cargo.toml
+- 🍎  try a new settings to generate macos binary compatible with pre-catalina version
+- 🐛  (README) the script getLatest.sh only work with bash (not with POSIX shell like dash)
+- 🏁  test on unix file permissions should not run on windows
+- 🐛  copy file permissions from template into destination
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.0.0-beta.1
+- pencil  (README) Alternatives sections moved to wiki
+- 🔊  add log about the phase
+- 🔀  Merge branch 'dependabot/cargo/handlebars-3.0.1'
+- 🔀  Merge branch 'master' into dependabot/cargo/handlebars-3.0.1
+- 🚧  add support for non-string value as variable
+- ⚗  try a workaround to be able to build without a missing fix in jmespath (to work with the latest serde_json)
+- 🚧  (cargo-release) start next development iteration 1.7.2-dev
+
+<a name="1.7.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.7.1
+
+### Changed
+- ⬆️  upgrade self_update from 0.9.0 to 0.10.0
+- ⬆️  Bump structopt from 0.3.7 to 0.3.8
+- ⬆️  Bump run_script from 0.5.0 to 0.6.0
+- ⬆️  Bump snafu from 0.6.1 to 0.6.2
+- ⬆️  Bump self_update from 0.8.0 to 0.9.0
+- ♻️  internally store values as serde_yaml::Value (previously was String)
+- ⬆️  Bump walkdir from 2.2.9 to 2.3.1
+- ⬆️  Bump regex from 1.3.1 to 1.3.3
+- ⬆️  :lock: Bump http from 0.1.18 to 0.1.21
+- ⬆️  Bump snafu from 0.6.0 to 0.6.1
+- ⬆️  Bump handlebars from 2.0.2 to 2.0.4
+- ⬆️  Bump run_script from 0.4.0 to 0.5.0
+
+### Fixed
+- 🐛  restore output of log on terminal
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.7.1
+- 🚧  (cargo-release) start next development iteration 1.7.1-dev
+
+<a name="1.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.7.0
+
+### Added
+- 👷  add config for dependabot
+
+### Changed
+- 🚨  apply clippy suggestion
+- ⬆️  Bump git2 from 0.10. 2 to 0.11.0
+- ⬆️  Bump handlebars_misc_helpers from 0.5.2 to 0.6.0
+- ⬆️  Bump run_script from 0.3.2 to 0.4.0
+- ⬆️  Bump structopt from 0.3.6 to 0.3.7
+- ⬆️  Bump structopt from 0.3.5 to 0.3.6
+- ⬆️  Bump serde from 1.0.103 to 1.0.104
+- ⬆️  Bump assert_cmd from 0.11.1 to 0.12.0
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.7.0
+- 💡  explain options of release profile
+- 🔊  provide more info (path of template) when error during rendering of a template
+- 🚧  (cargo-release) start next development iteration 1.6.4-dev
+
+<a name="1.6.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.6.3
+
+### Changed
+- 🔧  (ci) refactor the build and options (on mac_os)
+- ⬆️  Bump libc from 0.2.65 to 0.2.66
+- ⬆️  Bump serde from 1.0.102 to 1.0.103
+- ⬆️  Bump structopt from 0.3.4 to 0.3.5
+- ⬆️  Bump openssl from 0.10.25 to 0.10.26
+
+### Fixed
+- 🐛  trim pattern to ignore from template's config
+
+### Miscellaneous
+- 🚀  (cargo-release) version 1.6.3
+- 🚀  (cargo-release) version 1.6.2
+- 🚀  (cargo-release) version 1.6.1
+- 🚧  (cargo-release) start next development iteration 1.6.1-dev
+
+<a name="1.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 1.6.0
+
+### Added
+- ✅  remove the doc test of tree because tree is not available publicly
 - ✨  allow to use merge tool (as defined in git config) to merge updates
 - ✨  support several rules for the update of existing files (ask, override, keep, current-as-local, update-as-remote, show-diff)
 - 👷  try enable kcov+codecov  report on github-actions
 
 ### Changed
+- ⬆️  Bump git2 from 0.10.1 to 0.10.2
 - 💄  add description of update's option in selector
 - 🚨  fix some code practice (thx clippy)
 - ⬆️  Bump structopt from 0.3.3 to 0.3.4
@@ -25,13 +288,23 @@
 - ⬆️  Bump libc from 0.2.62 to 0.2.64
 
 ### Removed
+- 🔥  remove azure-pipelines definition (switch to github action)
 - 🔥  (cli) remove useless conf
 
 ### Fixed
+- 🐛  (snapcraft) fix the build of the snap on github-action/ubuntu
+- 🍎  the cache and project dir should be under &quot;ffizer&quot;, not &quot;github&quot;
+- ✏️  try to remove some markdown warning
+- 🐛  use only 1 source file from template(s) per destination file
 - 🐛  on error the exit status should be non-zero
 - 🐛  fix url to retrieve the latest version
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 1.6.0
+- ⚗  try a fix for the build of snap
+- 📦  setup packaging via snapcraft
+- ⚗  try to auto-detect proxy configuration for git call
+- pencil  pre-publish update book, changelog, bom
 - pencil  (README) update badge for CI
 - 🚧  (cargo-release) start next development iteration 1.5.2-dev
 

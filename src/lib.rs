@@ -16,6 +16,7 @@ mod ui;
 mod variable_def;
 mod variables;
 
+pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
 pub use crate::error::*;
 pub use crate::source_loc::SourceLoc;

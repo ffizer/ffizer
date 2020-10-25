@@ -1,5 +1,6 @@
 use super::transform_values::TransformsValues;
 use crate::Result;
+use schemars::JsonSchema;
 use snafu::ResultExt;
 use std::fs;
 use std::path::Path;
@@ -9,14 +10,18 @@ use super::import_cfg::ImportCfg;
 use super::script_cfg::ScriptCfg;
 use super::variable_cfg::VariableCfg;
 
-#[derive(Deserialize, Debug, Default, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, JsonSchema)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
+    /// list of variables/parameters of the template
     pub(crate) variables: Vec<VariableCfg>,
+    /// list of path from the current template to ignore
     pub(crate) ignores: Vec<IgnoreCfg>,
+    /// list of template to import and to apply as part of this template
     pub(crate) imports: Vec<ImportCfg>,
+    /// list of the scripts to apply at end of generation
     pub(crate) scripts: Vec<ScriptCfg>,
-    // set to true if the template content is under a `template` folder (not mixed with metadata)
+    /// set to true if the template content is under a `template` folder (not mixed with metadata)
     pub(crate) use_template_dir: bool,
 }
 
@@ -62,6 +67,7 @@ impl TransformsValues for TemplateCfg {
 
 #[cfg(test)]
 mod tests {
+    use super::super::variable_cfg::VariableValueCfg;
     use super::*;
     use pretty_assertions::assert_eq;
     use spectral::prelude::*;
@@ -98,12 +104,16 @@ mod tests {
         let mut expected = TemplateCfg::default();
         expected.variables.push(VariableCfg {
             name: "k2".to_owned(),
-            default_value: Some(serde_yaml::to_value("v2").expect("yaml parsed")),
+            default_value: Some(VariableValueCfg(
+                serde_yaml::to_value("v2").expect("yaml parsed"),
+            )),
             ..Default::default()
         });
         expected.variables.push(VariableCfg {
             name: "k1".to_owned(),
-            default_value: Some(serde_yaml::to_value("V1").expect("yaml parsed")),
+            default_value: Some(VariableValueCfg(
+                serde_yaml::to_value("V1").expect("yaml parsed"),
+            )),
             ..Default::default()
         });
         expected.variables.push(VariableCfg {

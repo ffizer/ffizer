@@ -135,4 +135,8 @@ pub enum Error {
         script: String,
         source: run_script::ScriptError,
     },
+    //HACK
+    SerdeJson {
+        source: serde_json::Error,
+    },
 }

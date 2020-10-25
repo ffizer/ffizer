@@ -1,7 +1,9 @@
 use super::transform_values::TransformsValues;
 use crate::Result;
+use schemars::JsonSchema;
 
-#[derive(Deserialize, Debug, Default, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, JsonSchema)]
+/// define a template layer to import
 pub(crate) struct ImportCfg {
     pub uri: String,
     pub rev: Option<String>,

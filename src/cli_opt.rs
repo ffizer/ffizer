@@ -36,6 +36,9 @@ pub enum Command {
     /// Inspect configuration, caches,... (wip)
     #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
     Inspect,
+    /// Show the json schema of the .ffizer.yaml files
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    ShowJsonSchema,
 }
 
 #[derive(StructOpt, Debug, Default, Clone)]

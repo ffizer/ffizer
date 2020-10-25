@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TemplateCfg",
+  "type": "object",
+  "properties": {
+    "ignores": {
+      "description": "list of path from the current template to ignore",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "imports": {
+      "description": "list of template to import and to apply as part of this template",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ImportCfg"
+      }
+    },
+    "scripts": {
+      "description": "list of the scripts to apply at end of generation",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ScriptCfg"
+      }
+    },
+    "use_template_dir": {
+      "description": "set to true if the template content is under a `template` folder (not mixed with metadata)",
+      "default": false,
+      "type": "boolean"
+    },
+    "variables": {
+      "description": "list of variables/parameters of the template",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/VariableCfg"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "AnyValue": true,
+    "ImportCfg": {
+      "description": "define a template layer to import",
+      "type": "object",
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "rev": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subfolder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "uri": {
+          "type": "string"
+        }
+      }
+    },
+    "ScriptCfg": {
+      "type": "object",
+      "properties": {
+        "cmd": {
+          "description": "command to execute",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "description": "message to display",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "VariableCfg": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "ask": {
+          "description": "sentence to ask the value (default to the name on variable)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default_value": {
+          "description": "optionnal default value",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/AnyValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hidden": {
+          "description": "is the variable hidden to the user (could be usefull to cache shared variable/data)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "name of variable used in the template",
+          "type": "string"
+        },
+        "select_in_values": {
+          "description": "if non-empty then the value should selected into the list of value",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/AnyValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,4 @@
+use ffizer::provide_json_schema;
 use ffizer::ApplyOpts;
 use ffizer::CliOpts;
 use ffizer::Command;
@@ -46,11 +47,17 @@ fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>>
     Ok(())
 }
 
-fn inspect(_logger: slog::Logger) -> Result<(), Box<dyn Error>> {
+fn inspect() -> Result<(), Box<dyn Error>> {
     println!(
         "remote cache folder: {}",
         SourceLoc::find_remote_cache_folder()?.to_string_lossy()
     );
+    Ok(())
+}
+
+fn show_json_schema() -> Result<(), Box<dyn Error>> {
+    let schema = provide_json_schema()?;
+    println!("{}", schema);
     Ok(())
 }
 
@@ -65,7 +72,8 @@ fn main() {
     let r = match &cli_opts.cmd {
         Command::Apply(g) => apply(logger.new(o!("sub-cmd" => "apply")), g.clone()),
         Command::Upgrade => upgrade(logger.new(o!("sub-cmd" => "upgrade"))),
-        Command::Inspect => inspect(logger.new(o!("sub-cmd" => "inspect"))),
+        Command::Inspect => inspect(),
+        Command::ShowJsonSchema => show_json_schema(),
     };
     if let Err(e) = r {
         error!(logger, "failed"; "error" => ?&e, "cmd" => ?&cli_opts);

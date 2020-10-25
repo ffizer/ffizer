@@ -471,6 +471,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4358a9e11b9a09cf52383b451b49a169e8d797b68aa02301ff586d70d9661ea3"
 
 [[package]]
+name = "dyn-clone"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d55796afa1b20c2945ca8eabfc421839f2b766619209f1ede813cf2484f31804"
+
+[[package]]
 name = "either"
 version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -536,8 +542,10 @@ dependencies = [
  "pretty_assertions",
  "regex",
  "run_script",
+ "schemars",
  "self_update",
  "serde",
+ "serde_json",
  "serde_plain",
  "serde_yaml",
  "slog",
@@ -1841,6 +1849,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "schemars"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "763f667253711994847f7e73befe859d6fff7bea2b7a7f01669d2c5b60765c37"
+dependencies = [
+ "dyn-clone",
+ "schemars_derive",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "schemars_derive"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1d457e2e37415f32b7628ddc5a7fea06ef63bd029ed180d65166e87ca25ce21"
+dependencies = [
+ "proc-macro2 1.0.18",
+ "quote 1.0.3",
+ "serde_derive_internals",
+ "syn 1.0.33",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1935,10 +1967,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_json"
-version = "1.0.51"
+name = "serde_derive_internals"
+version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da07b57ee2623368351e9a0488bb0b261322a15a6e0ae53e243cbdc0f4208da9"
+checksum = "1dbab34ca63057a1f15280bdf3c39f2b1eb1b54c17e98360e511637aef7418c6"
+dependencies = [
+ "proc-macro2 1.0.18",
+ "quote 1.0.3",
+ "syn 1.0.33",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.59"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dcac07dbffa1c65e7f816ab9eba78eb142c6d44410f4eeba1e26e4f5dfa56b95"
 dependencies = [
  "itoa",
  "ryu",

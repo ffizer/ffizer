@@ -1,9 +1,12 @@
 use super::transform_values::TransformsValues;
 use crate::Result;
+use schemars::JsonSchema;
 
-#[derive(Deserialize, Debug, Default, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, JsonSchema)]
 pub(crate) struct ScriptCfg {
+    /// message to display
     pub(crate) message: Option<String>,
+    /// command to execute
     pub(crate) cmd: Option<String>,
 }
 

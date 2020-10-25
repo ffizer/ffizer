@@ -70,9 +70,9 @@ fn to_variabledef(v: &variable_cfg::VariableCfg) -> Result<VariableDef> {
         None => false,
         Some(ref v) => serde_yaml::from_str(&v).context(crate::SerdeYaml {})?,
     };
-    let select_in_values: Vec<serde_yaml::Value> = match v.select_in_values {
+    let select_in_values: Vec<serde_yaml::Value> = match &v.select_in_values {
         None => vec![],
-        Some(ref v) => match v {
+        Some(v) => match &v.0 {
             serde_yaml::Value::String(ref s) => {
                 serde_yaml::from_str(&s).context(crate::SerdeYaml {})?
             }
@@ -95,9 +95,14 @@ fn to_variabledef(v: &variable_cfg::VariableCfg) -> Result<VariableDef> {
 
     Ok(VariableDef {
         name: v.name.clone(),
-        default_value: v.default_value.clone(),
+        default_value: v.default_value.as_ref().map(|v| v.0.clone()),
         ask: v.ask.clone(),
         hidden,
         select_in_values,
     })
+}
+
+pub fn provide_json_schema() -> Result<String> {
+    let schema = schemars::schema_for!(template_cfg::TemplateCfg);
+    Ok(serde_json::to_string_pretty(&schema).context(crate::SerdeJson {})?)
 }

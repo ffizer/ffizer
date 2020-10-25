@@ -17,6 +17,7 @@
 - 🔥  remove credits and bom generation
 
 ### Miscellaneous
+- pencil  pre-publish update book, changelog
 - pencil  add pages into book
 - pencil  update link to templates and help instruction
 - pencil  update doc (regenerate)

@@ -3,8 +3,8 @@ variables:
     default_value: "{{ file_name ffizer_dst_folder }}"
 
 imports:
-  - uri: "{{ ffizer_src_uri }}/../template_1"
+  - uri: "{{ ffizer_src_uri }}/../4compose/template_1"
     rev: "{{ ffizer_src_rev }}"
     # subfolder:
-  - uri: "{{ ffizer_src_uri }}/../template_2"
+  - uri: "{{ ffizer_src_uri }}/../4compose/template_2"
     rev: "{{ ffizer_src_rev }}"

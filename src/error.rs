@@ -3,9 +3,9 @@
 // - [Error Handling - A Gentle Introduction to Rust](https://stevedonovan.github.io/rust-gentle-intro/6-error-handling.html)
 // - [snafu::guide::comparison::failure - Rust](https://docs.rs/snafu/0.4.3/snafu/guide/comparison/failure/index.html)
 // - [Error Handling in Rust - Andrew Gallant's Blog](https://blog.burntsushi.net/rust-error-handling/)
+pub use snafu::ResultExt;
 use snafu::Snafu;
 use std::path::PathBuf;
-
 // pub type Result<T> = std::result::Result<T, Box<std::error::Error + Send + Sync>>;
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
@@ -43,8 +43,17 @@ pub enum Error {
         path: PathBuf,
         source: std::io::Error,
     },
+    #[snafu(display("create temp folder"))]
+    CreateTmpFolder {
+        source: std::io::Error,
+    },
     #[snafu(display("remove folder {:?}", path))]
     RemoveFolder {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    #[snafu(display("list content of folder {:?}", path))]
+    ListFolder {
         path: PathBuf,
         source: std::io::Error,
     },
@@ -116,6 +125,9 @@ pub enum Error {
     #[snafu(display("Application directory not found"))]
     ApplicationPathNotFound {},
 
+    #[snafu(display("test samples failed"))]
+    TestSamplesFailed {},
+
     //HACK
     Io {
         source: std::io::Error,
@@ -138,5 +150,17 @@ pub enum Error {
     //HACK
     SerdeJson {
         source: serde_json::Error,
+    },
+    //HACK
+    WalkDir {
+        source: walkdir::Error,
+    },
+    //HACK
+    PathStripPrefixError {
+        source: std::path::StripPrefixError,
+    },
+    //HACK
+    Clap {
+        source: clap::Error,
     },
 }

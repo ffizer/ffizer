@@ -483,6 +483,7 @@ name = "ffizer"
 version = "2.0.1-dev"
 dependencies = [
  "assert_cmd",
+ "clap",
  "console 0.13.0",
  "dialoguer 0.7.1",
  "difference",

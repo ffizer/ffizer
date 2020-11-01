@@ -1,5 +1,5 @@
+use crate::error::*;
 use std::cmp::Ordering;
-use std::error::Error;
 use std::fs;
 use std::fs::FileType;
 use std::path::{Path, PathBuf};
@@ -35,13 +35,13 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
     actual: A,
     expect: B,
     // options: SearchOptions,
-) -> Result<Vec<EntryDiff>, Box<dyn Error>> {
+) -> Result<Vec<EntryDiff>> {
     let actual = actual.as_ref();
     let expect = expect.as_ref();
 
     let mut differences = vec![];
-    let actual_listing = walk_dir(&actual)?;
-    let expect_listing = walk_dir(&expect)?;
+    let actual_listing = walk_dir(&actual).context(crate::error::WalkDir {})?;
+    let expect_listing = walk_dir(&expect).context(crate::error::WalkDir {})?;
 
     let mut actual_index = 0;
     let mut expect_index = 0;
@@ -59,10 +59,16 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
             break;
         }
         let actual_entry = &actual_listing[actual_index];
-        let actual_rpath = actual_entry.path().strip_prefix(actual)?;
+        let actual_rpath = actual_entry
+            .path()
+            .strip_prefix(actual)
+            .context(PathStripPrefixError)?;
 
         let expect_entry = &expect_listing[expect_index];
-        let expect_rpath = expect_entry.path().strip_prefix(expect)?;
+        let expect_rpath = expect_entry
+            .path()
+            .strip_prefix(expect)
+            .context(PathStripPrefixError)?;
 
         if actual_rpath > expect_rpath {
             add_diff(
@@ -102,8 +108,12 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
             // asserting(&format!("test content of {:?} vs {:?}", a, b))
             //     .that(&read_to_vec(a.path())?)
             //     .is_equal_to(&read_to_vec(b.path())?);
-            let actual_content = fs::read_to_string(actual_entry.path())?.replace("\r\n", "\n");
-            let expect_content = fs::read_to_string(expect_entry.path())?.replace("\r\n", "\n");
+            let actual_content = fs::read_to_string(actual_entry.path())
+                .context(Io {})?
+                .replace("\r\n", "\n");
+            let expect_content = fs::read_to_string(expect_entry.path())
+                .context(Io {})?
+                .replace("\r\n", "\n");
             if actual_content != expect_content {
                 add_diff(
                     &expect_rpath,
@@ -123,7 +133,10 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
     if expect_index != expect_listing.len() {
         while expect_index < expect_listing.len() {
             let expect_entry = &expect_listing[expect_index];
-            let expect_rpath = expect_entry.path().strip_prefix(expect)?;
+            let expect_rpath = expect_entry
+                .path()
+                .strip_prefix(expect)
+                .context(PathStripPrefixError)?;
             differences.push(EntryDiff {
                 actual_base_path: actual.to_path_buf(),
                 expect_base_path: expect.to_path_buf(),
@@ -139,7 +152,10 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
     if actual_index != actual_listing.len() {
         while actual_index < actual_listing.len() {
             let actual_entry = &actual_listing[actual_index];
-            let actual_rpath = actual_entry.path().strip_prefix(actual)?;
+            let actual_rpath = actual_entry
+                .path()
+                .strip_prefix(actual)
+                .context(PathStripPrefixError)?;
             differences.push(EntryDiff {
                 actual_base_path: actual.to_path_buf(),
                 expect_base_path: expect.to_path_buf(),

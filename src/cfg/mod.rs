@@ -19,6 +19,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
+pub const TEMPLATE_SAMPLES_DIRNAME: &str = ".ffizer.samples.d";
 
 impl template_cfg::TemplateCfg {
     pub(crate) fn find_ignores(&self) -> Result<Vec<PathPattern>> {
@@ -30,6 +31,8 @@ impl template_cfg::TemplateCfg {
             .collect::<Result<Vec<PathPattern>>>()?;
         let cfg_pattern = PathPattern::from_str(TEMPLATE_CFG_FILENAME)?;
         ignores.push(cfg_pattern);
+        let samples_pattern = PathPattern::from_str(TEMPLATE_SAMPLES_DIRNAME)?;
+        ignores.push(samples_pattern);
         Ok(ignores)
     }
 

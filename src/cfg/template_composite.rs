@@ -126,7 +126,7 @@ fn deep_download(
     templates: &mut HashMap<SourceLoc, TemplateCfg>,
 ) -> Result<()> {
     if !templates.contains_key(src) {
-        let template_base_path = &src.download(ctx, offline)?;
+        let template_base_path = &src.download(&ctx.logger, offline)?;
         // update cfg with variables defined by user
         let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
         // update cfg with variables defined by cli (use to update default_value)

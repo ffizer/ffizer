@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate serde;
 
+pub mod tools;
+
 mod cfg;
 mod cli_opt;
 mod error;

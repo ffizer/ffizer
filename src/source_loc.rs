@@ -1,8 +1,7 @@
 use crate::git;
 use crate::source_uri::SourceUri;
-use crate::Ctx;
 use crate::Result;
-use slog::warn;
+use slog::{warn, Logger};
 use snafu::ResultExt;
 use std::fmt;
 use std::fs;
@@ -59,12 +58,11 @@ impl SourceLoc {
             .join(&self.rev);
         Ok(cache_uri)
     }
-
-    pub fn download(&self, ctx: &Ctx, offline: bool) -> Result<PathBuf> {
+    pub fn download(&self, logger: &Logger, offline: bool) -> Result<PathBuf> {
         if !offline && self.uri.host.is_some() {
             let remote_path = self.remote_as_local()?;
             if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev) {
-                warn!(ctx.logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
+                warn!(logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
                 if remote_path.exists() {
                     fs::remove_dir_all(&remote_path)
                         .context(crate::RemoveFolder { path: remote_path })?;

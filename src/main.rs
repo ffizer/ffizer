@@ -4,6 +4,7 @@ use ffizer::CliOpts;
 use ffizer::Command;
 use ffizer::Ctx;
 use ffizer::SourceLoc;
+use ffizer::TestSamplesOpts;
 use self_update;
 use slog::Drain;
 use slog::{debug, error, info, o, trace};
@@ -61,6 +62,11 @@ fn show_json_schema() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+fn test_samples(logger: slog::Logger, cfg: &TestSamplesOpts) -> Result<(), Box<dyn Error>> {
+    ffizer::tools::test_samples(logger, cfg)?;
+    Ok(())
+}
+
 fn main() {
     human_panic::setup_panic!();
     let cli_opts = CliOpts::from_args();
@@ -74,9 +80,11 @@ fn main() {
         Command::Upgrade => upgrade(logger.new(o!("sub-cmd" => "upgrade"))),
         Command::Inspect => inspect(),
         Command::ShowJsonSchema => show_json_schema(),
+        Command::TestSamples(g) => test_samples(logger.new(o!("sub-cmd" => "test-samples")), g),
     };
     if let Err(e) = r {
-        error!(logger, "failed"; "error" => ?&e, "cmd" => ?&cli_opts);
+        error!(logger, "cmd: {:#?}", &cli_opts);
+        error!(logger, "failed: {:#?}", &e);
         std::process::exit(1)
     }
 }

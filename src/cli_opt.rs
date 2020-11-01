@@ -39,6 +39,9 @@ pub enum Command {
     /// Show the json schema of the .ffizer.yaml files
     #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
     ShowJsonSchema,
+    /// test a template against its samples
+    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    TestSamples(TestSamplesOpts),
 }
 
 #[derive(StructOpt, Debug, Default, Clone)]
@@ -125,4 +128,13 @@ fn parse_keyvalue(src: &str) -> (String, String) {
     } else {
         (src.to_owned(), "".to_owned())
     }
+}
+
+#[derive(StructOpt, Debug, Default, Clone)]
+pub struct TestSamplesOpts {
+    #[structopt(flatten)]
+    pub src: SourceLoc,
+    /// in offline, only local templates or cached templates are used
+    #[structopt(long = "offline")]
+    pub offline: bool,
 }

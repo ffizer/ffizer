@@ -97,71 +97,38 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
 #[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
-    let tmp_dir = tempdir()?;
-    let expected_path = PathBuf::from("./tests/data/test_1/expected");
-    let actual_path = tmp_dir.path().to_path_buf();
-
-    let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
-        .arg("apply")
-        .arg("--no-interaction")
-        .arg("--confirm")
-        .arg("never")
-        .arg("--update-mode")
-        .arg("keep")
-        .arg("--destination")
-        .arg(actual_path.to_str().unwrap())
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .ok()?;
-    assert_is_same(&actual_path, &expected_path, &output)
+    Ok(())
 }
 
 #[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
-    let tmp_dir = tempdir()?;
-    let expected_path = PathBuf::from("./tests/data/test_1/expected");
-    let actual_path = tmp_dir.path().to_path_buf();
-
-    let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
-        .arg("apply")
-        .arg("--no-interaction")
-        .arg("--confirm")
-        .arg("never")
-        .arg("--update-mode")
-        .arg("keep")
-        .arg("--destination")
-        .arg(actual_path.to_str().unwrap())
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("a476767b3ea4cde604d28761c4a2f8e4a31198e0")
+        .arg("3ab3bc67b5fab58ceecc031f7ed0eb29c0e0fff8")
         .ok()?;
-    assert_is_same(&actual_path, &expected_path, &output)
+    Ok(())
 }
 
 #[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
-    let tmp_dir = tempdir()?;
-    let expected_path = PathBuf::from("./tests/data/test_1/expected");
-    let actual_path = tmp_dir.path().to_path_buf();
-
-    let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
-        .arg("apply")
-        .arg("--no-interaction")
-        .arg("--confirm")
-        .arg("never")
-        .arg("--update-mode")
-        .arg("keep")
-        .arg("--destination")
-        .arg(actual_path.to_str().unwrap())
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("1.1.0")
+        .arg("1.2.0")
         .ok()?;
-    assert_is_same(&actual_path, &expected_path, &output)
+    Ok(())
 }
 
 // reproduce https://github.com/ffizer/ffizer/issues/195

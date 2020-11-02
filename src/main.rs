@@ -63,7 +63,7 @@ fn show_json_schema() -> Result<(), Box<dyn Error>> {
 }
 
 fn test_samples(logger: slog::Logger, cfg: &TestSamplesOpts) -> Result<(), Box<dyn Error>> {
-    ffizer::tools::test_samples(logger, cfg)?;
+    ffizer::tools::test_samples(&logger, cfg)?;
     Ok(())
 }
 

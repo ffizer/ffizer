@@ -3,13 +3,13 @@ pub mod dir_diff_list;
 use crate::cli_opt::{ApplyOpts, TestSamplesOpts};
 use crate::error::*;
 use dir_diff_list::EntryDiff;
-use slog::{info, o, warn};
+use slog::{info, o, warn, Logger};
 use std::fs;
 use std::path::{Path, PathBuf};
 use structopt::StructOpt;
 use tempfile::{tempdir, TempDir};
 
-pub fn test_samples(logger: slog::Logger, cfg: &TestSamplesOpts) -> Result<()> {
+pub fn test_samples(logger: &Logger, cfg: &TestSamplesOpts) -> Result<()> {
     let template_base_path = &cfg.src.download(&logger, cfg.offline)?;
     if !check_samples(&logger, template_base_path)? {
         Err(crate::Error::TestSamplesFailed {})
@@ -18,7 +18,7 @@ pub fn test_samples(logger: slog::Logger, cfg: &TestSamplesOpts) -> Result<()> {
     }
 }
 
-fn check_samples<A: AsRef<Path>>(logger: &slog::Logger, template_path: A) -> Result<bool> {
+fn check_samples<A: AsRef<Path>>(logger: &Logger, template_path: A) -> Result<bool> {
     let mut is_success = true;
     let tmp_dir = tempdir().context(CreateTmpFolder)?;
     let samples_folder = template_path

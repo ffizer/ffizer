@@ -1,9 +1,9 @@
 mod tree;
 
 use crate::cli_opt::*;
+use crate::error::*;
 use crate::variable_def::VariableDef;
 use crate::FileOperation;
-use crate::Result;
 use crate::{Action, Ctx, Variables};
 use console::Style;
 use console::Term;
@@ -14,7 +14,6 @@ use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use serde_yaml::Value;
 use slog::debug;
-use snafu::ResultExt;
 use std::borrow::Cow;
 
 lazy_static! {
@@ -23,8 +22,7 @@ lazy_static! {
 }
 
 fn write_title(s: &str) -> Result<()> {
-    TERM.write_line(&format!("\n\n{}\n", TITLE_STYLE.apply_to(s)))
-        .context(crate::Io {})?;
+    TERM.write_line(&format!("\n\n{}\n", TITLE_STYLE.apply_to(s)))?;
     Ok(())
 }
 
@@ -59,9 +57,10 @@ pub fn ask_variables(
                 let ask = variable.ask.expect("variable ask should defined");
                 handlebars
                     .render_template(&ask, &variables)
-                    .context(crate::Handlebars {
+                    .map_err(|source| Error::Handlebars {
                         when: format!("define prompt for '{}'", &name),
                         template: ask.clone(),
+                        source,
                     })?
             } else {
                 name.clone()
@@ -69,7 +68,7 @@ pub fn ask_variables(
             let values: Vec<String> = variable
                 .select_in_values
                 .iter()
-                .map(|v| serde_yaml::from_value(v.clone()).context(crate::SerdeYaml {}))
+                .map(|v| serde_yaml::from_value(v.clone()).map_err(Error::from))
                 .collect::<Result<Vec<String>>>()?;
             //TODO ValuesForSelection::Empty => vec![],
             // ValuesForSelection::Sequence(v) => v.clone(),
@@ -141,10 +140,7 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
         if let Some(default_value) = req.default_value {
             input.default(default_value.value);
         }
-        let value = input
-            .with_prompt(&req.prompt)
-            .interact()
-            .context(crate::Io {})?;
+        let value = input.with_prompt(&req.prompt).interact()?;
         Ok(VariableResponse { value, idx: None })
     } else {
         let mut input = Select::new();
@@ -155,7 +151,7 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
         if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
             input.default(default_value);
         }
-        let idx = input.interact().context(crate::Io {})?;
+        let idx = input.interact()?;
         Ok(VariableResponse {
             value: req.values[idx].clone(),
             idx: Some(idx),
@@ -192,13 +188,12 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
             prefix,
             p.file_name().and_then(|v| v.to_str()).unwrap_or("???"),
         );
-        TERM.write_line(&s).context(crate::Io {})?;
+        TERM.write_line(&s)?;
     }
     let r = if ctx.cmd_opt.confirm == AskConfirmation::Always {
         Confirm::new()
             .with_prompt("Do you want to apply plan ?")
-            .interact()
-            .context(crate::Io {})?
+            .interact()?
     } else {
         //TODO implement a algo for auto, like if no change then no ask.
         true
@@ -210,11 +205,10 @@ pub fn show_difference<P>(local: P, remote: P) -> Result<()>
 where
     P: AsRef<std::path::Path>,
 {
-    use crate::error::*;
     use difference::Changeset;
     use std::fs;
-    let local_str = fs::read_to_string(&local).context(Io {})?;
-    let remote_str = fs::read_to_string(&remote).context(Io {})?;
+    let local_str = fs::read_to_string(&local)?;
+    let remote_str = fs::read_to_string(&remote)?;
     let changeset = Changeset::new(&local_str, &remote_str, "\n");
     println!("{}", changeset);
     Ok(())
@@ -248,7 +242,7 @@ where
         )
         .default(0)
         .paged(false);
-    let idx = input.interact().context(crate::Io {})?;
+    let idx = input.interact()?;
 
     Ok(values[idx].1.clone())
 }
@@ -288,6 +282,6 @@ pub fn confirm_run_script(
         Confirm::new()
             .with_prompt("Do you want to run the commands ?")
             .interact()
-            .context(crate::Io {})
+            .map_err(Error::from)
     }
 }

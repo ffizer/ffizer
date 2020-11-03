@@ -512,11 +512,11 @@ dependencies = [
  "slog",
  "slog-stdlog",
  "slog-term",
- "snafu",
  "spectral",
  "structopt",
  "tempfile",
  "test-generator",
+ "thiserror",
  "walkdir",
  "winapi 0.3.9",
 ]

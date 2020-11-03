@@ -1,7 +1,6 @@
-use crate::Result;
+use crate::error::*;
 use globset::{Glob, GlobMatcher};
 use serde_plain::derive_deserialize_from_str;
-use snafu::ResultExt;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
@@ -14,8 +13,9 @@ impl FromStr for PathPattern {
     type Err = crate::Error;
     fn from_str(value: &str) -> Result<Self> {
         let value = value.trim();
-        let g = Glob::new(value).context(crate::ParsePathPattern {
+        let g = Glob::new(value).map_err(|source| Error::ParsePathPattern {
             value: value.to_owned(),
+            source,
         })?;
         let matcher = g.compile_matcher();
         Ok(PathPattern {

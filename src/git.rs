@@ -1,9 +1,8 @@
-use crate::Error;
+use crate::error::*;
 use git2::build::{CheckoutBuilder, RepoBuilder};
 use git2::{Config, FetchOptions, Repository};
 use git2_credentials;
 use slog::{debug, info, warn, Logger};
-use snafu::ResultExt;
 use std::path::Path;
 
 /// clone a repository at a rev to a directory
@@ -15,23 +14,26 @@ where
     U: AsRef<str>,
 {
     let dst = dst.as_ref();
-    let mut fo = make_fetch_options().context(crate::GitRetrieve {
+    let mut fo = make_fetch_options().map_err(|source| Error::GitRetrieve {
         dst: dst.to_path_buf(),
         url: url.as_ref().to_owned(),
         rev: rev.as_ref().to_owned(),
+        source,
     })?;
     if dst.exists() {
         info!(logger, "git reset cached template"; "folder" => ?&dst);
-        checkout(dst, &rev).context(crate::GitRetrieve {
+        checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
+            source,
         })?;
         info!(logger, "git pull cached template"; "folder" => ?&dst);
-        pull(logger, dst, &rev, &mut fo).context(crate::GitRetrieve {
+        pull(logger, dst, &rev, &mut fo).map_err(|source| Error::GitRetrieve {
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
+            source,
         })?;
     //until pull is fixed and work as expected
     // let mut tmp = dst.to_path_buf().clone();
@@ -46,10 +48,11 @@ where
     } else {
         info!(logger, "git clone into cached template"; "folder" => ?&dst);
         clone(&dst, &url, "master", fo)?;
-        checkout(&dst, &rev).context(crate::GitRetrieve {
+        checkout(&dst, &rev).map_err(|source| Error::GitRetrieve {
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
+            source,
         })?;
     }
     Ok(())
@@ -80,17 +83,19 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
-    std::fs::create_dir_all(&dst.as_ref()).context(crate::CreateFolder {
+    std::fs::create_dir_all(&dst.as_ref()).map_err(|source| Error::CreateFolder {
         path: dst.as_ref().to_path_buf(),
+        source,
     })?;
     RepoBuilder::new()
         .branch(rev.as_ref())
         .fetch_options(fo)
         .clone(url.as_ref(), dst.as_ref())
-        .context(crate::GitRetrieve {
+        .map_err(|source| Error::GitRetrieve {
             dst: dst.as_ref().to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
+            source,
         })?;
     Ok(())
 }

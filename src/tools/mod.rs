@@ -20,7 +20,7 @@ pub fn test_samples(logger: &Logger, cfg: &TestSamplesOpts) -> Result<()> {
 
 fn check_samples<A: AsRef<Path>>(logger: &Logger, template_path: A) -> Result<bool> {
     let mut is_success = true;
-    let tmp_dir = tempdir().context(CreateTmpFolder)?;
+    let tmp_dir = tempdir()?;
     let samples_folder = template_path
         .as_ref()
         .join(crate::cfg::TEMPLATE_SAMPLES_DIRNAME);
@@ -54,10 +54,11 @@ impl Sample {
         tmp_dir: &TempDir,
     ) -> Result<Vec<Sample>> {
         let mut out = vec![];
-        for e in fs::read_dir(&samples_folder).context(ListFolder {
-            path: samples_folder.as_ref(),
+        for e in fs::read_dir(&samples_folder).map_err(|source| Error::ListFolder {
+            path: samples_folder.as_ref().into(),
+            source,
         })? {
-            let path = e.context(Io)?.path();
+            let path = e?.path();
             if path
                 .extension()
                 .filter(|x| x.to_string_lossy() == "expected")
@@ -98,10 +99,11 @@ fn read_args<A: AsRef<Path>, B: AsRef<Path>, C: AsRef<Path>>(
     args_file: C,
 ) -> Result<ApplyOpts> {
     let sample_cfg = if args_file.as_ref().exists() {
-        let cfg_str = fs::read_to_string(args_file.as_ref()).context(ReadFile {
-            path: args_file.as_ref().to_path_buf(),
+        let cfg_str = fs::read_to_string(args_file.as_ref()).map_err(|source| Error::ReadFile {
+            path: args_file.as_ref().into(),
+            source,
         })?;
-        serde_yaml::from_str::<SampleCfg>(&cfg_str).context(SerdeYaml {})?
+        serde_yaml::from_str::<SampleCfg>(&cfg_str)?
     } else {
         SampleCfg { apply_args: vec![] }
     };
@@ -131,7 +133,7 @@ fn read_args<A: AsRef<Path>, B: AsRef<Path>, C: AsRef<Path>>(
     //  unless clap::AppSettings::NoBinaryName has been used
     //  (but I don't know how to use it in this case, patch is welcomed)
     args_line.insert(0, "ffizer apply");
-    ApplyOpts::from_iter_safe(args_line).context(Clap)
+    ApplyOpts::from_iter_safe(args_line).map_err(Error::from)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -189,14 +191,17 @@ pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<()> {
         };
         if fs::metadata(&dest).is_err() {
             // println!(" mkdir: {:?}", dest);
-            fs::create_dir_all(&dest).context(CreateFolder { path: &dest })?;
+            fs::create_dir_all(&dest).map_err(|source| Error::CreateFolder {
+                path: dest.clone().into(),
+                source,
+            })?;
         }
 
-        for entry in fs::read_dir(&working_path).context(ListFolder {
-            path: &working_path,
+        for entry in fs::read_dir(&working_path).map_err(|source| Error::ListFolder {
+            path: working_path.into(),
+            source,
         })? {
-            let entry = entry.context(Io)?;
-            let path = entry.path();
+            let path = entry?.path();
             if path.is_dir() {
                 stack.push(path);
             } else {
@@ -204,9 +209,10 @@ pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<()> {
                     Some(filename) => {
                         let dest_path = dest.join(filename);
                         //println!("  copy: {:?} -> {:?}", &path, &dest_path);
-                        fs::copy(&path, &dest_path).context(CopyFile {
-                            src: &path,
-                            dst: &dest_path,
+                        fs::copy(&path, &dest_path).map_err(|source| Error::CopyFile {
+                            src: path.into(),
+                            dst: dest_path.into(),
+                            source,
                         })?;
                     }
                     None => {

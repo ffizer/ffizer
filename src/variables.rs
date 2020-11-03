@@ -1,6 +1,5 @@
 use crate::error::*;
 use serde::Serialize;
-use snafu::ResultExt;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -12,10 +11,7 @@ impl Variables {
     }
 
     pub fn insert<K: Into<String>, V: Serialize>(&mut self, key: K, value: V) -> Result<()> {
-        self.0.insert(
-            key.into(),
-            serde_yaml::to_value(value).context(crate::SerdeYaml {})?,
-        );
+        self.0.insert(key.into(), serde_yaml::to_value(value)?);
         Ok(())
     }
 
@@ -25,7 +21,7 @@ impl Variables {
 
     pub fn value_from_str(s: &str) -> Result<serde_yaml::Value> {
         //serde_yaml::to_value(value).context(crate::SerdeYaml {})
-        serde_yaml::from_str::<serde_yaml::Value>(s).context(crate::SerdeYaml {})
+        serde_yaml::from_str::<serde_yaml::Value>(s).map_err(Error::from)
     }
 }
 

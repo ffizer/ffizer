@@ -1,7 +1,6 @@
 use super::transform_values::TransformsValues;
-use crate::Result;
+use crate::error::*;
 use schemars::JsonSchema;
-use snafu::ResultExt;
 use std::fs;
 use std::path::Path;
 
@@ -31,13 +30,13 @@ impl TemplateCfg {
         S: AsRef<str>,
     {
         //let cfg = serde_json::from_str::<TemplateCfg>(str.as_ref())?;
-        serde_yaml::from_str::<TemplateCfg>(str.as_ref()).context(crate::SerdeYaml {})
+        serde_yaml::from_str::<TemplateCfg>(str.as_ref()).map_err(Error::from)
     }
 
     pub fn from_template_folder(template_base: &Path) -> Result<TemplateCfg> {
         let cfg_path = template_base.join(super::TEMPLATE_CFG_FILENAME);
         if cfg_path.exists() {
-            let cfg_str = fs::read_to_string(cfg_path).context(crate::Io {})?;
+            let cfg_str = fs::read_to_string(cfg_path)?;
             Self::from_str(cfg_str)
         } else {
             Ok(TemplateCfg::default())

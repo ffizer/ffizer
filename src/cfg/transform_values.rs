@@ -24,9 +24,7 @@ impl TransformsValues for PathBuf {
         F: Fn(&str) -> String,
     {
         self.to_str()
-            .ok_or(crate::Error::Any {
-                msg: "failed to stringify path".to_owned(),
-            })
+            .ok_or(crate::Error::Unknown("failed to stringify path".to_owned()))
             .map(|s| PathBuf::from(render(s)))
     }
 }

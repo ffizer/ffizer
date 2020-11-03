@@ -14,7 +14,6 @@ use crate::source_loc::SourceLoc;
 use crate::source_uri::SourceUri;
 use crate::variable_def::VariableDef;
 use crate::Result;
-use snafu::ResultExt;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -71,16 +70,14 @@ impl template_cfg::TemplateCfg {
 fn to_variabledef(v: &variable_cfg::VariableCfg) -> Result<VariableDef> {
     let hidden: bool = match v.hidden {
         None => false,
-        Some(ref v) => serde_yaml::from_str(&v).context(crate::SerdeYaml {})?,
+        Some(ref v) => serde_yaml::from_str(&v)?,
     };
     let select_in_values: Vec<serde_yaml::Value> = match &v.select_in_values {
         None => vec![],
         Some(v) => match &v.0 {
-            serde_yaml::Value::String(ref s) => {
-                serde_yaml::from_str(&s).context(crate::SerdeYaml {})?
-            }
+            serde_yaml::Value::String(ref s) => serde_yaml::from_str(&s)?,
             // serde_yaml::Value::Sequence(ref s) => serde_yaml::Value::Sequence(s.clone()),
-            s => serde_yaml::from_value(s.clone()).context(crate::SerdeYaml {})?,
+            s => serde_yaml::from_value(s.clone())?,
         },
     };
 
@@ -107,5 +104,5 @@ fn to_variabledef(v: &variable_cfg::VariableCfg) -> Result<VariableDef> {
 
 pub fn provide_json_schema() -> Result<String> {
     let schema = schemars::schema_for!(template_cfg::TemplateCfg);
-    Ok(serde_json::to_string_pretty(&schema).context(crate::SerdeJson {})?)
+    Ok(serde_json::to_string_pretty(&schema)?)
 }

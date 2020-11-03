@@ -3,164 +3,152 @@
 // - [Error Handling - A Gentle Introduction to Rust](https://stevedonovan.github.io/rust-gentle-intro/6-error-handling.html)
 // - [snafu::guide::comparison::failure - Rust](https://docs.rs/snafu/0.4.3/snafu/guide/comparison/failure/index.html)
 // - [Error Handling in Rust - Andrew Gallant's Blog](https://blog.burntsushi.net/rust-error-handling/)
-pub use snafu::ResultExt;
-use snafu::Snafu;
 use std::path::PathBuf;
-// pub type Result<T> = std::result::Result<T, Box<std::error::Error + Send + Sync>>;
+use thiserror::Error;
+
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
-#[derive(Debug, Snafu)]
+#[derive(Error, Debug)]
 #[allow(clippy::large_enum_variant)] // warn to restore to default
-#[snafu(visibility = "pub(crate)")]
 pub enum Error {
-    #[snafu(display("{}", msg))]
-    Any {
-        msg: String,
-    },
+    #[error("unknown ffizer error: {0}")]
+    Unknown(String),
 
-    #[snafu(display("value {:?} of {} is not in {:?}", value, value_name, accepted))]
+    #[error("value {value:?} of {value_name} is not in {accepted:?}")]
     StringValueNotIn {
         value_name: String,
         value: String,
         accepted: Vec<String>,
     },
 
-    #[snafu(display("git retreive {:?} (rev: {:?}) into folder {:?}", url, rev, dst))]
+    #[error("git retreive {url:?} (rev: {rev:?}) into folder {dst:?}")]
     GitRetrieve {
         dst: PathBuf,
         url: String,
         rev: String,
         source: git2::Error,
     },
-    #[snafu(display("try to find git config '{:?}'", key))]
-    GitFindConfig {
-        key: String,
-        source: git2::Error,
-    },
+    #[error("try to find git config '{key:?}'")]
+    GitFindConfig { key: String, source: git2::Error },
 
-    #[snafu(display("create folder {:?}", path))]
+    #[error("create folder {path:?}")]
     CreateFolder {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("create temp folder"))]
-    CreateTmpFolder {
-        source: std::io::Error,
-    },
-    #[snafu(display("remove folder {:?}", path))]
+    #[error("create temp folder")]
+    CreateTmpFolder { source: std::io::Error },
+    #[error("remove folder {path:?}")]
     RemoveFolder {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("list content of folder {:?}", path))]
+    #[error("list content of folder {path:?}")]
     ListFolder {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("create file {:?}", path))]
+    #[error("create file {path:?}")]
     CreateFile {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("rename file from {:?} to {:?} ", src, dst))]
+    #[error("rename file from {src:?} to {dst:?}")]
     RenameFile {
         src: PathBuf,
         dst: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("copy file from {:?} to {:?} ", src, dst))]
+    #[error("copy file from {src:?} to {dst:?}")]
     CopyFile {
         src: PathBuf,
         dst: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("copy permission from {:?} to {:?} ", src, dst))]
+    #[error("copy permission from {src:?} to {dst:?}")]
     CopyFilePermission {
         src: PathBuf,
         dst: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("read file {:?}", path))]
+    #[error("read file {path:?}")]
     ReadFile {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("write file {:?}", path))]
+    #[error("write file {path:?}")]
     WriteFile {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("remove file {:?}", path))]
+    #[error("remove file {path:?}")]
     RemoveFile {
         path: PathBuf,
         source: std::io::Error,
     },
-    #[snafu(display("run command '{:?}'", cmd))]
-    RunCommand {
-        cmd: String,
-        source: std::io::Error,
-    },
+    #[error("run command '{cmd:?}'")]
+    RunCommand { cmd: String, source: std::io::Error },
+    #[error("fail to parse string as path '{value:?}'")]
     ParsePathPattern {
         value: String,
         source: globset::Error,
     },
 
-    ParseGitUri {
-        value: String,
-        source: regex::Error,
-    },
+    #[error("fail to parse string as uri for git repo '{value:?}'")]
+    ParseGitUri { value: String, source: regex::Error },
 
-    #[snafu(display(
-        "local path({:?}) not found for uri({:?}) subfolder({:?})",
-        path,
-        uri,
-        subfolder
-    ))]
+    #[error("local path({path:?}) not found for uri({uri:?}) subfolder({subfolder:?})")]
     LocalPathNotFound {
         path: PathBuf,
         uri: String,
         subfolder: Option<PathBuf>,
     },
 
-    #[snafu(display("Application directory not found"))]
+    #[error("Application directory not found")]
     ApplicationPathNotFound {},
 
-    #[snafu(display("test samples failed"))]
+    #[error("test samples failed")]
     TestSamplesFailed {},
 
-    //HACK
+    #[error(transparent)]
     Io {
+        #[from]
         source: std::io::Error,
     },
-    //HACK
+    #[error("fail to process template '{template}' when {when}")]
     Handlebars {
         when: String,
         template: String,
         source: handlebars::TemplateRenderError,
     },
-    //HACK
+    #[error(transparent)]
     SerdeYaml {
+        #[from]
         source: serde_yaml::Error,
     },
-    //HACK
+    #[error("fail to process script '{script}'")]
     ScriptError {
         script: String,
         source: run_script::ScriptError,
     },
-    //HACK
+    #[error(transparent)]
     SerdeJson {
+        #[from]
         source: serde_json::Error,
     },
-    //HACK
+    #[error(transparent)]
     WalkDir {
+        #[from]
         source: walkdir::Error,
     },
-    //HACK
+    #[error(transparent)]
     PathStripPrefixError {
+        #[from]
         source: std::path::StripPrefixError,
     },
-    //HACK
+    #[error(transparent)]
     Clap {
+        #[from]
         source: clap::Error,
     },
 }

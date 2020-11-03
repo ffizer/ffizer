@@ -1,11 +1,11 @@
 #[macro_use]
 extern crate serde;
 
+pub mod error;
 pub mod tools;
 
 mod cfg;
 mod cli_opt;
-mod error;
 mod files;
 mod git;
 mod graph;
@@ -20,16 +20,15 @@ mod variables;
 
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
-pub use crate::error::*;
 pub use crate::source_loc::SourceLoc;
 
 use crate::cfg::{render_composite, TemplateComposite};
+use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use slog::{debug, o, warn};
-use snafu::ResultExt;
 use std::fs;
 use std::path::PathBuf;
 
@@ -100,14 +99,15 @@ fn do_in_folder<F, R>(folder: &PathBuf, f: F) -> Result<R>
 where
     F: FnOnce() -> Result<R>,
 {
-    fs::create_dir_all(&folder).context(CreateFolder {
+    fs::create_dir_all(&folder).map_err(|source| Error::CreateFolder {
         path: folder.clone(),
+        source,
     })?;
-    let current_dir = std::env::current_dir().context(Io {})?;
-    std::env::set_current_dir(&folder).context(Io {})?;
+    let current_dir = std::env::current_dir()?;
+    std::env::set_current_dir(&folder)?;
     // let res = apply_plan(&ctx, &actions, &variables, &template_composite);
     let res = f();
-    let _ = std::env::set_current_dir(&current_dir).context(Io {});
+    let _ = std::env::set_current_dir(&current_dir)?;
     res
 }
 
@@ -192,7 +192,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => {
                 let path = PathBuf::from(&a.dst_path);
-                fs::create_dir_all(&path).context(CreateFolder { path })?;
+                fs::create_dir_all(&path).map_err(|source| Error::CreateFolder { path, source })?;
                 copy_file_permissions(
                     PathBuf::from(a.src[0].childpath()),
                     PathBuf::from(&a.dst_path),
@@ -204,15 +204,20 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
                 let (local, remote) = mk_file_on_action(&mut handlebars, variables, &a, ".REMOTE")?;
-                let local_digest = md5::compute(fs::read(&local).context(ReadFile {
-                    path: local.clone(),
-                })?);
-                let remote_digest = md5::compute(fs::read(&remote).context(ReadFile {
-                    path: remote.clone(),
-                })?);
-                if local_digest == remote_digest {
-                    fs::remove_file(&remote).context(RemoveFile {
+                let local_digest =
+                    md5::compute(fs::read(&local).map_err(|source| Error::ReadFile {
+                        path: local.clone(),
+                        source,
+                    })?);
+                let remote_digest =
+                    md5::compute(fs::read(&remote).map_err(|source| Error::ReadFile {
                         path: remote.clone(),
+                        source,
+                    })?);
+                if local_digest == remote_digest {
+                    fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
+                        path: remote.clone(),
+                        source,
                     })?
                 } else {
                     update_file(
@@ -250,27 +255,36 @@ fn mk_file_on_action(
         match source_file.metadata {
             SourceFileMetadata::RawFile => {
                 if i == index_latest {
-                    fs::copy(&src_full_path, &dest_full_path).context(CopyFile {
-                        src: src_full_path.clone(),
-                        dst: dest_full_path.clone(),
+                    fs::copy(&src_full_path, &dest_full_path).map_err(|source| {
+                        Error::CopyFile {
+                            src: src_full_path.clone(),
+                            dst: dest_full_path.clone(),
+                            source,
+                        }
                     })?;
                 } else {
-                    input_content = fs::read(&src_full_path).context(ReadFile {
+                    input_content = fs::read(&src_full_path).map_err(|source| Error::ReadFile {
                         path: src_full_path.clone(),
+                        source,
                     })?;
                 }
             }
             SourceFileMetadata::RenderableFile { .. } => {
                 if i == 0 && dest_full_path_target.exists() {
-                    input_content = fs::read(&dest_full_path_target).context(ReadFile {
-                        path: dest_full_path_target.clone(),
-                    })?;
+                    input_content =
+                        fs::read(&dest_full_path_target).map_err(|source| Error::ReadFile {
+                            path: dest_full_path_target.clone(),
+                            source,
+                        })?;
                 }
                 variables.insert("input_content", String::from_utf8_lossy(&input_content))?;
                 render_template(handlebars, &variables, &src_full_path, &mut input_content)?;
                 if i == index_latest {
-                    fs::write(&dest_full_path, &input_content).context(crate::WriteFile {
-                        path: dest_full_path.clone(),
+                    fs::write(&dest_full_path, &input_content).map_err(|source| {
+                        Error::WriteFile {
+                            path: dest_full_path.clone(),
+                            source,
+                        }
                     })?;
                 }
             }
@@ -300,17 +314,19 @@ fn render_template(
                 handlebars::TemplateRenderError::IOError(err, msg)
             }
         })
-        .context(crate::Handlebars {
+        .map_err(|source| Error::Handlebars {
             when: format!("load content of template '{:?}'", &src_full_path),
-            template: src_name.clone(),
+            template: src_name.to_string(),
+            source,
         })?;
     output.clear(); //vec![u8] writer appends content if not clear
     handlebars
         .render_to_write(&src_name, &variables, output)
         .map_err(handlebars::TemplateRenderError::from)
-        .context(crate::Handlebars {
-            when: "render template into buffer",
-            template: src_name.clone(),
+        .map_err(|source| Error::Handlebars {
+            when: "render template into buffer".into(),
+            template: src_name.to_string(),
+            source,
         })?;
     Ok(())
 }
@@ -323,9 +339,17 @@ where
     let src = src.as_ref();
     let dst = dst.as_ref();
     let perms = fs::metadata(&src)
-        .context(crate::CopyFilePermission { src, dst })?
+        .map_err(|source| Error::CopyFilePermission {
+            src: src.into(),
+            dst: dst.into(),
+            source,
+        })?
         .permissions();
-    fs::set_permissions(&dst, perms).context(crate::CopyFilePermission { src, dst })?;
+    fs::set_permissions(&dst, perms).map_err(|source| Error::CopyFilePermission {
+        src: src.into(),
+        dst: dst.into(),
+        source,
+    })?;
     Ok(())
 }
 
@@ -348,15 +372,22 @@ where
                 mode = UpdateMode::Ask;
             }
             UpdateMode::Override => {
-                fs::remove_file(&local).context(RemoveFile { path: local })?;
-                fs::rename(&remote, &local).context(RenameFile {
-                    src: remote,
-                    dst: local,
+                fs::remove_file(&local).map_err(|source| Error::RemoveFile {
+                    path: local.into(),
+                    source,
+                })?;
+                fs::rename(&remote, &local).map_err(|source| Error::RenameFile {
+                    src: remote.into(),
+                    dst: local.into(),
+                    source,
                 })?;
                 break;
             }
             UpdateMode::Keep => {
-                fs::remove_file(&remote).context(RemoveFile { path: remote })?;
+                fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
+                    path: remote.into(),
+                    source,
+                })?;
                 break;
             }
             UpdateMode::UpdateAsRemote => {
@@ -367,19 +398,24 @@ where
             UpdateMode::CurrentAsLocal => {
                 // backup existing as .LOCAL
                 let new_local = files::add_suffix(&local, ".LOCAL")?;
-                fs::rename(&local, &new_local).context(RenameFile {
-                    src: local,
+                fs::rename(&local, &new_local).map_err(|source| Error::RenameFile {
+                    src: local.into(),
                     dst: new_local,
+                    source,
                 })?;
-                fs::rename(&remote, &local).context(RenameFile {
-                    src: remote,
-                    dst: local,
+                fs::rename(&remote, &local).map_err(|source| Error::RenameFile {
+                    src: remote.into(),
+                    dst: local.into(),
+                    source,
                 })?;
                 break;
             }
             UpdateMode::Merge => match merge_file(src, local, remote) {
                 Ok(_) => {
-                    fs::remove_file(&remote).context(RemoveFile { path: remote })?;
+                    fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
+                        path: remote.into(),
+                        source,
+                    })?;
                     break;
                 }
                 Err(_) => mode = UpdateMode::Ask,
@@ -396,11 +432,15 @@ where
     let remote = remote.as_ref();
     let local = local.as_ref();
     let src = src.as_ref();
-    let merge_cmd = git::find_cmd_tool("merge").context(GitFindConfig { key: "merge" })?;
+    let merge_cmd = git::find_cmd_tool("merge").map_err(|source| Error::GitFindConfig {
+        key: "merge".into(),
+        source,
+    })?;
     let new_local = files::add_suffix(&local, ".LOCAL")?;
-    fs::copy(&local, &new_local).context(CopyFile {
-        src: local,
+    fs::copy(&local, &new_local).map_err(|source| Error::CopyFile {
+        src: local.into(),
         dst: new_local.clone(),
+        source,
     })?;
     let cmd_all = merge_cmd
         .replace("$REMOTE", &remote.to_string_lossy())
@@ -414,8 +454,14 @@ where
         // .stdin(std::process::Stdio::piped())
         // .stdout(std::process::Stdio::piped())
         .output()
-        .context(RunCommand { cmd: cmd_all })?;
-    fs::remove_file(&new_local).context(RemoveFile { path: new_local })?;
+        .map_err(|source| Error::RunCommand {
+            cmd: cmd_all,
+            source,
+        })?;
+    fs::remove_file(&new_local).map_err(|source| Error::RemoveFile {
+        path: new_local,
+        source,
+    })?;
     Ok(())
 }
 
@@ -424,9 +470,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
     let rendered_relative = src
         .relative
         .to_str()
-        .ok_or(Error::Any {
-            msg: "failed to stringify path".to_owned(),
-        })
+        .ok_or(Error::Unknown("failed to stringify path".to_owned()))
         .and_then(|s| {
             let p = if !s.contains('{') {
                 s.to_owned()
@@ -434,9 +478,10 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
                 let handlebars = new_hbs();
                 handlebars
                     .render_template(&s, variables)
-                    .context(crate::Handlebars {
+                    .map_err(|source| Error::Handlebars {
                         when: format!("define path for '{:?}'", src),
-                        template: s,
+                        template: s.into(),
+                        source,
                     })?
             };
             Ok(PathBuf::from(p))

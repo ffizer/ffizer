@@ -1,6 +1,5 @@
 use crate::error::*;
 use run_script::ScriptOptions;
-use snafu::ResultExt;
 
 #[derive(Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
@@ -14,8 +13,9 @@ impl Script {
         if let Some(cmd) = &self.cmd {
             let options = ScriptOptions::new();
             let args = vec![];
-            run_script::run(&cmd, &args, &options).context(ScriptError {
+            run_script::run(&cmd, &args, &options).map_err(|source| Error::ScriptError {
                 script: cmd.clone(),
+                source,
             })?;
         }
         Ok(())

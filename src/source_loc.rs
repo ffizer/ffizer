@@ -1,8 +1,7 @@
+use crate::error::*;
 use crate::git;
 use crate::source_uri::SourceUri;
-use crate::Result;
 use slog::{warn, Logger};
-use snafu::ResultExt;
 use std::fmt;
 use std::fs;
 use std::path::PathBuf;
@@ -35,7 +34,7 @@ impl SourceLoc {
 
     pub fn as_local_path(&self) -> Result<PathBuf> {
         let mut path = match self.uri.host {
-            None => self.uri.path.canonicalize().context(crate::error::Io {})?,
+            None => self.uri.path.canonicalize()?,
             Some(_) => self.remote_as_local()?,
         };
         if let Some(f) = &self.subfolder {
@@ -64,8 +63,10 @@ impl SourceLoc {
             if let Err(v) = git::retrieve(logger, &remote_path, &self.uri.raw, &self.rev) {
                 warn!(logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
                 if remote_path.exists() {
-                    fs::remove_dir_all(&remote_path)
-                        .context(crate::RemoveFolder { path: remote_path })?;
+                    fs::remove_dir_all(&remote_path).map_err(|source| Error::RemoveFolder {
+                        path: remote_path,
+                        source,
+                    })?;
                 }
                 return Err(v);
             }

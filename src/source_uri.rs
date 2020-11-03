@@ -1,7 +1,6 @@
-use crate::Result;
+use crate::error::*;
 use regex::Regex;
 use serde_plain::derive_deserialize_from_str;
-use snafu::ResultExt;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -24,18 +23,20 @@ impl FromStr for SourceUri {
     fn from_str(s: &str) -> Result<Self> {
         let url_re = Regex::new(
             r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$",
-        ).context(crate::ParseGitUri{value: s.to_owned()})?;
+        ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
         let url_re2 = Regex::new(
             r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
-        ).context(crate::ParseGitUri{value: s.to_owned()})?;
+        ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
         let git_re =
             Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")
-                .context(crate::ParseGitUri {
+                .map_err(|source| Error::ParseGitUri {
                     value: s.to_owned(),
+                    source,
                 })?;
         let git_re2 = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")
-            .context(crate::ParseGitUri {
+            .map_err(|source| Error::ParseGitUri {
                 value: s.to_owned(),
+                source,
             })?;
         git_re
             .captures(s)
@@ -54,9 +55,7 @@ impl FromStr for SourceUri {
                     host: None,
                 })
             })
-            .ok_or(crate::Error::Any {
-                msg: "failed to parse source uri".to_owned(),
-            })
+            .ok_or(Error::Unknown("failed to parse source uri".to_owned()))
     }
 }
 

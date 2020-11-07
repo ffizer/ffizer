@@ -46,13 +46,7 @@ impl SourceLoc {
     // the remote_as_local ignore subfolder
     fn remote_as_local(&self) -> Result<PathBuf> {
         let cache_uri = Self::find_remote_cache_folder()?
-            .join(
-                &self
-                    .uri
-                    .host
-                    .clone()
-                    .unwrap_or_else(|| "no_host".to_owned()),
-            )
+            .join(&self.uri.host.as_deref().unwrap_or("no_host"))
             .join(&self.uri.path)
             .join(&self.rev);
         Ok(cache_uri)

@@ -79,8 +79,7 @@ where
         .follow_links(false)
         .into_iter()
         .filter_entry(|e| {
-            e.clone()
-                .into_path()
+            e.path()
                 .strip_prefix(base)
                 .expect("scanned child path to be under base")
                 .to_str()

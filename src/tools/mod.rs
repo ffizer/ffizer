@@ -70,10 +70,8 @@ impl Sample {
                     .to_string_lossy()
                     .to_string();
                 let expected = path.clone();
-                let mut existing = path.clone();
-                existing.set_extension("existing");
-                let mut args_file = path.clone();
-                args_file.set_extension("cfg.yaml");
+                let existing = path.with_extension("existing");
+                let args_file = path.with_extension("cfg.yaml");
                 let destination = tmp_dir.path().join(&name).to_path_buf();
                 let args = read_args(&template_path, destination, args_file)?;
                 out.push(Sample {

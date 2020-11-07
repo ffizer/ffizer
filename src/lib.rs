@@ -357,7 +357,7 @@ fn update_file<P>(src: P, local: P, remote: P, mode_init: &UpdateMode) -> Result
 where
     P: AsRef<std::path::Path>,
 {
-    let mut mode = mode_init.clone();
+    let mut mode = mode_init.to_owned();
     let remote = remote.as_ref();
     let local = local.as_ref();
     let src = src.as_ref();

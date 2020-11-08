@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="template_in_5min.html"><strong aria-hidden="true">2.1.</strong> 5 minutes tutorial</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.2.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.3.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.4.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.5.</strong> Built-in Functions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -184,9 +184,7 @@
 <ul>
 <li><a href="#install">Install</a>
 <ul>
-<li><a href="#via-homebrew">via homebrew</a></li>
-<li><a href="#via-snap">via snap</a></li>
-<li><a href="#via-github-releases">via github releases</a></li>
+<li><a href="#via-homebrew-macos--linux">via homebrew (MacOs &amp; Linux)</a></li>
 <li><a href="#via-cargo">via cargo</a></li>
 </ul>
 </li>
@@ -199,7 +197,7 @@
 <li><a href="#authoring-a-template">Authoring a template</a></li>
 </ul>
 </li>
-<li><a href="#templates">Templates</a></li>
+<li><a href="#few-templates">Few templates</a></li>
 <li><a href="#build">Build</a></li>
 </ul>
 <h2><a class="header" href="#features" id="features">Features</a></h2>
@@ -222,7 +220,7 @@
 <ul>
 <li>Can be used for any file &amp; folder generation (no specialization to one ecosystem).</li>
 <li>Can start as simple as a folder to copy &quot;as is&quot;.</li>
-<li>Can use the [Handlebars] template syntax for file content, extended with functions:
+<li>Can use the <a href="https://handlebarsjs.com/guide/">Handlebars</a> template syntax for file content, extended with functions:
 <ul>
 <li>To transform strings (toUpperCase, toLowerCase, Capitalize,...)</li>
 <li>To retrieve content via http get (like <code>.gitignore</code> from <a href="https://gitignore.io"><code>gitignore.io</code></a>, license from spdx)</li>
@@ -254,24 +252,19 @@
 <h3><a class="header" href="#install" id="install">Install</a></h3>
 <pre><code class="language-sh">curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | bash
 </code></pre>
-<h4><a class="header" href="#via-homebrew" id="via-homebrew">via homebrew</a></h4>
+<p>Or download the binary for your platform from <a href="https://github.com/ffizer/ffizer/releases">github releases</a>, then un-archive it and place it your PATH.</p>
+<h4><a class="header" href="#via-homebrew-macos--linux" id="via-homebrew-macos--linux">via homebrew (MacOs &amp; Linux)</a></h4>
 <pre><code class="language-sh">brew tap ffizer/ffizer
 brew install ffizer-bin
 ffizer upgrade
 </code></pre>
-<h4><a class="header" href="#via-snap" id="via-snap">via snap</a></h4>
-<pre><code class="language-sh"># experimental, feedback welcome
-sudo snap install ffizer --edge
-</code></pre>
-<h4><a class="header" href="#via-github-releases" id="via-github-releases">via github releases</a></h4>
-<p>Download the binary for your platform from <a href="https://github.com/ffizer/ffizer/releases">github releases</a>, then un-archive it and place it your PATH.</p>
 <h4><a class="header" href="#via-cargo" id="via-cargo">via cargo</a></h4>
 <pre><code class="language-sh">cargo install ffizer --force --features cli
 </code></pre>
 <h3><a class="header" href="#run" id="run">Run</a></h3>
 <pre><code class="language-txt">➜  ffizer --help
 
-ffizer 2.0.1-dev
+ffizer 2.1.0
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)
@@ -285,10 +278,12 @@ FLAGS:
     -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
 
 SUBCOMMANDS:
-    apply      Apply a template into a target directory
-    help       Prints this message or the help of the given subcommand(s)
-    inspect    Inspect configuration, caches,... (wip)
-    upgrade    Self upgrade ffizer executable
+    apply               Apply a template into a target directory
+    help                Prints this message or the help of the given subcommand(s)
+    inspect             Inspect configuration, caches,... (wip)
+    show-json-schema    Show the json schema of the .ffizer.yaml files
+    test-samples        test a template against its samples
+    upgrade             Self upgrade ffizer executable
 </code></pre>
 <h4><a class="header" href="#self-upgrade-the-executable" id="self-upgrade-the-executable">Self upgrade the executable</a></h4>
 <pre><code class="language-sh">➜  ffizer upgrade
@@ -296,7 +291,7 @@ SUBCOMMANDS:
 <h4><a class="header" href="#apply-a-template-to-create-or-update" id="apply-a-template-to-create-or-update">Apply a template (to create or update)</a></h4>
 <pre><code class="language-sh">➜  ffizer apply --help
 
-ffizer-apply 2.0.1-dev
+ffizer-apply 2.1.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
@@ -355,10 +350,11 @@ Plan to execute
 </li>
 </ul>
 <h3><a class="header" href="#authoring-a-template" id="authoring-a-template">Authoring a template</a></h3>
-<p>see <a href="https://ffizer.github.io/ffizer/book/template_authoring.html">Template Authoring - ffizer</a> <em>WIP</em></p>
-<h2><a class="header" href="#templates" id="templates">Templates</a></h2>
+<p>Start with <a href="https://ffizer.github.io/ffizer/book/authoring_tutorial.html">Template Authoring Tutorial</a></p>
+<h2><a class="header" href="#few-templates" id="few-templates">Few templates</a></h2>
 <ul>
-<li>Any git repositories (in this case ffizer is like <code>git clone ...</code>)</li>
+<li>Any git repositories (in this case ffizer is like <code>git clone ... &amp;&amp; cd ... &amp;&amp; rm -Rf .git</code>)</li>
+<li>Any local folder (in this case ffizer is like <code>cp -R ... ...</code>)</li>
 <li>Parametrized (with variables) templates:
 <ul>
 <li><a href="https://github.com/ffizer/templates_default"><code>ffizer/templates_default</code>: the default collections of templates for ffizer</a> (WIP)</li>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>5 minutes tutorial - ffizer</title>
+        <title>IDE/Editor setup&#x27; suggestions - ffizer</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="template_in_5min.html" class="active"><strong aria-hidden="true">2.1.</strong> 5 minutes tutorial</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.2.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.3.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.4.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.5.</strong> Built-in Functions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html" class="active"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,72 +163,50 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#a-5-minutes-tutorial" id="a-5-minutes-tutorial">A 5 minutes tutorial</a></h1>
-<ol>
-<li>
-<p>create the folder with the template</p>
-<pre><code class="language-sh">mkdir my-template
-cd my-template
-</code></pre>
-</li>
-<li>
-<p>add file that will be copied as is</p>
-<pre><code class="language-sh">cat &gt; file0.txt &lt;&lt;EOF
-I am file0.
-EOF
-</code></pre>
-</li>
-<li>
-<p>add a template file that will be &quot;rendered&quot; by the handlebars engine</p>
+                        <h1><a class="header" href="#ideeditor-setup-suggestions" id="ideeditor-setup-suggestions">IDE/Editor setup' suggestions</a></h1>
+<p>Use your favorite IDE/Editor.</p>
+<h2><a class="header" href="#editing-ffizeryaml" id="editing-ffizeryaml">Editing <code>.ffizer.yaml</code></a></h2>
 <ul>
-<li>the file should have the <strong>.ffizer.hbs</strong> extension,</li>
-<li>the extension .ffizer.hbs is removed from the generated filename</li>
-<li><a href="https://handlebarsjs.com/">Handlebars templating language</a></li>
-</ul>
-<pre><code class="language-sh">cat &gt; file1.txt.ffizer.hbs &lt;&lt;EOF
-I am file1.txt of {{ project }}.
-EOF
-</code></pre>
+<li>
+<p>add support for yaml files</p>
 </li>
 <li>
-<p>add a ffizer configuration file (<strong>.ffizer.yaml</strong>)</p>
-<ul>
-<li>to list variables</li>
-<li>to list pattern to ignore</li>
-</ul>
-<pre><code class="language-yaml">variables:
-  - name: project
-    default_value: my-project
-
-ignores:
-  - .git # exclude .git of the template host
-</code></pre>
+<p>if possible configure to use <a href="https://www.schemastore.org/json/">schemastore json</a>
+to validate, to provide &quot;auto completion&quot; and tool tips</p>
 </li>
 <li>
-<p>add a file with a name that will be &quot;rendered&quot; by the handlebars engine</p>
-<ul>
-<li>the file should have {{ variable }},</li>
-<li><a href="https://handlebarsjs.com/">Handlebars templating language</a></li>
-</ul>
-<pre><code class="language-sh">cat &gt; '{{ project }}.txt' &lt;&lt;EOF
-I am a fixed content file with rendered file name.
-EOF
+<p>if your yaml plugin is not compatible with schemastore but it accepts json schema
+to validate yaml you can configure it to use the online schema</p>
+<pre><code class="language-json">  &quot;yaml.schemas&quot;: {
+    ...
+    &quot;https://ffizer.github.io/ffizer/ffizer.schema.json&quot;: [&quot;.ffizer.yaml&quot;],
+  },
+</code></pre>
+<p>or to use a local file that can be generated by</p>
+<pre><code class="language-sh">ffizer show-json-schema
 </code></pre>
 </li>
-</ol>
+</ul>
+<p>By example, for Visual Studio Code, you can use the following extension/plugin:</p>
+<pre><code class="language-yaml">Name: YAML
+Id: redhat.vscode-yaml
+Description: YAML Language Support by Red Hat, with built-in Kubernetes syntax support
+Publisher: redhat
+VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yaml
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="template_authoring.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="builtin_functions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="template_configuration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="changelog.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -240,13 +218,13 @@ EOF
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="template_authoring.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="builtin_functions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="template_configuration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="changelog.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

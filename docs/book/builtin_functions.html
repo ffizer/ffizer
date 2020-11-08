@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="template_in_5min.html"><strong aria-hidden="true">2.1.</strong> 5 minutes tutorial</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.2.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.3.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.4.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html" class="active"><strong aria-hidden="true">2.5.</strong> Built-in Functions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html" class="active"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -165,38 +165,49 @@
                     <main>
                         <h1><a class="header" href="#template-helpers--functions" id="template-helpers--functions">Template Helpers / Functions</a></h1>
 <p>Helpers extend the template to generate or to transform content.</p>
-<p>The helpers from <a href="https://crates.io/crates/handlebars_misc_helpers">handlebars_misc_helpers</a> are included. But if you need more helpers, ask via an issue or a PR.</p>
+<p><strong>The helpers from <a href="https://crates.io/crates/handlebars_misc_helpers">handlebars_misc_helpers</a> are included. This page is a copy of <a href="https://github.com/davidB/handlebars_misc_helpers/blob/master/README.md">handlebars_misc_helpers/README.md at master · davidB/handlebars_misc_helpers</a>, and it can be can be out-of-date.</strong></p>
+<p>Few helpers are included, but if you need more helpers, ask via an issue or a PR.</p>
 <p>To use an helper:</p>
-<pre><code class="language-handlebars">{{ helper_name argument}}
+<pre><code class="language-handlebars">// arguments are space separated
+{{ helper_name arguments}}
 </code></pre>
 <p>To chain helpers, use parenthesis:</p>
 <pre><code class="language-handlebars">{{ to_upper_case (to_singular &quot;Hello foo-bars&quot;) }}
-// -&gt; &quot;BAR&quot;
+// -&gt; BAR
+
+{{ first_non_empty (unquote (json_str_query &quot;package.edition&quot; (read_to_str &quot;Cargo.toml&quot;) format=&quot;toml&quot;)) (env_var &quot;MY_VERSION&quot;) &quot;foo&quot; }}
+// -&gt; 2018
 </code></pre>
 <p>see <a href="https://handlebarsjs.com/">Handlebars templating language</a></p>
 <h2><a class="header" href="#string-transformation" id="string-transformation">String transformation</a></h2>
-<p>for the same input: <code>&quot;Hello foo-bars&quot;</code></p>
-<table><thead><tr><th>helper_name</th><th>example out</th></tr></thead><tbody>
-<tr><td><code>to_lower_case</code></td><td><code>&quot;hello foo-bars&quot;</code></td></tr>
-<tr><td><code>to_upper_case</code></td><td><code>&quot;HELLO FOO-BARS&quot;</code></td></tr>
-<tr><td><code>to_camel_case</code></td><td><code>&quot;helloFooBars&quot;</code></td></tr>
-<tr><td><code>to_pascal_case</code></td><td><code>&quot;HelloFooBars&quot;</code></td></tr>
-<tr><td><code>to_snake_case</code></td><td><code>&quot;hello_foo_bars&quot;</code></td></tr>
-<tr><td><code>to_screaming_snake_case</code></td><td><code>&quot;HELLO_FOO_BARS&quot;</code></td></tr>
-<tr><td><code>to_kebab_case</code></td><td><code>&quot;hello-foo-bars&quot;</code></td></tr>
-<tr><td><code>to_train_case</code></td><td><code>&quot;Hello-Foo-Bars&quot;</code></td></tr>
-<tr><td><code>to_sentence_case</code></td><td><code>&quot;Hello foo bars&quot;</code></td></tr>
-<tr><td><code>to_title_case</code></td><td><code>&quot;Hello Foo Bars&quot;</code></td></tr>
-<tr><td><code>to_class_case</code></td><td><code>&quot;HelloFooBar&quot;</code></td></tr>
-<tr><td><code>to_table_case</code></td><td><code>&quot;hello_foo_bars&quot;</code></td></tr>
-<tr><td><code>to_plural</code></td><td><code>&quot;bars&quot;</code></td></tr>
-<tr><td><code>to_singular</code></td><td><code>&quot;bar&quot;</code></td></tr>
+<table><thead><tr><th>helper signature</th><th>usage sample</th><th>sample out</th></tr></thead><tbody>
+<tr><td><code>replace s:String from:String to:String</code></td><td><code>replace &quot;Hello old&quot; &quot;old&quot; &quot;new&quot;</code></td><td><code>&quot;Hello new&quot;</code></td></tr>
+<tr><td><code>to_lower_case s:String</code></td><td><code>to_lower_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;hello foo-bars&quot;</code></td></tr>
+<tr><td><code>to_upper_case s:String</code></td><td><code>to_upper_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;HELLO FOO-BARS&quot;</code></td></tr>
+<tr><td><code>to_camel_case s:String</code></td><td><code>to_camel_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;helloFooBars&quot;</code></td></tr>
+<tr><td><code>to_pascal_case s:String</code></td><td><code>to_pascal_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;HelloFooBars&quot;</code></td></tr>
+<tr><td><code>to_snake_case s:String</code></td><td><code>to_snake_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;hello_foo_bars&quot;</code></td></tr>
+<tr><td><code>to_screaming_snake_case s:String</code></td><td><code>to_screaming_snake_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;HELLO_FOO_BARS&quot;</code></td></tr>
+<tr><td><code>to_kebab_case s:String</code></td><td><code>to_kebab_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;hello-foo-bars&quot;</code></td></tr>
+<tr><td><code>to_train_case s:String</code></td><td><code>to_train_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;Hello-Foo-Bars&quot;</code></td></tr>
+<tr><td><code>to_sentence_case s:String</code></td><td><code>to_sentence_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;Hello foo&quot; bars</code></td></tr>
+<tr><td><code>to_title_case s:String</code></td><td><code>to_title_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;Hello Foo Bars&quot;</code></td></tr>
+<tr><td><code>to_class_case s:String</code></td><td><code>to_class_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;HelloFooBar&quot;</code></td></tr>
+<tr><td><code>to_table_case s:String</code></td><td><code>to_table_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;hello_foo_bars&quot;</code></td></tr>
+<tr><td><code>to_plural s:String</code></td><td><code>to_plural &quot;Hello foo-bars&quot;</code></td><td><code>&quot;bars&quot;</code></td></tr>
+<tr><td><code>to_singular s:String</code></td><td><code>to_singular &quot;Hello foo-bars&quot;</code></td><td><code>&quot;bar&quot;</code></td></tr>
+<tr><td><code>trim s:String</code></td><td><code>trim &quot; foo &quot;</code></td><td><code>&quot;foo&quot;</code></td></tr>
+<tr><td><code>trim_start s:String</code></td><td><code>trim_start &quot; foo &quot;</code></td><td><code>&quot;foo &quot;</code></td></tr>
+<tr><td><code>trim_end s:String</code></td><td><code>trim_end &quot; foo &quot;</code></td><td><code>&quot; foo&quot;</code></td></tr>
+<tr><td><code>unquote s:String</code></td><td><code>unquote &quot;\&quot;foo\&quot;&quot;</code></td><td><code>&quot;foo&quot;</code></td></tr>
+<tr><td><code>enquote symbol:String s:String</code></td><td><code>enquote &quot;&quot; &quot;foo&quot;</code></td><td><code>&quot;\&quot;foo\&quot;&quot;</code></td></tr>
+<tr><td><code>first_non_empty s:String+</code></td><td><code>first_non_empty &quot;&quot; null &quot;foo&quot; &quot;bar&quot;</code></td><td><code>&quot;foo&quot;</code></td></tr>
 </tbody></table>
 <h2><a class="header" href="#http-content" id="http-content">Http content</a></h2>
 <p>Helper able to render body response from an http request.</p>
-<table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
-<tr><td><code>http_get</code></td><td><code>http_get &quot;http://hello/...&quot;</code></td></tr>
-<tr><td><code>gitignore_io</code></td><td><code>gitignore_io &quot;rust&quot;</code></td></tr>
+<table><thead><tr><th>helper signature</th><th>usage sample</th></tr></thead><tbody>
+<tr><td><code>http_get url:String</code></td><td><code>http_get &quot;http://hello/...&quot;</code></td></tr>
+<tr><td><code>gitignore_io templates:String</code></td><td><code>gitignore_io &quot;rust,visualstudiocode&quot;</code></td></tr>
 </tbody></table>
 <h2><a class="header" href="#path-extraction" id="path-extraction">Path extraction</a></h2>
 <p>Helper able to extract (or transform) path (defined as string).</p>
@@ -206,10 +217,210 @@
 <tr><td>parent</td><td><code>&quot;/hello/bar&quot;</code></td></tr>
 <tr><td>extension</td><td><code>&quot;txt&quot;</code></td></tr>
 </tbody></table>
+<h2><a class="header" href="#file" id="file">File</a></h2>
+<p>Helper to read file content.</p>
+<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<tr><td><code>{{ read_to_str &quot;/foo/bar&quot; }}</code></td><td>content of file <code>/foo/bar</code></td></tr>
+<tr><td><code>{{ read_to_str &quot;file/does/not/exist&quot; }}</code></td><td>empty string</td></tr>
+</tbody></table>
 <h2><a class="header" href="#environment-variable" id="environment-variable">Environment variable</a></h2>
 <p>Helper able to get environment variables.</p>
 <table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
 <tr><td>env_var</td><td><code>env_var &quot;HOME&quot;</code></td></tr>
+</tbody></table>
+<p>Specials environment variables are predefined (some of them come from <a href="https://doc.rust-lang.org/std/env/consts/index.html"><code>std::env::consts</code> - Rust</a>):</p>
+<table>
+    <thead>
+        <tr>
+            <th>variable</th>
+            <th>possible values</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><code>"ARCH"</code></td><td><ul>
+            <li>x86</li>
+            <li>x86_64</li>
+            <li>arm</li>
+            <li>aarch64</li>
+            <li>mips</li>
+            <li>mips64</li>
+            <li>powerpc</li>
+            <li>powerpc64</li>
+            <li>s390x</li>
+            <li>sparc64</li>
+        </ul></td></tr>
+        <tr><td><code>"DLL_EXTENSION"</code></td><td><ul>
+            <li>so</li>
+            <li>dylib</li>
+            <li>dll</li>
+        </ul></td></tr>
+        <tr><td><code>"DLL_PREFIX"</code></td><td><ul>
+            <li>lib</li>
+            <li>"" (an empty string)</li>
+        </ul></td></tr>
+        <tr><td><code>"DLL_SUFFIX"</code></td><td><ul>
+            <li>.so</li>
+            <li>.dylib</li>
+            <li>.dll</li>
+        </ul></td></tr>
+        <tr><td><code>"EXE_EXTENSION"</code></td><td><ul>
+            <li>exe</li>
+            <li>"" (an empty string)</li>
+        </ul></td></tr>
+        <tr><td><code>"EXE_SUFFIX"</code></td><td><ul>
+            <li>.exe</li>
+            <li>.nexe</li>
+            <li>.pexe</li>
+            <li>"" (an empty string)</li>
+        </ul></td></tr>
+        <tr><td><code>"FAMILY"</code></td><td><ul>
+            <li>unix</li>
+            <li>windows</li>
+        </ul></td></tr>
+        <tr><td><code>"OS"</code></td><td><ul>
+            <li>linux</li>
+            <li>macos</li>
+            <li>ios</li>
+            <li>freebsd</li>
+            <li>dragonfly</li>
+            <li>netbsd</li>
+            <li>openbsd</li>
+            <li>solaris</li>
+            <li>android</li>
+            <li>windows</li>
+        </ul></td></tr>
+        <tr>
+          <td><code>"USERNAME"</code></td>
+          <td>try to find the current username, in the order:<ol>
+            <li>environment variable <code>"USERNAME"</code></li>
+            <li>environment variable <code>"username"</code></li>
+            <li>environment variable <code>"USER"</code></li>
+            <li>environment variable <code>"user"</code></li>
+          </ol></td>
+        </tr>
+    </tbody>
+</table>
+<h2><a class="header" href="#json--yaml--toml" id="json--yaml--toml">JSON &amp; YAML &amp; TOML</a></h2>
+<h3><a class="header" href="#helpers" id="helpers">Helpers</a></h3>
+<ul>
+<li><code>json_query query:String data:Json</code>: Helper able to extract information from json using <a href="http://jmespath.org/">JMESPath</a> syntax for <code>query</code>.</li>
+<li><code>json_str_query query:String data:String</code>: Helper able to extract information from json using <a href="http://jmespath.org/">JMESPath</a> syntax for <code>query</code>, data follows the requested <code>format</code>.</li>
+<li><code>json_to_str data:Json</code>: convert a json data into a string following the requested <code>format</code>.</li>
+<li><code>str_to_json data:String</code>: convert(parse) a string into a json following the requested <code>format</code>.</li>
+</ul>
+<p>The optional requested <code>format</code>, is the format of the string with data:</p>
+<ul>
+<li><code>&quot;json&quot;</code> (default if omitted)</li>
+<li><code>&quot;json_pretty&quot;</code> json with indentation,...</li>
+<li><code>&quot;yaml&quot;</code></li>
+<li><code>&quot;toml&quot;</code></li>
+<li><code>&quot;toml_pretty&quot;</code></li>
+</ul>
+<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<tr><td><code>{{ json_query &quot;foo&quot; {} }}</code></td><td>``</td></tr>
+<tr><td><code>{{ json_to_str ( json_query &quot;foo&quot; {&quot;foo&quot;:{&quot;bar&quot;:{&quot;baz&quot;:true}}} ) }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
+<tr><td><code>{{ json_to_str ( json_query &quot;foo&quot; (str_to_json &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; ) ) }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
+<tr><td><code>{{ json_str_query &quot;foo&quot; &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
+<tr><td><code>{{ json_str_query &quot;foo.bar.baz&quot; &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; }}</code></td><td><code>true</code></td></tr>
+<tr><td><code>{{ json_str_query &quot;foo&quot; &quot;foo:\n bar:\n  baz: true\n&quot; format=&quot;yaml&quot;}}</code></td><td><code>bar:\n  baz: true\n</code></td></tr>
+<tr><td><code>{{ json_to_str ( str_to_json &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; format=&quot;json&quot;) format=&quot;yaml&quot;}}</code></td><td><code>foo:\n  bar:\n    baz: true\n</code></td></tr>
+</tbody></table>
+<h3><a class="header" href="#blocks" id="blocks">Blocks</a></h3>
+<table>
+<tr>
+<td><pre><code>{{#from_json format="toml"}}
+{"foo": {"hello":"1.2.3", "bar":{"baz":true} } }
+{{/from_json}}
+</code></pre>
+</td>
+<td><pre><code>[foo]
+hello = "1.2.3"
+<p>[foo.bar]
+baz = true</code></pre></td></p>
+</tr>
+<tr>
+<td><pre><code>{{#to_json format="toml"}}
+[foo]
+bar = { baz = true }
+hello = "1.2.3"
+{{/to_json}}</code></pre>
+</td>
+<td><pre><code>{
+  "foo": {
+    "bar": {
+      "baz": true
+    },
+    "hello": "1.2.3"
+  }
+}</code></pre></td>
+</tr>
+<tr>
+<td><pre><code>{{#from_json format="toml"}}
+{"foo":{"bar":{"baz":true}}}
+{{/from_json}}</code></pre>
+</td>
+<td><pre><code>foo:
+  bar:
+    baz: true</code></pre></td>
+</tr>
+<tr>
+<td><pre><code>{{#to_json format="yaml"}}
+foo:
+    bar:
+        baz: true
+{{/to_json}}</code></pre>
+</td>
+<td><pre><code>{
+  "foo": {
+    "bar": {
+      "baz": true
+    }
+  }
+}</code></pre></td>
+</tr>
+</table>
+<p>Note: YAML &amp; TOML content are used as input and output format for json data. So capabilities are limited to what json support (eg. no date-time type like in TOML).</p>
+<h3><a class="header" href="#edition-via-jsonnet" id="edition-via-jsonnet">Edition via jsonnet</a></h3>
+<p>For more advanced edition of json, you can use jsonnet.</p>
+<blockquote>
+<p>A data templating language for app and tool developers</p>
+</blockquote>
+<ul>
+<li>See the doc of <a href="https://jsonnet.org/learning/tutorial.html">jsonnet</a> for more samples, syntax info,...</li>
+<li>This block can be combined with conversion helper/block for YAML &amp; TOML to provide edition capabilities for those format</li>
+<li>the output should a valid json, except if <code>string_output = false</code> is set as parameter of the block.</li>
+</ul>
+<table>
+<tr>
+<td><pre><code>{{#jsonnet}}
+local v = {"foo":{"bar":{"baz":false}}};
+v {
+  "foo" +: {
+      "bar" +: {
+          "baz2": true
+      }
+  }
+}
+{{/jsonnet}}</code></pre>
+</td>
+<td><pre><code>{
+  "foo": {
+      "bar": {
+          "baz": false,
+          "baz2": true
+      }
+  }
+}</code></pre></td>
+</tr>
+</table>
+<h2><a class="header" href="#assign" id="assign">Assign</a></h2>
+<p>Helper able to assign (to set) a variable to use later in the template.</p>
+<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<tr><td><code>{{ assign &quot;foo&quot; &quot;{}&quot; }}</code></td><td>``</td></tr>
+<tr><td><code>{{ assign &quot;foo&quot; &quot;{}&quot; }}{{ foo }}</code></td><td><code>{}</code></td></tr>
+<tr><td><code>{{ assign &quot;foo&quot; &quot;hello world&quot; }}{{ foo }}</code></td><td><code>hello world</code></td></tr>
+<tr><td><code>{{ assign &quot;foo&quot; {} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
+<tr><td><code>{{ assign &quot;foo&quot; {&quot;bar&quot;: 33} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 </tbody></table>
 
                     </main>
@@ -223,7 +434,7 @@
                         
 
                         
-                            <a rel="next" href="changelog.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="editors_setup.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -241,7 +452,7 @@
                 
 
                 
-                    <a rel="next" href="changelog.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="editors_setup.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

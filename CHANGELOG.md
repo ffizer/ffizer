@@ -11,12 +11,31 @@
 - ✅  update test to reflect change in gitignore.io
 
 ### Changed
+- 🎨  remove some explicit clone
+- ⬆️  upgrade git2_credentials &amp; handlebars_misc_helpers
+- ♻️  change remote test to use `ffizer test-samples`
+- ⬆️  Bump regex from 1.4.1 to 1.4.2
+- ⬆️  Bump serde_yaml from 0.8.13 to 0.8.14
+- ♻️  refactor test to use `test-samples`
+- ⬆️  Bump libc from 0.2.79 to 0.2.80
+- ⬆️  Bump actions/checkout from v1 to v2.3.3
+- ⬆️  updates severals dependencies
 - 🍱  regenerate doc
+
+### Breaking changes
+- 💥  error handling  switch from `snafu` to `thiserror`
 
 ### Removed
 - 🔥  remove credits and bom generation
 
+### Fixed
+- 💚  move data from a test to the right place
+- 🐛  replace the buggy code to &quot;git pull&quot; by the code example from git2.rs
+
 ### Miscellaneous
+- pencil  update the documentation and rewrite the tutorial
+- 🚧  support to include samples inside the template and to use them to test via `ffizer test-sample ...`
+- pencil  pre-publish update book, changelog
 - pencil  pre-publish update book, changelog
 - pencil  add pages into book
 - pencil  update link to templates and help instruction

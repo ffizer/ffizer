@@ -3,10 +3,8 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title></title>
+        <title>How to... - ffizer</title>
         
-        
-        <base href="/">
         
 
 
@@ -97,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html" class="active"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -165,15 +163,83 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#document-not-found-404" id="document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1><a class="header" href="#how-to----omit-in-toc---" id="how-to----omit-in-toc---">How to... <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></li>
+<li><a href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></li>
+<li><a href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></li>
+<li><a href="#how-to-import-a-sibling-template-">How to import a sibling template ?</a></li>
+<li><a href="#how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></li>
+<li><a href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></li>
+<li><a href="#how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></li>
+<li><a href="#how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></li>
+<li><a href="#how-to-test-my-template-">How to test my template ?</a></li>
+<li><a href="#how-to-host-template-on-github-">How to host template on github ?</a></li>
+</ul>
+<h2><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project-" id="how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></h2>
+<p>Define a <code>package_name</code> variable with a sensible value (eg snake case of the project name).</p>
+<pre><code class="language-yaml">variables:
+  - name: project_name
+    default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
+  - name: package_name
+    default_value: &quot;{{ to_snake_case project_name }}&quot;
+</code></pre>
+<p>And use it as name of the folder.</p>
+<pre><code class="language-sh">mkdir 'src/{{ package_name }}`
+</code></pre>
+<h2><a class="header" href="#how-to-display-a-message-after-filesgeneration-" id="how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></h2>
+<p>in <code>.ffizer.yaml</code></p>
+<pre><code class="language-yaml">scripts:
+  - message: |
+      Thanks for using my awesome template.
+</code></pre>
+<h2><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-" id="how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></h2>
+<p>in <code>.ffizer.yaml</code></p>
+<pre><code class="language-yaml">scripts:
+  - cmd: |
+      {{#if (eq (env_var &quot;OS&quot;) &quot;windows&quot;) }}
+      echo Hello {{ who }}&gt; file2.txt
+      del file_to_delete.txt
+      {{else}}
+      echo &quot;Hello {{ who }}&quot; &gt; file2.txt
+      rm file_to_delete.txt
+      {{/if}}
+</code></pre>
+<ul>
+<li>Having several entries under <code>scripts</code> with <code>cmd</code> is allowed.</li>
+<li>Empty <code>cmd</code> after template rendering are ignored.</li>
+<li>Each <code>cmd</code> block is displayed to the user to confirm
+if (s)he accepts to run it or not.</li>
+</ul>
+<h2><a class="header" href="#how-to-import-a-sibling-template-" id="how-to-import-a-sibling-template-">How to import a sibling template ?</a></h2>
+<p>If your git repository host several templates, one template can import a sibling
+template by specifying the absolute value or by using built-in variables</p>
+<pre><code class="language-yaml">imports:
+  - uri: &quot;{{ ffizer_src_uri }}&quot;
+    rev: &quot;{{ ffizer_src_rev }}&quot;
+    subfolder: &quot;template_2&quot;
+</code></pre>
+<h2><a class="header" href="#how-to-update-existing-jsonyamltoml-content-" id="how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></h2>
+<h2><a class="header" href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-" id="how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></h2>
+<h2><a class="header" href="#how-to-made-ignore-files-conditional-" id="how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></h2>
+<h2><a class="header" href="#how-to-include-a-git-folder-as-part-of-the-template-" id="how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></h2>
+<h2><a class="header" href="#how-to-test-my-template-" id="how-to-test-my-template-">How to test my template ?</a></h2>
+<h2><a class="header" href="#how-to-host-template-on-github-" id="how-to-host-template-on-github-">How to host template on github ?</a></h2>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="authoring_tutorial.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
+                        
+                            <a rel="next" href="template_configuration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -183,7 +249,15 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a rel="prev" href="authoring_tutorial.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
+                
+                    <a rel="next" href="template_configuration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

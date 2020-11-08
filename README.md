@@ -24,15 +24,13 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 - [Features](#features)
 - [Usages](#usages)
   - [Install](#install)
-    - [via homebrew](#via-homebrew)
-    - [via snap](#via-snap)
-    - [via github releases](#via-github-releases)
+    - [via homebrew (MacOs & Linux)](#via-homebrew-macos--linux)
     - [via cargo](#via-cargo)
   - [Run](#run)
     - [Self upgrade the executable](#self-upgrade-the-executable)
     - [Apply a template (to create or update)](#apply-a-template-to-create-or-update)
   - [Authoring a template](#authoring-a-template)
-- [Templates](#templates)
+- [Few templates](#few-templates)
 - [Build](#build)
 
 ## Features
@@ -48,7 +46,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 - Templates Authoring
   - Can be used for any file & folder generation (no specialization to one ecosystem).
   - Can start as simple as a folder to copy "as is".
-  - Can use the [Handlebars] template syntax for file content, extended with functions:
+  - Can use the [Handlebars](https://handlebarsjs.com/guide/) template syntax for file content, extended with functions:
     - To transform strings (toUpperCase, toLowerCase, Capitalize,...)
     - To retrieve content via http get (like `.gitignore` from [`gitignore.io`](https://gitignore.io), license from spdx)
     - ...
@@ -75,24 +73,15 @@ A list of alternatives is available on the [wiki](https://github.com/ffizer/ffiz
 curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | bash
 ```
 
-#### via homebrew
+Or download the binary for your platform from [github releases](https://github.com/ffizer/ffizer/releases), then un-archive it and place it your PATH.
+
+#### via homebrew (MacOs & Linux)
 
 ```sh
 brew tap ffizer/ffizer
 brew install ffizer-bin
 ffizer upgrade
 ```
-
-#### via snap
-
-```sh
-# experimental, feedback welcome
-sudo snap install ffizer --edge
-```
-
-#### via github releases
-
-Download the binary for your platform from [github releases](https://github.com/ffizer/ffizer/releases), then un-archive it and place it your PATH.
 
 #### via cargo
 
@@ -105,7 +94,7 @@ cargo install ffizer --force --features cli
 ```txt
 ➜  ffizer --help
 
-ffizer 2.0.1-dev
+ffizer 2.1.0
 https://github.com/ffizer/ffizer
 ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)
@@ -119,10 +108,12 @@ FLAGS:
     -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
 
 SUBCOMMANDS:
-    apply      Apply a template into a target directory
-    help       Prints this message or the help of the given subcommand(s)
-    inspect    Inspect configuration, caches,... (wip)
-    upgrade    Self upgrade ffizer executable
+    apply               Apply a template into a target directory
+    help                Prints this message or the help of the given subcommand(s)
+    inspect             Inspect configuration, caches,... (wip)
+    show-json-schema    Show the json schema of the .ffizer.yaml files
+    test-samples        test a template against its samples
+    upgrade             Self upgrade ffizer executable
 ```
 
 #### Self upgrade the executable
@@ -136,7 +127,7 @@ SUBCOMMANDS:
 ```sh
 ➜  ffizer apply --help
 
-ffizer-apply 2.0.1-dev
+ffizer-apply 2.1.0
 https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
@@ -200,11 +191,12 @@ OPTIONS:
 
 ### Authoring a template
 
-see [Template Authoring - ffizer](https://ffizer.github.io/ffizer/book/template_authoring.html) _WIP_
+Start with [Template Authoring Tutorial](https://ffizer.github.io/ffizer/book/authoring_tutorial.html)
 
-## Templates
+## Few templates
 
-- Any git repositories (in this case ffizer is like `git clone ...`)
+- Any git repositories (in this case ffizer is like `git clone ... && cd ... && rm -Rf .git`)
+- Any local folder (in this case ffizer is like `cp -R ... ...`)
 - Parametrized (with variables) templates:
   - [`ffizer/templates_default`: the default collections of templates for ffizer](https://github.com/ffizer/templates_default) (WIP)
   - [`davidB31 / cg-starter-multi-rust` · GitLab](https://gitlab.com/davidB31/cg-starter-multi-rust) Project template for Multi-Bot in Rust on CodinGame.

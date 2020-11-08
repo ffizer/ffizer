@@ -3,3 +3,13 @@ authors = ["David Bernard"]
 multilingual = false
 src = "src"
 title = "ffizer"
+
+[rust]
+edition = "2018"
+
+[build]
+create-missing = false
+
+[preprocessor.index]
+
+[preprocessor.links]

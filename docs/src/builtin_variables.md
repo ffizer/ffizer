@@ -1,6 +1,7 @@
 # The predefined variables
 
-Some variables are predefined and they can be used into `.ffizer.yaml` into the `ignores` section or `default_value` via handlebars expression.
+Some variables are predefined and they can be used into `.ffizer.yaml` into by example
+the `imports` section or `default_value` via handlebars expression.
 
 - `ffizer_dst_folder` contains the value from cli arg `--destination`
 - `ffizer_src_rev` contains the value from cli arg `--rev`

@@ -1,6 +1,6 @@
 [package]
 name = "ffizer"
-version = "2.0.1-dev"
+version = "2.1.0-dev"
 authors = ["David Bernard"]
 description = """ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)"""
@@ -10,7 +10,7 @@ keywords = ["project", "generator", "template", "skeleton"]
 categories = ["command-line-utilities", "development-tools", "template-engine"]
 repository = "https://github.com/ffizer/ffizer"
 homepage = "https://github.com/ffizer/ffizer"
-exclude = ["/azure-pipelines.yml", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
+exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
 edition = "2018"
 
 [dependencies]

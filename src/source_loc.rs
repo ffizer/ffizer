@@ -34,7 +34,8 @@ impl SourceLoc {
 
     pub fn as_local_path(&self) -> Result<PathBuf> {
         let mut path = match self.uri.host {
-            None => self.uri.path.canonicalize()?,
+            None => self.uri.path.canonicalize()
+                .map_err(|source| Error::CanonicalizePath{path: self.uri.path.clone(), source})?,
             Some(_) => self.remote_as_local()?,
         };
         if let Some(f) = &self.subfolder {

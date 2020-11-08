@@ -31,6 +31,11 @@ pub enum Error {
     #[error("try to find git config '{key:?}'")]
     GitFindConfig { key: String, source: git2::Error },
 
+    #[error("canonicalize {path:?}")]
+    CanonicalizePath {
+        path: PathBuf,
+        source: std::io::Error,
+    },
     #[error("create folder {path:?}")]
     CreateFolder {
         path: PathBuf,

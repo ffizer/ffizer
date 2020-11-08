@@ -3,6 +3,7 @@ use regex::Regex;
 use serde_plain::derive_deserialize_from_str;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::iter::Iterator;
 
 // create my own URI because didn't found acceptable solution
 // - http = "0.1.13" failed to parse "git@github.com:ffizer/ffizer.git"
@@ -51,11 +52,23 @@ impl FromStr for SourceUri {
             .or_else(|| {
                 Some(SourceUri {
                     raw: s.to_owned(),
-                    path: PathBuf::from(s.to_owned()),
+                    path: PathBuf::from(change_local_path_sep(s)),
                     host: None,
                 })
             })
             .ok_or(Error::Unknown("failed to parse source uri".to_owned()))
+    }
+}
+
+//HACK to support Path -> string -> Path
+fn change_local_path_sep(s: &str) -> String {
+    if cfg!(windows) {
+        // canonicalize on windows return UNC path,
+        // that can cause probleme when converted into string then back to Path
+        // see https://github.com/rust-lang/rust/issues/42869
+        s.replace("/", "\\").replace("\\\\?\\", "")
+    } else {
+        s.replace("\\", "/")
     }
 }
 

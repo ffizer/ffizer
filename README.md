@@ -1,4 +1,4 @@
-# ffizer <!-- omit in toc -->
+# ![ffizer](https://raw.githubusercontent.com/ffizer/ffizer/master/docs/src/images/logo.svg?raw=true) <!-- omit in toc -->
 
 <!-- copy badges from:
 - [`repostatus.org`](https://www.repostatus.org/#active)

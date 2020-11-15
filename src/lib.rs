@@ -21,6 +21,7 @@ mod variables;
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
 pub use crate::source_loc::SourceLoc;
+pub use crate::source_uri::SourceUri;
 
 use crate::cfg::{render_composite, TemplateComposite};
 use crate::error::*;

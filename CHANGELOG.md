@@ -3,6 +3,17 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+### Changed
+- 🍱  introduce logo
+- ⬆️  Bump actions/checkout from v2.3.3 to v2.3.4
+- ⬆️  Bump thiserror from 1.0.21 to 1.0.22
+
+### Miscellaneous
+- 🚧  (cargo-release) start next development iteration 2.1.1-dev
+
+<a name="2.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.1.0
+
 ### Added
 - ✨  cli can show the json schema the of the `.ffizer.yaml`
 - ✨  (cli) allow to specify value of variables from cli
@@ -29,10 +40,14 @@
 - 🔥  remove credits and bom generation
 
 ### Fixed
+- 🐛  prevent githb-page to use jekill and failed
+- 🐛  fix a bug on windows (due to UNC path conversion)
 - 💚  move data from a test to the right place
 - 🐛  replace the buggy code to &quot;git pull&quot; by the code example from git2.rs
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 2.1.0
+- pencil  pre-publish update book, changelog
 - pencil  update the documentation and rewrite the tutorial
 - 🚧  support to include samples inside the template and to use them to test via `ffizer test-sample ...`
 - pencil  pre-publish update book, changelog

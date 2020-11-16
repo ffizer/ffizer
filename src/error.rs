@@ -3,6 +3,7 @@
 // - [Error Handling - A Gentle Introduction to Rust](https://stevedonovan.github.io/rust-gentle-intro/6-error-handling.html)
 // - [snafu::guide::comparison::failure - Rust](https://docs.rs/snafu/0.4.3/snafu/guide/comparison/failure/index.html)
 // - [Error Handling in Rust - Andrew Gallant's Blog](https://blog.burntsushi.net/rust-error-handling/)
+// use std::backtrace::Backtrace;
 use std::path::PathBuf;
 use thiserror::Error;
 
@@ -115,6 +116,9 @@ pub enum Error {
     #[error("test samples failed")]
     TestSamplesFailed {},
 
+    #[error("failed to parse value '{value}' for variable '{name}'")]
+    ReadVariable { name: String, value: String },
+
     #[error(transparent)]
     Io {
         #[from]
@@ -127,9 +131,11 @@ pub enum Error {
         source: handlebars::TemplateRenderError,
     },
     #[error(transparent)]
+    // #[error("fail to process yaml")]
     SerdeYaml {
         #[from]
         source: serde_yaml::Error,
+        // backtrace: Backtrace,
     },
     #[error("fail to process script '{script}'")]
     ScriptError {

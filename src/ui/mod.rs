@@ -129,7 +129,13 @@ pub fn ask_variables(
         if let Some(idx) = resp.idx {
             variables.insert(format!("{}__idx", name), idx)?;
         }
-        variables.insert(name, Variables::value_from_str(&resp.value)?)?;
+        variables.insert(
+            name.clone(),
+            Variables::value_from_str(&resp.value).map_err(|_source| Error::ReadVariable {
+                name,
+                value: resp.value.clone(),
+            })?,
+        )?;
     }
     Ok(variables)
 }

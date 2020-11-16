@@ -3,7 +3,6 @@ use regex::Regex;
 use serde_plain::derive_deserialize_from_str;
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::iter::Iterator;
 
 // create my own URI because didn't found acceptable solution
 // - http = "0.1.13" failed to parse "git@github.com:ffizer/ffizer.git"

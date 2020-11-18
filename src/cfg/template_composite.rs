@@ -128,15 +128,17 @@ fn deep_download(
     if !templates.contains_key(src) {
         let template_base_path = &src.download(&ctx.logger, offline)?;
         // update cfg with variables defined by user
-        let mut template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
+        let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
         // update cfg with variables defined by cli (use to update default_value)
         let mut variables_children = variables.clone();
         variables_children.insert("ffizer_src_uri", src.uri.raw.clone())?;
         variables_children.insert("ffizer_src_rev", src.rev.clone())?;
         //variables_children.insert("ffizer_src_subfolder".to_owned(), src.subfolder.clone());
-        template_cfg = render_cfg(&ctx, &template_cfg, &variables_children, false)?;
-        let children = template_cfg.find_sourcelocs()?;
-        templates.insert(src.clone(), template_cfg);
+        let template_cfg_for_imports =
+            render_imports_only(&ctx, &template_cfg, &variables_children, false)?;
+        let children = template_cfg_for_imports.find_sourcelocs()?;
+        //WARN: Do insert a rendered templates because the value of are not yet defined
+        templates.insert(src.clone(), template_cfg_for_imports);
         for child in children {
             deep_download(ctx, &variables_children, offline, &child, templates)?;
         }
@@ -177,7 +179,7 @@ pub(crate) fn render_composite(
     template_composite.transforms_values(&render)
 }
 
-pub(crate) fn render_cfg(
+fn render_imports_only(
     ctx: &Ctx,
     template_cfg: &TemplateCfg,
     variables: &Variables,
@@ -196,5 +198,15 @@ pub(crate) fn render_cfg(
             }
         }
     };
-    template_cfg.transforms_values(&render)
+    let variables = template_cfg.variables.clone();
+    let ignores = template_cfg.ignores.clone();
+    let imports = template_cfg.imports.transforms_values(&render)?;
+    let scripts = template_cfg.scripts.clone();
+    Ok(TemplateCfg {
+        variables,
+        ignores,
+        imports,
+        scripts,
+        use_template_dir: template_cfg.use_template_dir,
+    })
 }

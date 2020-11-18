@@ -820,4 +820,128 @@ mod tests {
     //     update_file(&src_path, &local_path, &remote_path, &UpdateMode::ShowDiff)
     //         .expect("update without error");
     // }
+
+    #[test]
+    fn test_hbs_expression() {
+        let mut handlebars = new_hbs();
+        let variables = new_variables_for_test();
+        assert_eq!(
+            handlebars.render_template("myprj", &variables).unwrap(),
+            "myprj"
+        );
+        assert_eq!(
+            handlebars.render_template("{{prj}}", &variables).unwrap(),
+            "myprj"
+        );
+        // assert_eq!(
+        //     handlebars
+        //         .render_template("{{\"myprj\"}}", &variables)
+        //         .unwrap(),
+        //     "myprj"
+        // );
+        // assert_eq!(
+        //     handlebars
+        //         .render_template("{{'myprj'}}", &variables)
+        //         .unwrap(),
+        //     "myprj"
+        // );
+        assert_eq!(
+            handlebars
+                .render_template("{{#if prj}}v1{{/if}}", &variables)
+                .unwrap(),
+            "v1"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{#unless prj}}v1{{/unless}}", &variables)
+                .unwrap(),
+            ""
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{#if (eq prj \"myprj\")}}v1{{/if}}{{prj}}", &variables)
+                .unwrap(),
+            "v1myprj"
+        );
+        assert_eq!(
+            handlebars
+                .render_template(
+                    "{{#unless (eq prj \"myprj\")}}v1{{/unless}}{{prj}}",
+                    &variables
+                )
+                .unwrap(),
+            "myprj"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{#if (eq prj \"foo\")}}v1{{/if}}{{prj}}", &variables)
+                .unwrap(),
+            "myprj"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{#if (ne prj \"foo\")}}v1{{/if}}{{prj}}", &variables)
+                .unwrap(),
+            "v1myprj"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{#if (not (eq prj \"foo\"))}}v1{{/if}}{{prj}}", &variables)
+                .unwrap(),
+            "v1myprj"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{eq prj \"foo\"}}", &variables)
+                .unwrap(),
+            "false"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{ne prj \"foo\"}}", &variables)
+                .unwrap(),
+            "true"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{not (eq prj \"foo\")}}", &variables)
+                .unwrap(),
+            "true"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{eq prj \"myprj\"}}", &variables)
+                .unwrap(),
+            "true"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{ne prj \"myprj\"}}", &variables)
+                .unwrap(),
+            "false"
+        );
+
+        //WARNING: use double quote to enclose string, single quote are not converter as string
+        assert_eq!(
+            handlebars
+                .render_template("{{eq prj 'myprj'}}", &variables)
+                .unwrap(),
+            "false"
+        );
+
+        //WARNING: no error raised if undefined variable is used into an expression
+        handlebars.set_strict_mode(true);
+        assert_eq!(
+            handlebars
+                .render_template("{{eq undefined \"myprj\"}}", &variables)
+                .unwrap(),
+            "false"
+        );
+        assert_eq!(
+            handlebars
+                .render_template("{{ne undefined \"myprj\"}}", &variables)
+                .unwrap(),
+            "true"
+        );
+    }
 }

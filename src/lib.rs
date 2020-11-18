@@ -125,6 +125,7 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
     )?;
     variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
     variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
+    variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
 
     ctx.cmd_opt
         .key_value

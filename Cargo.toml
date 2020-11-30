@@ -35,7 +35,7 @@ serde = { version = "1.0", features = [ "derive"] }
 serde_json ="1.0.59"
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
-slog = { version = "2.5.2", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
+slog = { version = "2.7.0", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
 slog-term = { version = "2.6.0", optional = true }
 slog-stdlog = { version = "4.1.0", optional = true }
 tempfile = "3.1.0"

@@ -9,7 +9,7 @@ license = "CC0-1.0"
 keywords = ["project", "generator", "template", "skeleton"]
 categories = ["command-line-utilities", "development-tools", "template-engine"]
 repository = "https://github.com/ffizer/ffizer"
-homepage = "https://github.com/ffizer/ffizer"
+homepage = "https://ffizer.github.io/ffizer/book/"
 exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
 edition = "2018"
 
@@ -67,7 +67,7 @@ self_update = { version = "0.22.0", optional = true, features = ["archive-zip"]}
 
 [target.'cfg(windows)'.dependencies]
 winapi = "0.3"
-self_update = { version = "0.20.0", optional = true, features = ["archive-tar", "compression-flate2"]}
+self_update = { version = "0.22.0", optional = true, features = ["archive-tar", "compression-flate2"]}
 
 # see https://github.com/johnthagen/min-sized-rust
 [profile.release]

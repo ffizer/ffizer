@@ -4,6 +4,7 @@ use std::fs;
 use std::fs::FileType;
 use std::path::{Path, PathBuf};
 use walkdir::{DirEntry, WalkDir};
+use std::io;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct EntryDiff {
@@ -22,6 +23,7 @@ pub enum Difference {
     // },
     Kind { expect: FileType, actual: FileType },
     StringContent { expect: String, actual: String },
+    BinaryContent { expect_md5: String, actual_md5: String },
     //Permission
 }
 
@@ -99,22 +101,8 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
             continue;
         }
         if expect_entry.file_type().is_file() {
-            // asserting(&format!("test content of {:?} vs {:?}", a, b))
-            //     .that(&read_to_vec(a.path())?)
-            //     .is_equal_to(&read_to_vec(b.path())?);
-            let actual_content = fs::read_to_string(actual_entry.path())?.replace("\r\n", "\n");
-            let expect_content = fs::read_to_string(expect_entry.path())?.replace("\r\n", "\n");
-            if actual_content != expect_content {
-                add_diff(
-                    &expect_rpath,
-                    Difference::StringContent {
-                        actual: actual_content,
-                        expect: expect_content,
-                    },
-                );
-                actual_index += 1;
-                expect_index += 1;
-                continue;
+            if let Some(diff) = compare_file(expect_entry.path().to_path_buf(), actual_entry.path().to_path_buf())? {
+                add_diff(&expect_rpath, diff);
             }
         }
         actual_index += 1;
@@ -154,6 +142,50 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
     }
 
     Ok(differences)
+}
+
+fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Difference>> {
+    let expect_md5 = md5::compute(fs::read(&expect_path).map_err(|source| Error::ReadFile {
+        path: expect_path.clone(),
+        source,
+    })?);
+    let actual_md5 = md5::compute(fs::read(&actual_path).map_err(|source| Error::ReadFile {
+        path: actual_path.clone(),
+        source,
+    })?);
+    if expect_md5 == actual_md5 {
+        Ok(None)
+    } else {
+        match fs::read_to_string(&expect_path) {
+            // content is text
+            Ok(expect_content) => {
+                let expect_content = expect_content.replace("\r\n", "\n");
+                let actual_content = fs::read_to_string(&actual_path).map_err(|source|Error::ReadFile{path: actual_path, source: source})
+                ?.replace("\r\n", "\n");
+                if actual_content != expect_content {
+                    Ok(Some(
+                        Difference::StringContent {
+                            actual: actual_content,
+                            expect: expect_content,
+                        },
+                    ))
+                } else {
+                    Ok(None)
+                }
+            }
+            // content is maybe binary
+            Err(e) if e.kind() == io::ErrorKind::InvalidData => {
+                    Ok(Some(
+                        Difference::BinaryContent {
+                            actual_md5: format!("{:x}", actual_md5),
+                            expect_md5: format!("{:x}", expect_md5),
+                        })
+                    )
+            }
+            // other error
+            Err(source) => Err(Error::ReadFile{path: actual_path, source: source})
+        }
+    }
 }
 
 fn walk_dir<P: AsRef<Path>>(path: P) -> Result<Vec<DirEntry>, walkdir::Error> {

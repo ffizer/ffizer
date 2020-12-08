@@ -183,7 +183,7 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
                     )
             }
             // other error
-            Err(source) => Err(Error::ReadFile{path: actual_path, source: source})
+            Err(source) => Err(Error::ReadFile{path: expect_path, source: source})
         }
     }
 }

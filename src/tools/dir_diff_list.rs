@@ -2,9 +2,9 @@ use crate::error::*;
 use std::cmp::Ordering;
 use std::fs;
 use std::fs::FileType;
+use std::io;
 use std::path::{Path, PathBuf};
 use walkdir::{DirEntry, WalkDir};
-use std::io;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct EntryDiff {
@@ -16,14 +16,26 @@ pub struct EntryDiff {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Difference {
-    Presence { expect: bool, actual: bool },
+    Presence {
+        expect: bool,
+        actual: bool,
+    },
     // Length {
     //     expect: usize,
     //     actual: usize,
     // },
-    Kind { expect: FileType, actual: FileType },
-    StringContent { expect: String, actual: String },
-    BinaryContent { expect_md5: String, actual_md5: String },
+    Kind {
+        expect: FileType,
+        actual: FileType,
+    },
+    StringContent {
+        expect: String,
+        actual: String,
+    },
+    BinaryContent {
+        expect_md5: String,
+        actual_md5: String,
+    },
     //Permission
 }
 
@@ -101,7 +113,10 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
             continue;
         }
         if expect_entry.file_type().is_file() {
-            if let Some(diff) = compare_file(expect_entry.path().to_path_buf(), actual_entry.path().to_path_buf())? {
+            if let Some(diff) = compare_file(
+                expect_entry.path().to_path_buf(),
+                actual_entry.path().to_path_buf(),
+            )? {
                 add_diff(&expect_rpath, diff);
             }
         }
@@ -160,30 +175,33 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
             // content is text
             Ok(expect_content) => {
                 let expect_content = expect_content.replace("\r\n", "\n");
-                let actual_content = fs::read_to_string(&actual_path).map_err(|source|Error::ReadFile{path: actual_path, source: source})
-                ?.replace("\r\n", "\n");
+                let actual_content = fs::read_to_string(&actual_path)
+                    .map_err(|source| Error::ReadFile {
+                        path: actual_path,
+                        source: source,
+                    })?
+                    .replace("\r\n", "\n");
                 if actual_content != expect_content {
-                    Ok(Some(
-                        Difference::StringContent {
-                            actual: actual_content,
-                            expect: expect_content,
-                        },
-                    ))
+                    Ok(Some(Difference::StringContent {
+                        actual: actual_content,
+                        expect: expect_content,
+                    }))
                 } else {
                     Ok(None)
                 }
             }
             // content is maybe binary
             Err(e) if e.kind() == io::ErrorKind::InvalidData => {
-                    Ok(Some(
-                        Difference::BinaryContent {
-                            actual_md5: format!("{:x}", actual_md5),
-                            expect_md5: format!("{:x}", expect_md5),
-                        })
-                    )
+                Ok(Some(Difference::BinaryContent {
+                    actual_md5: format!("{:x}", actual_md5),
+                    expect_md5: format!("{:x}", expect_md5),
+                }))
             }
             // other error
-            Err(source) => Err(Error::ReadFile{path: expect_path, source: source})
+            Err(source) => Err(Error::ReadFile {
+                path: expect_path,
+                source: source,
+            }),
         }
     }
 }

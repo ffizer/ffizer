@@ -8,10 +8,10 @@ use walkdir::{DirEntry, WalkDir};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct EntryDiff {
-    expect_base_path: PathBuf,
-    actual_base_path: PathBuf,
-    relative_path: PathBuf,
-    difference: Difference,
+    pub expect_base_path: PathBuf,
+    pub actual_base_path: PathBuf,
+    pub relative_path: PathBuf,
+    pub difference: Difference,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

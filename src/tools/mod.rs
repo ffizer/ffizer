@@ -2,8 +2,9 @@ pub mod dir_diff_list;
 
 use crate::cli_opt::{ApplyOpts, TestSamplesOpts};
 use crate::error::*;
+use dir_diff_list::Difference;
 use dir_diff_list::EntryDiff;
-use slog::{info, o, warn, Logger};
+use slog::{info, o, Logger};
 use std::fs;
 use std::path::{Path, PathBuf};
 use structopt::StructOpt;
@@ -30,12 +31,68 @@ fn check_samples<A: AsRef<Path>>(logger: &Logger, template_path: A) -> Result<bo
         let run_logger = logger.new(o!("sample" => sample.name.clone()));
         info!(run_logger, "checking...");
         let run = SampleRun::run(run_logger.clone(), &sample)?;
-        if !run.is_success() {
-            is_success = false;
-            warn!(run_logger, "check failed {}", run);
-        }
+        is_success = is_success && run.is_success();
+        show_differences(&sample.name, &run.diffs)?;
     }
     Ok(is_success)
+}
+
+//TODO move to ui module to be customizable (in future)
+pub fn show_differences(name: &str, entries: &Vec<EntryDiff>) -> Result<()> {
+    use difference::Changeset;
+    for entry in entries {
+        println!("--------------------------------------------------------------");
+        match &entry.difference {
+            Difference::Presence { expect, actual } => {
+                if *expect && !*actual {
+                    println!(
+                        "missing file in the actual: {}",
+                        entry.relative_path.to_string_lossy()
+                    );
+                } else {
+                    println!(
+                        "unexpected file in the actual: {}",
+                        entry.relative_path.to_string_lossy()
+                    );
+                }
+            }
+            Difference::Kind { expect, actual } => {
+                println!(
+                    "difference kind of entry on: {}, expected: {:?}, actual: {:?}",
+                    entry.relative_path.to_string_lossy(),
+                    expect,
+                    actual
+                );
+            }
+            Difference::StringContent { expect, actual } => {
+                let changeset = Changeset::new(&actual, &expect, "\n");
+                println!(
+                    "difference detected on: {}",
+                    entry.relative_path.to_string_lossy()
+                );
+                println!("{}", changeset);
+            }
+            Difference::BinaryContent {
+                expect_md5,
+                actual_md5,
+            } => {
+                println!(
+                    "difference detected on: {} (detected as binary file)",
+                    entry.relative_path.to_string_lossy()
+                );
+                println!("expected md5: {}", expect_md5);
+                println!("actual md5: {}", actual_md5);
+            }
+        }
+    }
+    println!("--------------------------------------------------------------");
+    println!(
+        "number of differences in sample '{}': {}",
+        name,
+        entries.len()
+    );
+    println!("--------------------------------------------------------------");
+    Ok(())
 }
 
 #[derive(Debug, Clone)]

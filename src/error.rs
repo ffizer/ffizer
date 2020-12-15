@@ -28,6 +28,7 @@ pub enum Error {
         url: String,
         rev: String,
         source: git2::Error,
+        msg: String,
     },
     #[error("try to find git config '{key:?}'")]
     GitFindConfig { key: String, source: git2::Error },
@@ -120,9 +121,11 @@ pub enum Error {
     ReadVariable { name: String, value: String },
 
     #[error(transparent)]
+    // #[error("fail to process io")]
     Io {
         #[from]
         source: std::io::Error,
+        // backtrace: Backtrace,
     },
     #[error("fail to process template '{template}' when {when}")]
     Handlebars {

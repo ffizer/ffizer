@@ -15,6 +15,7 @@ where
 {
     let dst = dst.as_ref();
     let mut fo = make_fetch_options().map_err(|source| Error::GitRetrieve {
+        msg: "make_fetch_options".to_owned(),
         dst: dst.to_path_buf(),
         url: url.as_ref().to_owned(),
         rev: rev.as_ref().to_owned(),
@@ -23,6 +24,7 @@ where
     if dst.exists() {
         info!(logger, "git reset cached template"; "folder" => ?&dst);
         checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
+            msg: "checkout_reset".to_owned(),
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
@@ -30,6 +32,7 @@ where
         })?;
         info!(logger, "git pull cached template"; "folder" => ?&dst);
         pull(logger, dst, &rev, &mut fo).map_err(|source| Error::GitRetrieve {
+            msg: "pull".to_owned(),
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
@@ -49,6 +52,7 @@ where
         info!(logger, "git clone into cached template"; "folder" => ?&dst);
         clone(&dst, &url, "master", fo)?;
         checkout(&dst, &rev).map_err(|source| Error::GitRetrieve {
+            msg: "checkout_clone".to_owned(),
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),
@@ -92,6 +96,7 @@ where
         .fetch_options(fo)
         .clone(url.as_ref(), dst.as_ref())
         .map_err(|source| Error::GitRetrieve {
+            msg: "clone".to_owned(),
             dst: dst.as_ref().to_path_buf(),
             url: url.as_ref().to_owned(),
             rev: rev.as_ref().to_owned(),

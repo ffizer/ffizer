@@ -699,9 +699,9 @@ dependencies = [
 
 [[package]]
 name = "git2_credentials"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "618f8a229a6630f40274039908fa808bdba7705b721cb1c52deab9768f550098"
+checksum = "c524a918276b1ae07358e3fd70fb508b6c1a19dadae1d4f82f9b722614e47522"
 dependencies = [
  "dialoguer",
  "dirs 3.0.1",

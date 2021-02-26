@@ -11,16 +11,14 @@
 
 ## Begin with a existing sample
 
-Create the folder for the template by copying the existing folder (project)
-that you would like to generate with the future template.
+Create the folder for the template by copying the existing folder (project) that you would like to generate with the future template.
 
 ```sh
 cp -R my-existing-project my-template
 cd my-template
 ```
 
-If you don't have an existing sample you can start with the following code,
-just to have something 😉.
+If you don't have an existing sample you can start with the following code, just to have something 😉.
 
 ```sh
 mkdir my-template
@@ -38,9 +36,7 @@ EOF
 
 ## Test the template
 
-At this point you have a valid template but it's also a sample of what the
-template can produce. Use it to create a sample that can show a possible output,
-and a test to validate what ffizer + `my-template` can generate.
+At this point you have a valid template but it's also a sample of what the template can produce. Use it to create a sample that can show a possible output, and a test to validate what ffizer + `my-template` can generate.
 
 ```sh
 # create the folder for samples (the name of folder should be `.ffizer.samples.d`)
@@ -61,8 +57,7 @@ ffizer test-samples --source .
 git init
 ```
 
-A new folder `.git` was created and it should not be part of the template.
-To ignore this folder, you need to add a configuration for ffizer with this information.
+A new folder `.git` was created and it should not be part of the template. To ignore this folder, you need to add a configuration for ffizer with this information.
 
 ```sh
 cat >.ffizer.yaml <<EOF
@@ -74,7 +69,7 @@ EOF
 
 *An other alternatives would be to move the template, but not the sample under a `template` folder and to configure `use_template_dir: true`*
 
-Now you can add test again, and commit.
+Now you can test again, and commit.
 
 ```sh
 ffizer test-samples --source .
@@ -84,11 +79,7 @@ git commit -m ":tada: initialize the template"
 
 ## Publish on remote git repository
 
-ffizer support templates hosted on local file system or on remote git repositories
-(accessible via ssh or https). To share your template you can create and push
-your local repository to your favorite host (github, gitlab, bitbucket,...)
-following the same workflow than for any git repository
-(instructions are provided by the hosting service).
+ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,...) following the same workflow than for any git repository (instructions are provided by the hosting service).
 
 ```sh
 # adapt the following parameters for your case
@@ -101,11 +92,7 @@ ffizer test-samples --source git@github.com:xxxx/my_template.git
 
 ## Parametrize the template with variables
 
-The interest of a template is to be more than a `cp -R`, or a `git clone`.
-The first expected feature is to be able to render some parametrized content.
-ffizer renders only files with `.ffizer.hbs` as part of the filename (it could be at end or before final extension),
-the part `.ffizer.hbs` will be removed from the final name after rendering.
-[Handlebars](https://handlebarsjs.com/guide/) syntax is used for template string.
+The interest of a template is to be more than a `cp -R`, or a `git clone`. The first expected feature is to be able to render some parametrized content. ffizer renders only files with `.ffizer.hbs` as part of the filename (it could be at end or before final extension), the part `.ffizer.hbs` will be removed from the final name after rendering. [Handlebars](https://handlebarsjs.com/guide/) syntax is used for template string.
 
 ```sh
 # adapt to your case
@@ -282,11 +269,7 @@ rm -Rf ../my-template-t*
 
 ## Next
 
-It's the end of this tutorial but I hope not the end of your journey with ffizer.
-Now you know the basics to create, to test, to parametrize and to publish
-a template. You can take a look to existing templates and
-you can continue to read the ffizer's book, you could learn how to customize ask of value for variable, how to display selection,
-how to display a message, how to run command, how to read value of variable from existing file in the project,...
+It's the end of this tutorial but I hope not the end of your journey with ffizer. Now you know the basics to create, to test, to parametrize and to publish a template. You can take a look to existing templates and you can continue to read the ffizer's book, you could learn how to customize ask of value for variable, how to display selection, how to display a message, how to run command, how to read value of variable from existing file in the project,...
 
 I forgot you can also continue to work with your current template:
 

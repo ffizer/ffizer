@@ -341,7 +341,19 @@ dependencies = [
  "console 0.13.0",
  "lazy_static",
  "tempfile",
- "zeroize",
+ "zeroize 0.9.3",
+]
+
+[[package]]
+name = "dialoguer"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9dd058f8b65922819fabb4a41e7d1964e56344042c26efbccd465202c23fa0c"
+dependencies = [
+ "console 0.14.1",
+ "lazy_static",
+ "tempfile",
+ "zeroize 1.2.0",
 ]
 
 [[package]]
@@ -482,7 +494,7 @@ dependencies = [
  "assert_cmd",
  "clap",
  "console 0.14.1",
- "dialoguer",
+ "dialoguer 0.8.0",
  "difference",
  "directories",
  "git2",
@@ -729,7 +741,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c524a918276b1ae07358e3fd70fb508b6c1a19dadae1d4f82f9b722614e47522"
 dependencies = [
- "dialoguer",
+ "dialoguer 0.7.1",
  "dirs",
  "git2",
  "pest",
@@ -1013,7 +1025,7 @@ version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7baab56125e25686df467fe470785512329883aab42696d661247aca2a2896e4"
 dependencies = [
- "console 0.13.0",
+ "console 0.14.1",
  "lazy_static",
  "number_prefix",
  "regex",
@@ -2931,6 +2943,12 @@ name = "zeroize"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "45af6a010d13e4cf5b54c94ba5a2b2eba5596b9e46bf5875612d332a1f2b3f86"
+
+[[package]]
+name = "zeroize"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81a974bcdd357f0dca4d41677db03436324d45a4c9ed2d0b873a5a360ce41c36"
 
 [[package]]
 name = "zip"

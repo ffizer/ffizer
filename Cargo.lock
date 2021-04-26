@@ -251,22 +251,6 @@ dependencies = [
 
 [[package]]
 name = "console"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a50aab2529019abfabfa93f1e6c41ef392f91fbf179b347a7e96abb524884a08"
-dependencies = [
- "encode_unicode",
- "lazy_static",
- "libc",
- "regex",
- "terminal_size",
- "unicode-width",
- "winapi 0.3.9",
- "winapi-util",
-]
-
-[[package]]
-name = "console"
 version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3993e6445baa160675931ec041a5e03ca84b9c6e32a056150d3aa2bdda0a1f45"
@@ -334,26 +318,14 @@ dependencies = [
 
 [[package]]
 name = "dialoguer"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70f807b2943dc90f9747497d9d65d7e92472149be0b88bf4ce1201b4ac979c26"
-dependencies = [
- "console 0.13.0",
- "lazy_static",
- "tempfile",
- "zeroize 0.9.3",
-]
-
-[[package]]
-name = "dialoguer"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c9dd058f8b65922819fabb4a41e7d1964e56344042c26efbccd465202c23fa0c"
 dependencies = [
- "console 0.14.1",
+ "console",
  "lazy_static",
  "tempfile",
- "zeroize 1.2.0",
+ "zeroize",
 ]
 
 [[package]]
@@ -493,8 +465,8 @@ version = "2.2.2-dev"
 dependencies = [
  "assert_cmd",
  "clap",
- "console 0.14.1",
- "dialoguer 0.8.0",
+ "console",
+ "dialoguer",
  "difference",
  "directories",
  "git2",
@@ -737,11 +709,11 @@ dependencies = [
 
 [[package]]
 name = "git2_credentials"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c524a918276b1ae07358e3fd70fb508b6c1a19dadae1d4f82f9b722614e47522"
+checksum = "62808bffc5af6b70d8ccce646e313aeb0ed2df4d19721c2cc6ffd0f0f24d0a19"
 dependencies = [
- "dialoguer 0.7.1",
+ "dialoguer",
  "dirs",
  "git2",
  "pest",
@@ -1025,7 +997,7 @@ version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7baab56125e25686df467fe470785512329883aab42696d661247aca2a2896e4"
 dependencies = [
- "console 0.14.1",
+ "console",
  "lazy_static",
  "number_prefix",
  "regex",
@@ -2937,12 +2909,6 @@ checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
 dependencies = [
  "linked-hash-map",
 ]
-
-[[package]]
-name = "zeroize"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45af6a010d13e4cf5b54c94ba5a2b2eba5596b9e46bf5875612d332a1f2b3f86"
 
 [[package]]
 name = "zeroize"

@@ -48,7 +48,7 @@ assert_cmd = "1.0.3"
 # rexpect = "0.3"
 spectral = "0.6.0"
 test-generator = "0.3.0"
-predicates = "1.0.7"
+predicates = "1.0.8"
 pretty_assertions = "0.7.2"
 
 [[bin]]

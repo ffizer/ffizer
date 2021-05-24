@@ -445,7 +445,8 @@ dependencies = [
  "regex",
  "run_script",
  "schemars",
- "self_update",
+ "self_update 0.26.0",
+ "self_update 0.27.0",
  "serde",
  "serde_json",
  "serde_plain",
@@ -2022,9 +2023,9 @@ dependencies = [
 
 [[package]]
 name = "self_update"
-version = "0.27.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fb85f1802f7b987237b8525c0fde86ea86f31c957c1875467c727d5b921179c"
+checksum = "9031099ba3962ce8faaff991066bcbe6ec1f7ccb0be12a4b56733028ae090054"
 dependencies = [
  "either",
  "flate2",
@@ -2037,6 +2038,23 @@ dependencies = [
  "semver",
  "serde_json",
  "tar",
+ "tempfile",
+]
+
+[[package]]
+name = "self_update"
+version = "0.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6fb85f1802f7b987237b8525c0fde86ea86f31c957c1875467c727d5b921179c"
+dependencies = [
+ "hyper 0.14.2",
+ "indicatif 0.15.0",
+ "log",
+ "quick-xml",
+ "regex",
+ "reqwest 0.11.0",
+ "semver",
+ "serde_json",
  "tempfile",
  "zip",
 ]
@@ -2348,18 +2366,18 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.24"
+version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0f4a65597094d4483ddaed134f409b2cb7c1beccf25201a9f73c719254fa98e"
+checksum = "fa6f76457f59514c7eeb4e59d891395fab0b2fd1d40723ae737d64153392e9c6"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.24"
+version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7765189610d8241a44529806d6fd1f2e0a08734313a35d5b3a556f92b381f3c0"
+checksum = "8a36768c0fbf1bb15eca10defa29526bda730a2376c2ab4393ccfa16fb1a318d"
 dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.7",

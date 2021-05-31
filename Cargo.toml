@@ -25,7 +25,7 @@ globset = "0.4.6"
 handlebars = "3.5.3"
 handlebars_misc_helpers = {version = "0.11", features = [ "string", "http_reqwest", "json", "jsonnet" ], default-features = false }
 human-panic = { version = "1.0.3", optional = true}
-indicatif = "0.16.0"
+indicatif = "0.16.2"
 lazy_static ="1.4.0"
 md5 = "0.7.0"
 regex = "1.4.6"

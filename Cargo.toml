@@ -23,19 +23,28 @@ git2 = "0.13.18"
 git2_credentials = "0.7"
 globset = "0.4.6"
 handlebars = "3.5.3"
-handlebars_misc_helpers = {version = "0.11", features = [ "string", "http_reqwest", "json", "jsonnet" ], default-features = false }
-human-panic = { version = "1.0.3", optional = true}
+handlebars_misc_helpers = { version = "0.11", features = [
+    "string",
+    "http_reqwest",
+    "json",
+    "jsonnet",
+], default-features = false }
+human-panic = { version = "1.0.3", optional = true }
 indicatif = "0.16.2"
-lazy_static ="1.4.0"
+lazy_static = "1.4.0"
 md5 = "0.7.0"
 regex = "1.4.6"
 run_script = "0.8.0"
 schemars = "0.8"
-serde = { version = "1.0", features = [ "derive"] }
-serde_json ="1.0.64"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.64"
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
-slog = { version = "2.7.0", features = ["max_level_trace", "release_max_level_warn", "nested-values"] }
+slog = { version = "2.7.0", features = [
+    "max_level_trace",
+    "release_max_level_warn",
+    "nested-values",
+] }
 slog-term = { version = "2.8.0", optional = true }
 slog-stdlog = { version = "4.1.0", optional = true }
 tempfile = "3.2.0"
@@ -63,11 +72,11 @@ required-features = ["cli"]
 libc = "0.2"
 openssl = { version = "0.10", features = ["vendored"] }
 # self_update = { version = "0.12.0", optional = true, features = ["archive-zip", "compression-zip-deflate"]}
-self_update = { version = "0.27.0", optional = true, features = ["archive-zip"]}
+self_update = { version = "0.27.0", optional = true, features = ["archive-zip"] }
 
 [target.'cfg(windows)'.dependencies]
 winapi = "0.3"
-self_update = { version = "0.26.0", optional = true, features = ["archive-tar", "compression-flate2"]}
+self_update = { version = "0.27.0", optional = true, features = ["archive-tar", "compression-flate2"] }
 
 # see https://github.com/johnthagen/min-sized-rust
 [profile.release]

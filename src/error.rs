@@ -131,7 +131,7 @@ pub enum Error {
     Handlebars {
         when: String,
         template: String,
-        source: handlebars::TemplateRenderError,
+        source: handlebars::RenderError,
     },
     #[error(transparent)]
     // #[error("fail to process yaml")]

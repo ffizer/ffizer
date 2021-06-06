@@ -310,14 +310,7 @@ fn render_template(
     let src_name = &src_full_path.to_string_lossy();
     handlebars
         .register_template_file(&src_name, &src_full_path)
-        .map_err(|e| match e {
-            handlebars::TemplateFileError::TemplateError(err) => {
-                handlebars::TemplateRenderError::from(err)
-            }
-            handlebars::TemplateFileError::IOError(err, msg) => {
-                handlebars::TemplateRenderError::IOError(err, msg)
-            }
-        })
+        .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: format!("load content of template '{:?}'", &src_full_path),
             template: src_name.to_string(),
@@ -326,7 +319,7 @@ fn render_template(
     output.clear(); //vec![u8] writer appends content if not clear
     handlebars
         .render_to_write(&src_name, &variables, output)
-        .map_err(handlebars::TemplateRenderError::from)
+        .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: "render template into buffer".into(),
             template: src_name.to_string(),
@@ -923,12 +916,13 @@ mod tests {
         );
 
         //WARNING: use double quote to enclose string, single quote are not converter as string
-        assert_eq!(
-            handlebars
-                .render_template("{{eq prj 'myprj'}}", &variables)
-                .unwrap(),
-            "false"
-        );
+        // since handlebars 4.0 single quote generates "syntax error"
+        // assert_eq!(
+        //     handlebars
+        //         .render_template("{{eq prj 'myprj'}}", &variables)
+        //         .unwrap(),
+        //     "false"
+        // );
 
         //WARNING: no error raised if undefined variable is used into an expression
         handlebars.set_strict_mode(true);

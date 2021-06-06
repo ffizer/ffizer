@@ -150,7 +150,7 @@ fn log_should_report_error() -> Result<(), Box<dyn Error>> {
         .arg(template_path.to_str().unwrap())
         .assert()
         .stderr(
-            predicate::str::contains("source: TemplateError(")
+            predicate::str::contains("source: RenderError(")
                 .and(predicate::str::contains("reason: InvalidSyntax,")),
         )
         .failure();

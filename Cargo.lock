@@ -433,7 +433,7 @@ dependencies = [
  "git2",
  "git2_credentials",
  "globset",
- "handlebars",
+ "handlebars 4.0.0",
  "handlebars_misc_helpers",
  "human-panic",
  "indicatif 0.16.2",
@@ -742,6 +742,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "handlebars"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28f0fe89affef47e2c9729030a8f6e79df34cb66b8a44ecf91dad43f31150559"
+dependencies = [
+ "log",
+ "pest",
+ "pest_derive",
+ "quick-error",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "handlebars_misc_helpers"
 version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -749,7 +763,7 @@ checksum = "ffabb036ccea7ad1a3240f304d2e1b7827f3006d380aa4590edb1111b41d5c00"
 dependencies = [
  "Inflector",
  "enquote",
- "handlebars",
+ "handlebars 3.5.5",
  "jsonnet-rs",
  "lazy_static",
  "log",

@@ -6,13 +6,12 @@ use crate::scripts::Script;
 use crate::source_file::SourceFile;
 use crate::source_loc::SourceLoc;
 use crate::variable_def::VariableDef;
-use crate::Ctx;
 use crate::Result;
 use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
-use slog::{debug, warn};
 use std::collections::HashMap;
 use std::collections::HashSet;
+use tracing::{debug, warn};
 
 #[derive(Debug, Clone)]
 pub struct TemplateLayer {
@@ -42,13 +41,12 @@ pub struct TemplateComposite {
 
 impl TemplateComposite {
     pub fn from_src(
-        ctx: &Ctx,
         variables: &Variables,
         offline: bool,
         src: &SourceLoc,
     ) -> Result<TemplateComposite> {
         let mut templates = HashMap::new();
-        deep_download(ctx, variables, offline, src, &mut templates)?;
+        deep_download(variables, offline, src, &mut templates)?;
         let layers = templates
             .find_edges_ordered_by_depth(src)
             .into_iter()
@@ -62,7 +60,7 @@ impl TemplateComposite {
                 }
             })
             .collect::<Vec<_>>();
-        debug!(ctx.logger, "templates"; "layers" => ?layers);
+        debug!(?layers);
         Ok(TemplateComposite { layers })
     }
 
@@ -119,14 +117,13 @@ impl Graph for HashMap<SourceLoc, TemplateCfg> {
 
 //struct Template;
 fn deep_download(
-    ctx: &Ctx,
     variables: &Variables,
     offline: bool,
     src: &SourceLoc,
     templates: &mut HashMap<SourceLoc, TemplateCfg>,
 ) -> Result<()> {
     if !templates.contains_key(src) {
-        let template_base_path = &src.download(&ctx.logger, offline)?;
+        let template_base_path = &src.download(offline)?;
         // update cfg with variables defined by user
         let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
         // update cfg with variables defined by cli (use to update default_value)
@@ -135,12 +132,12 @@ fn deep_download(
         variables_children.insert("ffizer_src_rev", src.rev.clone())?;
         //variables_children.insert("ffizer_src_subfolder".to_owned(), src.subfolder.clone());
         let template_cfg_for_imports =
-            render_imports_only(&ctx, &template_cfg, &variables_children, false)?;
+            render_imports_only(&template_cfg, &variables_children, false)?;
         let children = template_cfg_for_imports.find_sourcelocs()?;
         //WARN: Do insert a rendered templates because the value of are not yet defined
         templates.insert(src.clone(), template_cfg_for_imports);
         for child in children {
-            deep_download(ctx, &variables_children, offline, &child, templates)?;
+            deep_download(&variables_children, offline, &child, templates)?;
         }
     }
     Ok(())
@@ -158,7 +155,6 @@ impl TransformsValues for TemplateComposite {
 }
 
 pub(crate) fn render_composite(
-    ctx: &Ctx,
     template_composite: &TemplateComposite,
     variables: &Variables,
     log_warning: bool,
@@ -170,7 +166,7 @@ pub(crate) fn render_composite(
             Ok(s) => s,
             Err(e) => {
                 if log_warning {
-                    warn!(ctx.logger, "failed to convert"; "input" => ?v, "error" => ?e)
+                    warn!(input = ?v, error = ?e, "failed to convert")
                 }
                 v.into()
             }
@@ -180,7 +176,6 @@ pub(crate) fn render_composite(
 }
 
 fn render_imports_only(
-    ctx: &Ctx,
     template_cfg: &TemplateCfg,
     variables: &Variables,
     log_warning: bool,
@@ -192,7 +187,7 @@ fn render_imports_only(
             Ok(s) => s,
             Err(e) => {
                 if log_warning {
-                    warn!(ctx.logger, "failed to convert"; "input" => ?v, "error" => ?e)
+                    warn!(input = ?v, error = ?e, "failed to convert")
                 }
                 v.into()
             }

@@ -4,33 +4,32 @@ use crate::cli_opt::{ApplyOpts, TestSamplesOpts};
 use crate::error::*;
 use dir_diff_list::Difference;
 use dir_diff_list::EntryDiff;
-use slog::{info, o, Logger};
 use std::fs;
 use std::path::{Path, PathBuf};
 use structopt::StructOpt;
 use tempfile::{tempdir, TempDir};
+use tracing::info;
 
-pub fn test_samples(logger: &Logger, cfg: &TestSamplesOpts) -> Result<()> {
-    let template_base_path = &cfg.src.download(&logger, cfg.offline)?;
-    if !check_samples(&logger, template_base_path)? {
+pub fn test_samples(cfg: &TestSamplesOpts) -> Result<()> {
+    let template_base_path = &cfg.src.download(cfg.offline)?;
+    if !check_samples(template_base_path)? {
         Err(crate::Error::TestSamplesFailed {})
     } else {
         Ok(())
     }
 }
 
-fn check_samples<A: AsRef<Path>>(logger: &Logger, template_path: A) -> Result<bool> {
+fn check_samples<A: AsRef<Path>>(template_path: A) -> Result<bool> {
     let mut is_success = true;
     let tmp_dir = tempdir()?;
     let samples_folder = template_path
         .as_ref()
         .join(crate::cfg::TEMPLATE_SAMPLES_DIRNAME);
     let samples = Sample::find_from_folder(&template_path, &samples_folder, &tmp_dir)?;
-    info!(logger, "nb samples detected: {}", samples.len(); "samples_folder" => ?&samples_folder);
+    info!(nb_samples_detected = samples.len(), ?samples_folder);
     for sample in samples {
-        let run_logger = logger.new(o!("sample" => sample.name.clone()));
-        info!(run_logger, "checking...");
-        let run = SampleRun::run(run_logger.clone(), &sample)?;
+        info!(sample = ?sample.name, "checking...");
+        let run = SampleRun::run(&sample)?;
         is_success = is_success && run.is_success();
         show_differences(&sample.name, &run.diffs)?;
     }
@@ -197,14 +196,14 @@ struct SampleRun {
 }
 
 impl SampleRun {
-    pub fn run(logger: slog::Logger, sample: &Sample) -> Result<SampleRun> {
+    #[tracing::instrument]
+    pub fn run(sample: &Sample) -> Result<SampleRun> {
         // ALTERNATIVE: fork a sub-process to run current ffizer in apply mode
         let destination = &sample.args.dst_folder;
         if sample.existing.exists() {
             copy(&sample.existing, destination)?;
         }
         let ctx = crate::Ctx {
-            logger,
             cmd_opt: sample.args.clone(),
         };
         crate::process(&ctx)?;

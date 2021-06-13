@@ -13,8 +13,8 @@ use dialoguer::Select;
 use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use serde_yaml::Value;
-use slog::debug;
 use std::borrow::Cow;
+use tracing::debug;
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -179,7 +179,7 @@ fn format_operation(op: &FileOperation) -> Cow<'static, str> {
 //TODO add flag to filter display: all, changes, none
 pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
     write_title("Plan to execute")?;
-    debug!(ctx.logger, "plan"; "actions" => ?actions);
+    debug!(?actions, "plan");
     let prefixes = tree::provide_prefix(actions, |parent, item| {
         Some(parent.dst_path.relative.as_path()) == item.dst_path.relative.parent()
     });

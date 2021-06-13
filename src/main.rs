@@ -6,26 +6,38 @@ use ffizer::Ctx;
 use ffizer::SourceLoc;
 use ffizer::TestSamplesOpts;
 use self_update;
-use slog::Drain;
-use slog::{debug, error, info, o, trace};
 use std::error::Error;
 use structopt::StructOpt;
+use tracing::{debug, error, info, trace};
+use tracing_subscriber::FmtSubscriber;
 
-fn init_log(level_min: slog::Level) -> slog::Logger {
-    let drain = slog_term::PlainSyncDecorator::new(std::io::stderr());
-    let drain = slog_term::FullFormat::new(drain)
-        .build()
-        .filter_level(level_min)
-        .fuse();
-    let log = slog::Logger::root(drain, o!());
-    slog_stdlog::init().unwrap();
-    info!(log, "start"; "version" => env!("CARGO_PKG_VERSION"));
-    debug!(log, "debug enabled");
-    trace!(log, "trace enabled");
-    log
+fn tracing_level_from_usize(level: usize) -> tracing::Level {
+    match level {
+        0 => tracing::Level::ERROR,
+        1 => tracing::Level::WARN,
+        2 => tracing::Level::INFO,
+        3 => tracing::Level::DEBUG,
+        _ => tracing::Level::TRACE,
+    }
 }
 
-fn upgrade(logger: slog::Logger) -> Result<(), Box<dyn Error>> {
+fn init_log(level_min: tracing::Level) {
+    // a builder for `FmtSubscriber`.
+    let subscriber = FmtSubscriber::builder()
+        // all spans/events with a level higher than TRACE (e.g, debug, info, warn, etc.)
+        // will be written to stdout.
+        .with_max_level(level_min)
+        // completes the builder.
+        .finish();
+
+    tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+    info!(version = env!("CARGO_PKG_VERSION"), "start");
+    debug!("debug enabled");
+    trace!("trace enabled");
+}
+
+#[tracing::instrument]
+fn upgrade() -> Result<(), Box<dyn Error>> {
     let target = self_update::get_target();
     // TODO extract repo info from CARGO_PKG_REPOSITORY
     let status = self_update::backends::github::Update::configure()
@@ -38,16 +50,18 @@ fn upgrade(logger: slog::Logger) -> Result<(), Box<dyn Error>> {
         .current_version(env!("CARGO_PKG_VERSION"))
         .build()?
         .update()?;
-    info!(logger, "success"; "status" => status.version());
+    info!(status = status.version(), "success");
     Ok(())
 }
 
-fn apply(logger: slog::Logger, cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>> {
-    let ctx = Ctx { logger, cmd_opt };
+#[tracing::instrument]
+fn apply(cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>> {
+    let ctx = Ctx { cmd_opt };
     ffizer::process(&ctx)?;
     Ok(())
 }
 
+#[tracing::instrument]
 fn inspect() -> Result<(), Box<dyn Error>> {
     println!(
         "remote cache folder: {}",
@@ -56,14 +70,16 @@ fn inspect() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+#[tracing::instrument]
 fn show_json_schema() -> Result<(), Box<dyn Error>> {
     let schema = provide_json_schema()?;
     println!("{}", schema);
     Ok(())
 }
 
-fn test_samples(logger: slog::Logger, cfg: &TestSamplesOpts) -> Result<(), Box<dyn Error>> {
-    ffizer::tools::test_samples(&logger, cfg)?;
+#[tracing::instrument]
+fn test_samples(cfg: &TestSamplesOpts) -> Result<(), Box<dyn Error>> {
+    ffizer::tools::test_samples(cfg)?;
     Ok(())
 }
 
@@ -71,20 +87,20 @@ fn main() {
     human_panic::setup_panic!();
     let cli_opts = CliOpts::from_args();
 
-    let log_level = slog::Level::from_usize(3 + cli_opts.verbose).unwrap_or(slog::Level::Warning);
-    let logger = init_log(log_level);
-    debug!(logger, "parsed args"; "cmd" => ?&cli_opts);
+    let log_level = tracing_level_from_usize(1 + cli_opts.verbose);
+    init_log(log_level);
+    debug!(cmd = ?&cli_opts, "parsed args");
 
     let r = match &cli_opts.cmd {
-        Command::Apply(g) => apply(logger.new(o!("sub-cmd" => "apply")), g.clone()),
-        Command::Upgrade => upgrade(logger.new(o!("sub-cmd" => "upgrade"))),
+        Command::Apply(g) => apply(g.clone()),
+        Command::Upgrade => upgrade(),
         Command::Inspect => inspect(),
         Command::ShowJsonSchema => show_json_schema(),
-        Command::TestSamples(g) => test_samples(logger.new(o!("sub-cmd" => "test-samples")), g),
+        Command::TestSamples(g) => test_samples(g),
     };
     if let Err(e) = r {
-        error!(logger, "cmd: {:#?}", &cli_opts);
-        error!(logger, "failed: {:#?}", &e);
+        error!("cmd: {:#?}", &cli_opts);
+        error!("failed: {:#?}", &e);
         std::process::exit(1)
     }
 }

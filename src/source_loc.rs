@@ -1,11 +1,11 @@
 use crate::error::*;
 use crate::git;
 use crate::source_uri::SourceUri;
-use slog::{warn, Logger};
 use std::fmt;
 use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use tracing::warn;
 
 #[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
@@ -58,11 +58,16 @@ impl SourceLoc {
             .join(&self.rev);
         Ok(cache_uri)
     }
-    pub fn download(&self, logger: &Logger, offline: bool) -> Result<PathBuf> {
+    pub fn download(&self, offline: bool) -> Result<PathBuf> {
         if !offline && self.uri.host.is_some() {
             let remote_path = self.remote_as_local()?;
-            if let Err(v) = git::retrieve(logger, &remote_path, &self.uri.raw, &self.rev) {
-                warn!(logger, "failed to download"; "src" => ?&self, "path" => ?&remote_path, "error" => ?&v);
+            if let Err(v) = git::retrieve(&remote_path, &self.uri.raw, &self.rev) {
+                warn!(
+                    src = ?self,
+                    path = ?remote_path,
+                    error = ?v,
+                    "failed to download"
+                );
                 if remote_path.exists() {
                     fs::remove_dir_all(&remote_path).map_err(|source| Error::RemoveFolder {
                         path: remote_path,

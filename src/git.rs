@@ -2,12 +2,13 @@ use crate::error::*;
 use git2::build::{CheckoutBuilder, RepoBuilder};
 use git2::{Config, FetchOptions, Repository};
 use git2_credentials;
-use slog::{debug, info, warn, Logger};
 use std::path::Path;
+use tracing::{debug, info, warn};
 
 /// clone a repository at a rev to a directory
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
-pub fn retrieve<P, U, R>(logger: &Logger, dst: P, url: U, rev: R) -> Result<(), Error>
+#[tracing::instrument(fields(dst = ?dst.as_ref(), url = url.as_ref(), rev = rev.as_ref()))]
+pub fn retrieve<P, U, R>(dst: P, url: U, rev: R) -> Result<(), Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,
@@ -22,7 +23,7 @@ where
         source,
     })?;
     if dst.exists() {
-        info!(logger, "git reset cached template"; "folder" => ?&dst);
+        info!(?dst, "git reset cached template");
         checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
             msg: "checkout_reset".to_owned(),
             dst: dst.to_path_buf(),
@@ -30,8 +31,8 @@ where
             rev: rev.as_ref().to_owned(),
             source,
         })?;
-        info!(logger, "git pull cached template"; "folder" => ?&dst);
-        pull(logger, dst, &rev, &mut fo).map_err(|source| Error::GitRetrieve {
+        info!(?dst, "git pull cached template");
+        pull(dst, &rev, &mut fo).map_err(|source| Error::GitRetrieve {
             msg: "pull".to_owned(),
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
@@ -49,7 +50,7 @@ where
     // std::fs::remove_dir_all(&dst)?;
     // std::fs::rename(&tmp, &dst)?;
     } else {
-        info!(logger, "git clone into cached template"; "folder" => ?&dst);
+        info!(?dst, "git clone into cached template");
         clone(&dst, &url, "master", fo)?;
         checkout(&dst, &rev).map_err(|source| Error::GitRetrieve {
             msg: "checkout_clone".to_owned(),
@@ -106,12 +107,7 @@ where
 }
 
 // from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn pull<'a, P, R>(
-    logger: &Logger,
-    dst: P,
-    rev: R,
-    fo: &mut FetchOptions<'a>,
-) -> Result<(), git2::Error>
+fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,
@@ -124,13 +120,12 @@ where
     remote.fetch(&[revref], Some(fo), None)?;
     let reference = repository.find_reference("FETCH_HEAD")?;
     let fetch_head_commit = repository.reference_to_annotated_commit(&reference)?;
-    do_merge(logger, &repository, "master", fetch_head_commit)?;
+    do_merge(&repository, "master", fetch_head_commit)?;
     Ok(())
 }
 
 // from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
 fn fast_forward(
-    logger: &Logger,
     repo: &Repository,
     lb: &mut git2::Reference,
     rc: &git2::AnnotatedCommit,
@@ -140,7 +135,7 @@ fn fast_forward(
         None => String::from_utf8_lossy(lb.name_bytes()).to_string(),
     };
     let msg = format!("Fast-Forward: Setting {} to id: {}", name, rc.id());
-    debug!(logger, "{}", msg);
+    debug!(msg = ?msg);
     lb.set_target(rc.id(), &msg)?;
     repo.set_head(&name)?;
     repo.checkout_head(Some(
@@ -155,7 +150,6 @@ fn fast_forward(
 
 // from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
 fn normal_merge(
-    logger: &Logger,
     repo: &Repository,
     local: &git2::AnnotatedCommit,
     remote: &git2::AnnotatedCommit,
@@ -168,7 +162,7 @@ fn normal_merge(
     let mut idx = repo.merge_trees(&ancestor, &local_tree, &remote_tree, None)?;
 
     if idx.has_conflicts() {
-        warn!(logger, "merge conficts detected...");
+        warn!("merge conficts detected...");
         repo.checkout_index(Some(&mut idx), None)?;
         return Ok(());
     }
@@ -194,22 +188,21 @@ fn normal_merge(
 
 // from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
 fn do_merge<'a>(
-    logger: &Logger,
     repo: &'a Repository,
     remote_branch: &str,
     fetch_commit: git2::AnnotatedCommit<'a>,
 ) -> Result<(), git2::Error> {
     // 1. do a merge analysis
     let analysis = repo.merge_analysis(&[&fetch_commit])?;
-
+    debug!(analysis = ?&analysis.0);
     // 2. Do the appopriate merge
     if analysis.0.is_fast_forward() {
-        debug!(logger, "git merge: doing a fast forward"; "analysis" => ?&analysis.0);
+        debug!("git merge: doing a fast forward");
         // do a fast forward
         let refname = format!("refs/heads/{}", remote_branch);
         match repo.find_reference(&refname) {
             Ok(mut r) => {
-                fast_forward(logger, repo, &mut r, &fetch_commit)?;
+                fast_forward(repo, &mut r, &fetch_commit)?;
             }
             Err(_) => {
                 // The branch doesn't exist so just set the reference to the
@@ -231,12 +224,12 @@ fn do_merge<'a>(
             }
         };
     } else if analysis.0.is_normal() {
-        debug!(logger, "git merge: doing normal merge"; "analysis" => ?&analysis.0);
+        debug!("git merge: doing normal merge");
         // do a normal merge
         let head_commit = repo.reference_to_annotated_commit(&repo.head()?)?;
-        normal_merge(logger, &repo, &head_commit, &fetch_commit)?;
+        normal_merge(&repo, &head_commit, &fetch_commit)?;
     } else {
-        debug!(logger, "git merge: nothing to do"; "analysis" => ?&analysis.0);
+        debug!("git merge: nothing to do");
     }
     Ok(())
 }
@@ -271,18 +264,17 @@ mod tests {
 
     #[cfg(not(target_os = "windows"))]
     #[test]
-    fn retrieve_should_update_existing_template() -> Result<(), Box<dyn std::error::Error>> {
-        let logger = slog::Logger::root(slog::Discard, slog::o!());
+    fn retrieve_should_update_existing_template() {
         if std::process::Command::new("git")
             .arg("version")
             .output()
             .is_err()
         {
             eprintln!("skip the test because `git` is not installed");
-            return Ok(());
+            return;
         }
 
-        let tmp_dir = tempdir()?;
+        let tmp_dir = tempdir().unwrap();
 
         // template v1
         let src_path = tmp_dir.path().join("src");
@@ -305,16 +297,17 @@ mod tests {
             ),
             &args,
             &options,
-        )?;
+        )
+        .unwrap();
         if code != 0 {
             eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
         }
-        assert_eq!(code, 0);
+        assert_eq!(code, 0, "setup template v1");
 
         let dst_path = tmp_dir.path().join("dst");
-        retrieve(&logger, &dst_path, src_path.to_str().unwrap(), "master")?;
+        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
         assert_eq!(
-            fs::read_to_string(&dst_path.join("foo.txt"))?,
+            fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
             "v1: Lorem ipsum\n"
         );
 
@@ -331,15 +324,16 @@ mod tests {
             ),
             &args,
             &options,
-        )?;
+        )
+        .unwrap();
         if code != 0 {
             eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
         }
-        assert_eq!(code, 0);
+        assert_eq!(code, 0, "setup template v2");
 
-        retrieve(&logger, &dst_path, src_path.to_str().unwrap(), "master")?;
+        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
         assert_eq!(
-            fs::read_to_string(&dst_path.join("foo.txt"))?,
+            fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
             "v2: Hello\n"
         );
 
@@ -356,19 +350,20 @@ mod tests {
             ),
             &args,
             &options,
-        )?;
+        )
+        .unwrap();
         if code != 0 {
             eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
         }
-        assert_eq!(code, 0);
+        assert_eq!(code, 0, "setup template v3");
 
-        retrieve(&logger, &dst_path, src_path.to_str().unwrap(), "master")?;
+        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
         assert_eq!(
-            fs::read_to_string(&dst_path.join("foo.txt"))?,
+            fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
             "v3: Hourra\n"
         );
         //TODO always remove
-        fs::remove_dir_all(tmp_dir)?;
-        Ok(())
+        //fs::remove_dir_all(tmp_dir)?;
+        //Ok(())
     }
 }

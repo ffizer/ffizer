@@ -40,13 +40,8 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.64"
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
-slog = { version = "2.7.0", features = [
-    "max_level_trace",
-    "release_max_level_warn",
-    "nested-values",
-] }
-slog-term = { version = "2.8.0", optional = true }
-slog-stdlog = { version = "4.1.0", optional = true }
+tracing = "0.1"
+tracing-subscriber = { version = "0.2", optional = true }
 tempfile = "3.2.0"
 thiserror = "1.0"
 structopt = "0.3.21"
@@ -92,4 +87,4 @@ codegen-units = 1
 [features]
 default = ["cli"]
 test_remote = [] # feature has no explicit dependencies
-cli = ["self_update", "human-panic", "slog-stdlog", "slog-term"]
+cli = ["self_update", "human-panic", "tracing-subscriber"]

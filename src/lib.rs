@@ -31,20 +31,18 @@ use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
-use slog::{debug, o, warn};
 use std::fs;
 use std::path::PathBuf;
+use tracing::{debug, warn};
 
 #[derive(Debug, Clone)]
 pub struct Ctx {
-    pub logger: slog::Logger,
     pub cmd_opt: ApplyOpts,
 }
 
 impl Default for Ctx {
     fn default() -> Ctx {
         Ctx {
-            logger: slog::Logger::root(slog::Discard, o!()),
             cmd_opt: ApplyOpts::default(),
         }
     }
@@ -68,31 +66,27 @@ pub struct Action {
 }
 
 pub fn process(ctx: &Ctx) -> Result<()> {
-    debug!(ctx.logger, "extracting variables from cli");
+    debug!("extracting variables from cli");
     let variables_from_cli = extract_variables(&ctx)?;
-    debug!(ctx.logger, "compositing templates");
-    let mut template_composite = TemplateComposite::from_src(
-        &ctx,
-        &variables_from_cli,
-        ctx.cmd_opt.offline,
-        &ctx.cmd_opt.src,
-    )?;
-    debug!(ctx.logger, "asking variables");
+    debug!("compositing templates");
+    let mut template_composite =
+        TemplateComposite::from_src(&variables_from_cli, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
+    debug!("asking variables");
     let variables = ui::ask_variables(
         &ctx,
         &template_composite.find_variabledefs()?,
         variables_from_cli,
     )?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)
-    template_composite = render_composite(&ctx, &template_composite, &variables, true)?;
-    debug!(ctx.logger, "listing files from templates");
+    template_composite = render_composite(&template_composite, &variables, true)?;
+    debug!("listing files from templates");
     let source_files = template_composite.find_sourcefiles()?;
-    debug!(ctx.logger, "defining plan of rendering");
+    debug!("defining plan of rendering");
     let actions = plan(ctx, source_files, &variables)?;
     if ui::confirm_plan(&ctx, &actions)? {
-        debug!(ctx.logger, "executing plan of rendering");
+        debug!("executing plan of rendering");
         execute(ctx, &actions, &variables)?;
-        debug!(ctx.logger, "running scripts");
+        debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
     }
     Ok(())
@@ -187,7 +181,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
 
     let pb = ProgressBar::new(actions.len() as u64);
     let mut handlebars = new_hbs();
-    debug!(ctx.logger, "execute"; "variables" => ?&variables);
+    debug!(?variables, "execute");
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
@@ -518,7 +512,7 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
                 if let Some(cmd) = &script.cmd {
                     if ui::confirm_run_script(ctx, loc, cmd)? {
                         if let Err(err) = script.run() {
-                            warn!(ctx.logger, ""; "err" => format!("{:#?}",err));
+                            warn!(?err);
                         }
                     }
                 }

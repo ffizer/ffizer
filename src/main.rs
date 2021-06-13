@@ -23,10 +23,8 @@ fn tracing_level_from_usize(level: usize) -> tracing::Level {
 fn init_log(level_min: tracing::Level) {
     // a builder for `FmtSubscriber`.
     let subscriber = FmtSubscriber::builder()
-        // all spans/events with a level higher than TRACE (e.g, debug, info, warn, etc.)
-        // will be written to stdout.
+        .with_writer(std::io::stderr)
         .with_max_level(level_min)
-        // completes the builder.
         .finish();
 
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");

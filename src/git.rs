@@ -22,7 +22,7 @@ where
         source,
     })?;
     if dst.exists() {
-        info!(?dst, "git reset cached template");
+        info!("git reset cached template");
         checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
             msg: "checkout_reset".to_owned(),
             dst: dst.to_path_buf(),
@@ -30,7 +30,7 @@ where
             rev: rev.as_ref().to_owned(),
             source,
         })?;
-        info!(?dst, "git pull cached template");
+        info!("git pull cached template");
         pull(dst, &rev, &mut fo).map_err(|source| Error::GitRetrieve {
             msg: "pull".to_owned(),
             dst: dst.to_path_buf(),
@@ -49,7 +49,7 @@ where
     // std::fs::remove_dir_all(&dst)?;
     // std::fs::rename(&tmp, &dst)?;
     } else {
-        info!(?dst, "git clone into cached template");
+        info!("git clone into cached template");
         clone(&dst, &url, "master", fo)?;
         checkout(&dst, &rev).map_err(|source| Error::GitRetrieve {
             msg: "checkout_clone".to_owned(),
@@ -260,10 +260,19 @@ mod tests {
     use run_script;
     use std::fs;
     use tempfile::tempdir;
+    use tracing_subscriber::FmtSubscriber;
 
     #[cfg(not(target_os = "windows"))]
     #[test]
     fn retrieve_should_update_existing_template() {
+        let subscriber = FmtSubscriber::builder()
+            .with_writer(tracing_subscriber::fmt::writer::TestWriter::default())
+            .with_max_level(tracing::Level::WARN)
+            .finish();
+
+        tracing::subscriber::set_global_default(subscriber)
+            .expect("setting default subscriber failed");
+
         if std::process::Command::new("git")
             .arg("version")
             .output()
@@ -275,94 +284,106 @@ mod tests {
 
         let tmp_dir = tempdir().unwrap();
 
-        // template v1
         let src_path = tmp_dir.path().join("src");
+        let dst_path = tmp_dir.path().join("dst");
         let options = run_script::ScriptOptions::new();
         let args = vec![];
-        let (code, output, error) = run_script::run(
-            &format!(
-                r#"
-            mkdir -p {}
-            cd {}
-            git init
-            git config user.email "test@example.com"
-            git config user.name "Test Name"
-            echo "v1: Lorem ipsum" > foo.txt
-            git add foo.txt
-            git commit -m "add foo.txt"
-            "#,
-                src_path.to_str().unwrap(),
-                src_path.to_str().unwrap()
-            ),
-            &args,
-            &options,
-        )
-        .unwrap();
-        if code != 0 {
-            eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
-        }
-        assert_eq!(code, 0, "setup template v1");
 
-        let dst_path = tmp_dir.path().join("dst");
-        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
-        assert_eq!(
-            fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
-            "v1: Lorem ipsum\n"
-        );
+        // template v1
+        {
+            let span = tracing::span!(tracing::Level::INFO, "template v1");
+            let _enter = span.enter();
+            let (code, output, error) = run_script::run(
+                &format!(
+                    r#"
+                        mkdir -p {}
+                        cd {}
+                        git init -b master
+                        git config user.email "test@example.com"
+                        git config user.name "Test Name"
+                        echo "v1: Lorem ipsum" > foo.txt
+                        git add foo.txt
+                        git commit -m "add foo.txt"
+                        "#,
+                    src_path.to_str().unwrap(),
+                    src_path.to_str().unwrap()
+                ),
+                &args,
+                &options,
+            )
+            .unwrap();
+            if code != 0 {
+                warn!(%output, %error);
+            }
+            assert_eq!(code, 0, "setup template v1");
+            retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+            assert_eq!(
+                fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
+                "v1: Lorem ipsum\n"
+            );
+        }
 
         // template v2
-        let (code, output, error) = run_script::run(
-            &format!(
-                r#"
-            cd {}
-            echo "v2: Hello" > foo.txt
-            git add foo.txt
-            git commit -m "add foo.txt"
-            "#,
-                src_path.to_str().unwrap()
-            ),
-            &args,
-            &options,
-        )
-        .unwrap();
-        if code != 0 {
-            eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
-        }
-        assert_eq!(code, 0, "setup template v2");
+        {
+            let span = tracing::span!(tracing::Level::INFO, "template v2");
+            let _enter = span.enter();
 
-        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
-        assert_eq!(
-            fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
-            "v2: Hello\n"
-        );
+            let (code, output, error) = run_script::run(
+                &format!(
+                    r#"
+                        cd {}
+                        echo "v2: Hello" > foo.txt
+                        git add foo.txt
+                        git commit -m "add foo.txt"
+                        "#,
+                    src_path.to_str().unwrap()
+                ),
+                &args,
+                &options,
+            )
+            .unwrap();
+            if code != 0 {
+                warn!(%output, %error);
+            }
+            assert_eq!(code, 0, "setup template v2");
+
+            retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+            assert_eq!(
+                fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
+                "v2: Hello\n"
+            );
+        }
 
         // template v3
-        let (code, output, error) = run_script::run(
-            &format!(
-                r#"
-            cd {}
-            echo "v3: Hourra" > foo.txt
-            git add foo.txt
-            git commit -m "add foo.txt"
-            "#,
-                src_path.to_str().unwrap()
-            ),
-            &args,
-            &options,
-        )
-        .unwrap();
-        if code != 0 {
-            eprintln!("---output:\n{}\n---error:\n{}\n---", output, error);
-        }
-        assert_eq!(code, 0, "setup template v3");
+        {
+            let span = tracing::span!(tracing::Level::INFO, "template v3");
+            let _enter = span.enter();
 
-        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
-        assert_eq!(
-            fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
-            "v3: Hourra\n"
-        );
-        //TODO always remove
-        //fs::remove_dir_all(tmp_dir)?;
-        //Ok(())
+            let (code, output, error) = run_script::run(
+                &format!(
+                    r#"
+                        cd {}
+                        echo "v3: Hourra" > foo.txt
+                        git add foo.txt
+                        git commit -m "add foo.txt"
+                        "#,
+                    src_path.to_str().unwrap()
+                ),
+                &args,
+                &options,
+            )
+            .unwrap();
+            if code != 0 {
+                warn!(%output, %error);
+            }
+            assert_eq!(code, 0, "setup template v3");
+
+            retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+            assert_eq!(
+                fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
+                "v3: Hourra\n"
+            );
+        }
+        fs::remove_dir_all(tmp_dir).expect("remove tmp dir");
     }
 }

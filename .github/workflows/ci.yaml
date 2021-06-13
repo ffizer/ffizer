@@ -22,9 +22,9 @@ jobs:
           - imageName: "macOS-latest"
             profile_rustup: minimal
             profile_ci_flow: none
-          - imageName: windows-latest
-            profile_rustup: minimal
-            profile_ci_flow: none
+          # - imageName: windows-latest
+          #   profile_rustup: minimal
+          #   profile_ci_flow: none
 
     steps:
       - uses: actions-rs/toolchain@v1

@@ -37,7 +37,7 @@ fn check_samples<A: AsRef<Path>>(template_path: A) -> Result<bool> {
 }
 
 //TODO move to ui module to be customizable (in future)
-pub fn show_differences(name: &str, entries: &Vec<EntryDiff>) -> Result<()> {
+pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
     use difference::Changeset;
     for entry in entries {
         println!("--------------------------------------------------------------");
@@ -225,9 +225,7 @@ impl std::fmt::Display for SampleRun {
 /// recursively copy a directory
 /// based on https://stackoverflow.com/a/60406693/469066
 pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<()> {
-    let mut stack = Vec::new();
-    stack.push(PathBuf::from(from.as_ref()));
-
+    let mut stack = vec![PathBuf::from(from.as_ref())];
     let output_root = PathBuf::from(to.as_ref());
     let input_root = PathBuf::from(from.as_ref()).components().count();
 
@@ -246,33 +244,26 @@ pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<()> {
         if fs::metadata(&dest).is_err() {
             // println!(" mkdir: {:?}", dest);
             fs::create_dir_all(&dest).map_err(|source| Error::CreateFolder {
-                path: dest.clone().into(),
+                path: dest.clone(),
                 source,
             })?;
         }
 
         for entry in fs::read_dir(&working_path).map_err(|source| Error::ListFolder {
-            path: working_path.into(),
+            path: working_path,
             source,
         })? {
             let path = entry?.path();
             if path.is_dir() {
                 stack.push(path);
-            } else {
-                match path.file_name() {
-                    Some(filename) => {
-                        let dest_path = dest.join(filename);
-                        //println!("  copy: {:?} -> {:?}", &path, &dest_path);
-                        fs::copy(&path, &dest_path).map_err(|source| Error::CopyFile {
-                            src: path.into(),
-                            dst: dest_path.into(),
-                            source,
-                        })?;
-                    }
-                    None => {
-                        //println!("failed: {:?}", path);
-                    }
-                }
+            } else if let Some(filename) = path.file_name() {
+                let dest_path = dest.join(filename);
+                //println!("  copy: {:?} -> {:?}", &path, &dest_path);
+                fs::copy(&path, &dest_path).map_err(|source| Error::CopyFile {
+                    src: path,
+                    dst: dest_path,
+                    source,
+                })?;
             }
         }
     }

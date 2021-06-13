@@ -178,7 +178,7 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
                 let actual_content = fs::read_to_string(&actual_path)
                     .map_err(|source| Error::ReadFile {
                         path: actual_path,
-                        source: source,
+                        source,
                     })?
                     .replace("\r\n", "\n");
                 if actual_content != expect_content {
@@ -200,7 +200,7 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
             // other error
             Err(source) => Err(Error::ReadFile {
                 path: expect_path,
-                source: source,
+                source,
             }),
         }
     }

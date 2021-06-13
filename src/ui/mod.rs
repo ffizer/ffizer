@@ -114,8 +114,8 @@ pub fn ask_variables(
                 });
             VariableRequest {
                 prompt,
-                values,
                 default_value,
+                values,
             }
         };
         let resp = if variable.hidden || ctx.cmd_opt.no_interaction {

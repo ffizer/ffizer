@@ -32,7 +32,7 @@ use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tracing::{debug, warn};
 
 #[derive(Debug, Clone)]
@@ -92,12 +92,12 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     Ok(())
 }
 
-fn do_in_folder<F, R>(folder: &PathBuf, f: F) -> Result<R>
+fn do_in_folder<F, R>(folder: &Path, f: F) -> Result<R>
 where
     F: FnOnce() -> Result<R>,
 {
     fs::create_dir_all(&folder).map_err(|source| Error::CreateFolder {
-        path: folder.clone(),
+        path: folder.to_path_buf(),
         source,
     })?;
     let current_dir = std::env::current_dir()?;
@@ -163,8 +163,8 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
                 //TODO reduce src (remove useless source) + test
                 //TODO add SourceFile of existing file
                 //TODO select the right operation
-                dst_path,
                 src,
+                dst_path,
                 operation,
             }
         })
@@ -298,7 +298,7 @@ fn mk_file_on_action(
 fn render_template(
     handlebars: &mut handlebars::Handlebars,
     variables: &Variables,
-    src_full_path: &PathBuf,
+    src_full_path: &Path,
     output: &mut Vec<u8>,
 ) -> Result<()> {
     let src_name = &src_full_path.to_string_lossy();
@@ -461,7 +461,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
     let rendered_relative = src
         .relative
         .to_str()
-        .ok_or(Error::Unknown("failed to stringify path".to_owned()))
+        .ok_or_else(|| Error::Unknown("failed to stringify path".to_owned()))
         .and_then(|s| {
             let p = if !s.contains('{') {
                 s.to_owned()

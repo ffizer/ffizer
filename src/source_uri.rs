@@ -55,7 +55,7 @@ impl FromStr for SourceUri {
                     host: None,
                 })
             })
-            .ok_or(Error::Unknown("failed to parse source uri".to_owned()))
+            .ok_or_else(|| Error::Unknown("failed to parse source uri".to_owned()))
     }
 }
 

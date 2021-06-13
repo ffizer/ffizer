@@ -121,13 +121,10 @@ pub(crate) fn optimize_sourcefiles(sources: &mut Vec<SourceFile>) {
     sources.sort();
     // take until not Renderable
     // Because apply Dir, Symlink, RawFile erase previous change
-    if let Some(pos) = sources.iter().position(|x| {
-        if let SourceFileMetadata::RenderableFile { .. } = x.metadata {
-            false
-        } else {
-            true
-        }
-    }) {
+    if let Some(pos) = sources
+        .iter()
+        .position(|x| !matches!(x.metadata, SourceFileMetadata::RenderableFile { .. }))
+    {
         sources.truncate(pos + 1);
     }
 }

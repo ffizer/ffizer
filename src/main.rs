@@ -5,7 +5,6 @@ use ffizer::Command;
 use ffizer::Ctx;
 use ffizer::SourceLoc;
 use ffizer::TestSamplesOpts;
-use self_update;
 use std::error::Error;
 use structopt::StructOpt;
 use tracing::{debug, error, info, trace};

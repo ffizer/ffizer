@@ -5,8 +5,7 @@ pub trait Graph {
     fn find_node(&self, k: &Self::K) -> Option<&Self::V>;
     fn find_edges_direct(&self, v: &Self::V) -> Vec<Self::K>;
     fn find_edges_ordered_by_depth(&self, root_key: &Self::K) -> Vec<Self::K> {
-        let mut back = vec![];
-        back.push(root_key.clone());
+        let mut back = vec![root_key.clone()];
         let mut visited = 0;
         while visited < back.len() {
             let k = back.get(visited).expect("should be present");

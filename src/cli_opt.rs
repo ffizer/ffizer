@@ -122,7 +122,7 @@ impl Default for UpdateMode {
 }
 
 fn parse_keyvalue(src: &str) -> (String, String) {
-    let kv: Vec<&str> = src.splitn(2, "=").collect();
+    let kv: Vec<&str> = src.splitn(2, '=').collect();
     if kv.len() == 2 {
         (kv[0].to_owned(), kv[1].to_owned())
     } else {

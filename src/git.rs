@@ -1,7 +1,6 @@
 use crate::error::*;
 use git2::build::{CheckoutBuilder, RepoBuilder};
 use git2::{Config, FetchOptions, Repository};
-use git2_credentials;
 use std::path::Path;
 use tracing::{debug, info, warn};
 
@@ -107,7 +106,7 @@ where
 }
 
 // from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn pull<'a, P, R>(dst: P, rev: R, fo: &mut FetchOptions<'a>) -> Result<(), git2::Error>
+fn pull<P, R>(dst: P, rev: R, fo: &mut FetchOptions) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
     R: AsRef<str>,

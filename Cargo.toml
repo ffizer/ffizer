@@ -21,7 +21,7 @@ difference = "2.0.0"
 directories = "3.0.2"
 git2 = "0.13"
 git2_credentials = "0.7"
-globset = "0.4.6"
+globset = "0.4.7"
 handlebars = "4.0"
 handlebars_misc_helpers = { version = "0.12", features = [
     "string",

@@ -8,7 +8,9 @@ use ffizer::TestSamplesOpts;
 use std::error::Error;
 use structopt::StructOpt;
 use tracing::{debug, error, info, trace};
-use tracing_subscriber::FmtSubscriber;
+use tracing_error::ErrorLayer;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::{filter, fmt};
 
 fn tracing_level_from_usize(level: usize) -> tracing::Level {
     match level {
@@ -22,12 +24,19 @@ fn tracing_level_from_usize(level: usize) -> tracing::Level {
 
 fn init_log(level_min: tracing::Level) {
     // a builder for `FmtSubscriber`.
-    let subscriber = FmtSubscriber::builder()
+    let fmt_layer = fmt::layer()
+        // .with_target(false)
         .with_writer(std::io::stderr)
-        .with_max_level(level_min)
-        .finish();
-
-    tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+        .pretty();
+    // let filter_layer = filter::EnvFilter::try_from_default_env()
+    //     .or_else(|_| EnvFilter::try_new("info"))
+    //     .unwrap();
+    let filter_layer = filter::LevelFilter::from_level(level_min);
+    tracing_subscriber::registry()
+        .with(ErrorLayer::default())
+        .with(filter_layer)
+        .with(fmt_layer)
+        .init();
     info!(version = env!("CARGO_PKG_VERSION"), "start");
     debug!("debug enabled");
     trace!("trace enabled");

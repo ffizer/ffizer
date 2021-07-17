@@ -41,7 +41,13 @@ serde_json = "1.0.64"
 serde_plain = "0.3.0"
 serde_yaml = "0.8"
 tracing = "0.1"
-tracing-subscriber = { version = "0.2", optional = true }
+tracing-subscriber = { version = "0.2", optional = true, features = [
+    "registry",
+    "fmt",
+    "ansi",
+    "env-filter",
+] }
+tracing-error = "0.1"
 tempfile = "3.2.0"
 thiserror = "1.0"
 structopt = "0.3.21"
@@ -67,11 +73,16 @@ required-features = ["cli"]
 libc = "0.2"
 openssl = { version = "0.10", features = ["vendored"] }
 # self_update = { version = "0.12.0", optional = true, features = ["archive-zip", "compression-zip-deflate"]}
-self_update = { version = "0.27.0", optional = true, features = ["archive-zip"] }
+self_update = { version = "0.27.0", optional = true, features = [
+    "archive-zip",
+] }
 
 [target.'cfg(windows)'.dependencies]
 winapi = "0.3"
-self_update = { version = "0.27.0", optional = true, features = ["archive-tar", "compression-flate2"] }
+self_update = { version = "0.27.0", optional = true, features = [
+    "archive-tar",
+    "compression-flate2",
+] }
 
 # see https://github.com/johnthagen/min-sized-rust
 [profile.release]
@@ -86,5 +97,5 @@ codegen-units = 1
 
 [features]
 default = ["cli"]
-test_remote = [] # feature has no explicit dependencies
+test_remote = []                                           # feature has no explicit dependencies
 cli = ["self_update", "human-panic", "tracing-subscriber"]

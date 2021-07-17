@@ -11,7 +11,7 @@ use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use tracing::{debug, warn};
+use tracing::{debug, instrument, span, warn, Level};
 
 #[derive(Debug, Clone)]
 pub struct TemplateLayer {
@@ -68,6 +68,7 @@ impl TemplateComposite {
         let mut back = vec![];
         let mut names = HashSet::new();
         for layer in &self.layers {
+            let _span_ = span!(Level::DEBUG, "find_variabledefs", layer = ?layer).entered();
             for variable in layer.cfg.find_variabledefs()? {
                 if !names.contains(&variable.name) {
                     names.insert(variable.name.clone());
@@ -81,6 +82,7 @@ impl TemplateComposite {
     pub fn find_sourcefiles(&self) -> Result<Vec<SourceFile>> {
         let mut back = vec![];
         for layer in &self.layers {
+            let _span_ = span!(Level::DEBUG, "find_sourcefiles", layer = ?layer).entered();
             let ignores = &layer.cfg.find_ignores()?;
             let template_dir = if layer.cfg.use_template_dir {
                 "template"
@@ -116,6 +118,7 @@ impl Graph for HashMap<SourceLoc, TemplateCfg> {
 }
 
 //struct Template;
+#[instrument(skip(variables, templates))]
 fn deep_download(
     variables: &Variables,
     offline: bool,

@@ -14,7 +14,7 @@ use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
 use serde_yaml::Value;
 use std::borrow::Cow;
-use tracing::debug;
+use tracing::{debug, span, Level};
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -48,6 +48,8 @@ pub fn ask_variables(
     write_title("Configure variables")?;
     // TODO optimize to reduce clones
     for variable in list_variables.iter().cloned() {
+        let _span_ = span!(Level::DEBUG, "ask_variables", ?variable).entered();
+        dbg!(&variable);
         let name = variable.name;
         if variables.contains_key(&name) {
             continue;

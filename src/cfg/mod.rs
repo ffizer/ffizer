@@ -16,6 +16,7 @@ use crate::variable_def::VariableDef;
 use crate::Result;
 use std::path::PathBuf;
 use std::str::FromStr;
+use tracing::instrument;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 pub const TEMPLATE_SAMPLES_DIRNAME: &str = ".ffizer.samples.d";
@@ -67,6 +68,7 @@ impl template_cfg::TemplateCfg {
     }
 }
 
+#[instrument]
 fn to_variabledef(v: &variable_cfg::VariableCfg) -> Result<VariableDef> {
     let hidden: bool = match v.hidden {
         None => false,

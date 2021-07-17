@@ -1,6 +1,7 @@
 use crate::error::*;
 use serde::Serialize;
 use std::collections::BTreeMap;
+use tracing::instrument;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Variables(BTreeMap<String, serde_yaml::Value>);
@@ -19,8 +20,8 @@ impl Variables {
         self.0.contains_key(&key.into())
     }
 
+    #[instrument]
     pub fn value_from_str(s: &str) -> Result<serde_yaml::Value> {
-        //serde_yaml::to_value(value).context(crate::SerdeYaml {})
         serde_yaml::from_str::<serde_yaml::Value>(s).map_err(Error::from)
     }
 }

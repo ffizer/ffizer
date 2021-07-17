@@ -6,6 +6,7 @@
 // use std::backtrace::Backtrace;
 use std::path::PathBuf;
 use thiserror::Error;
+use tracing_error::SpanTrace;
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
@@ -133,10 +134,11 @@ pub enum Error {
         template: String,
         source: handlebars::RenderError,
     },
-    #[error(transparent)]
-    // #[error("fail to process yaml")]
+    // #[error(transparent)]
+    #[error("fail to process yaml")]
     SerdeYaml {
-        #[from]
+        context: SpanTrace,
+        #[source]
         source: serde_yaml::Error,
         // backtrace: Backtrace,
     },
@@ -165,4 +167,13 @@ pub enum Error {
         #[from]
         source: clap::Error,
     },
+}
+
+impl From<serde_yaml::Error> for Error {
+    fn from(source: serde_yaml::Error) -> Self {
+        Error::SerdeYaml {
+            context: SpanTrace::capture(),
+            source,
+        }
+    }
 }

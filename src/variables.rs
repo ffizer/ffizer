@@ -24,6 +24,13 @@ impl Variables {
     pub fn value_from_str(s: &str) -> Result<serde_yaml::Value> {
         serde_yaml::from_str::<serde_yaml::Value>(s).map_err(Error::from)
     }
+
+    #[instrument]
+    pub fn value_as_str(s: &serde_yaml::Value) -> Result<String> {
+        serde_yaml::to_string(&s)
+            .map(|s| s.trim_start_matches("---").trim().to_owned())
+            .map_err(Error::from)
+    }
 }
 
 #[cfg(test)]

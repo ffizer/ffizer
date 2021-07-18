@@ -1,18 +1,17 @@
 use super::template_cfg::TemplateCfg;
 use super::transform_values::TransformsValues;
+use super::variable_cfg::VariableCfg;
 use crate::files;
 use crate::graph::Graph;
 use crate::scripts::Script;
 use crate::source_file::SourceFile;
 use crate::source_loc::SourceLoc;
-use crate::variable_def::VariableDef;
 use crate::Result;
 use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use tracing::{debug, instrument, span, warn, Level};
-
 #[derive(Debug, Clone)]
 pub struct TemplateLayer {
     order: usize,
@@ -64,12 +63,12 @@ impl TemplateComposite {
         Ok(TemplateComposite { layers })
     }
 
-    pub fn find_variabledefs(&self) -> Result<Vec<VariableDef>> {
+    pub fn find_variablecfgs(&self) -> Result<Vec<VariableCfg>> {
         let mut back = vec![];
         let mut names = HashSet::new();
         for layer in &self.layers {
-            let _span_ = span!(Level::DEBUG, "find_variabledefs", layer = ?layer).entered();
-            for variable in layer.cfg.find_variabledefs()? {
+            let _span_ = span!(Level::DEBUG, "find_variablecfgs", layer = ?layer).entered();
+            for variable in layer.cfg.variables.clone() {
                 if !names.contains(&variable.name) {
                     names.insert(variable.name.clone());
                     back.push(variable.clone());

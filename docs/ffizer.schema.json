@@ -47,24 +47,34 @@
     "ImportCfg": {
       "description": "define a template layer to import",
       "type": "object",
-      "required": [
-        "uri"
-      ],
+      "required": ["uri"],
       "properties": {
         "rev": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "subfolder": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "uri": {
           "type": "string"
+        }
+      }
+    },
+    "LabelValueCfg": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": {
+          "description": "display of the value (in select)",
+          "type": "string"
+        },
+        "value": {
+          "description": "the value",
+          "allOf": [
+            {
+              "$ref": "#/definitions/AnyValue"
+            }
+          ]
         }
       }
     },
@@ -73,32 +83,21 @@
       "properties": {
         "cmd": {
           "description": "command to execute",
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "message": {
           "description": "message to display",
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         }
       }
     },
     "VariableCfg": {
       "type": "object",
-      "required": [
-        "name"
-      ],
+      "required": ["name"],
       "properties": {
         "ask": {
           "description": "sentence to ask the value (default to the name on variable)",
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "default_value": {
           "description": "optionnal default value",
@@ -113,10 +112,7 @@
         },
         "hidden": {
           "description": "is the variable hidden to the user (could be usefull to cache shared variable/data)",
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "name": {
           "description": "name of variable used in the template",
@@ -126,7 +122,7 @@
           "description": "if non-empty then the value should selected into the list of value",
           "anyOf": [
             {
-              "$ref": "#/definitions/AnyValue"
+              "$ref": "#/definitions/VariableValuesCfg"
             },
             {
               "type": "null"
@@ -134,6 +130,25 @@
           ]
         }
       }
+    },
+    "VariableValuesCfg": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LabelValueCfg"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AnyValue"
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
     }
   }
 }

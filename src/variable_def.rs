@@ -9,5 +9,13 @@ pub struct VariableDef {
     /// is the variable hidden to the user (could be usefull to cache shared variable/data)
     pub hidden: bool,
     /// if non-empty then the value should selected into the list of value
-    pub select_in_values: Vec<serde_yaml::Value>,
+    pub select_in_values: Vec<LabelValue>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq)]
+pub struct LabelValue {
+    /// display of the value (in select)
+    pub label: String,
+    /// the value
+    pub value: serde_yaml::Value,
 }

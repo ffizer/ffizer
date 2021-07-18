@@ -1,7 +1,10 @@
 mod tree;
 
+use crate::cfg::TransformsValues;
+use crate::cfg::VariableCfg;
 use crate::cli_opt::*;
 use crate::error::*;
+use crate::variable_def::LabelValue;
 use crate::variable_def::VariableDef;
 use crate::FileOperation;
 use crate::{Action, Ctx, Variables};
@@ -12,9 +15,8 @@ use dialoguer::Input;
 use dialoguer::Select;
 use handlebars_misc_helpers::new_hbs;
 use lazy_static::lazy_static;
-use serde_yaml::Value;
 use std::borrow::Cow;
-use tracing::{debug, span, Level};
+use tracing::{debug, instrument, span, warn, Level};
 
 lazy_static! {
     static ref TERM: Term = Term::stdout();
@@ -26,34 +28,80 @@ fn write_title(s: &str) -> Result<()> {
     Ok(())
 }
 
+#[derive(Debug)]
 pub struct VariableResponse {
     value: String,
     idx: Option<usize>,
 }
 
+#[derive(Debug)]
 pub struct VariableRequest {
     prompt: String,
     default_value: Option<VariableResponse>,
     values: Vec<String>,
 }
 
-pub fn ask_variables(
+#[instrument]
+fn to_variabledef(v: &VariableCfg) -> Result<VariableDef> {
+    let hidden: bool = match v.hidden {
+        None => false,
+        Some(ref v) => serde_yaml::from_str(&v)?,
+    };
+    let select_in_values: Vec<LabelValue> = match &v.select_in_values {
+        None => vec![],
+        Some(v) => v.into(),
+    };
+
+    //     let s_evaluated =
+    //         handlebars
+    //             .render_template(&s, &variables)
+    //             .context(crate::Handlebars {
+    //                 when: format!("define values for '{}'", &name),
+    //                 template: s.clone(),
+    //             })?;
+    //     let s_values: Vec<String> =
+    //         serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
+    //     //dbg!(&s_values);
+    //     s_values
+
+    Ok(VariableDef {
+        name: v.name.clone(),
+        default_value: v.default_value.as_ref().map(|v| v.0.clone()),
+        ask: v.ask.clone(),
+        hidden,
+        select_in_values,
+    })
+}
+
+pub(crate) fn ask_variables(
     ctx: &Ctx,
-    list_variables: &[VariableDef],
+    list_variables: &[VariableCfg],
     mut init: Variables,
 ) -> Result<Variables> {
     let mut variables = Variables::default();
     variables.append(&mut init);
     let handlebars = new_hbs();
+
     write_title("Configure variables")?;
     // TODO optimize to reduce clones
-    for variable in list_variables.iter().cloned() {
-        let _span_ = span!(Level::DEBUG, "ask_variables", ?variable).entered();
-        dbg!(&variable);
-        let name = variable.name;
-        if variables.contains_key(&name) {
+    for variable_cfg in list_variables.iter().cloned() {
+        let _span_ = span!(Level::DEBUG, "ask_variables", ?variable_cfg).entered();
+        if variables.contains_key(&variable_cfg.name) {
             continue;
         }
+        let render = |v: &str| {
+            let r = handlebars.render_template(v, &variables);
+            match r {
+                Ok(s) => s,
+                Err(e) => {
+                    warn!(input = ?v, error = ?e, "failed to convert");
+                    v.into()
+                }
+            }
+        };
+        let variable_cfg = variable_cfg.transforms_values(&render)?;
+        let variable = to_variabledef(&variable_cfg)?;
+        let name = variable.name;
         let request = {
             let prompt = if variable.ask.is_some() {
                 let ask = variable.ask.expect("variable ask should defined");
@@ -70,42 +118,11 @@ pub fn ask_variables(
             let values: Vec<String> = variable
                 .select_in_values
                 .iter()
-                .map(|v| serde_yaml::from_value(v.clone()).map_err(Error::from))
-                .collect::<Result<Vec<String>>>()?;
-            //TODO ValuesForSelection::Empty => vec![],
-            // ValuesForSelection::Sequence(v) => v.clone(),
-            // ValuesForSelection::String(s) => {
-            //     let s_evaluated =
-            //         handlebars
-            //             .render_template(&s, &variables)
-            //             .context(crate::Handlebars {
-            //                 when: format!("define values for '{}'", &name),
-            //                 template: s.clone(),
-            //             })?;
-            //     let s_values: Vec<String> =
-            //         serde_yaml::from_str(&s_evaluated).context(crate::SerdeYaml {})?;
-            //     //dbg!(&s_values);
-            //     s_values
-            // }
-            // };
+                .map(|v| v.label.to_string())
+                .collect::<Vec<String>>();
             let default_value = variable
                 .default_value
-                .and_then(|default_value| match default_value {
-                    Value::String(ref v) => Some(format!("\"{}\"", v)),
-                    Value::Bool(ref v) => Some(format!("{}", v)),
-                    Value::Number(ref v) => Some(format!("{}", v)),
-                    _ => None,
-                })
-                .and_then(|tmpl| {
-                    handlebars
-                        .render_template(&tmpl, &variables)
-                        //TODO better manage error
-                        // .context(crate::Handlebars {
-                        //     when: format!("define default_value for '{}'", &name),
-                        //     template: tmpl,
-                        // })
-                        .ok()
-                })
+                .and_then(|default_value| Variables::value_as_str(&default_value).ok())
                 .map(|value| {
                     let idx = values
                         .iter()
@@ -130,14 +147,20 @@ pub fn ask_variables(
         };
         if let Some(idx) = resp.idx {
             variables.insert(format!("{}__idx", name), idx)?;
+            variables.insert(format!("{}__label", name), resp.value)?;
+            variables.insert(
+                name.clone(),
+                variable
+                    .select_in_values
+                    .iter()
+                    .nth(idx)
+                    .expect("selected should be in the list")
+                    .value
+                    .clone(),
+            )?;
+        } else {
+            variables.insert(name.clone(), Variables::value_from_str(&resp.value)?)?;
         }
-        variables.insert(
-            name.clone(),
-            Variables::value_from_str(&resp.value).map_err(|_source| Error::ReadVariable {
-                name,
-                value: resp.value.clone(),
-            })?,
-        )?;
     }
     Ok(variables)
 }

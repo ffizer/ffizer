@@ -74,7 +74,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("asking variables");
     let variables = ui::ask_variables(
         &ctx,
-        &template_composite.find_variabledefs()?,
+        &template_composite.find_variablecfgs()?,
         variables_from_cli,
     )?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)

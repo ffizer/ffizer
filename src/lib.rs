@@ -811,7 +811,7 @@ mod tests {
 
     #[test]
     fn test_hbs_expression() {
-        let mut handlebars = new_hbs();
+        let handlebars = new_hbs();
         let variables = new_variables_for_test();
         assert_eq!(
             handlebars.render_template("myprj", &variables).unwrap(),
@@ -919,18 +919,19 @@ mod tests {
         // );
 
         //WARNING: no error raised if undefined variable is used into an expression
-        handlebars.set_strict_mode(true);
-        assert_eq!(
-            handlebars
-                .render_template("{{eq undefined \"myprj\"}}", &variables)
-                .unwrap(),
-            "false"
-        );
-        assert_eq!(
-            handlebars
-                .render_template("{{ne undefined \"myprj\"}}", &variables)
-                .unwrap(),
-            "true"
-        );
+        // since handlebars 4.1 an error is raised
+        // handlebars.set_strict_mode(true);
+        // assert_eq!(
+        //     handlebars
+        //         .render_template("{{eq undefined \"myprj\"}}", &variables)
+        //         .unwrap(),
+        //     "false"
+        // );
+        // assert_eq!(
+        //     handlebars
+        //         .render_template("{{ne undefined \"myprj\"}}", &variables)
+        //         .unwrap(),
+        //     "true"
+        // );
     }
 }

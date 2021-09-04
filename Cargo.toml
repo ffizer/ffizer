@@ -50,7 +50,7 @@ tracing-subscriber = { version = "0.2", optional = true, features = [
 tracing-error = "0.1"
 tempfile = "3.2.0"
 thiserror = "1.0"
-structopt = "0.3.21"
+structopt = "0.3.23"
 walkdir = "2.3.2"
 
 [dev-dependencies]

@@ -1,6 +1,6 @@
 use crate::error::*;
 use globset::{Glob, GlobMatcher};
-use serde_plain::derive_deserialize_from_str;
+use serde_plain::derive_deserialize_from_fromstr;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
@@ -25,7 +25,7 @@ impl FromStr for PathPattern {
     }
 }
 
-derive_deserialize_from_str!(PathPattern, "valid path matcher");
+derive_deserialize_from_fromstr!(PathPattern, "valid path matcher");
 
 impl PartialEq for PathPattern {
     fn eq(&self, other: &Self) -> bool {

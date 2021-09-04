@@ -1,6 +1,6 @@
 use crate::error::*;
 use regex::Regex;
-use serde_plain::derive_deserialize_from_str;
+use serde_plain::derive_deserialize_from_fromstr;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -15,7 +15,7 @@ pub struct SourceUri {
     pub host: Option<String>,
 }
 
-derive_deserialize_from_str!(SourceUri, "source uri");
+derive_deserialize_from_fromstr!(SourceUri, "source uri");
 
 impl FromStr for SourceUri {
     type Err = crate::Error;

@@ -20,13 +20,22 @@ jobs:
           - imageName: "windows-latest"
 
     steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust_toolchain }}
           override: true
           profile: minimal
       - uses: davidB/rust-cargo-make@v1
-      - uses: actions/checkout@v2.3.4
       - name: Make zip-release-ci-flow
         run: cargo make zip-release-ci-flow
         # env:

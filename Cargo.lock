@@ -341,6 +341,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56899898ce76aaf4a0f24d914c97ea6ed976d42fec6ad33fcbb0a1103e07b2b0"
 
 [[package]]
+name = "dunce"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "453440c271cf5577fd2a40e4942540cb7d0d2f85e27c8d07dd0023c925a67541"
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -491,10 +497,11 @@ dependencies = [
 
 [[package]]
 name = "fsio"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a50045aa8931ae01afbc5d72439e8f57f326becb8c70d07dfc816778eff3d167"
+checksum = "09e87827efaf94c7a44b562ff57de06930712fe21b530c3797cdede26e6377eb"
 dependencies = [
+ "dunce",
  "rand 0.8.4",
  "users",
 ]
@@ -903,9 +910,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.101"
+version = "0.2.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cb00336871be5ed2c8ed44b60ae9959dc5b9f08539422ed43f09e34ecaeba21"
+checksum = "a2a5ac8f984bfcf3a823267e5fde638acc3325f6496633a5da6bb6eb2171e103"
 
 [[package]]
 name = "libgit2-sys"
@@ -1606,9 +1613,9 @@ dependencies = [
 
 [[package]]
 name = "run_script"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fa4becc694242c537d43695743701f362b43c42cb11a3d44c8a01eb0cd18ded"
+checksum = "5dd85213e37f76b40186ee781cf3a689b05c518c3102c987acf679c573d8e4ef"
 dependencies = [
  "fsio",
 ]

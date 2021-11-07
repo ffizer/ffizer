@@ -15,7 +15,7 @@ edition = "2018"
 
 [dependencies]
 clap = "2"
-console = "0.14.1"
+console = "0.15.0"
 dialoguer = "0.8.0"
 difference = "2.0.0"
 directories = "4.0"

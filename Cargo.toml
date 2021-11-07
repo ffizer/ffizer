@@ -15,7 +15,7 @@ edition = "2018"
 
 [dependencies]
 clap = "2"
-console = "0.14.1"
+console = "0.15.0"
 dialoguer = "0.8.0"
 difference = "2.0.0"
 directories = "4.0"
@@ -50,7 +50,7 @@ tracing-subscriber = { version = "0.2", optional = true, features = [
 tracing-error = "0.1"
 tempfile = "3.2.0"
 thiserror = "1.0"
-structopt = "0.3.23"
+structopt = "0.3.25"
 walkdir = "2.3.2"
 
 [dev-dependencies]

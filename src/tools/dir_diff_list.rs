@@ -80,7 +80,7 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
 
         if actual_rpath > expect_rpath {
             add_diff(
-                &expect_rpath,
+                expect_rpath,
                 Difference::Presence {
                     actual: false,
                     expect: true,
@@ -91,7 +91,7 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
         }
         if actual_rpath < expect_rpath {
             add_diff(
-                &actual_rpath,
+                actual_rpath,
                 Difference::Presence {
                     actual: true,
                     expect: false,
@@ -102,7 +102,7 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
         }
         if actual_entry.file_type() != expect_entry.file_type() {
             add_diff(
-                &expect_rpath,
+                expect_rpath,
                 Difference::Kind {
                     actual: actual_entry.file_type(),
                     expect: expect_entry.file_type(),
@@ -117,7 +117,7 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
                 expect_entry.path().to_path_buf(),
                 actual_entry.path().to_path_buf(),
             )? {
-                add_diff(&expect_rpath, diff);
+                add_diff(expect_rpath, diff);
             }
         }
         actual_index += 1;
@@ -213,7 +213,7 @@ fn walk_dir<P: AsRef<Path>>(path: P) -> Result<Vec<DirEntry>, walkdir::Error> {
 fn compare(a: &DirEntry, b: &DirEntry) -> Ordering {
     let d = a.depth().cmp(&b.depth());
     if d == Ordering::Equal {
-        a.file_name().cmp(&b.file_name())
+        a.file_name().cmp(b.file_name())
     } else {
         d
     }

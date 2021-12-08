@@ -13,7 +13,7 @@ impl Script {
         if let Some(cmd) = &self.cmd {
             let options = ScriptOptions::new();
             let args = vec![];
-            run_script::run(&cmd, &args, &options).map_err(|source| Error::ScriptError {
+            run_script::run(cmd, &args, &options).map_err(|source| Error::ScriptError {
                 script: cmd.clone(),
                 source,
             })?;

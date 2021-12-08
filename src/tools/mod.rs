@@ -64,7 +64,7 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
                 );
             }
             Difference::StringContent { expect, actual } => {
-                let changeset = Changeset::new(&actual, &expect, "\n");
+                let changeset = Changeset::new(actual, expect, "\n");
                 println!(
                     "difference detected on: {}",
                     entry.relative_path.to_string_lossy()

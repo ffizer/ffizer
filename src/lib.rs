@@ -67,13 +67,13 @@ pub struct Action {
 
 pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("extracting variables from cli");
-    let variables_from_cli = extract_variables(&ctx)?;
+    let variables_from_cli = extract_variables(ctx)?;
     debug!("compositing templates");
     let mut template_composite =
         TemplateComposite::from_src(&variables_from_cli, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
     debug!("asking variables");
     let variables = ui::ask_variables(
-        &ctx,
+        ctx,
         &template_composite.find_variablecfgs()?,
         variables_from_cli,
     )?;
@@ -83,7 +83,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     let source_files = template_composite.find_sourcefiles()?;
     debug!("defining plan of rendering");
     let actions = plan(ctx, source_files, &variables)?;
-    if ui::confirm_plan(&ctx, &actions)? {
+    if ui::confirm_plan(ctx, &actions)? {
         debug!("executing plan of rendering");
         execute(ctx, &actions, &variables)?;
         debug!("running scripts");
@@ -124,7 +124,7 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
     ctx.cmd_opt
         .key_value
         .iter()
-        .map(|(k, v)| variables.insert(k, Variables::value_from_str(&v)?))
+        .map(|(k, v)| variables.insert(k, Variables::value_from_str(v)?))
         .collect::<Result<Vec<()>>>()?;
     Ok(variables)
 }
@@ -137,7 +137,7 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
     let list_dst_and_src = source_files
         .into_iter()
         .map(|source_file| {
-            compute_dst_path(ctx, &source_file.childpath(), variables)
+            compute_dst_path(ctx, source_file.childpath(), variables)
                 .map(|dst_path| (dst_path, source_file))
         })
         .collect::<Result<Vec<_>>>()?;
@@ -197,11 +197,11 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                 )?
             }
             FileOperation::AddFile => {
-                mk_file_on_action(&mut handlebars, variables, &a, "").map(|_| ())?
+                mk_file_on_action(&mut handlebars, variables, a, "").map(|_| ())?
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
-                let (local, remote) = mk_file_on_action(&mut handlebars, variables, &a, ".REMOTE")?;
+                let (local, remote) = mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
                 let local_digest =
                     md5::compute(fs::read(&local).map_err(|source| Error::ReadFile {
                         path: local.clone(),
@@ -303,7 +303,7 @@ fn render_template(
 ) -> Result<()> {
     let src_name = &src_full_path.to_string_lossy();
     handlebars
-        .register_template_file(&src_name, &src_full_path)
+        .register_template_file(src_name, &src_full_path)
         .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: format!("load content of template '{:?}'", &src_full_path),
@@ -312,7 +312,7 @@ fn render_template(
         })?;
     output.clear(); //vec![u8] writer appends content if not clear
     handlebars
-        .render_to_write(&src_name, &variables, output)
+        .render_to_write(src_name, &variables, output)
         .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: "render template into buffer".into(),
@@ -468,7 +468,7 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             } else {
                 let handlebars = new_hbs();
                 handlebars
-                    .render_template(&s, variables)
+                    .render_template(s, variables)
                     .map_err(|source| Error::Handlebars {
                         when: format!("define path for '{:?}'", src),
                         template: s.into(),

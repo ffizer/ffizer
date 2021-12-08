@@ -49,7 +49,7 @@ fn upgrade() -> Result<(), Box<dyn Error>> {
     let status = self_update::backends::github::Update::configure()
         .repo_owner("ffizer")
         .repo_name("ffizer")
-        .target(&target)
+        .target(target)
         .bin_name("ffizer")
         .show_download_progress(true)
         //.current_version(self_update::cargo_crate_version!())

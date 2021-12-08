@@ -127,7 +127,7 @@ fn deep_download(
     if !templates.contains_key(src) {
         let template_base_path = &src.download(offline)?;
         // update cfg with variables defined by user
-        let template_cfg = TemplateCfg::from_template_folder(&template_base_path)?;
+        let template_cfg = TemplateCfg::from_template_folder(template_base_path)?;
         // update cfg with variables defined by cli (use to update default_value)
         let mut variables_children = variables.clone();
         variables_children.insert("ffizer_src_uri", src.uri.raw.clone())?;

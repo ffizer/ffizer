@@ -45,7 +45,7 @@ pub struct VariableRequest {
 fn to_variabledef(v: &VariableCfg) -> Result<VariableDef> {
     let hidden: bool = match v.hidden {
         None => false,
-        Some(ref v) => serde_yaml::from_str(&v)?,
+        Some(ref v) => serde_yaml::from_str(v)?,
     };
     let select_in_values: Vec<LabelValue> = match &v.select_in_values {
         None => vec![],
@@ -152,8 +152,7 @@ pub(crate) fn ask_variables(
                 name.clone(),
                 variable
                     .select_in_values
-                    .iter()
-                    .nth(idx)
+                    .get(idx)
                     .expect("selected should be in the list")
                     .value
                     .clone(),

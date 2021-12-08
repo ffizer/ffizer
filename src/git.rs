@@ -226,7 +226,7 @@ fn do_merge<'a>(
         debug!("git merge: doing normal merge");
         // do a normal merge
         let head_commit = repo.reference_to_annotated_commit(&repo.head()?)?;
-        normal_merge(&repo, &head_commit, &fetch_commit)?;
+        normal_merge(repo, &head_commit, &fetch_commit)?;
     } else {
         debug!("git merge: nothing to do");
     }
@@ -256,12 +256,6 @@ pub fn find_cmd_tool(kind: &str) -> Result<String, git2::Error> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use run_script;
-    use std::fs;
-    use tempfile::tempdir;
-    use tracing_subscriber::FmtSubscriber;
-
     #[cfg(not(target_os = "windows"))]
     #[test]
     fn retrieve_should_update_existing_template() {

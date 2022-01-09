@@ -1,73 +1,70 @@
 use crate::source_loc::SourceLoc;
+use clap::{ArgEnum, Args, Parser, Subcommand};
 use std::path::PathBuf;
-use structopt::clap::arg_enum;
-use structopt::clap::AppSettings;
-use structopt::StructOpt;
 
-#[derive(StructOpt, Debug, Clone)]
-// #[structopt(
+#[derive(Parser, Debug, Clone)]
+// #[clap(
 //     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
 //     rename_all = "kebab-case",
 //     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
 // )]
-#[structopt(
-    global_settings(&[AppSettings::ColoredHelp, AppSettings::VersionlessSubcommands]),
-    author = env!("CARGO_PKG_HOMEPAGE"), about
+#[clap(
+    version, author = env!("CARGO_PKG_HOMEPAGE"), about, 
 )]
 pub struct CliOpts {
     // The number of occurences of the `v/verbose` flag
     /// Verbose mode (-v, -vv (very verbose / level debug), -vvv)
     /// print on stderr
-    #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
+    #[clap(short = 'v', long = "verbose", parse(from_occurrences))]
     pub verbose: usize,
 
-    #[structopt(subcommand)] // Note that we mark a field as a subcommand
+    #[clap(subcommand)] // Note that we mark a field as a subcommand
     pub cmd: Command,
 }
 
-#[derive(StructOpt, Debug, Clone)]
+#[derive(Subcommand, Debug, Clone)]
 pub enum Command {
     /// Apply a template into a target directory
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     Apply(ApplyOpts),
     /// Self upgrade ffizer executable
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     Upgrade,
     /// Inspect configuration, caches,... (wip)
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     Inspect,
     /// Show the json schema of the .ffizer.yaml files
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     ShowJsonSchema,
     /// test a template against its samples
-    #[structopt(author = env!("CARGO_PKG_HOMEPAGE"))]
+    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     TestSamples(TestSamplesOpts),
 }
 
-#[derive(StructOpt, Debug, Default, Clone)]
+#[derive(Args, Debug, Default, Clone)]
 pub struct ApplyOpts {
     /// ask for plan confirmation
-    #[structopt(long, default_value = "Never", possible_values = &AskConfirmation::variants(), case_insensitive = true)]
+    #[clap(long, default_value = "Never", arg_enum, ignore_case = true)]
     pub confirm: AskConfirmation,
 
     /// mode to update existing file
-    #[structopt(long, default_value = "Ask", possible_values = &UpdateMode::variants(), case_insensitive = true)]
+    #[clap(long, default_value = "Ask", arg_enum, ignore_case = true)]
     pub update_mode: UpdateMode,
 
     /// should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
-    #[structopt(short = "y", long = "no-interaction")]
+    #[clap(short = 'y', long = "no-interaction")]
     pub no_interaction: bool,
 
     /// in offline, only local templates or cached templates are used
-    #[structopt(long = "offline")]
+    #[clap(long = "offline")]
     pub offline: bool,
 
-    #[structopt(flatten)]
+    #[clap(flatten)]
     pub src: SourceLoc,
 
     /// destination folder (created if doesn't exist)
-    #[structopt(
-        short = "d",
+    #[clap(
+        short = 'd',
         long = "destination",
         parse(from_os_str),
         //default_value = "."
@@ -75,17 +72,15 @@ pub struct ApplyOpts {
     pub dst_folder: PathBuf,
 
     /// set variable's value from cli ("key=value")
-    #[structopt(short = "v", long = "variables", parse(from_str=parse_keyvalue))]
+    #[clap(short = 'v', long = "variables", parse(from_str=parse_keyvalue))]
     pub key_value: Vec<(String, String)>,
 }
 
-arg_enum! {
-    #[derive(Debug, Clone, PartialEq, Eq)]
-    pub enum AskConfirmation {
-        Auto,
-        Always,
-        Never,
-    }
+#[derive(Debug, Clone, PartialEq, Eq, ArgEnum)]
+pub enum AskConfirmation {
+    Auto,
+    Always,
+    Never,
 }
 
 impl Default for AskConfirmation {
@@ -94,30 +89,39 @@ impl Default for AskConfirmation {
     }
 }
 
-arg_enum! {
-    #[derive(Debug, Clone, PartialEq, Eq)]
-    /// mode to process update of existing local file
-    pub enum UpdateMode {
-        // ask what to do
-        Ask,
-        // keep existing local file (ignore template)
-        Keep,
-        // override local file with file from template
-        Override,
-        // keep existing local file, add template with extension .REMOTE
-        UpdateAsRemote,
-        // rename existing local file with extension .LOCAL, add template file
-        CurrentAsLocal,
-        // show diff then ask
-        ShowDiff,
-        // try to merge existing local with remote template via merge tool (defined in the git's configuration)
-        Merge,
-    }
+#[derive(Debug, Clone, PartialEq, Eq, ArgEnum)]
+/// mode to process update of existing local file
+pub enum UpdateMode {
+    // ask what to do
+    Ask,
+    // keep existing local file (ignore template)
+    Keep,
+    // override local file with file from template
+    Override,
+    // keep existing local file, add template with extension .REMOTE
+    UpdateAsRemote,
+    // rename existing local file with extension .LOCAL, add template file
+    CurrentAsLocal,
+    // show diff then ask
+    ShowDiff,
+    // try to merge existing local with remote template via merge tool (defined in the git's configuration)
+    Merge,
 }
 
 impl Default for UpdateMode {
     fn default() -> Self {
         UpdateMode::Ask
+    }
+}
+
+impl std::fmt::Display for UpdateMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!(
+            "{}",
+            self.to_possible_value()
+                .expect("UpdateMode should have a possible value")
+                .get_name()
+        ))
     }
 }
 
@@ -130,11 +134,11 @@ fn parse_keyvalue(src: &str) -> (String, String) {
     }
 }
 
-#[derive(StructOpt, Debug, Default, Clone)]
+#[derive(Parser, Debug, Default, Clone)]
 pub struct TestSamplesOpts {
-    #[structopt(flatten)]
+    #[clap(flatten)]
     pub src: SourceLoc,
     /// in offline, only local templates or cached templates are used
-    #[structopt(long = "offline")]
+    #[clap(long = "offline")]
     pub offline: bool,
 }

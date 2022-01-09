@@ -1,25 +1,25 @@
 use crate::error::*;
 use crate::git;
 use crate::source_uri::SourceUri;
+use clap::Args;
 use std::fmt;
 use std::fs;
 use std::path::PathBuf;
-use structopt::StructOpt;
 use tracing::warn;
 
-#[derive(StructOpt, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Args, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
 pub struct SourceLoc {
     /// uri / path of the template
-    #[structopt(short = "s", long = "source")]
+    #[clap(short = 's', long = "source")]
     pub uri: SourceUri,
 
     /// git revision of the template
-    #[structopt(long = "rev", default_value = "master")]
+    #[clap(long = "rev", default_value = "master")]
     pub rev: String,
 
     /// path of the folder under the source uri to use for template
-    #[structopt(long = "source-subfolder", parse(from_os_str))]
+    #[clap(long = "source-subfolder", parse(from_os_str))]
     pub subfolder: Option<PathBuf>,
 }
 

@@ -1,3 +1,4 @@
+use clap::Parser;
 use ffizer::provide_json_schema;
 use ffizer::ApplyOpts;
 use ffizer::CliOpts;
@@ -6,7 +7,6 @@ use ffizer::Ctx;
 use ffizer::SourceLoc;
 use ffizer::TestSamplesOpts;
 use std::error::Error;
-use structopt::StructOpt;
 use tracing::{debug, error, info, trace};
 use tracing_error::ErrorLayer;
 use tracing_subscriber::prelude::*;
@@ -91,7 +91,7 @@ fn test_samples(cfg: &TestSamplesOpts) -> Result<(), Box<dyn Error>> {
 
 fn main() {
     human_panic::setup_panic!();
-    let cli_opts = CliOpts::from_args();
+    let cli_opts = CliOpts::parse();
 
     let log_level = tracing_level_from_usize(1 + cli_opts.verbose);
     init_log(log_level);

@@ -1,12 +1,12 @@
 pub mod dir_diff_list;
 
-use crate::cli_opt::{ApplyOpts, TestSamplesOpts};
+use crate::cli_opt::{ApplyOpts, CliOpts, Command, TestSamplesOpts};
 use crate::error::*;
+use clap::Parser;
 use dir_diff_list::Difference;
 use dir_diff_list::EntryDiff;
 use std::fs;
 use std::path::{Path, PathBuf};
-use structopt::StructOpt;
 use tempfile::{tempdir, TempDir};
 use tracing::info;
 
@@ -186,8 +186,17 @@ fn read_args<A: AsRef<Path>, B: AsRef<Path>, C: AsRef<Path>>(
     //HACK from_iter_safe expect first entry to be the binary name,
     //  unless clap::AppSettings::NoBinaryName has been used
     //  (but I don't know how to use it in this case, patch is welcomed)
-    args_line.insert(0, "ffizer apply");
-    ApplyOpts::from_iter_safe(args_line).map_err(Error::from)
+    args_line.insert(0, "apply");
+    args_line.insert(0, "ffizer");
+    CliOpts::try_parse_from(args_line)
+        .map_err(Error::from)
+        .and_then(|o| match o.cmd {
+            Command::Apply(g) => Ok(g),
+            e => Err(Error::Unknown(format!(
+                "command should always be parsed as 'apply' not as {:?}",
+                e
+            ))),
+        })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

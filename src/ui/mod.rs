@@ -264,7 +264,7 @@ where
         .items(
             &values
                 .iter()
-                .map(|v| format!("{} - {}", v.1.to_string(), v.0))
+                .map(|v| format!("{} - {}", v.1, v.0))
                 .collect::<Vec<_>>(),
         )
         .default(0);

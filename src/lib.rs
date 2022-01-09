@@ -35,17 +35,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use tracing::{debug, warn};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Ctx {
     pub cmd_opt: ApplyOpts,
-}
-
-impl Default for Ctx {
-    fn default() -> Ctx {
-        Ctx {
-            cmd_opt: ApplyOpts::default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

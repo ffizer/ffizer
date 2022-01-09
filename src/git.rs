@@ -256,6 +256,12 @@ pub fn find_cmd_tool(kind: &str) -> Result<String, git2::Error> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use run_script;
+    use std::fs;
+    use tempfile::tempdir;
+    use tracing_subscriber::FmtSubscriber;
+
     #[cfg(not(target_os = "windows"))]
     #[test]
     fn retrieve_should_update_existing_template() {

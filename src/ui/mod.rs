@@ -174,10 +174,7 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
         Ok(VariableResponse { value, idx: None })
     } else {
         let mut input = Select::new();
-        input
-            .with_prompt(&req.prompt)
-            .items(&req.values)
-            .paged(true);
+        input.with_prompt(&req.prompt).items(&req.values);
         if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
             input.default(default_value);
         }
@@ -270,8 +267,7 @@ where
                 .map(|v| format!("{} - {}", v.1.to_string(), v.0))
                 .collect::<Vec<_>>(),
         )
-        .default(0)
-        .paged(false);
+        .default(0);
     let idx = input.interact()?;
 
     Ok(values[idx].1.clone())

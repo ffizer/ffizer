@@ -1,6 +1,6 @@
 [package]
 name = "ffizer"
-version = "2.4.2"
+version = "2.4.3-dev"
 authors = ["David Bernard"]
 description = """ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)"""
@@ -58,7 +58,7 @@ assert_cmd = "2.0.2"
 spectral = "0.6.0"
 test-generator = "0.3.0"
 predicates = "2.1.1"
-pretty_assertions = "1.0.0"
+pretty_assertions = "1.1.0"
 
 [[bin]]
 name = "ffizer"

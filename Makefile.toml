@@ -28,7 +28,7 @@ DIST_VERSION = "${CARGO_MAKE_CRATE_VERSION}"
 DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${DIST_VERSION}-${TARGET}"
 DIST_EXT = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "tar.gz", mapping = { windows = "zip" } }
 DIST_PATH = "target/dist/${DIST_NAME}"
-GITHUB_RELEASE_VERSION = "v0.7.2"
+GITHUB_RELEASE_VERSION = "v0.10.0"
 GITHUB_RELEASE_PATH = { source = "${CARGO_MAKE_RUST_TARGET_OS}", mapping = { linux = "target/bin/linux/amd64", macos = "target/bin/darwin/amd64", windows = "target/bin/windows/amd64" } }
 # provide by environment
 # GITHUB_TOKEN =
@@ -62,6 +62,12 @@ dependencies = [
   "build-release-for-target",
   "zip-release-binary-for-target",
 ]
+script_runner = "@shell"
+script = ['''
+  echo "::set-output name=dist_file_path::${DIST_PATH}.${DIST_EXT}"
+  echo "::set-output name=dist_file_name::${DIST_NAME}.${DIST_EXT}"
+  echo "::set-output name=dist_version::${DIST_VERSION}"
+  ''']
 
 [tasks.setup-cross]
 description = "Install cross from https://github.com/cross-rs/cross"
@@ -167,9 +173,9 @@ condition = { files_not_exist = ["${GITHUB_RELEASE_PATH}/github-release"] }
 script = [
   '''
   cd target
-  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.tar.bz2"
-  curl -o darwin-amd64-github-release.tar.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.tar.bz2"
-  tar -xzvf darwin-amd64-github-release.tar.bz2
+  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.bz2"
+  curl -o darwin-amd64-github-release.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.bz2"
+  bzip2 -d darwin-amd64-github-release.bz2
   ''',
 ]
 
@@ -178,9 +184,9 @@ condition = { files_not_exist = ["${GITHUB_RELEASE_PATH}/github-release"] }
 script = [
   '''
   cd target
-  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.tar.bz2"
-  curl -o linux-amd64-github-release.tar.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.tar.bz2"
-  tar -xjvf linux-amd64-github-release.tar.bz2
+  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.bz2"
+  curl -o linux-amd64-github-release.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.bz2"
+  bzip2 -d linux-amd64-github-release.bz2
   ''',
 ]
 

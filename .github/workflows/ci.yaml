@@ -16,26 +16,26 @@ jobs:
       matrix:
         rust_toolchain: ["stable"]
         os:
-          - imageName: ubuntu-latest
+          # - imageName: ubuntu-latest
+          #   profile_rustup: default
+          #   profile_ci_flow: ci-static-code-analysis-tasks
+          #   target_platform: x86_64-unknown-linux-gnu
+          - target_platform: x86_64-unknown-linux-musl
+            imageName: ubuntu-latest
             profile_rustup: default
             profile_ci_flow: ci-static-code-analysis-tasks
-            target_platform: x86_64-unknown-linux-gnu
-          - imageName: ubuntu-latest
-            profile_rustup: default
-            profile_ci_flow: ci-static-code-analysis-tasks
-            target_platform: x86_64-unknown-linux-musl
-          - imageName: "macOS-latest"
+          - target_platform: x86_64-apple-darwin
+            imageName: "macOS-latest"
             profile_rustup: minimal
             profile_ci_flow: none
-            target_platform: x86_64-apple-darwin
-          - imageName: "macOS-latest"
-            profile_rustup: minimal
-            profile_ci_flow: none
-            target_platform: aarch64-apple-darwin
-          - imageName: windows-latest
-            profile_rustup: minimal
-            profile_ci_flow: none
-            target_platform:
+          # - imageName: "macOS-latest"
+          #   profile_rustup: minimal
+          #   profile_ci_flow: none
+          #   target_platform: aarch64-apple-darwin
+          # - imageName: windows-latest
+          #   profile_rustup: minimal
+          #   profile_ci_flow: none
+          #   target_platform:
 
     steps:
       - uses: actions/checkout@v2.4.0

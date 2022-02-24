@@ -3,14 +3,16 @@
 RUST_TEST_THREADS = "1"
 CARGO_MAKE_TEST_COVERAGE_BINARY_FILTER = "cli-[a-z0-9]*$\\|makers-[a-z0-9]*$\\|${CARGO_MAKE_TEST_COVERAGE_DEFAULT_BINARY_FILTER}"
 # TARGET is  {arch}-{vendor}-{sys}-{abi} the output of rustc --print target-list
-TARGET_AUTO = { source = "${CARGO_MAKE_RUST_TARGET_ARCH}-${CARGO_MAKE_RUST_TARGET_VENDOR}-${CARGO_MAKE_RUST_TARGET_OS}-${CARGO_MAKE_RUST_TARGET_ENV}", mapping = { x86_64-apple-macos- = "x86_64-apple-darwin" }}
-TARGET = { condition = { env_not_set = [ "TARGET"] }, value = "${TARGET_AUTO}" }
+TARGET_AUTO = { source = "${CARGO_MAKE_RUST_TARGET_ARCH}-${CARGO_MAKE_RUST_TARGET_VENDOR}-${CARGO_MAKE_RUST_TARGET_OS}-${CARGO_MAKE_RUST_TARGET_ENV}", mapping = { x86_64-apple-macos- = "x86_64-apple-darwin" } }
+TARGET = { condition = { env_not_set = ["TARGET"] }, value = "${TARGET_AUTO}" }
 LIBZ_SYS_STATIC = "1"
 PKG_CONFIG_ALLOW_CROSS = "1"
 # see https://github.com/naftulikay/rust-openssl-static-example
 OPENSSL_STATIC = "1"
 # OPENSSL_LIB_DIR="/usr/lib64"
 # OPENSSL_INCLUDE_DIR="/usr/include/openssl"
+CARGO_BUILD_CMD = { source = "${CROSS}", default_value = "cargo", mapping = { true = "cross" } }
+
 
 [tasks.init.mac.env]
 # workaround for "____chkstk_darwin ... which was built for Mac OS X 10.15 /usr/lib/libSystem.B.dylib"
@@ -26,7 +28,7 @@ DIST_VERSION = "${CARGO_MAKE_CRATE_VERSION}"
 DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${DIST_VERSION}-${TARGET}"
 DIST_EXT = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "tar.gz", mapping = { windows = "zip" } }
 DIST_PATH = "target/dist/${DIST_NAME}"
-GITHUB_RELEASE_VERSION = "v0.7.2"
+GITHUB_RELEASE_VERSION = "v0.10.0"
 GITHUB_RELEASE_PATH = { source = "${CARGO_MAKE_RUST_TARGET_OS}", mapping = { linux = "target/bin/linux/amd64", macos = "target/bin/darwin/amd64", windows = "target/bin/windows/amd64" } }
 # provide by environment
 # GITHUB_TOKEN =
@@ -45,6 +47,7 @@ script = [
   echo "TAG=${TAG}"
   echo "GITHUB_REPOSITORY=${GITHUB_REPOSITORY}"
   echo "GITHUB_REF=${GITHUB_REF}"
+  echo "CARGO_BUILD_CMD=${CARGO_BUILD_CMD}"
   echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}
   ''',
 ]
@@ -59,11 +62,23 @@ dependencies = [
   "build-release-for-target",
   "zip-release-binary-for-target",
 ]
+script_runner = "@shell"
+script = ['''
+  echo "::set-output name=dist_file_path::${DIST_PATH}.${DIST_EXT}"
+  echo "::set-output name=dist_file_name::${DIST_NAME}.${DIST_EXT}"
+  echo "::set-output name=dist_version::${DIST_VERSION}"
+  ''']
+
+[tasks.setup-cross]
+description = "Install cross from https://github.com/cross-rs/cross"
+condition = { env_set = ["TARGET", "CROSS"] }
+install_crate = { crate_name = "cross", binary = "cross", test_arg = "--help" }
 
 [tasks.build-release-for-target]
 description = "Makes a release build for a given target"
 condition = { env_set = ["TARGET"] }
-command = "cargo"
+dependencies = ["setup-cross"]
+command = "${CARGO_BUILD_CMD}"
 args = ["build", "--release", "--all-features", "--target", "${TARGET}"]
 
 [tasks.zip-release-binary-for-target]
@@ -158,9 +173,9 @@ condition = { files_not_exist = ["${GITHUB_RELEASE_PATH}/github-release"] }
 script = [
   '''
   cd target
-  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.tar.bz2"
-  curl -o darwin-amd64-github-release.tar.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.tar.bz2"
-  tar -xzvf darwin-amd64-github-release.tar.bz2
+  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.bz2"
+  curl -o darwin-amd64-github-release.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/darwin-amd64-github-release.bz2"
+  bzip2 -d darwin-amd64-github-release.bz2
   ''',
 ]
 
@@ -169,9 +184,9 @@ condition = { files_not_exist = ["${GITHUB_RELEASE_PATH}/github-release"] }
 script = [
   '''
   cd target
-  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.tar.bz2"
-  curl -o linux-amd64-github-release.tar.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.tar.bz2"
-  tar -xjvf linux-amd64-github-release.tar.bz2
+  echo download "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.bz2"
+  curl -o linux-amd64-github-release.bz2 -sS -L "https://github.com/aktau/github-release/releases/download/${GITHUB_RELEASE_VERSION}/linux-amd64-github-release.bz2"
+  bzip2 -d linux-amd64-github-release.bz2
   ''',
 ]
 

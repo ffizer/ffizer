@@ -58,7 +58,7 @@ assert_cmd = "2.0.4"
 spectral = "0.6.0"
 test-generator = "0.3.0"
 predicates = "2.1.1"
-pretty_assertions = "1.0.0"
+pretty_assertions = "1.1.0"
 
 [[bin]]
 name = "ffizer"

@@ -14,9 +14,9 @@ exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
 edition = "2021"
 
 [dependencies]
-clap = { version = "3.0", features = ["derive"] }
+clap = { version = "3.1", features = ["derive"] }
 console = "0.15.0"
-dialoguer = "0.9.0"
+dialoguer = "0.10.0"
 difference = "2.0.0"
 directories = "4.0"
 git2 = "0.13"
@@ -37,7 +37,7 @@ regex = "1.4.6"
 run_script = "0.9.0"
 schemars = "0.8"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.69"
+serde_json = "1.0.79"
 serde_plain = "1.0"
 serde_yaml = "0.8"
 tracing = "0.1"

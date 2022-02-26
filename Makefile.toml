@@ -64,9 +64,9 @@ dependencies = [
 ]
 script = ['''
   #!@duckscript
-  echo "::set-output name=dist_file_path::${DIST_PATH}.${DIST_EXT}"
-  echo "::set-output name=dist_file_name::${DIST_NAME}.${DIST_EXT}"
-  echo "::set-output name=dist_version::${DIST_VERSION}"
+  echo ::set-output name=dist_file_path::${DIST_PATH}.${DIST_EXT}
+  echo ::set-output name=dist_file_name::${DIST_NAME}.${DIST_EXT}
+  echo ::set-output name=dist_version::${DIST_VERSION}
   ''']
 
 [tasks.setup-cross]

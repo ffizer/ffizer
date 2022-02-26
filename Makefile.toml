@@ -36,9 +36,9 @@ GITHUB_RELEASE_PATH = { source = "${CARGO_MAKE_RUST_TARGET_OS}", mapping = { lin
 
 [tasks.debug]
 dependencies = ["dist_env"]
-script_runner = "@shell"
 script = [
   '''
+  #!@duckscript
   echo "PROFILE=${PROFILE}"
   echo "MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}"
   echo "FILE=${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
@@ -62,8 +62,8 @@ dependencies = [
   "build-release-for-target",
   "zip-release-binary-for-target",
 ]
-script_runner = "@shell"
 script = ['''
+  #!@duckscript
   echo "::set-output name=dist_file_path::${DIST_PATH}.${DIST_EXT}"
   echo "::set-output name=dist_file_name::${DIST_NAME}.${DIST_EXT}"
   echo "::set-output name=dist_version::${DIST_VERSION}"

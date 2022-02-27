@@ -1,4 +1,5 @@
 # see https://crates.io/crates/cargo-make
+
 [env]
 RUST_TEST_THREADS = "1"
 CARGO_MAKE_TEST_COVERAGE_BINARY_FILTER = "cli-[a-z0-9]*$\\|makers-[a-z0-9]*$\\|${CARGO_MAKE_TEST_COVERAGE_DEFAULT_BINARY_FILTER}"
@@ -12,7 +13,6 @@ OPENSSL_STATIC = "1"
 # OPENSSL_LIB_DIR="/usr/lib64"
 # OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 CARGO_BUILD_CMD = { source = "${CROSS}", default_value = "cargo", mapping = { true = "cross" } }
-
 
 [tasks.init.mac.env]
 # workaround for "____chkstk_darwin ... which was built for Mac OS X 10.15 /usr/lib/libSystem.B.dylib"
@@ -28,29 +28,21 @@ DIST_VERSION = "${CARGO_MAKE_CRATE_VERSION}"
 DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${DIST_VERSION}-${TARGET}"
 DIST_EXT = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "tar.gz", mapping = { windows = "zip" } }
 DIST_PATH = "target/dist/${DIST_NAME}"
-GITHUB_RELEASE_VERSION = "v0.10.0"
-GITHUB_RELEASE_PATH = { source = "${CARGO_MAKE_RUST_TARGET_OS}", mapping = { linux = "target/bin/linux/amd64", macos = "target/bin/darwin/amd64", windows = "target/bin/windows/amd64" } }
-# provide by environment
-# GITHUB_TOKEN =
-# GITHUB_REPOSITORY =
 
 [tasks.debug]
 dependencies = ["dist_env"]
 script_runner = "@duckscript"
-script = [
-  '''
+script = ['''
   echo "PROFILE=${PROFILE}"
   echo "MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}"
-  echo "FILE=${GITHUB_RELEASE_PATH_REV}${DIST_PATH}.${DIST_EXT}"
+  echo "FILE=${DIST_PATH}.${DIST_EXT}"
   echo "TARGET=${TARGET}"
   echo "DIST_VERSION=${DIST_VERSION}"
   echo "TAG=${TAG}"
-  echo "GITHUB_REPOSITORY=${GITHUB_REPOSITORY}"
   echo "GITHUB_REF=${GITHUB_REF}"
   echo "CARGO_BUILD_CMD=${CARGO_BUILD_CMD}"
-  echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${GITHUB_RELEASE_PATH} : ${platform}
-  ''',
-]
+  echo ${CARGO_MAKE_PROFILE} : ${DIST_PATH} : ${platform}
+  ''']
 
 [tasks.zip-release-ci-flow]
 description = "Compiles the binary in release mode and zips it up"

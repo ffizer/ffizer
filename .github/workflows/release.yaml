@@ -19,9 +19,6 @@ jobs:
           - target_platform: x86_64-unknown-linux-gnu
             imageName: ubuntu-latest
             cross: "true"
-          - target_platform: x86_64-unknown-linux-musl
-            imageName: ubuntu-latest
-            cross: "true"
           - target_platform: x86_64-apple-darwin
             imageName: "macOS-latest"
           - target_platform: aarch64-apple-darwin
@@ -54,13 +51,16 @@ jobs:
           TARGET: ${{ matrix.os.target_platform }}
           CROSS: ${{ matrix.os.cross }}
           # DEVELOPER_DIR: "/Applications/Xcode_11.app/Contents/Developer"
-      - name: Upload to gitHub release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Upload binaries to release
+        # if: startsWith(github.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
         with:
-          # draft: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          name: ${{ steps.zip-release-ci-flow.outputs.dist_version }}
-          files: ${{ steps.zip-release-ci-flow.outputs.dist_file_path }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.zip-release-ci-flow.outputs.dist_file_path }}
+          # asset_name: ${{ steps.zip-release-ci-flow.outputs.dist_file_name }}
+          # tag: ${{ github.ref }}
+          tag: ${{ steps.zip-release-ci-flow.outputs.dist_version }}
+          overwrite: true
       # - name: Upload to gitHub release
       #   run: cargo make github-upload-flow
       #   env:

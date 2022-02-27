@@ -61,16 +61,3 @@ jobs:
           # tag: ${{ github.ref }}
           tag: ${{ steps.zip-release-ci-flow.outputs.dist_version }}
           overwrite: true
-      # - name: Upload to gitHub release
-      #   run: cargo make github-upload-flow
-      #   env:
-      #     TARGET: ${{ matrix.os.target_platform }}
-      #     CROSS: ${{ matrix.os.cross }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     TAG: ${{ github.ref }}
-      # GITHUB_REPOSITORY: ${{ GITHUB_REPOSITORY }}
-      # - name: Update snapcraft
-      #   run: cargo make snapcraft-push
-      #   env:
-      #     SNAPCRAFT_TOKEN: ${{ secrets.SNAPCRAFT_TOKEN }}
-      #     SNAPCRAFT_CHANNEL: beta

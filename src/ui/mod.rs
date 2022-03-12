@@ -126,10 +126,21 @@ pub(crate) fn ask_variables(
                 .default_value
                 .and_then(|default_value| Variables::value_as_str(&default_value).ok())
                 .map(|value| {
-                    let idx = values
+                    let idx = variable
+                        .select_in_values
                         .iter()
                         .enumerate()
-                        .filter_map(|(i, v)| if v == &value { Some(i) } else { None })
+                        .filter_map(|(i, v)| {
+                            if v.label == value
+                                || Variables::value_as_str(&v.value)
+                                    .map(|v| v == value)
+                                    .unwrap_or(false)
+                            {
+                                Some(i)
+                            } else {
+                                None
+                            }
+                        })
                         .next();
                     VariableResponse { value, idx }
                 });

@@ -10,6 +10,7 @@ use crate::FileOperation;
 use crate::{Action, Ctx, Variables};
 use console::Style;
 use console::Term;
+use dialoguer::theme::ColorfulTheme;
 use dialoguer::Confirm;
 use dialoguer::Input;
 use dialoguer::Select;
@@ -21,6 +22,7 @@ use tracing::{debug, instrument, span, warn, Level};
 lazy_static! {
     static ref TERM: Term = Term::stdout();
     static ref TITLE_STYLE: Style = Style::new().bold();
+    static ref PROMPT_THEME: ColorfulTheme = ColorfulTheme::default();
 }
 
 fn write_title(s: &str) -> Result<()> {
@@ -166,14 +168,25 @@ pub(crate) fn ask_variables(
 
 pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
     if req.values.is_empty() {
-        let mut input = Input::new();
-        if let Some(default_value) = req.default_value {
-            input.default(default_value.value);
-        }
-        let value = input.with_prompt(&req.prompt).interact()?;
+        let value = match req.default_value {
+            Some(v) if v.value == "true" || v.value == "false" => {
+                Confirm::with_theme(&(*PROMPT_THEME))
+                    .default(v.value == "true")
+                    .with_prompt(&req.prompt)
+                    .interact()
+                    .map(|r| r.to_string())?
+            }
+            _ => {
+                let mut input = Input::with_theme(&(*PROMPT_THEME));
+                if let Some(default_value) = req.default_value {
+                    input.default(default_value.value);
+                }
+                input.with_prompt(&req.prompt).interact()?
+            }
+        };
         Ok(VariableResponse { value, idx: None })
     } else {
-        let mut input = Select::new();
+        let mut input = Select::with_theme(&(*PROMPT_THEME));
         input.with_prompt(&req.prompt).items(&req.values);
         if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
             input.default(default_value);
@@ -218,7 +231,7 @@ pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
         TERM.write_line(&s)?;
     }
     let r = if ctx.cmd_opt.confirm == AskConfirmation::Always {
-        Confirm::new()
+        Confirm::with_theme(&(*PROMPT_THEME))
             .with_prompt("Do you want to apply plan ?")
             .interact()?
     } else {
@@ -255,7 +268,7 @@ where
                 ("rename existing local file with extension .LOCAL, add template file", UpdateMode::CurrentAsLocal),
                 ("try to merge existing local with remote template via merge tool (defined in the git's configuration)", UpdateMode::Merge),
     ];
-    let mut input = Select::new();
+    let mut input = Select::with_theme(&(*PROMPT_THEME));
     input
         .with_prompt(&format!(
             "Modification of {:?} (use arrow + return to select option)",
@@ -305,7 +318,7 @@ pub fn confirm_run_script(
     if ctx.cmd_opt.no_interaction {
         Ok(true)
     } else {
-        Confirm::new()
+        Confirm::with_theme(&(*PROMPT_THEME))
             .with_prompt("Do you want to run the commands ?")
             .interact()
             .map_err(Error::from)

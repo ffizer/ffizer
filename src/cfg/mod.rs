@@ -23,11 +23,13 @@ pub const TEMPLATE_SAMPLES_DIRNAME: &str = ".ffizer.samples.d";
 
 impl template_cfg::TemplateCfg {
     pub(crate) fn find_ignores(&self) -> Result<Vec<PathPattern>> {
+        let trim_chars: &[_] = &['\r', '\n', ' ', '\t', '"', '\''];
         let mut ignores = self
             .ignores
             .iter()
+            .map(|v| v.trim_matches(trim_chars))
             .filter(|v| !v.is_empty())
-            .map(|v| PathPattern::from_str(v.as_str()))
+            .map(|v| PathPattern::from_str(v))
             .collect::<Result<Vec<PathPattern>>>()?;
         let cfg_pattern = PathPattern::from_str(TEMPLATE_CFG_FILENAME)?;
         ignores.push(cfg_pattern);

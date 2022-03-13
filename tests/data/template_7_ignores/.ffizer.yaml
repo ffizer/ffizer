@@ -3,8 +3,13 @@ variables:
     default_value: fast
 ignores:
   - .git # exclude .git of the template host
-  # - '{{#unless (eq v "fast")}}file3.txt{{/unles}}' #do not work
-  - '{{#if (eq v "fast")}}file2.txt{{/if}}'
+  # - >- # unless do not work
+  #   {{#unless (eq v "fast")}}dir2{{/unless}}
+  - >-
+    {{#if (eq v "fast")}}dir2{{/if}}
+  - >-
+    {{#if (eq v "fast")}}file2.txt{{/if}}
   - '{{#if (ne v "fast")}}file1.txt{{/if}}'
-  - '{{#if (ne v "slow")}}dir1/file4.txt{{/if}}'
+  - | # support this syntax because ignores'entries are `trimmed` but prefer to use `>-`
+    {{#if (ne v "slow")}}dir1/file4.txt{{/if}}
   - "{{v}}"

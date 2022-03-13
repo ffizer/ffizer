@@ -89,6 +89,7 @@ impl TemplateComposite {
                 ""
             };
             let path = layer.loc.as_local_path()?.join(template_dir);
+            debug!(ignores = ?ignores);
             for childpath in files::find_childpaths(path, ignores) {
                 back.push(SourceFile::from((childpath, layer.order)));
             }

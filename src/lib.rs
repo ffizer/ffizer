@@ -58,18 +58,19 @@ pub struct Action {
 }
 
 pub fn process(ctx: &Ctx) -> Result<()> {
-    debug!("extracting variables from cli");
+    debug!("extracting variables from cli",);
     let variables_from_cli = extract_variables(ctx)?;
     debug!("compositing templates");
     let mut template_composite =
         TemplateComposite::from_src(&variables_from_cli, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
-    debug!("asking variables");
+    debug!(variables_from_cli = ?variables_from_cli, "asking variables");
     let variables = ui::ask_variables(
         ctx,
         &template_composite.find_variablecfgs()?,
         variables_from_cli,
     )?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)
+    debug!(variables = ?variables, "update template_composite with variables");
     template_composite = render_composite(&template_composite, &variables, true)?;
     debug!("listing files from templates");
     let source_files = template_composite.find_sourcefiles()?;

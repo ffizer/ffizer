@@ -28,7 +28,7 @@ fn check_samples<A: AsRef<Path>>(template_path: A) -> Result<bool> {
     let samples = Sample::find_from_folder(&template_path, &samples_folder, &tmp_dir)?;
     info!(nb_samples_detected = samples.len(), ?samples_folder);
     for sample in samples {
-        info!(sample = ?sample.name, "checking...");
+        info!(sample = ?sample.name, args = ?sample.args, "checking...");
         let run = SampleRun::run(&sample)?;
         is_success = is_success && run.is_success();
         show_differences(&sample.name, &run.diffs)?;

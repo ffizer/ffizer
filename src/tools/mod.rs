@@ -64,9 +64,11 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
                 );
             }
             Difference::StringContent { expect, actual } => {
-                let changeset = Changeset::new(actual, expect, "\n");
+                let actual = replace_blank_char(actual);
+                let expect = replace_blank_char(expect);
+                let changeset = Changeset::new(&actual, &expect, "\n");
                 println!(
-                    "difference detected on: {}",
+                    "difference detected on: {}\n",
                     entry.relative_path.to_string_lossy()
                 );
                 println!("{}", changeset);
@@ -76,7 +78,7 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
                 actual_md5,
             } => {
                 println!(
-                    "difference detected on: {} (detected as binary file)",
+                    "difference detected on: {} (detected as binary file)\n",
                     entry.relative_path.to_string_lossy()
                 );
                 println!("expected md5: {}", expect_md5);
@@ -92,6 +94,13 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
     );
     println!("--------------------------------------------------------------");
     Ok(())
+}
+
+fn replace_blank_char(s: &str) -> String {
+    s.replace(" ", "·")
+        .replace("\t", "⇒\t")
+        .replace("\r\n", "¶\n")
+        .replace("\n", "↩\n")
 }
 
 #[derive(Debug, Clone)]

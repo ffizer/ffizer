@@ -116,7 +116,14 @@ pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
     ctx.cmd_opt
         .key_value
         .iter()
-        .map(|(k, v)| variables.insert(k, Variables::value_from_str(v)?))
+        .map(|(k, v)| {
+            let v = match v.to_lowercase().trim() {
+                "true" | "y" | "yes" => "true",
+                "false" | "n" | "no" => "false",
+                _ => v.trim(),
+            };
+            variables.insert(k, Variables::value_from_str(v)?)
+        })
         .collect::<Result<Vec<()>>>()?;
     Ok(variables)
 }

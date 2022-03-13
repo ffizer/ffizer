@@ -114,12 +114,20 @@ where
     let repository = Repository::discover(dst.as_ref())?;
 
     // fetch
-    let revref = rev.as_ref();
+    let mut revref = rev.as_ref().to_string();
+    //FIXME workaround see https://github.com/rust-lang/git2-rs/issues/819
+    if revref.len() == 40
+        && revref
+            .chars()
+            .all(|c| (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'))
+    {
+        revref = format!("+{}:{}", rev.as_ref(), rev.as_ref());
+    }
     let mut remote = repository.find_remote("origin")?;
     remote.fetch(&[revref], Some(fo), None)?;
     let reference = repository.find_reference("FETCH_HEAD")?;
     let fetch_head_commit = repository.reference_to_annotated_commit(&reference)?;
-    do_merge(&repository, "master", fetch_head_commit)?;
+    do_merge(&repository, rev.as_ref(), fetch_head_commit)?;
     Ok(())
 }
 
@@ -257,6 +265,7 @@ pub fn find_cmd_tool(kind: &str) -> Result<String, git2::Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
     use run_script;
     use std::fs;
     use tempfile::tempdir;

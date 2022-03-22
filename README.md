@@ -91,28 +91,28 @@ cargo install ffizer --force --features cli
 ### Run
 
 ```txt
-➜  ffizer --help
-
-ffizer 2.1.0
-https://github.com/ffizer/ffizer
+❯ ffizer --help
+ffizer 2.5.0
+https://ffizer.github.io/ffizer/book/
 ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)
 
 USAGE:
-    ffizer [FLAGS] <SUBCOMMAND>
+    ffizer [OPTIONS] <SUBCOMMAND>
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+OPTIONS:
+    -h, --help       Print help information
     -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+    -V, --version    Print version information
 
 SUBCOMMANDS:
     apply               Apply a template into a target directory
-    help                Prints this message or the help of the given subcommand(s)
+    help                Print this message or the help of the given subcommand(s)
     inspect             Inspect configuration, caches,... (wip)
     show-json-schema    Show the json schema of the .ffizer.yaml files
     test-samples        test a template against its samples
     upgrade             Self upgrade ffizer executable
+
 ```
 
 #### Self upgrade the executable
@@ -124,32 +124,49 @@ SUBCOMMANDS:
 #### Apply a template (to create or update)
 
 ```sh
-➜  ffizer apply --help
-
-ffizer-apply 2.1.0
-https://github.com/ffizer/ffizer
+❯ ffizer apply --help
+ffizer-apply 2.5.0
+https://ffizer.github.io/ffizer/book/
 Apply a template into a target directory
 
 USAGE:
-    ffizer apply [FLAGS] [OPTIONS] --destination <dst-folder> --source <uri>
-
-FLAGS:
-    -h, --help              Prints help information
-    -y, --no-interaction    should not ask for confirmation (to use default value, to apply plan, to override, to run
-                            script,...)
-        --offline           in offline, only local templates or cached templates are used
+    ffizer apply [OPTIONS] --source <URI> --destination <DST_FOLDER>
 
 OPTIONS:
-        --confirm <confirm>               ask for plan confirmation [default: Never]  [possible values:
-                                          Auto, Always, Never]
-    -d, --destination <dst-folder>        destination folder (created if doesn't exist)
-    -v, --variables <key-value>...        set variable's value from cli ("key=value")
-        --rev <rev>                       git revision of the template [default: master]
-        --source-subfolder <subfolder>    path of the folder under the source uri to use for template
-        --update-mode <update-mode>       mode to update existing file [default: Ask]  [possible values:
-                                          Ask, Keep, Override, UpdateAsRemote,
-                                          CurrentAsLocal, ShowDiff, Merge]
-    -s, --source <uri>                    uri / path of the template
+        --confirm <CONFIRM>
+            ask for plan confirmation [default: Never] [possible values: auto, always, never]
+
+    -d, --destination <DST_FOLDER>
+            destination folder (created if doesn't exist)
+
+    -h, --help
+            Print help information
+
+        --offline
+            in offline, only local templates or cached templates are used
+
+        --rev <REV>
+            git revision of the template [default: master]
+
+    -s, --source <URI>
+            uri / path of the template
+
+        --source-subfolder <SUBFOLDER>
+            path of the folder under the source uri to use for template
+
+        --update-mode <UPDATE_MODE>
+            mode to update existing file [default: Ask] [possible values: ask, keep, override,
+            update-as-remote, current-as-local, show-diff, merge]
+
+    -v, --variables <KEY_VALUE>
+            set variable's value from cli ("key=value")
+
+    -V, --version
+            Print version information
+
+    -y, --no-interaction
+            should not ask for confirmation (to use default value, to apply plan, to override, to
+            run script,...)
 ```
 
 - use a local folder as template
@@ -167,25 +184,25 @@ OPTIONS:
   output
 
   ```sh
-  Configure variables
+    Configure variables
 
-  project_name: my_project
+    ✔ project_name · my-project
+    ✔ package_name · my_project
 
 
-  Plan to execute
+    Plan to execute
 
-    - mkdir "my_project/"
-    - mkdir "my_project/dir_1"
-    - copyraw "my_project/dir_1/file_1_1.txt"
-    - mkdir "my_project/dir_2_my_project"
-    - copyraw "my_project/dir_2_my_project/file_1_2.txt"
-    - copyraw "my_project/file_1.txt"
-    - copyrender "my_project/file_2.txt"
-    - keep "my_project/file_2.txt"
-    - copyrender "my_project/file_3.txt"
-    - copyraw "my_project/file_4_my_project.txt"
-    - copyrender "my_project/file_5_my_project.txt"
-    - copyraw "my_project/file_6.hbs"
+      - make dir        my_project
+      - make dir         ├─dir_1
+      - add file         │  └─file_1_1.txt
+      - make dir         ├─dir_2_my-project
+      - add file         │  └─file_1_2.txt
+      - add file         ├─file_1.txt
+      - add file         ├─file_2.txt
+      - add file         ├─file_3.txt
+      - add file         ├─file_4_my_project.txt
+      - add file         ├─file_5_my-project.txt
+      - add file         └─file_6.hbs
   ```
 
 ### Authoring a template
@@ -224,6 +241,6 @@ git commit -m ':memo: (CHANGELOG) update'
 Release a new version by bump `patch` (or `minor`or `major`)
 
 ```sh
-cargo make publish -- patch --dry-run
-cargo make publish -- patch
+cargo make publish --execute patch --dry-run
+cargo make publish --execute patch
 ```

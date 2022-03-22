@@ -1,7 +1,7 @@
 pub mod dir_diff_list;
 
 use crate::cli_opt::{ApplyOpts, CliOpts, Command, TestSamplesOpts};
-use crate::error::*;
+use crate::{error::*, SourceLoc};
 use clap::Parser;
 use dir_diff_list::Difference;
 use dir_diff_list::EntryDiff;
@@ -12,20 +12,20 @@ use tracing::info;
 
 pub fn test_samples(cfg: &TestSamplesOpts) -> Result<()> {
     let template_base_path = &cfg.src.download(cfg.offline)?;
-    if !check_samples(template_base_path)? {
+    if !check_samples(template_base_path, &cfg.src)? {
         Err(crate::Error::TestSamplesFailed {})
     } else {
         Ok(())
     }
 }
 
-fn check_samples<A: AsRef<Path>>(template_path: A) -> Result<bool> {
+fn check_samples<A: AsRef<Path>>(template_path: A, template_loc: &SourceLoc) -> Result<bool> {
     let mut is_success = true;
     let tmp_dir = tempdir()?;
     let samples_folder = template_path
         .as_ref()
         .join(crate::cfg::TEMPLATE_SAMPLES_DIRNAME);
-    let samples = Sample::find_from_folder(&template_path, &samples_folder, &tmp_dir)?;
+    let samples = Sample::find_from_folder(&template_loc, &samples_folder, &tmp_dir)?;
     info!(nb_samples_detected = samples.len(), ?samples_folder);
     for sample in samples {
         info!(sample = ?sample.name, args = ?sample.args, "checking...");
@@ -113,8 +113,8 @@ struct Sample {
 
 impl Sample {
     // scan folder to find sample to test (xxx.args, xxx.expected, xxx.existing)
-    fn find_from_folder<A: AsRef<Path>, B: AsRef<Path>>(
-        template_path: A,
+    fn find_from_folder<B: AsRef<Path>>(
+        template_loc: &SourceLoc,
         samples_folder: B,
         tmp_dir: &TempDir,
     ) -> Result<Vec<Sample>> {
@@ -138,7 +138,7 @@ impl Sample {
                 let existing = path.with_extension("existing");
                 let args_file = path.with_extension("cfg.yaml");
                 let destination = tmp_dir.path().join(&name).to_path_buf();
-                let args = read_args(&template_path, destination, args_file)?;
+                let args = read_args(&template_loc, destination, args_file)?;
                 out.push(Sample {
                     name,
                     args,
@@ -156,8 +156,8 @@ struct SampleCfg {
     apply_args: Vec<String>,
 }
 
-fn read_args<A: AsRef<Path>, B: AsRef<Path>, C: AsRef<Path>>(
-    template_path: A,
+fn read_args<B: AsRef<Path>, C: AsRef<Path>>(
+    template_loc: &SourceLoc,
     destination: B,
     args_file: C,
 ) -> Result<ApplyOpts> {
@@ -186,12 +186,14 @@ fn read_args<A: AsRef<Path>, B: AsRef<Path>, C: AsRef<Path>>(
             .expect("to convert destination path into str"),
     );
     args_line.push("--source");
-    args_line.push(
-        template_path
-            .as_ref()
-            .to_str()
-            .expect("to convert source path into str"),
-    );
+    args_line.push(&template_loc.uri.raw);
+    args_line.push("--rev");
+    args_line.push(&template_loc.rev);
+    let buff = template_loc.subfolder.as_ref().map(|v| v.to_string_lossy());
+    if let Some(subfolder) = buff.as_ref() {
+        args_line.push("--source-subfolder");
+        args_line.push(subfolder);
+    }
     //HACK from_iter_safe expect first entry to be the binary name,
     //  unless clap::AppSettings::NoBinaryName has been used
     //  (but I don't know how to use it in this case, patch is welcomed)

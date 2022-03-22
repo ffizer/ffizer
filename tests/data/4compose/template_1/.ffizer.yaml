@@ -1,4 +1,4 @@
-
 imports:
-  - uri: "{{ ffizer_src_uri }}/../template_1_1"
+  - uri: "{{ ffizer_src_uri }}"
     rev: "{{ ffizer_src_rev }}"
+    subfolder: "template_1_1"

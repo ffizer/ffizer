@@ -4,11 +4,325 @@
 ## Version x.y.z-dev
 
 ### Changed
+- ⬆️  Bump libc from 0.2.119 to 0.2.121
+- ⬆️  Bump actions/cache from 2 to 3
+- ⬆️  Bump actions/checkout from 2.4.0 to 3
+
+### Fixed
+- 🐛  preserve the original source definition when test-samples
+
+### Miscellaneous
+- pencil  update README
+- 🚧  (cargo-release) start next development iteration 2.5.1-dev
+
+<a name="2.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.5.0
+
+### Changed
+- ⬆️  upgrade  cargo.lock
+- 💄  show &quot;blank&quot;  for diff on `test-samples`
+- 💄  accept more syntax for boolean variable from cli
+- 💄  allow to use label or value of item of `select_in_values` as `default_value`
+- 💄  use color to prompt
+- ⬆️  Bump git2 from 0.13 to 0.14
+
+### Removed
+- 🔥  clean up makefile
+
+### Fixed
+- 🐛  for `ignores` value, ignore some blank caractere that could be introduced by yaml or handlebars syntax
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.5.0
+- poop  add workaround for a bug in git2 0.14
+- 🔊  add logs debug
+- 🚧  (cargo-release) start next development iteration 2.4.5-dev
+
+<a name="2.4.4" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.4.4
+
+### Removed
+- 🔥  remove task for github-upload and snapcraft push
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.4.4
+
+<a name="2.4.4-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.4.4-dev
+
+<a name="2.4.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.4.3
+
+### Changed
+- ⬆️  Bump libc from 0.2.112 to 0.2.119
+- ⬆️  Bump pretty_assertions from 1.0.0 to 1.1.0
+- ⬆️  Bump clap from 3.1.1 to 3.1.2
+- ⬆️  Bump tracing-subscriber from 0.3.5 to 0.3.9
+- ⬆️  Bump tracing from 0.1.29 to 0.1.31
+- ⬆️  Bump assert_cmd from 2.0.2 to 2.0.4
+- ⬆️  Bump dialoguer from 0.9.0 to 0.10.0
+- ⬆️  Bump serde from 1.0.133 to 1.0.136
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.4.3
+- 🚧  try to build cross-platform from ci/cd  (#491)
+
+<a name="2.4.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.4.2
+
+### Added
+- ✅  cargo update
+- 👷  add cache into workflows
+
+### Changed
+- ⬆️  Bump self_update from 0.27.0 to 0.28.0
+- ⬆️  Bump predicates from 2.1.0 to 2.1.1
+- ⬆️  Bump handlebars from 4.2.0 to 4.2.1
+- ⬆️  Bump serde_json from 1.0.74 to 1.0.79
+- ⬆️  Bump clap from 3.0.5 to 3.1.1
+- ⬆️  switch structopt + clap v2 to clap v3
+- ⬆️  bumps dialoguer from 0.8.0 to 0.9.0
+- 🚨  apply clippy suggestion
+- ⬆️  swith to rust edition 2021
+- ⬆️  upgrade tracing-subscriber
+- ⬆️  Bump assert_cmd from 2.0.1 to 2.0.2
+- ⬆️  Bump libc from 0.2.107 to 0.2.109
+- ⬆️  Bump handlebars from 4.1.4 to 4.1.6
+- ⬆️  Bump clap from 2.33.3 to 2.34.0
+- ⬆️  Bump tracing from 0.1.28 to 0.1.29
+- ⬆️  Bump structopt from 0.3.23 to 0.3.25
+- ⬆️  Bump actions/checkout from 2.3.5 to 2.4.0
+- ⬆️  Bump libc from 0.2.106 to 0.2.107
+- ⬆️  Bump handlebars from 4.1.3 to 4.1.4
+- ⬆️  Bump console from 0.14.1 to 0.15.0
+- ⬆️  Bump serde_json from 1.0.68 to 1.0.69
+- ⬆️  Bump schemars from 0.8.3 to 0.8.6
+- ⬆️  Bump actions/checkout from 2.3.4 to 2.3.5
+- ⬆️  Bump git2 from 0.13.22 to 0.13.23
+- ⬆️  Bump pretty_assertions from 0.7.2 to 1.0.0
+- ⬆️  Bump libc from 0.2.102 to 0.2.106
+- ⬆️  bump directories, patch version and transitive dependencies
+- ⬆️  Bump thiserror from 1.0.28 to 1.0.29
+- ⬆️  Bump serde_yaml from 0.8.20 to 0.8.21
+- ⬆️  Bump git2 from 0.13.21 to 0.13.22
+- ⬆️  Bump handlebars from 4.1.2 to 4.1.3
+- ⬆️  Bump run_script from 0.8.0 to 0.9.0
+- ⬆️  update dependencies
+- ⬆️  Bump predicates from 2.0.0 to 2.0.2
+- ⬆️  Bump handlebars from 4.1.0 to 4.1.2
+- ⬆️  Bump serde_json from 1.0.64 to 1.0.67
+- ⬆️  Bump serde from 1.0.126 to 1.0.130
+- ⬆️  Bump structopt from 0.3.22 to 0.3.23
+- ⬆️  Bump assert_cmd from 1.0.7 to 2.0.0
+- ⬆️  Bump predicates from 1.0.8 to 2.0.0
+
+### Fixed
+- 🐛  fix bugs and linting
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.4.2
+- ⚗  try to build for mac m1 and linux-musl
+- 🚧  (cargo-release) start next development iteration 2.4.2-dev
+
+<a name="2.4.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.4.1
+
+### Added
+- ✅  update and fixe test
+- ✨  allow to define select_in_values as an array of `{label, value}` + fix evaluation of select_in_values defined as a string
+
+### Changed
+- ⬆️  Bump globset from 0.4.6 to 0.4.7
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.4.1
+- 🚧  (cargo-release) start next development iteration 2.4.1-dev
+- 🚀  (cargo-release) version 2.4.0
+- pencil  simplify installation from brew
+- 🔊  enhance SerdeYamlError with context from tracing'Span
+
+<a name="2.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.4.0
+
+### Added
+- ✅  update and fixe test
+- ✨  allow to define select_in_values as an array of `{label, value}` + fix evaluation of select_in_values defined as a string
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.4.0
+- pencil  simplify installation from brew
+- 🔊  enhance SerdeYamlError with context from tracing'Span
+- 🚧  (cargo-release) start next development iteration 2.3.1-dev
+
+<a name="2.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.3.0
+
+### Added
+- ✅  improve git test to be less sensitive to local git configuration
+- ✅  update test for handlebar
+
+### Changed
+- 🚨  apply clippy suggestion
+- ⬆️  update cargo.lock
+- ⬆️  upgrade to handlebars 4.0
+- 🔧  define CODEOWNERS
+- ⬆️  fix + cargo update
+- ⬆️  Bump assert_cmd from 1.0.4 to 1.0.5
+- ⬆️  Bump libc from 0.2.94 to 0.2.95
+- ⬆️  Bump indicatif from 0.16.0 to 0.16.2
+- ⬆️  Bump run_script from 0.7.0 to 0.8.0
+- ⬆️  Bump thiserror from 1.0.24 to 1.0.25
+- ⬆️  Bump serde from 1.0.125 to 1.0.126
+- ⬆️  Bump assert_cmd from 1.0.3 to 1.0.4
+- ⬆️  Bump self_update from 0.26.0 to 0.27.0
+- ⬆️  Bump predicates from 1.0.7 to 1.0.8
+- ⬆️  Bump openssl from 0.10.33 to 0.10.34
+- ⬆️  Bump libc from 0.2.93 to 0.2.94
+- ⬆️  Bump indicatif from 0.15.0 to 0.16.0
+- ⬆️  Bump directories from 3.0.1 to 3.0.2
+- ⬆️  Bump git2_credentials from 0.7.1 to 0.7.2
+- ⬆️  Bump git2 from 0.13.17 to 0.13.18
+- ⬆️  Bump regex from 1.4.5 to 1.4.6
+- ⬆️  Bump libc from 0.2.92 to 0.2.93
+- ⬆️  Bump schemars from 0.8.2 to 0.8.3
+- ⬆️  Bump pretty_assertions from 0.7.1 to 0.7.2
+- ⬆️  Bump serde from 1.0.124 to 1.0.125
+- ⬆️  Bump walkdir from 2.3.1 to 2.3.2
+- ⬆️  Bump schemars from 0.8.0 to 0.8.2
+- ⬆️  Bump libc from 0.2.90 to 0.2.92
+- ⬆️  Bump dialoguer from 0.7.1 to 0.8.0
+- ⬆️  Bump libc from 0.2.88 to 0.2.90
+- 🎨  reformat tutorial (remove EOL that can break display on some renderer)
+- ⬆️  Bump openssl from 0.10.32 to 0.10.33
+- ⬆️  Bump regex from 1.4.3 to 1.4.5
+- ⬆️  Bump pretty_assertions from 0.6.1 to 0.7.1
+- ⬆️  Bump console from 0.14.0 to 0.14.1
+- ⬆️  Bump run_script from 0.6.4 to 0.7.0
+- ⬆️  Bump self_update from 0.25.0 to 0.26.0
+- ⬆️  Bump serde from 1.0.123 to 1.0.124
+- ⬆️  Bump libc from 0.2.86 to 0.2.88
+- ⬆️  Bump self_update from 0.24.0 to 0.25.0
+- ⬆️  Bump serde_json from 1.0.62 to 1.0.64
+- ⬆️  Bump run_script from 0.6.3 to 0.6.4
+- ⬆️  Bump handlebars from 3.5.2 to 3.5.3
+- ⬆️  Bump self_update from 0.23.0 to 0.24.0
+- ⬆️  Bump thiserror from 1.0.23 to 1.0.24
+- ⬆️  Bump serde_yaml from 0.8.16 to 0.8.17
+- ⬆️  Bump libc from 0.2.85 to 0.2.86
+- ⬆️  Bump slog-term from 2.7.0 to 2.8.0
+- ⬆️  Bump slog-term from 2.6.0 to 2.7.0
+- ⬆️  Bump serde_json from 1.0.61 to 1.0.62
+- ⬆️  Bump libc from 0.2.84 to 0.2.85
+- ⬆️  Bump assert_cmd from 1.0.2 to 1.0.3
+- ⬆️  Bump serde_yaml from 0.8.15 to 0.8.16
+- ⬆️  Bump libc from 0.2.82 to 0.2.84
+- ⬆️  Bump predicates from 1.0.6 to 1.0.7
+- ⬆️  Bump serde from 1.0.122 to 1.0.123
+- ⬆️  Bump serde from 1.0.119 to 1.0.122
+- ⬆️  Bump git2 from 0.13.15 to 0.13.17
+- ⬆️  Bump serde from 1.0.118 to 1.0.119
+- ⬆️  Bump tempfile from 3.1.0 to 3.2.0
+- ⬆️  Bump serde_yaml from 0.8.14 to 0.8.15
+- ⬆️  Bump libc from 0.2.81 to 0.2.82
+- ⬆️  Bump regex from 1.4.2 to 1.4.3
+- ⬆️  Bump self_update from 0.22.0 to 0.23.0
+- ⬆️  Bump serde_json from 1.0.60 to 1.0.61
+- ⬆️  Bump predicates from 1.0.5 to 1.0.6
+- ⬆️  Bump git2_credentials from 0.7.0 to 0.7.1
+- ⬆️  Bump handlebars from 3.5.1 to 3.5.2
+- ⬆️  Bump git2 from 0.13.14 to 0.13.15
+- ⬆️  Bump console from 0.13.0 to 0.14.0
+- ⬆️  Bump thiserror from 1.0.22 to 1.0.23
+- ⬆️  Bump git2 from 0.13.13 to 0.13.14
+- ⬆️  Bump openssl from 0.10.31 to 0.10.32
+- ⬆️  Bump git2 from 0.13.12 to 0.13.13
+
+### Breaking changes
+- 💥  replace slog by tracing
+
+### Fixed
+- 🏁  disable windows build (until fixe the issue with git clone on windows)
+- 🐛  migration to tracing report log to stdout instead of stderr
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.3.0
+- 🚧  (cargo-release) start next development iteration 2.2.2-dev
+
+<a name="2.2.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.2.1
+
+### Changed
+- ⬆️  upgrade handlebars_misc_helpers to fix json-&gt;toml conversion
+- 🚸  add more info when error on git
+- ⬆️  cargo update
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.2.1
+- 🚧  (cargo-release) start next development iteration 2.2.1-dev
+
+<a name="2.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.2.0
+
+### Changed
+- 🚸  improve the display of differences when run `test-samples`
+- 🎨  format code
+
+### Fixed
+- 🐛  wrong ifo in the error
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.2.0
+- 🚧  (cargo-release) start next development iteration 2.1.4-dev
+
+<a name="2.1.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.1.3
+
+### Changed
+- ⬆️  Bump structopt from 0.3.20 to 0.3.21
+- ⬆️  Bump serde_json from 1.0.59 to 1.0.60
+- ⬆️  Bump serde from 1.0.117 to 1.0.118
+- ⬆️  Bump libc from 0.2.80 to 0.2.81
+- ⬆️  Bump assert_cmd from 1.0.1 to 1.0.2
+- ⬆️  Bump self_update from 0.20.0 to 0.22.0
+- ⬆️  Bump slog from 2.5.2 to 2.7.0
+
+### Fixed
+- 🐛  do not failed to compare binary file during test-samples
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.1.3
+- 💡  link the book as homepage
+- 🚧  (cargo-release) start next development iteration 2.1.3-dev
+
+<a name="2.1.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.1.2
+
+### Added
+- ✨  add preset variable &quot;ffizer_version&quot;
+
+### Changed
+- 👽  update config of cargo-release
+- 🚨  remove useless `use`
+- 🚸  context info on error when set variables
+
+### Fixed
+- 🐛  evaluation of `ignores`section during compositing phase of the template generate incorrect value.Handlebars expression (eq, ne,...) don't raise error when undefined variabled are used (also in strict mode)
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.1.2
+- 🚧  (cargo-release) start next development iteration 2.1.2-dev
+
+<a name="2.1.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.1.1
+
+### Changed
 - 🍱  introduce logo
 - ⬆️  Bump actions/checkout from v2.3.3 to v2.3.4
 - ⬆️  Bump thiserror from 1.0.21 to 1.0.22
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 2.1.1
+- pencil  pre-publish update book, changelog
 - 🚧  (cargo-release) start next development iteration 2.1.1-dev
 
 <a name="2.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
@@ -153,6 +467,15 @@
 - poop  workaround to not failed if `ignores` is a not-evaluable path
 - 🚀  (cargo-release) version 2.0.0-beta.2
 - 📦  disable snapcraft (temporary ?)
+
+<a name="2.0.0-beta.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.0.0-beta.2
+
+### Fixed
+- 🐛  do not create folder in folder and crash on update
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.0.0-beta.2
 
 <a name="2.0.0-beta.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version 2.0.0-beta.1

@@ -386,7 +386,7 @@ dependencies = [
 
 [[package]]
 name = "ffizer"
-version = "2.5.1-dev"
+version = "2.5.1"
 dependencies = [
  "assert_cmd",
  "clap",

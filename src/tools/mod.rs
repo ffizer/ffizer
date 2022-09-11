@@ -1,6 +1,7 @@
 pub mod dir_diff_list;
 
 use crate::cli_opt::{ApplyOpts, CliOpts, Command, TestSamplesOpts};
+use crate::path_pattern::PathPattern;
 use crate::{error::*, SourceLoc};
 use clap::Parser;
 use dir_diff_list::Difference;
@@ -109,6 +110,7 @@ struct Sample {
     pub args: ApplyOpts,
     pub expected: PathBuf,
     pub existing: PathBuf,
+    pub ignores: Vec<PathPattern>,
 }
 
 impl Sample {
@@ -138,12 +140,15 @@ impl Sample {
                 let existing = path.with_extension("existing");
                 let args_file = path.with_extension("cfg.yaml");
                 let destination = tmp_dir.path().join(&name).to_path_buf();
-                let args = read_args(template_loc, destination, args_file)?;
+                let sample_cfg = SampleCfg::from_file(args_file)?;
+                let args = sample_cfg.make_args(template_loc, destination)?;
+                let ignores = sample_cfg.make_ignores()?;
                 out.push(Sample {
                     name,
                     args,
                     expected,
                     existing,
+                    ignores,
                 });
             }
         }
@@ -153,61 +158,80 @@ impl Sample {
 
 #[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq)]
 struct SampleCfg {
-    apply_args: Vec<String>,
+    apply_args: Option<Vec<String>>,
+    check_ignores: Option<Vec<String>>,
 }
 
-fn read_args<B: AsRef<Path>, C: AsRef<Path>>(
-    template_loc: &SourceLoc,
-    destination: B,
-    args_file: C,
-) -> Result<ApplyOpts> {
-    let sample_cfg = if args_file.as_ref().exists() {
-        let cfg_str = fs::read_to_string(args_file.as_ref()).map_err(|source| Error::ReadFile {
-            path: args_file.as_ref().into(),
-            source,
-        })?;
-        serde_yaml::from_str::<SampleCfg>(&cfg_str)?
-    } else {
-        SampleCfg { apply_args: vec![] }
-    };
-    let mut args_line = sample_cfg
-        .apply_args
-        .iter()
-        .map(|s| s.as_str())
-        .collect::<Vec<_>>();
-    args_line.push("--confirm");
-    args_line.push("never");
-    args_line.push("--no-interaction");
-    args_line.push("--destination");
-    args_line.push(
-        destination
-            .as_ref()
-            .to_str()
-            .expect("to convert destination path into str"),
-    );
-    args_line.push("--source");
-    args_line.push(&template_loc.uri.raw);
-    args_line.push("--rev");
-    args_line.push(&template_loc.rev);
-    let buff = template_loc.subfolder.as_ref().map(|v| v.to_string_lossy());
-    if let Some(subfolder) = buff.as_ref() {
-        args_line.push("--source-subfolder");
-        args_line.push(subfolder);
+impl SampleCfg {
+    fn from_file<P: AsRef<Path>>(file: P) -> Result<Self> {
+        let v = if file.as_ref().exists() {
+            let cfg_str = fs::read_to_string(file.as_ref()).map_err(|source| Error::ReadFile {
+                path: file.as_ref().into(),
+                source,
+            })?;
+            serde_yaml::from_str::<SampleCfg>(&cfg_str)?
+        } else {
+            SampleCfg::default()
+        };
+        Ok(v)
     }
-    //HACK from_iter_safe expect first entry to be the binary name,
-    //  unless clap::AppSettings::NoBinaryName has been used
-    //  (but I don't know how to use it in this case, patch is welcomed)
-    args_line.insert(0, "apply");
-    args_line.insert(0, "ffizer");
-    CliOpts::try_parse_from(args_line)
-        .map_err(Error::from)
-        .and_then(|o| match o.cmd {
-            Command::Apply(g) => Ok(g),
-            e => Err(Error::Unknown(format!(
-                "command should always be parsed as 'apply' not as {:?}",
-                e
-            ))),
-        })
+
+    fn make_ignores(&self) -> Result<Vec<PathPattern>> {
+        use std::str::FromStr;
+        let trim_chars: &[_] = &['\r', '\n', ' ', '\t', '"', '\''];
+        let ignores = self
+            .check_ignores
+            .clone()
+            .unwrap_or_default()
+            .iter()
+            .map(|v| v.trim_matches(trim_chars))
+            .filter(|v| !v.is_empty())
+            .map(PathPattern::from_str)
+            .collect::<Result<Vec<PathPattern>>>()?;
+        Ok(ignores)
+    }
+
+    fn make_args<B: AsRef<Path>>(
+        &self,
+        template_loc: &SourceLoc,
+        destination: B,
+    ) -> Result<ApplyOpts> {
+        let cfg_args = self.apply_args.clone().unwrap_or_default();
+        let mut args_line = cfg_args.iter().map(|s| s.as_str()).collect::<Vec<_>>();
+        args_line.push("--confirm");
+        args_line.push("never");
+        args_line.push("--no-interaction");
+        args_line.push("--destination");
+        args_line.push(
+            destination
+                .as_ref()
+                .to_str()
+                .expect("to convert destination path into str"),
+        );
+        args_line.push("--source");
+        args_line.push(&template_loc.uri.raw);
+        args_line.push("--rev");
+        args_line.push(&template_loc.rev);
+        let buff = template_loc.subfolder.as_ref().map(|v| v.to_string_lossy());
+        if let Some(subfolder) = buff.as_ref() {
+            args_line.push("--source-subfolder");
+            args_line.push(subfolder);
+        }
+        //HACK from_iter_safe expect first entry to be the binary name,
+        //  unless clap::AppSettings::NoBinaryName has been used
+        //  (but I don't know how to use it in this case, patch is welcomed)
+        args_line.insert(0, "apply");
+        args_line.insert(0, "ffizer");
+        CliOpts::try_parse_from(args_line)
+            .map_err(Error::from)
+            .and_then(|o| match o.cmd {
+                Command::Apply(g) => Ok(g),
+                e => Err(Error::Unknown(format!(
+                    "command should always be parsed as 'apply' not as {:?}",
+                    e
+                ))),
+            })
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -227,7 +251,7 @@ impl SampleRun {
             cmd_opt: sample.args.clone(),
         };
         crate::process(&ctx)?;
-        let diffs = dir_diff_list::search_diff(destination, &sample.expected)?;
+        let diffs = dir_diff_list::search_diff(destination, &sample.expected, &sample.ignores)?;
         Ok(SampleRun { diffs })
     }
 

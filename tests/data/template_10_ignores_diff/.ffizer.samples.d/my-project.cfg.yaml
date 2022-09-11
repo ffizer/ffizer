@@ -1,0 +1,2 @@
+check_ignores:
+  - to_ignore*.txt

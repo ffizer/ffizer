@@ -1,4 +1,5 @@
 use crate::error::*;
+use crate::path_pattern::PathPattern;
 use std::cmp::Ordering;
 use std::fs;
 use std::fs::FileType;
@@ -49,13 +50,14 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
     actual: A,
     expect: B,
     // options: SearchOptions,
+    ignores: &[PathPattern],
 ) -> Result<Vec<EntryDiff>> {
     let actual = actual.as_ref();
     let expect = expect.as_ref();
 
     let mut differences = vec![];
-    let actual_listing = walk_dir(&actual)?;
-    let expect_listing = walk_dir(&expect)?;
+    let actual_listing = walk_dir(&actual, ignores)?;
+    let expect_listing = walk_dir(&expect, ignores)?;
 
     let mut actual_index = 0;
     let mut expect_index = 0;
@@ -206,8 +208,21 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
     }
 }
 
-fn walk_dir<P: AsRef<Path>>(path: P) -> Result<Vec<DirEntry>, walkdir::Error> {
-    WalkDir::new(path).sort_by(compare).into_iter().collect()
+fn walk_dir<P: AsRef<Path>>(
+    path: P,
+    ignores: &[PathPattern],
+) -> Result<Vec<DirEntry>, walkdir::Error> {
+    let base = path.as_ref();
+    WalkDir::new(base)
+        .sort_by(compare)
+        .into_iter()
+        .filter_entry(|e| {
+            e.path()
+                .strip_prefix(base)
+                .map(|rpath| !ignores.iter().any(|pattern| pattern.is_match(rpath)))
+                .unwrap_or(true)
+        })
+        .collect()
 }
 
 fn compare(a: &DirEntry, b: &DirEntry) -> Ordering {

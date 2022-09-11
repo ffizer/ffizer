@@ -1,7 +1,7 @@
 use crate::error::*;
 use globset::{Glob, GlobMatcher};
 use serde_plain::derive_deserialize_from_fromstr;
-use std::str::FromStr;
+use std::{path::Path, str::FromStr};
 
 #[derive(Debug, Clone)]
 pub struct PathPattern {
@@ -34,7 +34,7 @@ impl PartialEq for PathPattern {
 }
 
 impl PathPattern {
-    pub fn is_match(&self, value: &str) -> bool {
+    pub fn is_match<P: AsRef<Path>>(&self, value: P) -> bool {
         self.matcher.is_match(value)
     }
 }

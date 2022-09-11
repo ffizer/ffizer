@@ -14,7 +14,7 @@ exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
 edition = "2021"
 
 [dependencies]
-clap = { version = "3.1", features = ["derive"] }
+clap = { version = "3.2", features = ["derive"] }
 console = "0.15.0"
 dialoguer = "0.10.0"
 difference = "2.0.0"
@@ -22,7 +22,7 @@ directories = "4.0"
 git2 = "0.14"
 git2_credentials = "0.8"
 globset = "0.4.9"
-handlebars = "4.2"
+handlebars = "4.3"
 handlebars_misc_helpers = { version = "0.12", features = [
     "string",
     "http_reqwest",
@@ -34,7 +34,7 @@ indicatif = "0.16.2"
 lazy_static = "1.4.0"
 md5 = "0.7.0"
 regex = "1.6.0"
-run_script = "0.9.0"
+run_script = "0.10.0"
 schemars = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.81"
@@ -58,7 +58,7 @@ assert_cmd = "2.0.4"
 spectral = "0.6.0"
 test-generator = "0.3.0"
 predicates = "2.1.1"
-pretty_assertions = "1.2.1"
+pretty_assertions = "1.3.0"
 
 [[bin]]
 name = "ffizer"

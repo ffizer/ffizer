@@ -16,7 +16,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.2", features = ["derive"] }
 console = "0.15.0"
-dialoguer = "0.10.0"
+dialoguer = "0.10.2"
 difference = "2.0.0"
 directories = "4.0"
 git2 = "0.14"

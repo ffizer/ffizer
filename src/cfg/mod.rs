@@ -29,7 +29,7 @@ impl template_cfg::TemplateCfg {
             .iter()
             .map(|v| v.trim_matches(trim_chars))
             .filter(|v| !v.is_empty())
-            .map(|v| PathPattern::from_str(v))
+            .map(PathPattern::from_str)
             .collect::<Result<Vec<PathPattern>>>()?;
         let cfg_pattern = PathPattern::from_str(TEMPLATE_CFG_FILENAME)?;
         ignores.push(cfg_pattern);

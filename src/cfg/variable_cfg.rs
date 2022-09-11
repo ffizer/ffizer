@@ -5,7 +5,7 @@ use schemars::gen::SchemaGenerator;
 use schemars::schema::Schema;
 use schemars::JsonSchema;
 
-#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, JsonSchema)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, Eq, JsonSchema)]
 pub struct VariableCfg {
     /// name of variable used in the template
     pub name: String,
@@ -40,7 +40,7 @@ impl TransformsValues for VariableCfg {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, Eq)]
 pub struct VariableValueCfg(pub serde_yaml::Value);
 
 impl JsonSchema for VariableValueCfg {
@@ -75,7 +75,7 @@ impl From<&VariableValueCfg> for LabelValue {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, JsonSchema)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, Eq, JsonSchema)]
 pub struct LabelValueCfg {
     /// display of the value (in select)
     pub label: String,
@@ -105,7 +105,7 @@ impl From<&LabelValueCfg> for LabelValue {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, JsonSchema)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, JsonSchema)]
 #[serde(untagged)] // order in enum is the priority order to find the right subtype
 pub enum VariableValuesCfg {
     ListLV(Vec<LabelValueCfg>),

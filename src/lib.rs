@@ -40,7 +40,7 @@ pub struct Ctx {
     pub cmd_opt: ApplyOpts,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FileOperation {
     Nothing,
     Ignore,
@@ -49,7 +49,7 @@ pub enum FileOperation {
     UpdateFile,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Action {
     pub src: Vec<SourceFile>,
     pub dst_path: ChildPath,
@@ -97,7 +97,7 @@ where
     std::env::set_current_dir(&folder)?;
     // let res = apply_plan(&ctx, &actions, &variables, &template_composite);
     let res = f();
-    let _ = std::env::set_current_dir(&current_dir)?;
+    std::env::set_current_dir(&current_dir)?;
     res
 }
 
@@ -540,7 +540,6 @@ mod tests {
                 dst_folder: PathBuf::from(DST_FOLDER_STR),
                 ..Default::default()
             },
-            ..Default::default()
         }
     }
 
@@ -679,7 +678,7 @@ mod tests {
 
         let action = Action {
             dst_path: dst,
-            src: vec![SourceFile::from((ChildPath::from(src), 0))],
+            src: vec![SourceFile::from((src, 0))],
             operation: FileOperation::AddFile,
         };
 
@@ -707,7 +706,7 @@ mod tests {
 
         let action = Action {
             dst_path: dst,
-            src: vec![SourceFile::from((ChildPath::from(src), 0))],
+            src: vec![SourceFile::from((src, 0))],
             operation: FileOperation::AddFile,
         };
 

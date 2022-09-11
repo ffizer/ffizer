@@ -65,9 +65,9 @@ fn change_local_path_sep(s: &str) -> String {
         // canonicalize on windows return UNC path,
         // that can cause probleme when converted into string then back to Path
         // see https://github.com/rust-lang/rust/issues/42869
-        s.replace("/", "\\").replace("\\\\?\\", "")
+        s.replace('/', "\\").replace("\\\\?\\", "")
     } else {
-        s.replace("\\", "/")
+        s.replace('\\', "/")
     }
 }
 

@@ -25,7 +25,7 @@ fn check_samples<A: AsRef<Path>>(template_path: A, template_loc: &SourceLoc) -> 
     let samples_folder = template_path
         .as_ref()
         .join(crate::cfg::TEMPLATE_SAMPLES_DIRNAME);
-    let samples = Sample::find_from_folder(&template_loc, &samples_folder, &tmp_dir)?;
+    let samples = Sample::find_from_folder(template_loc, &samples_folder, &tmp_dir)?;
     info!(nb_samples_detected = samples.len(), ?samples_folder);
     for sample in samples {
         info!(sample = ?sample.name, args = ?sample.args, "checking...");
@@ -97,10 +97,10 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
 }
 
 fn replace_blank_char(s: &str) -> String {
-    s.replace(" ", "·")
-        .replace("\t", "⇒\t")
+    s.replace(' ', "·")
+        .replace('\t', "⇒\t")
         .replace("\r\n", "¶\n")
-        .replace("\n", "↩\n")
+        .replace('\n', "↩\n")
 }
 
 #[derive(Debug, Clone)]
@@ -138,7 +138,7 @@ impl Sample {
                 let existing = path.with_extension("existing");
                 let args_file = path.with_extension("cfg.yaml");
                 let destination = tmp_dir.path().join(&name).to_path_buf();
-                let args = read_args(&template_loc, destination, args_file)?;
+                let args = read_args(template_loc, destination, args_file)?;
                 out.push(Sample {
                     name,
                     args,

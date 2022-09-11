@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct VariableDef {
     /// name of variable used in the template
     pub name: String,
@@ -12,7 +12,7 @@ pub struct VariableDef {
     pub select_in_values: Vec<LabelValue>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, Eq)]
 pub struct LabelValue {
     /// display of the value (in select)
     pub label: String,

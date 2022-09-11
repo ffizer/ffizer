@@ -9,6 +9,7 @@ use tempfile::tempdir;
 use test_generator::test_resources;
 
 #[test_resources("tests/data/template_*")]
+#[allow(clippy::assertions_on_constants)]
 fn run_test_samples(template_path: &str) {
     let t = do_run_test_samples(template_path);
     if let Err(e) = t {
@@ -136,7 +137,7 @@ fn log_should_report_error() -> Result<(), Box<dyn Error>> {
     let tmp_dir = tempdir()?;
     let sample_path = PathBuf::from("tests/data/log_error");
     let template_path = sample_path.join("template");
-    let actual_path = tmp_dir.path().join("my-project").to_path_buf();
+    let actual_path = tmp_dir.path().join("my-project");
 
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("apply")

@@ -119,7 +119,7 @@ mod tests {
             name: "k3".to_owned(),
             ..Default::default()
         });
-        let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
+        let actual = serde_yaml::from_str::<TemplateCfg>(cfg_str).unwrap();
         assert_that!(&actual.variables).is_equal_to(&expected.variables);
         assert_that!(&actual.use_template_dir).is_false();
     }
@@ -212,7 +212,7 @@ mod tests {
         let cfg_str = r#"
         use_template_dir: false
         "#;
-        let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
+        let actual = serde_yaml::from_str::<TemplateCfg>(cfg_str).unwrap();
         assert_that!(&actual.use_template_dir).is_false();
     }
 
@@ -221,7 +221,7 @@ mod tests {
         let cfg_str = r#"
         use_template_dir: true
         "#;
-        let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
+        let actual = serde_yaml::from_str::<TemplateCfg>(cfg_str).unwrap();
         assert_that!(&actual.use_template_dir).is_true();
     }
 

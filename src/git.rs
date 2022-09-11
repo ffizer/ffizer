@@ -119,7 +119,7 @@ where
     if revref.len() == 40
         && revref
             .chars()
-            .all(|c| (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'))
+            .all(|c| ('0'..='9').contains(&c) || ('a'..='f').contains(&c))
     {
         revref = format!("+{}:{}", rev.as_ref(), rev.as_ref());
     }
@@ -266,7 +266,6 @@ pub fn find_cmd_tool(kind: &str) -> Result<String, git2::Error> {
 mod tests {
     use super::*;
     use pretty_assertions::assert_eq;
-    use run_script;
     use std::fs;
     use tempfile::tempdir;
     use tracing_subscriber::FmtSubscriber;

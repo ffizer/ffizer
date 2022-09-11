@@ -30,7 +30,7 @@ handlebars_misc_helpers = { version = "0.12", features = [
     "jsonnet",
 ], default-features = false }
 human-panic = { version = "1.0.3", optional = true }
-indicatif = "0.16.2"
+indicatif = "0.17.0"
 lazy_static = "1.4.0"
 md5 = "0.7.0"
 regex = "1.6.0"

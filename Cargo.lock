@@ -409,7 +409,7 @@ dependencies = [
  "handlebars",
  "handlebars_misc_helpers",
  "human-panic",
- "indicatif",
+ "indicatif 0.17.0",
  "lazy_static",
  "libc",
  "md5",
@@ -829,6 +829,17 @@ dependencies = [
  "lazy_static",
  "number_prefix",
  "regex",
+]
+
+[[package]]
+name = "indicatif"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fcc42b206e70d86ec03285b123e65a5458c92027d1fb2ae3555878b8113b3ddf"
+dependencies = [
+ "console",
+ "number_prefix",
+ "unicode-width",
 ]
 
 [[package]]
@@ -1711,7 +1722,7 @@ dependencies = [
  "either",
  "flate2",
  "hyper",
- "indicatif",
+ "indicatif 0.16.2",
  "log",
  "quick-xml",
  "regex",

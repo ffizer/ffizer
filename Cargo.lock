@@ -428,7 +428,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_plain",
- "serde_yaml 0.9.11",
+ "serde_yaml 0.9.13",
  "spectral",
  "tempfile",
  "test-generator",
@@ -1776,9 +1776,9 @@ dependencies = [
 
 [[package]]
 name = "serde_yaml"
-version = "0.9.11"
+version = "0.9.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89f31df3f50926cdf2855da5fd8812295c34752cb20438dae42a67f79e021ac3"
+checksum = "8613d593412a0deb7bbd8de9d908efff5a0cb9ccd8f62c641e7b2ed2f57291d1"
 dependencies = [
  "indexmap",
  "itoa",

@@ -37,7 +37,7 @@ regex = "1.6.0"
 run_script = "0.10.0"
 schemars = "0.8"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.85"
+serde_json = "1.0.88"
 serde_plain = "1.0"
 serde_yaml = "0.9"
 tracing = "0.1"

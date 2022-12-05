@@ -33,7 +33,7 @@ human-panic = { version = "1.0.3", optional = true }
 indicatif = "0.17.0"
 lazy_static = "1.4.0"
 md5 = "0.7.0"
-regex = "1.6.0"
+regex = "1.7.0"
 run_script = "0.10.0"
 schemars = "0.8"
 serde = { version = "1.0", features = ["derive"] }

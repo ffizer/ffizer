@@ -125,7 +125,7 @@ mod tests {
             Some("github.com"),
         );
         assert_source_uri_from_str(
-            "http://github.com/ffizer/ffizer.git",
+            "http://github.com/ffizer/ffizer.git", //Devskim: ignore DS137138
             "ffizer/ffizer",
             Some("github.com"),
         );
@@ -148,7 +148,7 @@ mod tests {
             Some("github.com"),
         );
         assert_source_uri_from_str(
-            "http://user@github.com/ffizer/ffizer.git",
+            "http://user@github.com/ffizer/ffizer.git", //Devskim: ignore DS137138
             "ffizer/ffizer",
             Some("github.com"),
         );
@@ -162,7 +162,7 @@ mod tests {
             Some("github.com"),
         );
         assert_source_uri_from_str(
-            "http://user:pass@github.com/ffizer/ffizer.git",
+            "http://user:pass@github.com/ffizer/ffizer.git", //Devskim: ignore DS137138
             "ffizer/ffizer",
             Some("github.com"),
         );

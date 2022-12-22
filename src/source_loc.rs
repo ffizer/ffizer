@@ -25,7 +25,7 @@ pub struct SourceLoc {
 
 impl SourceLoc {
     pub fn find_remote_cache_folder() -> Result<PathBuf> {
-        let app_name = std::env::var("CARGO_PKG_NAME").unwrap_or_else(|_| "".into());
+        let app_name = env!("CARGO_PKG_NAME");
         let project_dirs = directories::ProjectDirs::from("", &app_name, &app_name)
             .ok_or(crate::Error::ApplicationPathNotFound {})?;
         let cache_base = project_dirs.cache_dir();

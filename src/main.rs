@@ -12,7 +12,7 @@ use tracing_error::ErrorLayer;
 use tracing_subscriber::prelude::*;
 use tracing_subscriber::{filter, fmt};
 
-fn tracing_level_from_usize(level: usize) -> tracing::Level {
+fn tracing_level_from_usize(level: u8) -> tracing::Level {
     match level {
         0 => tracing::Level::ERROR,
         1 => tracing::Level::WARN,

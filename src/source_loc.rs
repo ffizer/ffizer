@@ -11,15 +11,15 @@ use tracing::warn;
 #[serde(deny_unknown_fields, default)]
 pub struct SourceLoc {
     /// uri / path of the template
-    #[clap(short = 's', long = "source")]
+    #[arg(short = 's', long = "source")]
     pub uri: SourceUri,
 
     /// git revision of the template
-    #[clap(long = "rev", default_value = "master")]
+    #[arg(long = "rev", default_value = "master")]
     pub rev: String,
 
     /// path of the folder under the source uri to use for template
-    #[clap(long = "source-subfolder", parse(from_os_str))]
+    #[arg(long = "source-subfolder", value_name = "FOLDER")]
     pub subfolder: Option<PathBuf>,
 }
 

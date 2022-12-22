@@ -1,82 +1,82 @@
 use crate::source_loc::SourceLoc;
-use clap::{ArgEnum, Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug, Clone)]
-// #[clap(
+// #[arg(
 //     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
 //     rename_all = "kebab-case",
 //     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
 // )]
-#[clap(
+#[command(
     version, author = env!("CARGO_PKG_HOMEPAGE"), about, 
 )]
+#[command(propagate_version = true)]
 pub struct CliOpts {
     // The number of occurences of the `v/verbose` flag
     /// Verbose mode (-v, -vv (very verbose / level debug), -vvv)
     /// print on stderr
-    #[clap(short = 'v', long = "verbose", parse(from_occurrences))]
-    pub verbose: usize,
+    #[arg(short = 'v', long = "verbose", action = clap::ArgAction::Count)]
+    pub verbose: u8,
 
-    #[clap(subcommand)] // Note that we mark a field as a subcommand
+    #[command(subcommand)]
     pub cmd: Command,
 }
 
 #[derive(Subcommand, Debug, Clone)]
 pub enum Command {
     /// Apply a template into a target directory
-    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     Apply(ApplyOpts),
+
     /// Self upgrade ffizer executable
-    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     Upgrade,
+
     /// Inspect configuration, caches,... (wip)
-    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     Inspect,
+
     /// Show the json schema of the .ffizer.yaml files
-    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     ShowJsonSchema,
+
     /// test a template against its samples
-    #[clap(version, author = env!("CARGO_PKG_HOMEPAGE"))]
     TestSamples(TestSamplesOpts),
 }
 
 #[derive(Args, Debug, Default, Clone)]
 pub struct ApplyOpts {
     /// ask for plan confirmation
-    #[clap(long, default_value = "Never", arg_enum, ignore_case = true)]
+    #[arg(long, default_value = "Never", value_enum, ignore_case = true)]
     pub confirm: AskConfirmation,
 
     /// mode to update existing file
-    #[clap(long, default_value = "Ask", arg_enum, ignore_case = true)]
+    #[arg(long, default_value = "Ask", value_enum, ignore_case = true)]
     pub update_mode: UpdateMode,
 
     /// should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
-    #[clap(short = 'y', long = "no-interaction")]
+    #[arg(short = 'y', long = "no-interaction")]
     pub no_interaction: bool,
 
     /// in offline, only local templates or cached templates are used
-    #[clap(long = "offline")]
+    #[arg(long = "offline")]
     pub offline: bool,
 
-    #[clap(flatten)]
+    #[command(flatten)]
     pub src: SourceLoc,
 
     /// destination folder (created if doesn't exist)
-    #[clap(
+    #[arg(
         short = 'd',
         long = "destination",
-        parse(from_os_str),
         //default_value = "."
+        value_name = "FOLDER"
     )]
     pub dst_folder: PathBuf,
 
     /// set variable's value from cli ("key=value")
-    #[clap(short = 'v', long = "variables", parse(from_str=parse_keyvalue))]
+    #[arg(short = 'v', long = "variables", value_parser = parse_keyvalue)]
     pub key_value: Vec<(String, String)>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, ArgEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, ValueEnum)]
 pub enum AskConfirmation {
     Auto,
     Always,
@@ -89,7 +89,7 @@ impl Default for AskConfirmation {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, ArgEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, ValueEnum)]
 /// mode to process update of existing local file
 pub enum UpdateMode {
     // ask what to do
@@ -125,20 +125,31 @@ impl std::fmt::Display for UpdateMode {
     }
 }
 
-fn parse_keyvalue(src: &str) -> (String, String) {
+fn parse_keyvalue(src: &str) -> Result<(String, String), String> {
     let kv: Vec<&str> = src.splitn(2, '=').collect();
     if kv.len() == 2 {
-        (kv[0].to_owned(), kv[1].to_owned())
+        Ok((kv[0].to_owned(), kv[1].to_owned()))
     } else {
-        (src.to_owned(), "".to_owned())
+        Ok((src.to_owned(), "".to_owned()))
     }
 }
 
 #[derive(Parser, Debug, Default, Clone)]
 pub struct TestSamplesOpts {
-    #[clap(flatten)]
+    #[command(flatten)]
     pub src: SourceLoc,
     /// in offline, only local templates or cached templates are used
-    #[clap(long = "offline")]
+    #[arg(long = "offline")]
     pub offline: bool,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn verify_cli() {
+        use clap::CommandFactory;
+        CliOpts::command().debug_assert()
+    }
 }

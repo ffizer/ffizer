@@ -56,8 +56,8 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
     let expect = expect.as_ref();
 
     let mut differences = vec![];
-    let actual_listing = walk_dir(&actual, ignores)?;
-    let expect_listing = walk_dir(&expect, ignores)?;
+    let actual_listing = walk_dir(actual, ignores)?;
+    let expect_listing = walk_dir(expect, ignores)?;
 
     let mut actual_index = 0;
     let mut expect_index = 0;

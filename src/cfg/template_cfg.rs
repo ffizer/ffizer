@@ -200,8 +200,8 @@ mod tests {
         scripts:
             - cmd: hello transformed
         "#;
-        let cfg_in = TemplateCfg::from_str(&cfg_in_str).unwrap();
-        let expected = TemplateCfg::from_str(&cfg_expected_str).unwrap();
+        let cfg_in = TemplateCfg::from_str(cfg_in_str).unwrap();
+        let expected = TemplateCfg::from_str(cfg_expected_str).unwrap();
         let render = |v: &str| v.replace("to_transform", "transformed");
         let actual = cfg_in.transforms_values(&render).unwrap();
         assert_eq!(&actual, &expected);
@@ -234,6 +234,6 @@ mod tests {
         variables:
             - name: k1
         "#;
-        TemplateCfg::from_str(&cfg_in_str).unwrap();
+        TemplateCfg::from_str(cfg_in_str).unwrap();
     }
 }

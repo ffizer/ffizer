@@ -26,7 +26,7 @@ pub struct SourceLoc {
 impl SourceLoc {
     pub fn find_remote_cache_folder() -> Result<PathBuf> {
         let app_name = env!("CARGO_PKG_NAME");
-        let project_dirs = directories::ProjectDirs::from("", &app_name, &app_name)
+        let project_dirs = directories::ProjectDirs::from("", app_name, app_name)
             .ok_or(crate::Error::ApplicationPathNotFound {})?;
         let cache_base = project_dirs.cache_dir();
         Ok(cache_base.join("git"))
@@ -53,7 +53,7 @@ impl SourceLoc {
     // the remote_as_local ignore subfolder
     fn remote_as_local(&self) -> Result<PathBuf> {
         let cache_uri = Self::find_remote_cache_folder()?
-            .join(&self.uri.host.as_deref().unwrap_or("no_host"))
+            .join(self.uri.host.as_deref().unwrap_or("no_host"))
             .join(&self.uri.path)
             .join(&self.rev);
         Ok(cache_uri)

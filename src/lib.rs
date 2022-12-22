@@ -89,12 +89,12 @@ fn do_in_folder<F, R>(folder: &Path, f: F) -> Result<R>
 where
     F: FnOnce() -> Result<R>,
 {
-    fs::create_dir_all(&folder).map_err(|source| Error::CreateFolder {
+    fs::create_dir_all(folder).map_err(|source| Error::CreateFolder {
         path: folder.to_path_buf(),
         source,
     })?;
     let current_dir = std::env::current_dir()?;
-    std::env::set_current_dir(&folder)?;
+    std::env::set_current_dir(folder)?;
     // let res = apply_plan(&ctx, &actions, &variables, &template_composite);
     let res = f();
     std::env::set_current_dir(&current_dir)?;
@@ -303,7 +303,7 @@ fn render_template(
 ) -> Result<()> {
     let src_name = &src_full_path.to_string_lossy();
     handlebars
-        .register_template_file(src_name, &src_full_path)
+        .register_template_file(src_name, src_full_path)
         .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: format!("load content of template '{:?}'", &src_full_path),
@@ -329,14 +329,14 @@ where
 {
     let src = src.as_ref();
     let dst = dst.as_ref();
-    let perms = fs::metadata(&src)
+    let perms = fs::metadata(src)
         .map_err(|source| Error::CopyFilePermission {
             src: src.into(),
             dst: dst.into(),
             source,
         })?
         .permissions();
-    fs::set_permissions(&dst, perms).map_err(|source| Error::CopyFilePermission {
+    fs::set_permissions(dst, perms).map_err(|source| Error::CopyFilePermission {
         src: src.into(),
         dst: dst.into(),
         source,
@@ -355,7 +355,7 @@ where
     loop {
         match mode {
             UpdateMode::Ask => {
-                mode = ui::ask_update_mode(&local)?;
+                mode = ui::ask_update_mode(local)?;
             }
             UpdateMode::ShowDiff => {
                 // show diff (then re-ask)
@@ -363,11 +363,11 @@ where
                 mode = UpdateMode::Ask;
             }
             UpdateMode::Override => {
-                fs::remove_file(&local).map_err(|source| Error::RemoveFile {
+                fs::remove_file(local).map_err(|source| Error::RemoveFile {
                     path: local.into(),
                     source,
                 })?;
-                fs::rename(&remote, &local).map_err(|source| Error::RenameFile {
+                fs::rename(remote, local).map_err(|source| Error::RenameFile {
                     src: remote.into(),
                     dst: local.into(),
                     source,
@@ -375,7 +375,7 @@ where
                 break;
             }
             UpdateMode::Keep => {
-                fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
+                fs::remove_file(remote).map_err(|source| Error::RemoveFile {
                     path: remote.into(),
                     source,
                 })?;
@@ -388,13 +388,13 @@ where
             }
             UpdateMode::CurrentAsLocal => {
                 // backup existing as .LOCAL
-                let new_local = files::add_suffix(&local, ".LOCAL")?;
-                fs::rename(&local, &new_local).map_err(|source| Error::RenameFile {
+                let new_local = files::add_suffix(local, ".LOCAL")?;
+                fs::rename(local, &new_local).map_err(|source| Error::RenameFile {
                     src: local.into(),
                     dst: new_local,
                     source,
                 })?;
-                fs::rename(&remote, &local).map_err(|source| Error::RenameFile {
+                fs::rename(remote, local).map_err(|source| Error::RenameFile {
                     src: remote.into(),
                     dst: local.into(),
                     source,
@@ -403,7 +403,7 @@ where
             }
             UpdateMode::Merge => match merge_file(src, local, remote) {
                 Ok(_) => {
-                    fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
+                    fs::remove_file(remote).map_err(|source| Error::RemoveFile {
                         path: remote.into(),
                         source,
                     })?;
@@ -427,8 +427,8 @@ where
         key: "merge".into(),
         source,
     })?;
-    let new_local = files::add_suffix(&local, ".LOCAL")?;
-    fs::copy(&local, &new_local).map_err(|source| Error::CopyFile {
+    let new_local = files::add_suffix(local, ".LOCAL")?;
+    fs::copy(local, &new_local).map_err(|source| Error::CopyFile {
         src: local.into(),
         dst: new_local.clone(),
         source,
@@ -596,9 +596,9 @@ mod tests {
     fn test_path_extension_extraction() {
         use std::ffi::OsStr;
 
-        assert_that!(PathBuf::from("foo.ext1").extension()).is_equal_to(&Some(OsStr::new("ext1")));
+        assert_that!(PathBuf::from("foo.ext1").extension()).is_equal_to(Some(OsStr::new("ext1")));
         assert_that!(PathBuf::from("foo.ext2.ext1").extension())
-            .is_equal_to(&Some(OsStr::new("ext1")));
+            .is_equal_to(Some(OsStr::new("ext1")));
     }
 
     #[test]

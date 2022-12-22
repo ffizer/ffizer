@@ -50,8 +50,8 @@ where
     // std::fs::rename(&tmp, &dst)?;
     } else {
         info!("git clone into cached template");
-        clone(&dst, &url, "master", fo)?;
-        checkout(&dst, &rev).map_err(|source| Error::GitRetrieve {
+        clone(dst, &url, "master", fo)?;
+        checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
             msg: "checkout_clone".to_owned(),
             dst: dst.to_path_buf(),
             url: url.as_ref().to_owned(),
@@ -87,7 +87,7 @@ where
     R: AsRef<str>,
     U: AsRef<str>,
 {
-    std::fs::create_dir_all(&dst.as_ref()).map_err(|source| Error::CreateFolder {
+    std::fs::create_dir_all(dst.as_ref()).map_err(|source| Error::CreateFolder {
         path: dst.as_ref().to_path_buf(),
         source,
     })?;

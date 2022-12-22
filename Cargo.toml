@@ -98,3 +98,10 @@ codegen-units = 1
 default = ["cli"]
 test_remote = []                                           # feature has no explicit dependencies
 cli = ["self_update", "human-panic", "tracing-subscriber"]
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/{ version }/{ name }_{ version }-{ target }{ archive-suffix }"
+bin-dir = "{ bin }{ binary-ext }"
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-fmt = "zip"

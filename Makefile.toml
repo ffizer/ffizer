@@ -26,7 +26,7 @@ MACOSX_DEPLOYMENT_TARGET = "10.9"
 [tasks.dist_env.env]
 DIST_VERSION = "${CARGO_MAKE_CRATE_VERSION}"
 DIST_NAME = "${CARGO_MAKE_CRATE_NAME}_${DIST_VERSION}-${TARGET}"
-DIST_EXT = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "tar.gz", mapping = { windows = "zip" } }
+DIST_EXT = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "tgz", mapping = { windows = "zip" } }
 DIST_PATH = "target/dist/${DIST_NAME}"
 
 [tasks.debug]

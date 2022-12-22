@@ -26,36 +26,36 @@ fail() {
 
 find_download_url() {
   local SUFFIX=$1
-  local URL=$(curl -s https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases/latest \
-    | grep "browser_download_url.*${SUFFIX}" \
-    | cut -d : -f 2,3 \
-    | tr -d \" \
-    | head -n 1)
+  local URL=$(curl -s https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases/latest |
+    grep "browser_download_url.*${SUFFIX}" |
+    cut -d : -f 2,3 |
+    tr -d \" |
+    head -n 1)
   echo "${URL//[[:space:]]/}"
 }
 
 find_arch() {
   local ARCH=$(uname -m)
   case $ARCH in
-    armv5*) ARCH="armv5";;
-    armv6*) ARCH="armv6";;
-    armv7*) ARCH="armv7";;
-    aarch64) ARCH="arm64";;
-    x86) ARCH="386";;
-    # x86_64) ARCH="amd64";;
-    i686) ARCH="386";;
-    i386) ARCH="386";;
+  armv5*) ARCH="armv5" ;;
+  armv6*) ARCH="armv6" ;;
+  armv7*) ARCH="armv7" ;;
+  aarch64) ARCH="arm64" ;;
+  x86) ARCH="386" ;;
+  # x86_64) ARCH="amd64";;
+  i686) ARCH="386" ;;
+  i386) ARCH="386" ;;
   esac
   echo $ARCH
 }
 
 find_os() {
-  local OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
+  local OS=$(echo $(uname) | tr '[:upper:]' '[:lower:]')
 
   case "$OS" in
-    # Minimalist GNU for Windows
-    mingw*) OS='windows';;
-    msys*) OS='windows';;
+  # Minimalist GNU for Windows
+  mingw*) OS='windows' ;;
+  msys*) OS='windows' ;;
   esac
   echo $OS
 }
@@ -63,11 +63,11 @@ find_os() {
 find_suffix() {
   local ARCH=$1
   local OS=$2
-  local SUFFIX="$ARCH-$OS.tar.gz"
+  local SUFFIX="$ARCH-$OS.tgz"
   case "$SUFFIX" in
-    "x86_64-darwin.tar.gz") SUFFIX='x86_64-apple-darwin.tar.gz';;
-    "x86_64-linux.tar.gz") SUFFIX='x86_64-unknown-linux-gnu.tar.gz';;
-    # "x86_64-windows.tar.gz") SUFFIX='x86_64-pc-windows-msvc.zip';;
+  "x86_64-darwin.tgz") SUFFIX='x86_64-apple-darwin.tgz' ;;
+  "x86_64-linux.tgz") SUFFIX='x86_64-unknown-linux-gnu.tgz' ;;
+    # "x86_64-windows.tgz") SUFFIX='x86_64-pc-windows-msvc.zip';;
   esac
   echo $SUFFIX
 }
@@ -85,7 +85,7 @@ download_file() {
 
 find_exec_dest_path() {
   local DEST_DIR="/usr/local/bin"
-  if [ ! -w $DEST_DIR ] ; then
+  if [ ! -w $DEST_DIR ]; then
     DEST_DIR=$(pwd)
   fi
   echo ${DEST_DIR}

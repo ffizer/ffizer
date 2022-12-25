@@ -3,15 +3,11 @@ use clap::{Args, Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug, Clone)]
-// #[arg(
-//     raw(setting = "structopt::clap::AppSettings::ColoredHelp"),
-//     rename_all = "kebab-case",
-//     raw(author = "env!(\"CARGO_PKG_HOMEPAGE\")")
-// )]
 #[command(
-    version, author = env!("CARGO_PKG_HOMEPAGE"), about, 
+    version, about,
+    after_help(env!("CARGO_PKG_HOMEPAGE")),
+    propagate_version = true
 )]
-#[command(propagate_version = true)]
 pub struct CliOpts {
     // The number of occurences of the `v/verbose` flag
     /// Verbose mode (-v, -vv (very verbose / level debug), -vvv)

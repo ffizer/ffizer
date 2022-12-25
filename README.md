@@ -85,6 +85,10 @@ ffizer upgrade
 #### via cargo
 
 ```sh
+# install pre-build binary via cargo-binstall
+cargo binstall ffizer
+
+# install from source
 cargo install ffizer --force --features cli
 ```
 
@@ -92,81 +96,56 @@ cargo install ffizer --force --features cli
 
 ```txt
 ❯ ffizer --help
-ffizer 2.5.0
-https://ffizer.github.io/ffizer/book/
+
 ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)
 
-USAGE:
-    ffizer [OPTIONS] <SUBCOMMAND>
+Usage: ffizer [OPTIONS] <COMMAND>
 
-OPTIONS:
-    -h, --help       Print help information
-    -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
-    -V, --version    Print version information
+Commands:
+  apply             Apply a template into a target directory
+  upgrade           Self upgrade ffizer executable
+  inspect           Inspect configuration, caches,... (wip)
+  show-json-schema  Show the json schema of the .ffizer.yaml files
+  test-samples      test a template against its samples
+  help              Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    apply               Apply a template into a target directory
-    help                Print this message or the help of the given subcommand(s)
-    inspect             Inspect configuration, caches,... (wip)
-    show-json-schema    Show the json schema of the .ffizer.yaml files
-    test-samples        test a template against its samples
-    upgrade             Self upgrade ffizer executable
+Options:
+  -v, --verbose...  Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+  -h, --help        Print help information
+  -V, --version     Print version information
 
+https://ffizer.github.io/ffizer/book/
 ```
 
 #### Self upgrade the executable
 
 ```sh
-➜  ffizer upgrade
+❯ ffizer upgrade
 ```
 
 #### Apply a template (to create or update)
 
 ```sh
 ❯ ffizer apply --help
-ffizer-apply 2.5.0
-https://ffizer.github.io/ffizer/book/
+
 Apply a template into a target directory
 
-USAGE:
-    ffizer apply [OPTIONS] --source <URI> --destination <DST_FOLDER>
+Usage: ffizer apply [OPTIONS] --source <URI> --destination <FOLDER>
 
-OPTIONS:
-        --confirm <CONFIRM>
-            ask for plan confirmation [default: Never] [possible values: auto, always, never]
+Options:
+      --confirm <CONFIRM>          ask for plan confirmation [default: Never] [possible values: auto, always, never]
+      --update-mode <UPDATE_MODE>  mode to update existing file [default: Ask] [possible values: ask, keep, override, update-as-remote, current-as-local, show-diff, merge]
+  -y, --no-interaction             should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
+      --offline                    in offline, only local templates or cached templates are used
+  -s, --source <URI>               uri / path of the template
+      --rev <REV>                  git revision of the template [default: master]
+      --source-subfolder <FOLDER>  path of the folder under the source uri to use for template
+  -d, --destination <FOLDER>       destination folder (created if doesn't exist)
+  -v, --variables <KEY_VALUE>      set variable's value from cli ("key=value")
+  -h, --help                       Print help information
+  -V, --version                    Print version information
 
-    -d, --destination <DST_FOLDER>
-            destination folder (created if doesn't exist)
-
-    -h, --help
-            Print help information
-
-        --offline
-            in offline, only local templates or cached templates are used
-
-        --rev <REV>
-            git revision of the template [default: master]
-
-    -s, --source <URI>
-            uri / path of the template
-
-        --source-subfolder <SUBFOLDER>
-            path of the folder under the source uri to use for template
-
-        --update-mode <UPDATE_MODE>
-            mode to update existing file [default: Ask] [possible values: ask, keep, override,
-            update-as-remote, current-as-local, show-diff, merge]
-
-    -v, --variables <KEY_VALUE>
-            set variable's value from cli ("key=value")
-
-    -V, --version
-            Print version information
-
-    -y, --no-interaction
-            should not ask for confirmation (to use default value, to apply plan, to override, to
-            run script,...)
 ```
 
 - use a local folder as template
@@ -184,25 +163,25 @@ OPTIONS:
   output
 
   ```sh
-    Configure variables
+  Configure variables
 
-    ✔ project_name · my-project
-    ✔ package_name · my_project
+  ✔ project_name · my-project
+  ✔ package_name · my_project
 
 
-    Plan to execute
+  Plan to execute
 
-      - make dir        my_project
-      - make dir         ├─dir_1
-      - add file         │  └─file_1_1.txt
-      - make dir         ├─dir_2_my-project
-      - add file         │  └─file_1_2.txt
-      - add file         ├─file_1.txt
-      - add file         ├─file_2.txt
-      - add file         ├─file_3.txt
-      - add file         ├─file_4_my_project.txt
-      - add file         ├─file_5_my-project.txt
-      - add file         └─file_6.hbs
+    - make dir        my_project
+    - make dir         ├─dir_1
+    - add file         │  └─file_1_1.txt
+    - make dir         ├─dir_2_my-project
+    - add file         │  └─file_1_2.txt
+    - add file         ├─file_1.txt
+    - add file         ├─file_2.txt
+    - add file         ├─file_3.txt
+    - add file         ├─file_4_my_project.txt
+    - add file         ├─file_5_my-project.txt
+    - add file         └─file_6.hbs
   ```
 
 ### Authoring a template

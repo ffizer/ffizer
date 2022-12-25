@@ -3,6 +3,101 @@
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 ## Version x.y.z-dev
 
+<a name="2.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.7.0
+
+### Changed
+- 👽  update to use the clap 4 api
+- ⬆️  Bump clap from 3.2.22 to 4.0.18
+- ⬆️  Bump regex from 1.6.0 to 1.7.0
+- ⬆️  Bump assert_cmd from 2.0.4 to 2.0.7
+- ⬆️  Bump openssl from 0.10.42 to 0.10.44
+- ⬆️  Bump serde from 1.0.145 to 1.0.151
+- ⬆️  Bump serde_json from 1.0.85 to 1.0.89
+- ⬆️  Bump libc from 0.2.134 to 0.2.137
+- ⬆️  Bump serde_yaml from 0.9.13 to 0.9.14
+- ⬆️  Bump tracing from 0.1.36 to 0.1.37
+- ⬆️  Bump tracing-subscriber from 0.3.15 to 0.3.16
+- ⬆️  Bump handlebars from 4.3.4 to 4.3.5
+- ⬆️  Bump libc from 0.2.133 to 0.2.134
+- ⬆️  Bump openssl from 0.10.41 to 0.10.42
+- ⬆️  Bump console from 0.15.1 to 0.15.2
+- ⬆️  Bump schemars from 0.8.10 to 0.8.11
+- ⬆️  Bump thiserror from 1.0.36 to 1.0.37
+- ⬆️  bump dependencies
+- ⬆️  Bump libc from 0.2.132 to 0.2.133
+- ⬆️  Bump self_update from 0.31.0 to 0.32.0
+- ⬆️  Bump serde_yaml from 0.9.11 to 0.9.13
+- ⬆️  Bump clap from 3.2.20 to 3.2.22
+- ⬆️  Bump thiserror from 1.0.34 to 1.0.35
+
+### Fixed
+- 🐛  use the value of CARGO_PKG_NAME at compile time for the cache
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.7.0
+- arrow-up  cargo update
+- rotating-light  disable warning on &quot;http&quot; in test
+- 🚧  (cargo-release) start next development iteration 2.6.2-dev
+
+<a name="2.6.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.6.1
+
+### Changed
+- ⬆️  Bump git2 from 0.14 to 0.15
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.6.1
+- 🚧  (cargo-release) start next development iteration 2.6.1-dev
+
+<a name="2.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.6.0
+
+### Added
+- ✨  add `check_ignores` to ignore files during test-sample
+
+### Changed
+- 🚨  improve code with clippy' suggestions
+- ⬆️  Bump libc from 0.2.126 to 0.2.132
+- ⬆️  Bump console from 0.15.0 to 0.15.1
+- ⬆️  Bump self_update from 0.30.0 to 0.31.0
+- ⬆️  Bump serde_yaml from 0.9.4 to 0.9.11
+- ⬆️  Bump schemars from 0.8.8 to 0.8.10
+- ⬆️  Bump tracing-subscriber from 0.3.11 to 0.3.15
+- ⬆️  Bump serde from 1.0.142 to 1.0.144
+- ⬆️  Bump dialoguer from 0.10.0 to 0.10.2
+- ⬆️  Bump run_script from 0.9.0 to 0.10.0
+- ⬆️  Bump git2 from 0.14.2 to 0.14.4
+- ⬆️  Bump indicatif from 0.16.2 to 0.17.0
+- ⬆️  Bump serde_json from 1.0.81 to 1.0.85
+- ⬆️  Bump handlebars from 4.2.2 to 4.3.4
+- ⬆️  Bump pretty_assertions from 1.2.1 to 1.3.0
+- ⬆️  Bump clap from 3.1.18 to 3.2.2
+- ⬆️  Bump regex from 1.5.5 to 1.6.0
+- ⬆️  Bump serde_yaml from 0.8.23 to 0.9.4
+- ⬆️  Bump thiserror from 1.0.30 to 1.0.34
+- ⬆️  Bump globset from 0.4.8 to 0.4.9
+- ⬆️  Bump openssl-src from 111.17.0+1.1.1m to 111.20.0+1.1.1o
+- ⬆️  Bump libc from 0.2.124 to 0.2.126
+- ⬆️  Bump clap from 3.1.12 to 3.1.18
+- ⬆️  Bump serde_json from 1.0.79 to 1.0.81
+- ⬆️  Bump self_update from 0.29.0 to 0.30.0
+- ⬆️  Bump serde from 1.0.136 to 1.0.137
+- ⬆️  Bump clap from 3.1.6 to 3.1.12
+- ⬆️  Bump libc from 0.2.121 to 0.2.124
+- ⬆️  Bump tracing from 0.1.32 to 0.1.34
+- ⬆️  Bump tracing-subscriber from 0.3.9 to 0.3.11
+- ⬆️  Bump pretty_assertions from 1.2.0 to 1.2.1
+- ⬆️  Bump self_update from 0.28.0 to 0.29.0
+
+### Miscellaneous
+- 🚀  (cargo-release) version 2.6.0
+- ⚗  configure dependabot to only track direct dependencies
+- 🚧  (cargo-release) start next development iteration 2.5.2-dev
+
+<a name="2.5.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+## Version 2.5.1
+
 ### Changed
 - ⬆️  Bump libc from 0.2.119 to 0.2.121
 - ⬆️  Bump actions/cache from 2 to 3
@@ -12,6 +107,8 @@
 - 🐛  preserve the original source definition when test-samples
 
 ### Miscellaneous
+- 🚀  (cargo-release) version 2.5.1
+- pencil  update changelog
 - pencil  update README
 - 🚧  (cargo-release) start next development iteration 2.5.1-dev
 

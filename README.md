@@ -24,7 +24,7 @@ keywords: file generator, project template, project scaffolding, quick start, pr
 - [Features](#features)
 - [Usages](#usages)
   - [Install](#install)
-    - [via homebrew (MacOs & Linux)](#via-homebrew-macos--linux)
+    - [via homebrew (MacOs \& Linux)](#via-homebrew-macos--linux)
     - [via cargo](#via-cargo)
   - [Run](#run)
     - [Self upgrade the executable](#self-upgrade-the-executable)
@@ -241,6 +241,6 @@ git commit -m ':memo: (CHANGELOG) update'
 Release a new version by bump `patch` (or `minor`or `major`)
 
 ```sh
-cargo make publish --execute patch --dry-run
+cargo make publish patch # dry-run
 cargo make publish --execute patch
 ```

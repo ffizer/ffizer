@@ -135,9 +135,9 @@ mod tests {
 
     #[test]
     fn test_add_suffix() -> Result<(), Box<dyn std::error::Error>> {
-        assert_that!(add_suffix(&PathBuf::from("foo.ext1"), "")?)
+        assert_that!(add_suffix(PathBuf::from("foo.ext1"), "")?)
             .is_equal_to(&PathBuf::from("foo.ext1"));
-        assert_that!(add_suffix(&PathBuf::from("foo.ext1"), ".REMOTE")?)
+        assert_that!(add_suffix(PathBuf::from("foo.ext1"), ".REMOTE")?)
             .is_equal_to(&PathBuf::from("foo.ext1.REMOTE"));
         Ok(())
     }

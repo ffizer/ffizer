@@ -97,7 +97,7 @@ where
     std::env::set_current_dir(folder)?;
     // let res = apply_plan(&ctx, &actions, &variables, &template_composite);
     let res = f();
-    std::env::set_current_dir(&current_dir)?;
+    std::env::set_current_dir(current_dir)?;
     res
 }
 

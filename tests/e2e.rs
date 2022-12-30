@@ -91,7 +91,7 @@ fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
         .arg("--source-subfolder")
         .arg(source_subfolder)
         .ok()?;
-    assert_is_same(&actual_path, &expected_path, &output)
+    assert_is_same(&actual_path, expected_path, &output)
 }
 
 #[cfg(feature = "test_remote")]

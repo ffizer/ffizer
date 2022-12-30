@@ -326,7 +326,7 @@ mod tests {
             assert_eq!(code, 0, "setup template v1");
             retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
             assert_eq!(
-                fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
+                fs::read_to_string(dst_path.join("foo.txt")).unwrap(),
                 "v1: Lorem ipsum\n"
             );
         }
@@ -357,7 +357,7 @@ mod tests {
 
             retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
             assert_eq!(
-                fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
+                fs::read_to_string(dst_path.join("foo.txt")).unwrap(),
                 "v2: Hello\n"
             );
         }
@@ -388,7 +388,7 @@ mod tests {
 
             retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
             assert_eq!(
-                fs::read_to_string(&dst_path.join("foo.txt")).unwrap(),
+                fs::read_to_string(dst_path.join("foo.txt")).unwrap(),
                 "v3: Hourra\n"
             );
         }

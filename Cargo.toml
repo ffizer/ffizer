@@ -48,7 +48,7 @@ tracing-subscriber = { version = "0.3", optional = true, features = [
     "env-filter",
 ] }
 tracing-error = "0.2"
-tempfile = "3.2.0"
+tempfile = "3.4.0"
 thiserror = "1.0"
 walkdir = "2.3.2"
 

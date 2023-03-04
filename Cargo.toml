@@ -19,8 +19,8 @@ console = "0.15.2"
 dialoguer = "0.10.2"
 difference = "2.0.0"
 directories = "4.0"
-git2 = "0.16"
-git2_credentials = "0.10"
+git2 = { version = "0.16", optional = true }
+git2_credentials = { version = "0.10", optional = true }
 globset = "0.4.9"
 handlebars = "4.3"
 handlebars_misc_helpers = { version = "0.13", features = [
@@ -95,9 +95,10 @@ opt-level = 'z'
 codegen-units = 1
 
 [features]
-default = ["cli"]
+default = ["cli", "git2"]
 test_remote = []                                           # feature has no explicit dependencies
 cli = ["self_update", "human-panic", "tracing-subscriber"]
+git2 = ["dep:git2", "dep:git2_credentials"]
 
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/{ version }/{ name }_{ version }-{ target }{ archive-suffix }"

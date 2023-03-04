@@ -4,40 +4,18 @@ use git2::{Config, FetchOptions, Repository};
 use std::path::Path;
 use tracing::{debug, info, warn};
 
+use super::GitError;
+
 /// clone a repository at a rev to a directory
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
-#[tracing::instrument(fields(dst = ?dst.as_ref(), url = url.as_ref(), rev = rev.as_ref()))]
-pub fn retrieve<P, U, R>(dst: P, url: U, rev: R) -> Result<(), Error>
-where
-    P: AsRef<Path>,
-    R: AsRef<str>,
-    U: AsRef<str>,
-{
-    let dst = dst.as_ref();
-    let mut fo = make_fetch_options().map_err(|source| Error::GitRetrieve {
-        msg: "make_fetch_options".to_owned(),
-        dst: dst.to_path_buf(),
-        url: url.as_ref().to_owned(),
-        rev: rev.as_ref().to_owned(),
-        source,
-    })?;
+#[tracing::instrument]
+pub fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError> {
+    let mut fo = make_fetch_options()?;
     if dst.exists() {
         info!("git reset cached template");
-        checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
-            msg: "checkout_reset".to_owned(),
-            dst: dst.to_path_buf(),
-            url: url.as_ref().to_owned(),
-            rev: rev.as_ref().to_owned(),
-            source,
-        })?;
+        checkout(dst, &rev)?;
         info!("git pull cached template");
-        pull(dst, &rev, &mut fo).map_err(|source| Error::GitRetrieve {
-            msg: "pull".to_owned(),
-            dst: dst.to_path_buf(),
-            url: url.as_ref().to_owned(),
-            rev: rev.as_ref().to_owned(),
-            source,
-        })?;
+        pull(dst, &rev, &mut fo)?;
     //until pull is fixed and work as expected
     // let mut tmp = dst.to_path_buf().clone();
     // tmp.set_extension("part");
@@ -51,13 +29,7 @@ where
     } else {
         info!("git clone into cached template");
         clone(dst, &url, "master", fo)?;
-        checkout(dst, &rev).map_err(|source| Error::GitRetrieve {
-            msg: "checkout_clone".to_owned(),
-            dst: dst.to_path_buf(),
-            url: url.as_ref().to_owned(),
-            rev: rev.as_ref().to_owned(),
-            source,
-        })?;
+        checkout(dst, &rev)?;
     }
     Ok(())
 }
@@ -81,27 +53,15 @@ fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, git2::Error> {
     Ok(fo)
 }
 
-fn clone<P, U, R>(dst: P, url: U, rev: R, fo: FetchOptions<'_>) -> Result<(), Error>
-where
-    P: AsRef<Path>,
-    R: AsRef<str>,
-    U: AsRef<str>,
-{
-    std::fs::create_dir_all(dst.as_ref()).map_err(|source| Error::CreateFolder {
-        path: dst.as_ref().to_path_buf(),
+fn clone(dst: &Path, url: &str, rev: &str, fo: FetchOptions<'_>) -> Result<(), GitError> {
+    std::fs::create_dir_all(dst).map_err(|source| GitError::CreateFolder {
+        path: dst.to_path_buf(),
         source,
     })?;
     RepoBuilder::new()
         .branch(rev.as_ref())
         .fetch_options(fo)
-        .clone(url.as_ref(), dst.as_ref())
-        .map_err(|source| Error::GitRetrieve {
-            msg: "clone".to_owned(),
-            dst: dst.as_ref().to_path_buf(),
-            url: url.as_ref().to_owned(),
-            rev: rev.as_ref().to_owned(),
-            source,
-        })?;
+        .clone(url.as_ref(), dst.as_ref())?;
     Ok(())
 }
 

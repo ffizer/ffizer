@@ -111,8 +111,8 @@ pub(crate) fn ask_variables(
                     .render_template(&ask, &variables)
                     .map_err(|source| Error::Handlebars {
                         when: format!("define prompt for '{}'", &name),
-                        template: ask.clone(),
-                        source,
+                        template: Box::new(ask.clone()),
+                        source: Box::new(source),
                     })?
             } else {
                 name.clone()

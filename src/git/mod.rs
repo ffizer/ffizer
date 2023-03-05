@@ -75,7 +75,7 @@ where
         url: url.to_owned(),
         rev: rev.to_owned(),
         source,
-        msg: "Fail to retrieve repository".to_string(),
+        msg: Box::new("Fail to retrieve repository".to_string()),
     })
 }
 

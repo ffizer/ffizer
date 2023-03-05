@@ -307,8 +307,8 @@ fn render_template(
         .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: format!("load content of template '{:?}'", &src_full_path),
-            template: src_name.to_string(),
-            source,
+            template: Box::new(src_name.to_string()),
+            source: Box::new(source),
         })?;
     output.clear(); //vec![u8] writer appends content if not clear
     handlebars
@@ -316,8 +316,8 @@ fn render_template(
         .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: "render template into buffer".into(),
-            template: src_name.to_string(),
-            source,
+            template: Box::new(src_name.to_string()),
+            source: Box::new(source),
         })?;
     Ok(())
 }
@@ -471,8 +471,8 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
                     .render_template(s, variables)
                     .map_err(|source| Error::Handlebars {
                         when: format!("define path for '{:?}'", src),
-                        template: s.into(),
-                        source,
+                        template: Box::new(s.into()),
+                        source: Box::new(source),
                     })?
             };
             Ok(PathBuf::from(p))

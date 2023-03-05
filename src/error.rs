@@ -31,7 +31,7 @@ pub enum Error {
         url: String,
         rev: String,
         source: GitError,
-        msg: String,
+        msg: Box<String>,
     },
     #[error("try to find git config '{key:?}'")]
     GitFindConfig { key: String, source: GitError },
@@ -133,8 +133,8 @@ pub enum Error {
     #[error("fail to process template '{template}' when {when}")]
     Handlebars {
         when: String,
-        template: String,
-        source: handlebars::RenderError,
+        template: Box<String>,
+        source: Box<handlebars::RenderError>,
     },
     // #[error(transparent)]
     #[error("fail to process yaml")]

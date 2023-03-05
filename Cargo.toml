@@ -20,7 +20,7 @@ dialoguer = "0.10.2"
 difference = "2.0.0"
 directories = "4.0"
 git2 = { version = "0.16", optional = true }
-git2_credentials = { version = "0.10", optional = true }
+git2_credentials = { version = "0.11", optional = true }
 globset = "0.4.9"
 handlebars = "4.3"
 handlebars_misc_helpers = { version = "0.13", features = [
@@ -96,8 +96,8 @@ codegen-units = 1
 
 [features]
 default = ["cli", "git2"]
-test_remote = []                                           # feature has no explicit dependencies
-cli = ["self_update", "human-panic", "tracing-subscriber"]
+test_remote = []                                                               # feature has no explicit dependencies
+cli = ["git2", "dep:self_update", "dep:human-panic", "dep:tracing-subscriber"]
 git2 = ["dep:git2", "dep:git2_credentials"]
 
 [package.metadata.binstall]

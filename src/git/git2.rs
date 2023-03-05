@@ -13,9 +13,9 @@ pub fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError> {
     let mut fo = make_fetch_options()?;
     if dst.exists() {
         info!("git reset cached template");
-        checkout(dst, &rev)?;
+        checkout(dst, rev)?;
         info!("git pull cached template");
-        pull(dst, &rev, &mut fo)?;
+        pull(dst, rev, &mut fo)?;
     //until pull is fixed and work as expected
     // let mut tmp = dst.to_path_buf().clone();
     // tmp.set_extension("part");
@@ -28,8 +28,8 @@ pub fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError> {
     // std::fs::rename(&tmp, &dst)?;
     } else {
         info!("git clone into cached template");
-        clone(dst, &url, "master", fo)?;
-        checkout(dst, &rev)?;
+        clone(dst, url, "master", fo)?;
+        checkout(dst, rev)?;
     }
     Ok(())
 }

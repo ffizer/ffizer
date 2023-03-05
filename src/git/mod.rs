@@ -179,7 +179,7 @@ mod tests {
                     "#
             ),
             args,
-            &options,
+            options,
         )
         .unwrap();
         if code != 0 {
@@ -200,8 +200,8 @@ mod tests {
                     git commit -m "add foo.txt"
                     "#,
             ),
-            &args,
-            &options,
+            args,
+            options,
         )
         .unwrap();
         if code != 0 {
@@ -209,7 +209,7 @@ mod tests {
         }
         assert_eq!(code, 0, "setup template v2");
 
-        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+        retrieve(dst_path, src_path.to_str().unwrap(), "master").unwrap();
     }
 
     #[tracing::instrument]
@@ -223,8 +223,8 @@ mod tests {
                     git commit -m "add foo.txt"
                     "#,
             ),
-            &args,
-            &options,
+            args,
+            options,
         )
         .unwrap();
         if code != 0 {
@@ -232,6 +232,6 @@ mod tests {
         }
         assert_eq!(code, 0, "setup template v3");
 
-        retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+        retrieve(dst_path, src_path.to_str().unwrap(), "master").unwrap();
     }
 }

@@ -39,7 +39,6 @@ fn check_samples<A: AsRef<Path>>(template_path: A, template_loc: &SourceLoc) -> 
 
 //TODO move to ui module to be customizable (in future)
 pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
-    use difference::Changeset;
     for entry in entries {
         println!("--------------------------------------------------------------");
         match &entry.difference {
@@ -65,14 +64,11 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
                 );
             }
             Difference::StringContent { expect, actual } => {
-                let actual = replace_blank_char(actual);
-                let expect = replace_blank_char(expect);
-                let changeset = Changeset::new(&actual, &expect, "\n");
                 println!(
                     "difference detected on: {}\n",
                     entry.relative_path.to_string_lossy()
                 );
-                println!("{}", changeset);
+                crate::ui::show_difference_text(&expect, &actual, true);
             }
             Difference::BinaryContent {
                 expect_md5,
@@ -95,13 +91,6 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
     );
     println!("--------------------------------------------------------------");
     Ok(())
-}
-
-fn replace_blank_char(s: &str) -> String {
-    s.replace(' ', "·")
-        .replace('\t', "⇒\t")
-        .replace("\r\n", "¶\n")
-        .replace('\n', "↩\n")
 }
 
 #[derive(Debug, Clone)]

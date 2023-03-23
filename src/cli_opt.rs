@@ -137,6 +137,10 @@ pub struct TestSamplesOpts {
     /// in offline, only local templates or cached templates are used
     #[arg(long = "offline")]
     pub offline: bool,
+
+    /// interactive review mode, allow to update sample from generated
+    #[arg(long = "review")]
+    pub review: bool,
 }
 
 #[cfg(test)]

@@ -355,6 +355,13 @@ where
     Ok(values[idx].1.clone())
 }
 
+pub fn ask_to_update_sample(msg: &str) -> Result<bool> {
+    Confirm::with_theme(&(*PROMPT_THEME))
+        .with_prompt(msg)
+        .interact()
+        .map_err(|e| e.into())
+}
+
 pub fn show_message(
     _ctx: &Ctx,
     template_name: impl std::fmt::Display,

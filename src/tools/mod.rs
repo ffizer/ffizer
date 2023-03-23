@@ -13,14 +13,18 @@ use tracing::info;
 
 pub fn test_samples(cfg: &TestSamplesOpts) -> Result<()> {
     let template_base_path = &cfg.src.download(cfg.offline)?;
-    if !check_samples(template_base_path, &cfg.src)? {
+    if !check_samples(template_base_path, &cfg.src, cfg.review)? {
         Err(crate::Error::TestSamplesFailed {})
     } else {
         Ok(())
     }
 }
 
-fn check_samples<A: AsRef<Path>>(template_path: A, template_loc: &SourceLoc) -> Result<bool> {
+fn check_samples<A: AsRef<Path>>(
+    template_path: A,
+    template_loc: &SourceLoc,
+    review_mode: bool,
+) -> Result<bool> {
     let mut is_success = true;
     let tmp_dir = tempdir()?;
     let samples_folder = template_path
@@ -32,33 +36,54 @@ fn check_samples<A: AsRef<Path>>(template_path: A, template_loc: &SourceLoc) -> 
         info!(sample = ?sample.name, args = ?sample.args, "checking...");
         let run = SampleRun::run(&sample)?;
         is_success = is_success && run.is_success();
-        show_differences(&sample.name, &run.diffs)?;
+        show_differences(&sample.name, &run.diffs, review_mode)?;
     }
-    Ok(is_success)
+    Ok(is_success || review_mode)
 }
 
 //TODO move to ui module to be customizable (in future)
-pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
+pub fn show_differences(name: &str, entries: &[EntryDiff], review_mode: bool) -> Result<()> {
+    let mut updates_count = 0;
     for entry in entries {
         println!("--------------------------------------------------------------");
-        match &entry.difference {
+        entry.show();
+        if review_mode && entry.review()? {
+            updates_count += 1
+        }
+    }
+    println!("--------------------------------------------------------------");
+    println!(
+        "number of differences in sample '{}': {}",
+        name,
+        entries.len(),
+    );
+    if review_mode {
+        println!("number of updates in sample '{}': {}", name, updates_count);
+    }
+    println!("--------------------------------------------------------------");
+    Ok(())
+}
+
+impl EntryDiff {
+    fn show(&self) {
+        match &self.difference {
             Difference::Presence { expect, actual } => {
                 if *expect && !*actual {
                     println!(
                         "missing file in the actual: {}",
-                        entry.relative_path.to_string_lossy()
+                        self.relative_path.to_string_lossy()
                     );
                 } else {
                     println!(
                         "unexpected file in the actual: {}",
-                        entry.relative_path.to_string_lossy()
+                        self.relative_path.to_string_lossy()
                     );
                 }
             }
             Difference::Kind { expect, actual } => {
                 println!(
                     "difference kind of entry on: {}, expected: {:?}, actual: {:?}",
-                    entry.relative_path.to_string_lossy(),
+                    self.relative_path.to_string_lossy(),
                     expect,
                     actual
                 );
@@ -66,9 +91,9 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
             Difference::StringContent { expect, actual } => {
                 println!(
                     "difference detected on: {}\n",
-                    entry.relative_path.to_string_lossy()
+                    self.relative_path.to_string_lossy()
                 );
-                crate::ui::show_difference_text(&expect, &actual, true);
+                crate::ui::show_difference_text(expect, actual, true);
             }
             Difference::BinaryContent {
                 expect_md5,
@@ -76,23 +101,49 @@ pub fn show_differences(name: &str, entries: &[EntryDiff]) -> Result<()> {
             } => {
                 println!(
                     "difference detected on: {} (detected as binary file)\n",
-                    entry.relative_path.to_string_lossy()
+                    self.relative_path.to_string_lossy()
                 );
                 println!("expected md5: {}", expect_md5);
                 println!("actual md5: {}", actual_md5);
             }
         }
     }
-    println!("--------------------------------------------------------------");
-    println!(
-        "number of differences in sample '{}': {}",
-        name,
-        entries.len()
-    );
-    println!("--------------------------------------------------------------");
-    Ok(())
-}
 
+    fn review(&self) -> Result<bool> {
+        let accept_update = match self.difference {
+            Difference::Presence { expect, actual } => {
+                if expect && !actual {
+                    if crate::ui::ask_to_update_sample("Accept to remove file from sample ?")? {
+                        std::fs::remove_file(self.expect_base_path.join(&self.relative_path))?;
+                        true
+                    } else {
+                        false
+                    }
+                } else if crate::ui::ask_to_update_sample("Accept to add file into sample ?")? {
+                    std::fs::copy(
+                        self.actual_base_path.join(&self.relative_path),
+                        self.expect_base_path.join(&self.relative_path),
+                    )?;
+                    true
+                } else {
+                    false
+                }
+            }
+            _ => {
+                if crate::ui::ask_to_update_sample("Accept to update file into sample ?")? {
+                    std::fs::copy(
+                        self.actual_base_path.join(&self.relative_path),
+                        self.expect_base_path.join(&self.relative_path),
+                    )?;
+                    true
+                } else {
+                    false
+                }
+            }
+        };
+        Ok(accept_update)
+    }
+}
 #[derive(Debug, Clone)]
 struct Sample {
     pub name: String,

@@ -45,6 +45,11 @@ impl template_cfg::TemplateCfg {
             .map(|v| Script {
                 message: v.message.clone().filter(|x| !x.is_empty()),
                 cmd: v.cmd.clone().filter(|x| !x.is_empty()),
+                default_confirm_answer: v
+                    .default_confirm_answer
+                    .clone()
+                    .map(|x| x.parse::<bool>().unwrap_or(false))
+                    .unwrap_or_default(),
             })
             .collect())
     }

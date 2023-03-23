@@ -6,6 +6,7 @@ use run_script::ScriptOptions;
 pub struct Script {
     pub message: Option<String>,
     pub cmd: Option<String>,
+    pub default_confirm_answer: bool,
 }
 
 impl Script {

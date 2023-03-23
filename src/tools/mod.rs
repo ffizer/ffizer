@@ -45,13 +45,13 @@ fn check_samples<A: AsRef<Path>>(
 pub fn show_differences(name: &str, entries: &[EntryDiff], review_mode: bool) -> Result<()> {
     let mut updates_count = 0;
     for entry in entries {
-        println!("--------------------------------------------------------------");
+        println!("{:-^1$}", "-", 80);
         entry.show();
         if review_mode && entry.review()? {
             updates_count += 1
         }
     }
-    println!("--------------------------------------------------------------");
+    println!("{:-^1$}", "-", 80);
     println!(
         "number of differences in sample '{}': {}",
         name,
@@ -60,7 +60,7 @@ pub fn show_differences(name: &str, entries: &[EntryDiff], review_mode: bool) ->
     if review_mode {
         println!("number of updates in sample '{}': {}", name, updates_count);
     }
-    println!("--------------------------------------------------------------");
+    println!("{:-^1$}", "-", 80);
     Ok(())
 }
 

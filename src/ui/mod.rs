@@ -270,7 +270,7 @@ pub fn show_difference_text(old: &str, new: &str, show_whitespace: bool) {
     let diff = TextDiff::from_lines(old, new);
     for (idx, group) in diff.grouped_ops(3).iter().enumerate() {
         if idx > 0 {
-            println!("{:-^1$}", "-", 80);
+            println!("...");
         }
         for op in group {
             for change in diff.iter_inline_changes(op) {
@@ -375,6 +375,7 @@ pub fn confirm_run_script(
     ctx: &Ctx,
     template_name: impl std::fmt::Display,
     script: impl std::fmt::Display,
+    default_confirm_answer: bool,
 ) -> Result<bool> {
     // let s = format!(
     //     "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}",
@@ -392,10 +393,11 @@ pub fn confirm_run_script(
         template_name, script
     );
     if ctx.cmd_opt.no_interaction {
-        Ok(true)
+        Ok(default_confirm_answer)
     } else {
         Confirm::with_theme(&(*PROMPT_THEME))
             .with_prompt("Do you want to run the commands ?")
+            .default(default_confirm_answer)
             .interact()
             .map_err(Error::from)
     }

@@ -5,7 +5,8 @@ variables:
     default_value: "World"
 
 scripts:
-  - cmd: |
+  - default_confirm_answer: true
+    cmd: |
       {{#if (eq (env_var "OS") "windows") }}
       echo Hello {{ who }}> file2.txt
       del file_to_delete.txt

@@ -36,6 +36,7 @@ impl TemplateCfg {
     pub fn from_template_folder(template_base: &Path) -> Result<TemplateCfg> {
         let cfg_path = template_base.join(super::TEMPLATE_CFG_FILENAME);
         if cfg_path.exists() {
+            tracing::event!(tracing::Level::TRACE, cfg_path = ?cfg_path);
             let cfg_str = fs::read_to_string(cfg_path)?;
             Self::from_str(cfg_str)
         } else {

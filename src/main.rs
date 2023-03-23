@@ -27,6 +27,7 @@ fn init_log(level_min: tracing::Level) {
     let fmt_layer = fmt::layer()
         // .with_target(false)
         .with_writer(std::io::stderr)
+        .with_ansi(true)
         .pretty();
     // let filter_layer = filter::EnvFilter::try_from_default_env()
     //     .or_else(|_| EnvFilter::try_new("info"))

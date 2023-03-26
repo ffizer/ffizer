@@ -109,17 +109,31 @@ impl EntryDiff {
         }
     }
 
+    // TODO add test
     fn review(&self) -> Result<bool> {
         let accept_update = match self.difference {
             Difference::Presence { expect, actual } => {
                 if expect && !actual {
-                    if crate::ui::ask_to_update_sample("Accept to remove file from sample ?")? {
-                        std::fs::remove_file(self.expect_base_path.join(&self.relative_path))?;
+                    let path = self.expect_base_path.join(&self.relative_path);
+                    let is_dir = std::fs::metadata(&path)?.is_dir();
+                    if crate::ui::ask_to_update_sample("Accept to remove from sample ?")? {
+                        if is_dir {
+                            std::fs::remove_dir_all(&path)?;
+                        } else {
+                            std::fs::remove_file(&path)?;
+                        }
                         true
                     } else {
                         false
                     }
-                } else if crate::ui::ask_to_update_sample("Accept to add file into sample ?")? {
+                } else if crate::ui::ask_to_update_sample("Accept to add into sample ?")? {
+                    let path = self.actual_base_path.join(&self.relative_path);
+                    let is_dir = std::fs::metadata(&path)?.is_dir();
+                    if is_dir {
+                        std::fs::create_dir_all(self.expect_base_path.join(&self.relative_path))?;
+                    } else {
+                        std::fs::copy(path, self.expect_base_path.join(&self.relative_path))?;
+                    }
                     std::fs::copy(
                         self.actual_base_path.join(&self.relative_path),
                         self.expect_base_path.join(&self.relative_path),

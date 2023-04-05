@@ -16,8 +16,8 @@ pub enum GitCliError {
 }
 
 #[tracing::instrument]
-pub(super) fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError> {
-    if dst.exists() {
+pub(super) fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitError> {
+    if dst.join(".git").exists() {
         debug!("Repository already exists, update it");
         git_cmd(dst, &["fetch", "origin"])?;
     } else {

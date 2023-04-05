@@ -11,7 +11,7 @@ use super::GitError;
 #[tracing::instrument]
 pub fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitError> {
     let mut fo = make_fetch_options()?;
-    if dst.exists() {
+    if dst.join(".git").exists() {
         info!("git reset cached template");
         checkout(dst, rev)?;
         info!("git pull cached template");

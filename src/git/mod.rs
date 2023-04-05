@@ -43,15 +43,13 @@ fn has_git_cli() -> bool {
 }
 
 #[tracing::instrument(fields(dst = ?dst.as_ref(), url = url.as_ref(), rev = rev.as_ref()))]
-pub fn retrieve<P, U, R>(dst: P, url: U, rev: R) -> Result<(), Error>
+pub fn retrieve<P, U>(dst: P, url: U, rev: &Option<String>) -> Result<(), Error>
 where
     P: AsRef<Path>,
-    R: AsRef<str>,
     U: AsRef<str>,
 {
     let dst = dst.as_ref();
     let url = url.as_ref();
-    let rev = rev.as_ref();
 
     #[cfg(feature = "git2")]
     match self::git2::retrieve(dst, url, rev) {
@@ -186,7 +184,7 @@ mod tests {
             warn!(%output, %error);
         }
         assert_eq!(code, 0, "setup template v1");
-        retrieve(dst_path, src_path.to_str().unwrap(), "master").unwrap();
+        retrieve(dst_path, src_path.to_str().unwrap(), &None).unwrap();
     }
 
     #[tracing::instrument]
@@ -209,7 +207,12 @@ mod tests {
         }
         assert_eq!(code, 0, "setup template v2");
 
-        retrieve(dst_path, src_path.to_str().unwrap(), "master").unwrap();
+        retrieve(
+            dst_path,
+            src_path.to_str().unwrap(),
+            &Some("master".to_owned()),
+        )
+        .unwrap();
     }
 
     #[tracing::instrument]
@@ -232,6 +235,6 @@ mod tests {
         }
         assert_eq!(code, 0, "setup template v3");
 
-        retrieve(dst_path, src_path.to_str().unwrap(), "master").unwrap();
+        retrieve(dst_path, src_path.to_str().unwrap(), &None).unwrap();
     }
 }

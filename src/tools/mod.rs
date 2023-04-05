@@ -264,8 +264,10 @@ impl SampleCfg {
         );
         args_line.push("--source");
         args_line.push(&template_loc.uri.raw);
-        args_line.push("--rev");
-        args_line.push(&template_loc.rev);
+        if let Some(rev) = &template_loc.rev {
+            args_line.push("--rev");
+            args_line.push(rev);
+        }
         let buff = template_loc.subfolder.as_ref().map(|v| v.to_string_lossy());
         if let Some(subfolder) = buff.as_ref() {
             args_line.push("--source-subfolder");

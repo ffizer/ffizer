@@ -9,7 +9,7 @@ use super::GitError;
 /// clone a repository at a rev to a directory
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
 #[tracing::instrument]
-pub fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError> {
+pub fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitError> {
     let mut fo = make_fetch_options()?;
     if dst.exists() {
         info!("git reset cached template");
@@ -28,8 +28,7 @@ pub fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError> {
     // std::fs::rename(&tmp, &dst)?;
     } else {
         info!("git clone into cached template");
-        clone(dst, url, "master", fo)?;
-        checkout(dst, rev)?;
+        clone(dst, url, rev, fo)?;
     }
     Ok(())
 }
@@ -53,41 +52,51 @@ fn make_fetch_options<'a>() -> Result<FetchOptions<'a>, git2::Error> {
     Ok(fo)
 }
 
-fn clone(dst: &Path, url: &str, rev: &str, fo: FetchOptions<'_>) -> Result<(), GitError> {
+fn clone(
+    dst: &Path,
+    url: &str,
+    rev: &Option<String>,
+    fo: FetchOptions<'_>,
+) -> Result<(), GitError> {
     std::fs::create_dir_all(dst).map_err(|source| GitError::CreateFolder {
         path: dst.to_path_buf(),
         source,
     })?;
-    RepoBuilder::new()
-        .branch(rev.as_ref())
+    let mut builder = RepoBuilder::new();
+    if let Some(rev) = rev {
+        builder.branch(rev);
+    }
+    builder
         .fetch_options(fo)
-        .clone(url.as_ref(), dst.as_ref())?;
+        .clone(url.as_ref(), dst.as_ref())
+        .map_err(|err| {
+            // remove dst folder on error
+            let _ = std::fs::remove_dir_all(dst);
+            err
+        })?;
     Ok(())
 }
 
 // from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn pull<P, R>(dst: P, rev: R, fo: &mut FetchOptions) -> Result<(), git2::Error>
+fn pull<P>(dst: P, rev: &Option<String>, fo: &mut FetchOptions) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
-    R: AsRef<str>,
 {
     let repository = Repository::discover(dst.as_ref())?;
 
     // fetch
-    let mut revref = rev.as_ref().to_string();
+    //TODO detect the default branch
+    let rev = rev.as_deref().unwrap_or("master");
+    let mut revref = rev.to_string();
     //FIXME workaround see https://github.com/rust-lang/git2-rs/issues/819
-    if revref.len() == 40
-        && revref
-            .chars()
-            .all(|c| ('0'..='9').contains(&c) || ('a'..='f').contains(&c))
-    {
-        revref = format!("+{}:{}", rev.as_ref(), rev.as_ref());
+    if revref.len() == 40 && revref.chars().all(|c| c.is_ascii_hexdigit()) {
+        revref = format!("+{}:{}", rev, rev);
     }
     let mut remote = repository.find_remote("origin")?;
     remote.fetch(&[revref], Some(fo), None)?;
     let reference = repository.find_reference("FETCH_HEAD")?;
     let fetch_head_commit = repository.reference_to_annotated_commit(&reference)?;
-    do_merge(&repository, rev.as_ref(), fetch_head_commit)?;
+    do_merge(&repository, rev, fetch_head_commit)?;
     Ok(())
 }
 
@@ -201,12 +210,13 @@ fn do_merge<'a>(
     Ok(())
 }
 
-fn checkout<P, R>(dst: P, rev: R) -> Result<(), git2::Error>
+fn checkout<P>(dst: P, rev: &Option<String>) -> Result<(), git2::Error>
 where
     P: AsRef<Path>,
-    R: AsRef<str>,
 {
-    let rev = rev.as_ref();
+    //TODO detect the default branch
+    let rev = rev.as_deref().unwrap_or("master");
+
     let repository = Repository::discover(dst.as_ref())?;
     let mut co = CheckoutBuilder::new();
     co.force().remove_ignored(true).remove_untracked(true);
@@ -284,7 +294,12 @@ mod tests {
                 warn!(%output, %error);
             }
             assert_eq!(code, 0, "setup template v1");
-            retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+            retrieve(
+                &dst_path,
+                src_path.to_str().unwrap(),
+                &Some("master".to_string()),
+            )
+            .unwrap();
             assert_eq!(
                 fs::read_to_string(dst_path.join("foo.txt")).unwrap(),
                 "v1: Lorem ipsum\n"
@@ -315,7 +330,7 @@ mod tests {
             }
             assert_eq!(code, 0, "setup template v2");
 
-            retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+            retrieve(&dst_path, src_path.to_str().unwrap(), &None).unwrap();
             assert_eq!(
                 fs::read_to_string(dst_path.join("foo.txt")).unwrap(),
                 "v2: Hello\n"
@@ -346,7 +361,7 @@ mod tests {
             }
             assert_eq!(code, 0, "setup template v3");
 
-            retrieve(&dst_path, src_path.to_str().unwrap(), "master").unwrap();
+            retrieve(&dst_path, src_path.to_str().unwrap(), &None).unwrap();
             assert_eq!(
                 fs::read_to_string(dst_path.join("foo.txt")).unwrap(),
                 "v3: Hourra\n"

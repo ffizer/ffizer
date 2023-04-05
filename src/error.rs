@@ -29,7 +29,7 @@ pub enum Error {
     GitRetrieve {
         dst: PathBuf,
         url: String,
-        rev: String,
+        rev: Option<String>,
         source: GitError,
         msg: Box<String>,
     },

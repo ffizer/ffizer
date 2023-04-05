@@ -60,7 +60,7 @@ impl template_cfg::TemplateCfg {
             .map(|v| {
                 let uri = SourceUri::from_str(v.uri.as_str())?;
                 let subfolder = v.subfolder.as_ref().map(|x| PathBuf::from(x.as_str()));
-                let rev = v.rev.as_deref().unwrap_or("master").to_owned();
+                let rev = v.rev.clone();
                 Ok(SourceLoc {
                     uri,
                     rev,

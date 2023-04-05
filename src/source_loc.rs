@@ -16,7 +16,7 @@ pub struct SourceLoc {
 
     /// git revision of the template
     #[arg(long = "rev", default_value = "master")]
-    pub rev: String,
+    pub rev: Option<String>,
 
     /// path of the folder under the source uri to use for template
     #[arg(long = "source-subfolder", value_name = "FOLDER")]
@@ -55,7 +55,7 @@ impl SourceLoc {
         let cache_uri = Self::find_remote_cache_folder()?
             .join(self.uri.host.as_deref().unwrap_or("no_host"))
             .join(&self.uri.path)
-            .join(&self.rev);
+            .join(self.rev.as_deref().unwrap_or("_default_"));
         Ok(cache_uri)
     }
     pub fn download(&self, offline: bool) -> Result<PathBuf> {
@@ -78,7 +78,7 @@ impl SourceLoc {
             }
         }
         let path = self.as_local_path()?;
-        if !path.exists() {
+        if !path.try_exists()? {
             Err(crate::Error::LocalPathNotFound {
                 path,
                 uri: self.uri.raw.clone(),
@@ -94,12 +94,15 @@ impl fmt::Display for SourceLoc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "{} (rev: {}{})",
+            "{} ({}{})",
             self.uri.raw,
-            self.rev,
+            self.rev
+                .as_ref()
+                .map(|s| format!("rev: '{}' ", s))
+                .unwrap_or_else(|| "".to_string()),
             self.subfolder
                 .as_ref()
-                .map(|s| format!(", subfolder: {}", s.to_string_lossy()))
+                .map(|s| format!("subfolder: '{}'", s.to_string_lossy()))
                 .unwrap_or_else(|| "".to_string())
         )
     }

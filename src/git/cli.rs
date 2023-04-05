@@ -29,6 +29,8 @@ pub(super) fn retrieve(dst: &Path, url: &str, rev: &str) -> Result<(), GitError>
         git_cmd(dst, &["clone", url, dst.to_str().unwrap_or_default()])?;
     }
 
+    //TODO detect the default branch
+    let rev = rev.as_deref().unwrap_or("master");
     git_cmd(dst, &["checkout", "--force", rev])?;
     git_cmd(dst, &["reset", "--hard", &format!("origin/{rev}")])?;
 

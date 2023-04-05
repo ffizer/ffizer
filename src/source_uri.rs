@@ -38,19 +38,25 @@ impl FromStr for SourceUri {
                 value: s.to_owned(),
                 source,
             })?;
+
+        let mut text = s.to_owned();
+        if s.starts_with("gh:") {
+            text = s.replacen("gh:", "git@github.com:", 1);
+        }
+
         git_re
-            .captures(s)
-            .or_else(|| git_re2.captures(s))
-            .or_else(|| url_re.captures(s))
-            .or_else(|| url_re2.captures(s))
+            .captures(&text)
+            .or_else(|| git_re2.captures(&text))
+            .or_else(|| url_re.captures(&text))
+            .or_else(|| url_re2.captures(&text))
             .map(|caps| SourceUri {
-                raw: s.to_owned(),
+                raw: text.clone(),
                 path: PathBuf::from(caps["path"].to_owned()),
                 host: Some(caps["host"].to_owned()),
             })
             .or_else(|| {
                 Some(SourceUri {
-                    raw: s.to_owned(),
+                    raw: text,
                     path: PathBuf::from(change_local_path_sep(s)),
                     host: None,
                 })

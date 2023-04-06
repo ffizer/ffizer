@@ -19,20 +19,19 @@ pub enum GitCliError {
 pub(super) fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitError> {
     if dst.join(".git").exists() {
         debug!("Repository already exists, update it");
-        git_cmd(dst, &["fetch", "origin"])?;
+        git_cmd(dst, &["reset", "--hard" /*, &format!("origin/{rev}")*/])?;
+        git_cmd(dst, &["pull", "--force", "--prune"])?;
     } else {
         debug!("Repository does not exists, create it");
         fs::create_dir_all(dst).map_err(|source| GitError::CreateFolder {
             path: dst.to_path_buf(),
             source,
         })?;
-        git_cmd(dst, &["clone", url, dst.to_str().unwrap_or_default()])?;
+        git_cmd(dst, &["clone", "-q", url, dst.to_str().unwrap_or_default()])?;
+        if let Some(rev) = rev {
+            git_cmd(dst, &["checkout", rev])?;
+        }
     }
-
-    //TODO detect the default branch
-    let rev = rev.as_deref().unwrap_or("master");
-    git_cmd(dst, &["checkout", "--force", rev])?;
-    git_cmd(dst, &["reset", "--hard", &format!("origin/{rev}")])?;
 
     Ok(())
 }

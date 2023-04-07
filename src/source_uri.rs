@@ -22,33 +22,37 @@ impl FromStr for SourceUri {
 
     fn from_str(s: &str) -> Result<Self> {
         let url_re = Regex::new(
-            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+).git$",
+            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)(\.git)?$",
         ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
-        let url_re2 = Regex::new(
-            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
-        ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
+        // let url_re2 = Regex::new(
+        //     r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
+        // ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
         let git_re =
-            Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+).git$")
+            Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)(\.git)?$")
                 .map_err(|source| Error::ParseGitUri {
                     value: s.to_owned(),
                     source,
                 })?;
-        let git_re2 = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")
-            .map_err(|source| Error::ParseGitUri {
-                value: s.to_owned(),
-                source,
-            })?;
+        // let git_re2 = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")
+        //     .map_err(|source| Error::ParseGitUri {
+        //         value: s.to_owned(),
+        //         source,
+        //     })?;
 
         let mut text = s.to_owned();
         if s.starts_with("gh:") {
             text = s.replacen("gh:", "git@github.com:", 1);
+        } else if s.starts_with("gl:") {
+            text = s.replacen("gl:", "git@gitlab.com:", 1);
+        } else if s.starts_with("bb:") {
+            text = s.replacen("bb:", "git@bitbucket.org:", 1);
         }
 
         git_re
             .captures(&text)
-            .or_else(|| git_re2.captures(&text))
+            // .or_else(|| git_re2.captures(&text))
             .or_else(|| url_re.captures(&text))
-            .or_else(|| url_re2.captures(&text))
+            // .or_else(|| url_re2.captures(&text))
             .map(|caps| SourceUri {
                 raw: text.clone(),
                 path: PathBuf::from(caps["path"].to_owned()),

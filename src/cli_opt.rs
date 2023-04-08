@@ -72,42 +72,32 @@ pub struct ApplyOpts {
     pub key_value: Vec<(String, String)>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, ValueEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, ValueEnum, Default)]
 pub enum AskConfirmation {
+    #[default]
     Auto,
     Always,
     Never,
 }
 
-impl Default for AskConfirmation {
-    fn default() -> Self {
-        AskConfirmation::Auto
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, ValueEnum)]
+#[derive(Debug, Clone, PartialEq, Eq, ValueEnum, Default)]
 /// mode to process update of existing local file
 pub enum UpdateMode {
-    // ask what to do
+    /// ask what to do
+    #[default]
     Ask,
-    // keep existing local file (ignore template)
+    /// keep existing local file (ignore template)
     Keep,
-    // override local file with file from template
+    /// override local file with file from template
     Override,
-    // keep existing local file, add template with extension .REMOTE
+    /// keep existing local file, add template with extension .REMOTE
     UpdateAsRemote,
-    // rename existing local file with extension .LOCAL, add template file
+    /// rename existing local file with extension .LOCAL, add template file
     CurrentAsLocal,
-    // show diff then ask
+    /// show diff then ask
     ShowDiff,
-    // try to merge existing local with remote template via merge tool (defined in the git's configuration)
+    /// try to merge existing local with remote template via merge tool (defined in the git's configuration)
     Merge,
-}
-
-impl Default for UpdateMode {
-    fn default() -> Self {
-        UpdateMode::Ask
-    }
 }
 
 impl std::fmt::Display for UpdateMode {

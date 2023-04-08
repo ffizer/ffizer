@@ -22,24 +22,23 @@ impl FromStr for SourceUri {
 
     fn from_str(s: &str) -> Result<Self> {
         let url_re = Regex::new(
-            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)(\.git)?$",
+            r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
         ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
         // let url_re2 = Regex::new(
         //     r"^(https?|ssh)://([[:alnum:]:\._-]+@)?(?P<host>[[:alnum:]\._-]+)(:\d+)?/(?P<path>[[:alnum:]\._\-/]+)$",
         // ).map_err(|source| Error::ParseGitUri{value: s.to_owned(), source})?;
-        let git_re =
-            Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)(\.git)?$")
-                .map_err(|source| Error::ParseGitUri {
-                    value: s.to_owned(),
-                    source,
-                })?;
+        let git_re = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")
+            .map_err(|source| Error::ParseGitUri {
+            value: s.to_owned(),
+            source,
+        })?;
         // let git_re2 = Regex::new(r"^git@(?P<host>[[:alnum:]\._-]+):(?P<path>[[:alnum:]\._\-/]+)$")
         //     .map_err(|source| Error::ParseGitUri {
         //         value: s.to_owned(),
         //         source,
         //     })?;
 
-        let mut text = s.to_owned();
+        let mut text = s.strip_suffix(".git").unwrap_or(s).to_owned();
         if s.starts_with("gh:") {
             text = s.replacen("gh:", "git@github.com:", 1);
         } else if s.starts_with("gl:") {
@@ -94,87 +93,72 @@ impl Default for SourceUri {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use spectral::prelude::*;
+    use rstest::*;
+    use similar_asserts::assert_eq;
 
-    fn assert_source_uri_from_str(s: &str, path: &str, host: Option<&str>) {
-        assert_that!(&SourceUri::from_str(s).unwrap()).is_equal_to(&SourceUri {
-            raw: s.to_owned(),
-            path: PathBuf::from(path.to_owned()),
-            host: host.map(|s| s.into()),
-        });
-    }
-
-    #[test]
-    fn test_source_uri_from_str_abs_localpath() {
-        assert_source_uri_from_str("/foo/bar", "/foo/bar", None);
-    }
-
-    #[test]
-    fn test_source_uri_from_str_git_with_git_extension() {
-        assert_source_uri_from_str(
-            "git@github.com:ffizer/ffizer.git",
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-    }
-
-    #[test]
-    fn test_source_uri_from_str_git_without_git_extension() {
-        assert_source_uri_from_str(
-            "git@github.com:ffizer/ffizer",
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-    }
-
-    #[test]
-    fn test_source_uri_from_str_http_with_git_extension() {
-        assert_source_uri_from_str(
-            "https://github.com/ffizer/ffizer.git",
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-        assert_source_uri_from_str(
-            "http://github.com/ffizer/ffizer.git", //Devskim: ignore DS137138
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-    }
-
-    #[test]
-    fn test_source_uri_from_str_http_without_git_extension() {
-        assert_source_uri_from_str(
-            "https://github.com/ffizer/ffizer",
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-    }
-
-    #[test]
-    fn test_source_uri_from_str_http_with_git_extension_and_username() {
-        assert_source_uri_from_str(
-            "https://user@github.com/ffizer/ffizer.git",
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-        assert_source_uri_from_str(
-            "http://user@github.com/ffizer/ffizer.git", //Devskim: ignore DS137138
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-    }
-
-    #[test]
-    fn test_source_uri_from_str_http_with_git_extension_and_username_and_password() {
-        assert_source_uri_from_str(
-            "https://user:pass@github.com/ffizer/ffizer.git",
-            "ffizer/ffizer",
-            Some("github.com"),
-        );
-        assert_source_uri_from_str(
-            "http://user:pass@github.com/ffizer/ffizer.git", //Devskim: ignore DS137138
-            "ffizer/ffizer",
-            Some("github.com"),
+    #[rstest]
+    #[case::abs_localpath("/foo/bar", "/foo/bar", "/foo/bar", None)]
+    #[case::git_with_git_extension(
+        "git@github.com:ffizer/ffizer.git",
+        "git@github.com:ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("github.com")
+    )]
+    #[case::git_without_git_extension(
+        "git@github.com:ffizer/ffizer",
+        "git@github.com:ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("github.com")
+    )]
+    #[case::https_with_git_extension(
+        "https://github.com/ffizer/ffizer.git",
+        "https://github.com/ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("github.com")
+    )]
+    #[case::https_without_git_extension(
+        "https://github.com/ffizer/ffizer",
+        "https://github.com/ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("github.com")
+    )]
+    #[case::https_with_git_extension_and_username(
+        "https://user@github.com/ffizer/ffizer.git",
+        "https://user@github.com/ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("github.com")
+    )]
+    #[case::abbreviation_gh(
+        "gh:ffizer/ffizer",
+        "git@github.com:ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("github.com")
+    )]
+    #[case::abbreviation_gl(
+        "gl:ffizer/ffizer",
+        "git@gitlab.com:ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("gitlab.com")
+    )]
+    #[case::abbreviation_bitbucket(
+        "bb:ffizer/ffizer",
+        "git@bitbucket.org:ffizer/ffizer",
+        "ffizer/ffizer",
+        Some("bitbucket.org")
+    )]
+    fn assert_source_uri_from_str(
+        #[case] input: &str,
+        #[case] raw: &str,
+        #[case] path: &str,
+        #[case] host: Option<&str>,
+    ) {
+        assert_eq!(
+            &SourceUri::from_str(input).unwrap(),
+            &SourceUri {
+                raw: raw.to_owned(),
+                path: PathBuf::from(path.to_owned()),
+                host: host.map(|s| s.into()),
+            }
         );
     }
 }

@@ -92,6 +92,7 @@ lto = true
 panic = 'abort'
 # Tells the compiler to optimize for minimal code size. This will make the code less performant but it will take up less space.
 opt-level = 'z'
+strip = true
 # Tells the compiler to use only one code generator instead of running several in parallel. Disabling parallel code generation makes the compilation slower but makes all optimizations possible.
 codegen-units = 1
 

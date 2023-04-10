@@ -10,7 +10,3 @@ The schema is also available via cli.
 ```sh
 ffizer show-json-schema
 ```
-
-```json
-{{#include ../ffizer.schema.json}}
-```

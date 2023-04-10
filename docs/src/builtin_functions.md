@@ -1,4 +1,4 @@
-# Template Helpers / Functions
+# Template Helpers / Functions <!-- omit in toc -->
 
 Helpers extend the template to generate or to transform content.
 
@@ -24,6 +24,17 @@ To chain helpers, use parenthesis:
 ```
 
 see [Handlebars templating language](https://handlebarsjs.com/)
+
+- [String transformation](#string-transformation)
+- [Http content](#http-content)
+- [Path extraction](#path-extraction)
+- [File](#file)
+- [Environment variable](#environment-variable)
+- [JSON \& YAML \& TOML](#json--yaml--toml)
+  - [Helpers](#helpers)
+  - [Blocks](#blocks)
+  - [Edition via jsonnet](#edition-via-jsonnet)
+- [Assign](#assign)
 
 ## String transformation
 

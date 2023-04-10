@@ -4,35 +4,24 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Changelog - ffizer</title>
-        
-        
 
 
         <!-- Custom HTML head -->
         
-
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        
         <link rel="icon" href="favicon.svg">
-        
-        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        
         <link rel="stylesheet" href="css/print.css" media="print">
-        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        
         <link rel="stylesheet" href="fonts/fonts.css">
-        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -40,9 +29,10 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
+        <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
-        
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -101,8 +91,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -117,30 +106,29 @@
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">ffizer</h1>
 
                     <div class="right-buttons">
-                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -148,7 +136,6 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
@@ -161,10 +148,461 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#changelog" id="changelog">Changelog</a></h1>
+                        <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <p><a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-xyz-dev" id="version-xyz-dev">Version x.y.z-dev</a></h2>
-<h3><a class="header" href="#added" id="added">Added</a></h3>
+<h2 id="version-xyz-dev"><a class="header" href="#version-xyz-dev">Version x.y.z-dev</a></h2>
+<p><a name="2.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-270"><a class="header" href="#version-270">Version 2.7.0</a></h2>
+<h3 id="changed"><a class="header" href="#changed">Changed</a></h3>
+<ul>
+<li>👽  update to use the clap 4 api</li>
+<li>⬆️  Bump clap from 3.2.22 to 4.0.18</li>
+<li>⬆️  Bump regex from 1.6.0 to 1.7.0</li>
+<li>⬆️  Bump assert_cmd from 2.0.4 to 2.0.7</li>
+<li>⬆️  Bump openssl from 0.10.42 to 0.10.44</li>
+<li>⬆️  Bump serde from 1.0.145 to 1.0.151</li>
+<li>⬆️  Bump serde_json from 1.0.85 to 1.0.89</li>
+<li>⬆️  Bump libc from 0.2.134 to 0.2.137</li>
+<li>⬆️  Bump serde_yaml from 0.9.13 to 0.9.14</li>
+<li>⬆️  Bump tracing from 0.1.36 to 0.1.37</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.15 to 0.3.16</li>
+<li>⬆️  Bump handlebars from 4.3.4 to 4.3.5</li>
+<li>⬆️  Bump libc from 0.2.133 to 0.2.134</li>
+<li>⬆️  Bump openssl from 0.10.41 to 0.10.42</li>
+<li>⬆️  Bump console from 0.15.1 to 0.15.2</li>
+<li>⬆️  Bump schemars from 0.8.10 to 0.8.11</li>
+<li>⬆️  Bump thiserror from 1.0.36 to 1.0.37</li>
+<li>⬆️  bump dependencies</li>
+<li>⬆️  Bump libc from 0.2.132 to 0.2.133</li>
+<li>⬆️  Bump self_update from 0.31.0 to 0.32.0</li>
+<li>⬆️  Bump serde_yaml from 0.9.11 to 0.9.13</li>
+<li>⬆️  Bump clap from 3.2.20 to 3.2.22</li>
+<li>⬆️  Bump thiserror from 1.0.34 to 1.0.35</li>
+</ul>
+<h3 id="fixed"><a class="header" href="#fixed">Fixed</a></h3>
+<ul>
+<li>🐛  use the value of CARGO_PKG_NAME at compile time for the cache</li>
+</ul>
+<h3 id="miscellaneous"><a class="header" href="#miscellaneous">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.7.0</li>
+<li>arrow-up  cargo update</li>
+<li>rotating-light  disable warning on &quot;http&quot; in test</li>
+<li>🚧  (cargo-release) start next development iteration 2.6.2-dev</li>
+</ul>
+<p><a name="2.6.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-261"><a class="header" href="#version-261">Version 2.6.1</a></h2>
+<h3 id="changed-1"><a class="header" href="#changed-1">Changed</a></h3>
+<ul>
+<li>⬆️  Bump git2 from 0.14 to 0.15</li>
+</ul>
+<h3 id="miscellaneous-1"><a class="header" href="#miscellaneous-1">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.6.1</li>
+<li>🚧  (cargo-release) start next development iteration 2.6.1-dev</li>
+</ul>
+<p><a name="2.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-260"><a class="header" href="#version-260">Version 2.6.0</a></h2>
+<h3 id="added"><a class="header" href="#added">Added</a></h3>
+<ul>
+<li>✨  add <code>check_ignores</code> to ignore files during test-sample</li>
+</ul>
+<h3 id="changed-2"><a class="header" href="#changed-2">Changed</a></h3>
+<ul>
+<li>🚨  improve code with clippy' suggestions</li>
+<li>⬆️  Bump libc from 0.2.126 to 0.2.132</li>
+<li>⬆️  Bump console from 0.15.0 to 0.15.1</li>
+<li>⬆️  Bump self_update from 0.30.0 to 0.31.0</li>
+<li>⬆️  Bump serde_yaml from 0.9.4 to 0.9.11</li>
+<li>⬆️  Bump schemars from 0.8.8 to 0.8.10</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.11 to 0.3.15</li>
+<li>⬆️  Bump serde from 1.0.142 to 1.0.144</li>
+<li>⬆️  Bump dialoguer from 0.10.0 to 0.10.2</li>
+<li>⬆️  Bump run_script from 0.9.0 to 0.10.0</li>
+<li>⬆️  Bump git2 from 0.14.2 to 0.14.4</li>
+<li>⬆️  Bump indicatif from 0.16.2 to 0.17.0</li>
+<li>⬆️  Bump serde_json from 1.0.81 to 1.0.85</li>
+<li>⬆️  Bump handlebars from 4.2.2 to 4.3.4</li>
+<li>⬆️  Bump pretty_assertions from 1.2.1 to 1.3.0</li>
+<li>⬆️  Bump clap from 3.1.18 to 3.2.2</li>
+<li>⬆️  Bump regex from 1.5.5 to 1.6.0</li>
+<li>⬆️  Bump serde_yaml from 0.8.23 to 0.9.4</li>
+<li>⬆️  Bump thiserror from 1.0.30 to 1.0.34</li>
+<li>⬆️  Bump globset from 0.4.8 to 0.4.9</li>
+<li>⬆️  Bump openssl-src from 111.17.0+1.1.1m to 111.20.0+1.1.1o</li>
+<li>⬆️  Bump libc from 0.2.124 to 0.2.126</li>
+<li>⬆️  Bump clap from 3.1.12 to 3.1.18</li>
+<li>⬆️  Bump serde_json from 1.0.79 to 1.0.81</li>
+<li>⬆️  Bump self_update from 0.29.0 to 0.30.0</li>
+<li>⬆️  Bump serde from 1.0.136 to 1.0.137</li>
+<li>⬆️  Bump clap from 3.1.6 to 3.1.12</li>
+<li>⬆️  Bump libc from 0.2.121 to 0.2.124</li>
+<li>⬆️  Bump tracing from 0.1.32 to 0.1.34</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.9 to 0.3.11</li>
+<li>⬆️  Bump pretty_assertions from 1.2.0 to 1.2.1</li>
+<li>⬆️  Bump self_update from 0.28.0 to 0.29.0</li>
+</ul>
+<h3 id="miscellaneous-2"><a class="header" href="#miscellaneous-2">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.6.0</li>
+<li>⚗  configure dependabot to only track direct dependencies</li>
+<li>🚧  (cargo-release) start next development iteration 2.5.2-dev</li>
+</ul>
+<p><a name="2.5.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-251"><a class="header" href="#version-251">Version 2.5.1</a></h2>
+<h3 id="changed-3"><a class="header" href="#changed-3">Changed</a></h3>
+<ul>
+<li>⬆️  Bump libc from 0.2.119 to 0.2.121</li>
+<li>⬆️  Bump actions/cache from 2 to 3</li>
+<li>⬆️  Bump actions/checkout from 2.4.0 to 3</li>
+</ul>
+<h3 id="fixed-1"><a class="header" href="#fixed-1">Fixed</a></h3>
+<ul>
+<li>🐛  preserve the original source definition when test-samples</li>
+</ul>
+<h3 id="miscellaneous-3"><a class="header" href="#miscellaneous-3">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.5.1</li>
+<li>pencil  update changelog</li>
+<li>pencil  update README</li>
+<li>🚧  (cargo-release) start next development iteration 2.5.1-dev</li>
+</ul>
+<p><a name="2.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-250"><a class="header" href="#version-250">Version 2.5.0</a></h2>
+<h3 id="changed-4"><a class="header" href="#changed-4">Changed</a></h3>
+<ul>
+<li>⬆️  upgrade  cargo.lock</li>
+<li>💄  show &quot;blank&quot;  for diff on <code>test-samples</code></li>
+<li>💄  accept more syntax for boolean variable from cli</li>
+<li>💄  allow to use label or value of item of <code>select_in_values</code> as <code>default_value</code></li>
+<li>💄  use color to prompt</li>
+<li>⬆️  Bump git2 from 0.13 to 0.14</li>
+</ul>
+<h3 id="removed"><a class="header" href="#removed">Removed</a></h3>
+<ul>
+<li>🔥  clean up makefile</li>
+</ul>
+<h3 id="fixed-2"><a class="header" href="#fixed-2">Fixed</a></h3>
+<ul>
+<li>🐛  for <code>ignores</code> value, ignore some blank caractere that could be introduced by yaml or handlebars syntax</li>
+</ul>
+<h3 id="miscellaneous-4"><a class="header" href="#miscellaneous-4">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.5.0</li>
+<li>poop  add workaround for a bug in git2 0.14</li>
+<li>🔊  add logs debug</li>
+<li>🚧  (cargo-release) start next development iteration 2.4.5-dev</li>
+</ul>
+<p><a name="2.4.4" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-244"><a class="header" href="#version-244">Version 2.4.4</a></h2>
+<h3 id="removed-1"><a class="header" href="#removed-1">Removed</a></h3>
+<ul>
+<li>🔥  remove task for github-upload and snapcraft push</li>
+</ul>
+<h3 id="miscellaneous-5"><a class="header" href="#miscellaneous-5">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.4</li>
+</ul>
+<p><a name="2.4.4-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-244-dev"><a class="header" href="#version-244-dev">Version 2.4.4-dev</a></h2>
+<p><a name="2.4.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-243"><a class="header" href="#version-243">Version 2.4.3</a></h2>
+<h3 id="changed-5"><a class="header" href="#changed-5">Changed</a></h3>
+<ul>
+<li>⬆️  Bump libc from 0.2.112 to 0.2.119</li>
+<li>⬆️  Bump pretty_assertions from 1.0.0 to 1.1.0</li>
+<li>⬆️  Bump clap from 3.1.1 to 3.1.2</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.5 to 0.3.9</li>
+<li>⬆️  Bump tracing from 0.1.29 to 0.1.31</li>
+<li>⬆️  Bump assert_cmd from 2.0.2 to 2.0.4</li>
+<li>⬆️  Bump dialoguer from 0.9.0 to 0.10.0</li>
+<li>⬆️  Bump serde from 1.0.133 to 1.0.136</li>
+</ul>
+<h3 id="miscellaneous-6"><a class="header" href="#miscellaneous-6">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.3</li>
+<li>🚧  try to build cross-platform from ci/cd  (#491)</li>
+</ul>
+<p><a name="2.4.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-242"><a class="header" href="#version-242">Version 2.4.2</a></h2>
+<h3 id="added-1"><a class="header" href="#added-1">Added</a></h3>
+<ul>
+<li>✅  cargo update</li>
+<li>👷  add cache into workflows</li>
+</ul>
+<h3 id="changed-6"><a class="header" href="#changed-6">Changed</a></h3>
+<ul>
+<li>⬆️  Bump self_update from 0.27.0 to 0.28.0</li>
+<li>⬆️  Bump predicates from 2.1.0 to 2.1.1</li>
+<li>⬆️  Bump handlebars from 4.2.0 to 4.2.1</li>
+<li>⬆️  Bump serde_json from 1.0.74 to 1.0.79</li>
+<li>⬆️  Bump clap from 3.0.5 to 3.1.1</li>
+<li>⬆️  switch structopt + clap v2 to clap v3</li>
+<li>⬆️  bumps dialoguer from 0.8.0 to 0.9.0</li>
+<li>🚨  apply clippy suggestion</li>
+<li>⬆️  swith to rust edition 2021</li>
+<li>⬆️  upgrade tracing-subscriber</li>
+<li>⬆️  Bump assert_cmd from 2.0.1 to 2.0.2</li>
+<li>⬆️  Bump libc from 0.2.107 to 0.2.109</li>
+<li>⬆️  Bump handlebars from 4.1.4 to 4.1.6</li>
+<li>⬆️  Bump clap from 2.33.3 to 2.34.0</li>
+<li>⬆️  Bump tracing from 0.1.28 to 0.1.29</li>
+<li>⬆️  Bump structopt from 0.3.23 to 0.3.25</li>
+<li>⬆️  Bump actions/checkout from 2.3.5 to 2.4.0</li>
+<li>⬆️  Bump libc from 0.2.106 to 0.2.107</li>
+<li>⬆️  Bump handlebars from 4.1.3 to 4.1.4</li>
+<li>⬆️  Bump console from 0.14.1 to 0.15.0</li>
+<li>⬆️  Bump serde_json from 1.0.68 to 1.0.69</li>
+<li>⬆️  Bump schemars from 0.8.3 to 0.8.6</li>
+<li>⬆️  Bump actions/checkout from 2.3.4 to 2.3.5</li>
+<li>⬆️  Bump git2 from 0.13.22 to 0.13.23</li>
+<li>⬆️  Bump pretty_assertions from 0.7.2 to 1.0.0</li>
+<li>⬆️  Bump libc from 0.2.102 to 0.2.106</li>
+<li>⬆️  bump directories, patch version and transitive dependencies</li>
+<li>⬆️  Bump thiserror from 1.0.28 to 1.0.29</li>
+<li>⬆️  Bump serde_yaml from 0.8.20 to 0.8.21</li>
+<li>⬆️  Bump git2 from 0.13.21 to 0.13.22</li>
+<li>⬆️  Bump handlebars from 4.1.2 to 4.1.3</li>
+<li>⬆️  Bump run_script from 0.8.0 to 0.9.0</li>
+<li>⬆️  update dependencies</li>
+<li>⬆️  Bump predicates from 2.0.0 to 2.0.2</li>
+<li>⬆️  Bump handlebars from 4.1.0 to 4.1.2</li>
+<li>⬆️  Bump serde_json from 1.0.64 to 1.0.67</li>
+<li>⬆️  Bump serde from 1.0.126 to 1.0.130</li>
+<li>⬆️  Bump structopt from 0.3.22 to 0.3.23</li>
+<li>⬆️  Bump assert_cmd from 1.0.7 to 2.0.0</li>
+<li>⬆️  Bump predicates from 1.0.8 to 2.0.0</li>
+</ul>
+<h3 id="fixed-3"><a class="header" href="#fixed-3">Fixed</a></h3>
+<ul>
+<li>🐛  fix bugs and linting</li>
+</ul>
+<h3 id="miscellaneous-7"><a class="header" href="#miscellaneous-7">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.2</li>
+<li>⚗  try to build for mac m1 and linux-musl</li>
+<li>🚧  (cargo-release) start next development iteration 2.4.2-dev</li>
+</ul>
+<p><a name="2.4.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-241"><a class="header" href="#version-241">Version 2.4.1</a></h2>
+<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
+<ul>
+<li>✅  update and fixe test</li>
+<li>✨  allow to define select_in_values as an array of <code>{label, value}</code> + fix evaluation of select_in_values defined as a string</li>
+</ul>
+<h3 id="changed-7"><a class="header" href="#changed-7">Changed</a></h3>
+<ul>
+<li>⬆️  Bump globset from 0.4.6 to 0.4.7</li>
+</ul>
+<h3 id="miscellaneous-8"><a class="header" href="#miscellaneous-8">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.1</li>
+<li>🚧  (cargo-release) start next development iteration 2.4.1-dev</li>
+<li>🚀  (cargo-release) version 2.4.0</li>
+<li>pencil  simplify installation from brew</li>
+<li>🔊  enhance SerdeYamlError with context from tracing'Span</li>
+</ul>
+<p><a name="2.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-240"><a class="header" href="#version-240">Version 2.4.0</a></h2>
+<h3 id="added-3"><a class="header" href="#added-3">Added</a></h3>
+<ul>
+<li>✅  update and fixe test</li>
+<li>✨  allow to define select_in_values as an array of <code>{label, value}</code> + fix evaluation of select_in_values defined as a string</li>
+</ul>
+<h3 id="miscellaneous-9"><a class="header" href="#miscellaneous-9">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.0</li>
+<li>pencil  simplify installation from brew</li>
+<li>🔊  enhance SerdeYamlError with context from tracing'Span</li>
+<li>🚧  (cargo-release) start next development iteration 2.3.1-dev</li>
+</ul>
+<p><a name="2.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-230"><a class="header" href="#version-230">Version 2.3.0</a></h2>
+<h3 id="added-4"><a class="header" href="#added-4">Added</a></h3>
+<ul>
+<li>✅  improve git test to be less sensitive to local git configuration</li>
+<li>✅  update test for handlebar</li>
+</ul>
+<h3 id="changed-8"><a class="header" href="#changed-8">Changed</a></h3>
+<ul>
+<li>🚨  apply clippy suggestion</li>
+<li>⬆️  update cargo.lock</li>
+<li>⬆️  upgrade to handlebars 4.0</li>
+<li>🔧  define CODEOWNERS</li>
+<li>⬆️  fix + cargo update</li>
+<li>⬆️  Bump assert_cmd from 1.0.4 to 1.0.5</li>
+<li>⬆️  Bump libc from 0.2.94 to 0.2.95</li>
+<li>⬆️  Bump indicatif from 0.16.0 to 0.16.2</li>
+<li>⬆️  Bump run_script from 0.7.0 to 0.8.0</li>
+<li>⬆️  Bump thiserror from 1.0.24 to 1.0.25</li>
+<li>⬆️  Bump serde from 1.0.125 to 1.0.126</li>
+<li>⬆️  Bump assert_cmd from 1.0.3 to 1.0.4</li>
+<li>⬆️  Bump self_update from 0.26.0 to 0.27.0</li>
+<li>⬆️  Bump predicates from 1.0.7 to 1.0.8</li>
+<li>⬆️  Bump openssl from 0.10.33 to 0.10.34</li>
+<li>⬆️  Bump libc from 0.2.93 to 0.2.94</li>
+<li>⬆️  Bump indicatif from 0.15.0 to 0.16.0</li>
+<li>⬆️  Bump directories from 3.0.1 to 3.0.2</li>
+<li>⬆️  Bump git2_credentials from 0.7.1 to 0.7.2</li>
+<li>⬆️  Bump git2 from 0.13.17 to 0.13.18</li>
+<li>⬆️  Bump regex from 1.4.5 to 1.4.6</li>
+<li>⬆️  Bump libc from 0.2.92 to 0.2.93</li>
+<li>⬆️  Bump schemars from 0.8.2 to 0.8.3</li>
+<li>⬆️  Bump pretty_assertions from 0.7.1 to 0.7.2</li>
+<li>⬆️  Bump serde from 1.0.124 to 1.0.125</li>
+<li>⬆️  Bump walkdir from 2.3.1 to 2.3.2</li>
+<li>⬆️  Bump schemars from 0.8.0 to 0.8.2</li>
+<li>⬆️  Bump libc from 0.2.90 to 0.2.92</li>
+<li>⬆️  Bump dialoguer from 0.7.1 to 0.8.0</li>
+<li>⬆️  Bump libc from 0.2.88 to 0.2.90</li>
+<li>🎨  reformat tutorial (remove EOL that can break display on some renderer)</li>
+<li>⬆️  Bump openssl from 0.10.32 to 0.10.33</li>
+<li>⬆️  Bump regex from 1.4.3 to 1.4.5</li>
+<li>⬆️  Bump pretty_assertions from 0.6.1 to 0.7.1</li>
+<li>⬆️  Bump console from 0.14.0 to 0.14.1</li>
+<li>⬆️  Bump run_script from 0.6.4 to 0.7.0</li>
+<li>⬆️  Bump self_update from 0.25.0 to 0.26.0</li>
+<li>⬆️  Bump serde from 1.0.123 to 1.0.124</li>
+<li>⬆️  Bump libc from 0.2.86 to 0.2.88</li>
+<li>⬆️  Bump self_update from 0.24.0 to 0.25.0</li>
+<li>⬆️  Bump serde_json from 1.0.62 to 1.0.64</li>
+<li>⬆️  Bump run_script from 0.6.3 to 0.6.4</li>
+<li>⬆️  Bump handlebars from 3.5.2 to 3.5.3</li>
+<li>⬆️  Bump self_update from 0.23.0 to 0.24.0</li>
+<li>⬆️  Bump thiserror from 1.0.23 to 1.0.24</li>
+<li>⬆️  Bump serde_yaml from 0.8.16 to 0.8.17</li>
+<li>⬆️  Bump libc from 0.2.85 to 0.2.86</li>
+<li>⬆️  Bump slog-term from 2.7.0 to 2.8.0</li>
+<li>⬆️  Bump slog-term from 2.6.0 to 2.7.0</li>
+<li>⬆️  Bump serde_json from 1.0.61 to 1.0.62</li>
+<li>⬆️  Bump libc from 0.2.84 to 0.2.85</li>
+<li>⬆️  Bump assert_cmd from 1.0.2 to 1.0.3</li>
+<li>⬆️  Bump serde_yaml from 0.8.15 to 0.8.16</li>
+<li>⬆️  Bump libc from 0.2.82 to 0.2.84</li>
+<li>⬆️  Bump predicates from 1.0.6 to 1.0.7</li>
+<li>⬆️  Bump serde from 1.0.122 to 1.0.123</li>
+<li>⬆️  Bump serde from 1.0.119 to 1.0.122</li>
+<li>⬆️  Bump git2 from 0.13.15 to 0.13.17</li>
+<li>⬆️  Bump serde from 1.0.118 to 1.0.119</li>
+<li>⬆️  Bump tempfile from 3.1.0 to 3.2.0</li>
+<li>⬆️  Bump serde_yaml from 0.8.14 to 0.8.15</li>
+<li>⬆️  Bump libc from 0.2.81 to 0.2.82</li>
+<li>⬆️  Bump regex from 1.4.2 to 1.4.3</li>
+<li>⬆️  Bump self_update from 0.22.0 to 0.23.0</li>
+<li>⬆️  Bump serde_json from 1.0.60 to 1.0.61</li>
+<li>⬆️  Bump predicates from 1.0.5 to 1.0.6</li>
+<li>⬆️  Bump git2_credentials from 0.7.0 to 0.7.1</li>
+<li>⬆️  Bump handlebars from 3.5.1 to 3.5.2</li>
+<li>⬆️  Bump git2 from 0.13.14 to 0.13.15</li>
+<li>⬆️  Bump console from 0.13.0 to 0.14.0</li>
+<li>⬆️  Bump thiserror from 1.0.22 to 1.0.23</li>
+<li>⬆️  Bump git2 from 0.13.13 to 0.13.14</li>
+<li>⬆️  Bump openssl from 0.10.31 to 0.10.32</li>
+<li>⬆️  Bump git2 from 0.13.12 to 0.13.13</li>
+</ul>
+<h3 id="breaking-changes"><a class="header" href="#breaking-changes">Breaking changes</a></h3>
+<ul>
+<li>💥  replace slog by tracing</li>
+</ul>
+<h3 id="fixed-4"><a class="header" href="#fixed-4">Fixed</a></h3>
+<ul>
+<li>🏁  disable windows build (until fixe the issue with git clone on windows)</li>
+<li>🐛  migration to tracing report log to stdout instead of stderr</li>
+</ul>
+<h3 id="miscellaneous-10"><a class="header" href="#miscellaneous-10">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.3.0</li>
+<li>🚧  (cargo-release) start next development iteration 2.2.2-dev</li>
+</ul>
+<p><a name="2.2.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-221"><a class="header" href="#version-221">Version 2.2.1</a></h2>
+<h3 id="changed-9"><a class="header" href="#changed-9">Changed</a></h3>
+<ul>
+<li>⬆️  upgrade handlebars_misc_helpers to fix json-&gt;toml conversion</li>
+<li>🚸  add more info when error on git</li>
+<li>⬆️  cargo update</li>
+</ul>
+<h3 id="miscellaneous-11"><a class="header" href="#miscellaneous-11">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.2.1</li>
+<li>🚧  (cargo-release) start next development iteration 2.2.1-dev</li>
+</ul>
+<p><a name="2.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-220"><a class="header" href="#version-220">Version 2.2.0</a></h2>
+<h3 id="changed-10"><a class="header" href="#changed-10">Changed</a></h3>
+<ul>
+<li>🚸  improve the display of differences when run <code>test-samples</code></li>
+<li>🎨  format code</li>
+</ul>
+<h3 id="fixed-5"><a class="header" href="#fixed-5">Fixed</a></h3>
+<ul>
+<li>🐛  wrong ifo in the error</li>
+</ul>
+<h3 id="miscellaneous-12"><a class="header" href="#miscellaneous-12">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.2.0</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.4-dev</li>
+</ul>
+<p><a name="2.1.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-213"><a class="header" href="#version-213">Version 2.1.3</a></h2>
+<h3 id="changed-11"><a class="header" href="#changed-11">Changed</a></h3>
+<ul>
+<li>⬆️  Bump structopt from 0.3.20 to 0.3.21</li>
+<li>⬆️  Bump serde_json from 1.0.59 to 1.0.60</li>
+<li>⬆️  Bump serde from 1.0.117 to 1.0.118</li>
+<li>⬆️  Bump libc from 0.2.80 to 0.2.81</li>
+<li>⬆️  Bump assert_cmd from 1.0.1 to 1.0.2</li>
+<li>⬆️  Bump self_update from 0.20.0 to 0.22.0</li>
+<li>⬆️  Bump slog from 2.5.2 to 2.7.0</li>
+</ul>
+<h3 id="fixed-6"><a class="header" href="#fixed-6">Fixed</a></h3>
+<ul>
+<li>🐛  do not failed to compare binary file during test-samples</li>
+</ul>
+<h3 id="miscellaneous-13"><a class="header" href="#miscellaneous-13">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.1.3</li>
+<li>💡  link the book as homepage</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.3-dev</li>
+</ul>
+<p><a name="2.1.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-212"><a class="header" href="#version-212">Version 2.1.2</a></h2>
+<h3 id="added-5"><a class="header" href="#added-5">Added</a></h3>
+<ul>
+<li>✨  add preset variable &quot;ffizer_version&quot;</li>
+</ul>
+<h3 id="changed-12"><a class="header" href="#changed-12">Changed</a></h3>
+<ul>
+<li>👽  update config of cargo-release</li>
+<li>🚨  remove useless <code>use</code></li>
+<li>🚸  context info on error when set variables</li>
+</ul>
+<h3 id="fixed-7"><a class="header" href="#fixed-7">Fixed</a></h3>
+<ul>
+<li>🐛  evaluation of <code>ignores</code>section during compositing phase of the template generate incorrect value.Handlebars expression (eq, ne,...) don't raise error when undefined variabled are used (also in strict mode)</li>
+</ul>
+<h3 id="miscellaneous-14"><a class="header" href="#miscellaneous-14">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.1.2</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.2-dev</li>
+</ul>
+<p><a name="2.1.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-211"><a class="header" href="#version-211">Version 2.1.1</a></h2>
+<h3 id="changed-13"><a class="header" href="#changed-13">Changed</a></h3>
+<ul>
+<li>🍱  introduce logo</li>
+<li>⬆️  Bump actions/checkout from v2.3.3 to v2.3.4</li>
+<li>⬆️  Bump thiserror from 1.0.21 to 1.0.22</li>
+</ul>
+<h3 id="miscellaneous-15"><a class="header" href="#miscellaneous-15">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.1.1</li>
+<li>pencil  pre-publish update book, changelog</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.1-dev</li>
+</ul>
+<p><a name="2.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-210"><a class="header" href="#version-210">Version 2.1.0</a></h2>
+<h3 id="added-6"><a class="header" href="#added-6">Added</a></h3>
 <ul>
 <li>✨  cli can show the json schema the of the <code>.ffizer.yaml</code></li>
 <li>✨  (cli) allow to specify value of variables from cli</li>
@@ -172,7 +610,7 @@
 <li>✨  allow to display a message</li>
 <li>✅  update test to reflect change in gitignore.io</li>
 </ul>
-<h3><a class="header" href="#changed" id="changed">Changed</a></h3>
+<h3 id="changed-14"><a class="header" href="#changed-14">Changed</a></h3>
 <ul>
 <li>🎨  remove some explicit clone</li>
 <li>⬆️  upgrade git2_credentials &amp; handlebars_misc_helpers</li>
@@ -185,21 +623,25 @@
 <li>⬆️  updates severals dependencies</li>
 <li>🍱  regenerate doc</li>
 </ul>
-<h3><a class="header" href="#breaking-changes" id="breaking-changes">Breaking changes</a></h3>
+<h3 id="breaking-changes-1"><a class="header" href="#breaking-changes-1">Breaking changes</a></h3>
 <ul>
 <li>💥  error handling  switch from <code>snafu</code> to <code>thiserror</code></li>
 </ul>
-<h3><a class="header" href="#removed" id="removed">Removed</a></h3>
+<h3 id="removed-2"><a class="header" href="#removed-2">Removed</a></h3>
 <ul>
 <li>🔥  remove credits and bom generation</li>
 </ul>
-<h3><a class="header" href="#fixed" id="fixed">Fixed</a></h3>
+<h3 id="fixed-8"><a class="header" href="#fixed-8">Fixed</a></h3>
 <ul>
+<li>🐛  prevent githb-page to use jekill and failed</li>
+<li>🐛  fix a bug on windows (due to UNC path conversion)</li>
 <li>💚  move data from a test to the right place</li>
 <li>🐛  replace the buggy code to &quot;git pull&quot; by the code example from git2.rs</li>
 </ul>
-<h3><a class="header" href="#miscellaneous" id="miscellaneous">Miscellaneous</a></h3>
+<h3 id="miscellaneous-16"><a class="header" href="#miscellaneous-16">Miscellaneous</a></h3>
 <ul>
+<li>🚀  (cargo-release) version 2.1.0</li>
+<li>pencil  pre-publish update book, changelog</li>
 <li>pencil  update the documentation and rewrite the tutorial</li>
 <li>🚧  support to include samples inside the template and to use them to test via <code>ffizer test-sample ...</code></li>
 <li>pencil  pre-publish update book, changelog</li>
@@ -211,8 +653,8 @@
 <li>🚧  (cargo-release) start next development iteration 2.0.1-dev</li>
 </ul>
 <p><a name="2.0.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-200" id="version-200">Version 2.0.0</a></h2>
-<h3><a class="header" href="#changed-1" id="changed-1">Changed</a></h3>
+<h2 id="version-200"><a class="header" href="#version-200">Version 2.0.0</a></h2>
+<h3 id="changed-15"><a class="header" href="#changed-15">Changed</a></h3>
 <ul>
 <li>⬆️  update handlebars from 3.3 to 3.4</li>
 <li>👽  update configuration of release plugin</li>
@@ -241,13 +683,13 @@
 <li>⬆️  Bump indicatif from 0.14.0 to 0.15.0</li>
 <li>⬆️  Bump serde_yaml from 0.8.12 to 0.8.13</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-1" id="miscellaneous-1">Miscellaneous</a></h3>
+<h3 id="miscellaneous-17"><a class="header" href="#miscellaneous-17">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 2.0.0</li>
 </ul>
 <p><a name="2.0.0-beta.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-200-beta3" id="version-200-beta3">Version 2.0.0-beta.3</a></h2>
-<h3><a class="header" href="#changed-2" id="changed-2">Changed</a></h3>
+<h2 id="version-200-beta3"><a class="header" href="#version-200-beta3">Version 2.0.0-beta.3</a></h2>
+<h3 id="changed-16"><a class="header" href="#changed-16">Changed</a></h3>
 <ul>
 <li>👽  update call to dialoguer API</li>
 <li>⬆️  Bump git2_credentials from 0.6.0 to 0.6.1</li>
@@ -298,27 +740,37 @@
 <li>⬆️  Bump structopt from 0.3.11 to 0.3.12</li>
 <li>⬆️  Bump libc from 0.2.67 to 0.2.68</li>
 </ul>
-<h3><a class="header" href="#fixed-1" id="fixed-1">Fixed</a></h3>
+<h3 id="fixed-9"><a class="header" href="#fixed-9">Fixed</a></h3>
 <ul>
 <li>🐛  do not create folder in folder and crash on update</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-2" id="miscellaneous-2">Miscellaneous</a></h3>
+<h3 id="miscellaneous-18"><a class="header" href="#miscellaneous-18">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 2.0.0-beta.3</li>
 <li>poop  workaround to not failed if <code>ignores</code> is a not-evaluable path</li>
 <li>🚀  (cargo-release) version 2.0.0-beta.2</li>
 <li>📦  disable snapcraft (temporary ?)</li>
 </ul>
+<p><a name="2.0.0-beta.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-200-beta2"><a class="header" href="#version-200-beta2">Version 2.0.0-beta.2</a></h2>
+<h3 id="fixed-10"><a class="header" href="#fixed-10">Fixed</a></h3>
+<ul>
+<li>🐛  do not create folder in folder and crash on update</li>
+</ul>
+<h3 id="miscellaneous-19"><a class="header" href="#miscellaneous-19">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.0.0-beta.2</li>
+</ul>
 <p><a name="2.0.0-beta.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-200-beta1" id="version-200-beta1">Version 2.0.0-beta.1</a></h2>
-<h3><a class="header" href="#added-1" id="added-1">Added</a></h3>
+<h2 id="version-200-beta1"><a class="header" href="#version-200-beta1">Version 2.0.0-beta.1</a></h2>
+<h3 id="added-7"><a class="header" href="#added-7">Added</a></h3>
 <ul>
 <li>🎉  prepare 2.0.0 release</li>
 <li>✅  test e2e can now simulate run over an existing folder</li>
 <li>✨  shell <code>scripts</code> can be run after apply of templates</li>
 <li>✨  hbs template can be chained to transform content from existing file or from previous template layer</li>
 </ul>
-<h3><a class="header" href="#changed-3" id="changed-3">Changed</a></h3>
+<h3 id="changed-17"><a class="header" href="#changed-17">Changed</a></h3>
 <ul>
 <li>⬆️  Bump globset from 0.4.4 to 0.4.5</li>
 <li>⬆️  Bump predicates from 1.0.3 to 1.0.4</li>
@@ -360,11 +812,11 @@
 <li>⬆️  Bump self_update from 0.10.0 to 0.11.0</li>
 <li>⬆️  Bump console from 0.9.1 to 0.9.2</li>
 </ul>
-<h3><a class="header" href="#removed-1" id="removed-1">Removed</a></h3>
+<h3 id="removed-3"><a class="header" href="#removed-3">Removed</a></h3>
 <ul>
 <li>🔥  remove useless file</li>
 </ul>
-<h3><a class="header" href="#fixed-2" id="fixed-2">Fixed</a></h3>
+<h3 id="fixed-11"><a class="header" href="#fixed-11">Fixed</a></h3>
 <ul>
 <li>🏁  try to fix test_3</li>
 <li>🏁  try to fix test_3 to show mutli-os cmd</li>
@@ -379,7 +831,7 @@
 <li>🏁  test on unix file permissions should not run on windows</li>
 <li>🐛  copy file permissions from template into destination</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-3" id="miscellaneous-3">Miscellaneous</a></h3>
+<h3 id="miscellaneous-20"><a class="header" href="#miscellaneous-20">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 2.0.0-beta.1</li>
 <li>pencil  (README) Alternatives sections moved to wiki</li>
@@ -391,8 +843,8 @@
 <li>🚧  (cargo-release) start next development iteration 1.7.2-dev</li>
 </ul>
 <p><a name="1.7.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-171" id="version-171">Version 1.7.1</a></h2>
-<h3><a class="header" href="#changed-4" id="changed-4">Changed</a></h3>
+<h2 id="version-171"><a class="header" href="#version-171">Version 1.7.1</a></h2>
+<h3 id="changed-18"><a class="header" href="#changed-18">Changed</a></h3>
 <ul>
 <li>⬆️  upgrade self_update from 0.9.0 to 0.10.0</li>
 <li>⬆️  Bump structopt from 0.3.7 to 0.3.8</li>
@@ -407,22 +859,22 @@
 <li>⬆️  Bump handlebars from 2.0.2 to 2.0.4</li>
 <li>⬆️  Bump run_script from 0.4.0 to 0.5.0</li>
 </ul>
-<h3><a class="header" href="#fixed-3" id="fixed-3">Fixed</a></h3>
+<h3 id="fixed-12"><a class="header" href="#fixed-12">Fixed</a></h3>
 <ul>
 <li>🐛  restore output of log on terminal</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-4" id="miscellaneous-4">Miscellaneous</a></h3>
+<h3 id="miscellaneous-21"><a class="header" href="#miscellaneous-21">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.7.1</li>
 <li>🚧  (cargo-release) start next development iteration 1.7.1-dev</li>
 </ul>
 <p><a name="1.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-170" id="version-170">Version 1.7.0</a></h2>
-<h3><a class="header" href="#added-2" id="added-2">Added</a></h3>
+<h2 id="version-170"><a class="header" href="#version-170">Version 1.7.0</a></h2>
+<h3 id="added-8"><a class="header" href="#added-8">Added</a></h3>
 <ul>
 <li>👷  add config for dependabot</li>
 </ul>
-<h3><a class="header" href="#changed-5" id="changed-5">Changed</a></h3>
+<h3 id="changed-19"><a class="header" href="#changed-19">Changed</a></h3>
 <ul>
 <li>🚨  apply clippy suggestion</li>
 <li>⬆️  Bump git2 from 0.10. 2 to 0.11.0</li>
@@ -433,7 +885,7 @@
 <li>⬆️  Bump serde from 1.0.103 to 1.0.104</li>
 <li>⬆️  Bump assert_cmd from 0.11.1 to 0.12.0</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-5" id="miscellaneous-5">Miscellaneous</a></h3>
+<h3 id="miscellaneous-22"><a class="header" href="#miscellaneous-22">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.7.0</li>
 <li>💡  explain options of release profile</li>
@@ -441,8 +893,8 @@
 <li>🚧  (cargo-release) start next development iteration 1.6.4-dev</li>
 </ul>
 <p><a name="1.6.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-163" id="version-163">Version 1.6.3</a></h2>
-<h3><a class="header" href="#changed-6" id="changed-6">Changed</a></h3>
+<h2 id="version-163"><a class="header" href="#version-163">Version 1.6.3</a></h2>
+<h3 id="changed-20"><a class="header" href="#changed-20">Changed</a></h3>
 <ul>
 <li>🔧  (ci) refactor the build and options (on mac_os)</li>
 <li>⬆️  Bump libc from 0.2.65 to 0.2.66</li>
@@ -450,11 +902,11 @@
 <li>⬆️  Bump structopt from 0.3.4 to 0.3.5</li>
 <li>⬆️  Bump openssl from 0.10.25 to 0.10.26</li>
 </ul>
-<h3><a class="header" href="#fixed-4" id="fixed-4">Fixed</a></h3>
+<h3 id="fixed-13"><a class="header" href="#fixed-13">Fixed</a></h3>
 <ul>
 <li>🐛  trim pattern to ignore from template's config</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-6" id="miscellaneous-6">Miscellaneous</a></h3>
+<h3 id="miscellaneous-23"><a class="header" href="#miscellaneous-23">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.6.3</li>
 <li>🚀  (cargo-release) version 1.6.2</li>
@@ -462,15 +914,15 @@
 <li>🚧  (cargo-release) start next development iteration 1.6.1-dev</li>
 </ul>
 <p><a name="1.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-160" id="version-160">Version 1.6.0</a></h2>
-<h3><a class="header" href="#added-3" id="added-3">Added</a></h3>
+<h2 id="version-160"><a class="header" href="#version-160">Version 1.6.0</a></h2>
+<h3 id="added-9"><a class="header" href="#added-9">Added</a></h3>
 <ul>
 <li>✅  remove the doc test of tree because tree is not available publicly</li>
 <li>✨  allow to use merge tool (as defined in git config) to merge updates</li>
 <li>✨  support several rules for the update of existing files (ask, override, keep, current-as-local, update-as-remote, show-diff)</li>
 <li>👷  try enable kcov+codecov  report on github-actions</li>
 </ul>
-<h3><a class="header" href="#changed-7" id="changed-7">Changed</a></h3>
+<h3 id="changed-21"><a class="header" href="#changed-21">Changed</a></h3>
 <ul>
 <li>⬆️  Bump git2 from 0.10.1 to 0.10.2</li>
 <li>💄  add description of update's option in selector</li>
@@ -488,12 +940,12 @@
 <li>💄  display &quot;plan to execute&quot; with a tree and lines</li>
 <li>⬆️  Bump libc from 0.2.62 to 0.2.64</li>
 </ul>
-<h3><a class="header" href="#removed-2" id="removed-2">Removed</a></h3>
+<h3 id="removed-4"><a class="header" href="#removed-4">Removed</a></h3>
 <ul>
 <li>🔥  remove azure-pipelines definition (switch to github action)</li>
 <li>🔥  (cli) remove useless conf</li>
 </ul>
-<h3><a class="header" href="#fixed-5" id="fixed-5">Fixed</a></h3>
+<h3 id="fixed-14"><a class="header" href="#fixed-14">Fixed</a></h3>
 <ul>
 <li>🐛  (snapcraft) fix the build of the snap on github-action/ubuntu</li>
 <li>🍎  the cache and project dir should be under &quot;ffizer&quot;, not &quot;github&quot;</li>
@@ -502,7 +954,7 @@
 <li>🐛  on error the exit status should be non-zero</li>
 <li>🐛  fix url to retrieve the latest version</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-7" id="miscellaneous-7">Miscellaneous</a></h3>
+<h3 id="miscellaneous-24"><a class="header" href="#miscellaneous-24">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.6.0</li>
 <li>⚗  try a fix for the build of snap</li>
@@ -513,30 +965,30 @@
 <li>🚧  (cargo-release) start next development iteration 1.5.2-dev</li>
 </ul>
 <p><a name="1.5.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-151" id="version-151">Version 1.5.1</a></h2>
-<h3><a class="header" href="#changed-8" id="changed-8">Changed</a></h3>
+<h2 id="version-151"><a class="header" href="#version-151">Version 1.5.1</a></h2>
+<h3 id="changed-22"><a class="header" href="#changed-22">Changed</a></h3>
 <ul>
 <li>👽  cargo-release change the default value of tag-name to include a v :-(</li>
 </ul>
-<h3><a class="header" href="#fixed-6" id="fixed-6">Fixed</a></h3>
+<h3 id="fixed-15"><a class="header" href="#fixed-15">Fixed</a></h3>
 <ul>
 <li>🐛  (ci) missing GITHUB_REPOSITORY on azure-pipeline so the tarball was not build &amp; uploaded</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-8" id="miscellaneous-8">Miscellaneous</a></h3>
+<h3 id="miscellaneous-25"><a class="header" href="#miscellaneous-25">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.5.1</li>
 <li>🚧  (cargo-release) start next development iteration 1.5.1-dev</li>
 </ul>
 <p><a name="v1.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-v150" id="version-v150">Version v1.5.0</a></h2>
+<h2 id="version-v150"><a class="header" href="#version-v150">Version v1.5.0</a></h2>
 <p><a name="1.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-150" id="version-150">Version 1.5.0</a></h2>
-<h3><a class="header" href="#added-4" id="added-4">Added</a></h3>
+<h2 id="version-150"><a class="header" href="#version-150">Version 1.5.0</a></h2>
+<h3 id="added-10"><a class="header" href="#added-10">Added</a></h3>
 <ul>
 <li>✅  skip the git test if git is not in the path</li>
 <li>👷  init github-action</li>
 </ul>
-<h3><a class="header" href="#changed-9" id="changed-9">Changed</a></h3>
+<h3 id="changed-23"><a class="header" href="#changed-23">Changed</a></h3>
 <ul>
 <li>🔧  (test) try to fix setup of git</li>
 <li>🔧  enable feature &quot;cli&quot; by default to work friendly with <code>cargo install</code> and  <code>topgrade</code></li>
@@ -573,15 +1025,15 @@
 <li>⬆️  Bump snafu from 0.4.4 to 0.5.0</li>
 <li>⬆️  Bump serde from 1.0.98 to 1.0.99</li>
 </ul>
-<h3><a class="header" href="#breaking-changes-1" id="breaking-changes-1">Breaking changes</a></h3>
+<h3 id="breaking-changes-2"><a class="header" href="#breaking-changes-2">Breaking changes</a></h3>
 <ul>
 <li>💥  prepare upgrade to structopt 0.3.0</li>
 </ul>
-<h3><a class="header" href="#removed-3" id="removed-3">Removed</a></h3>
+<h3 id="removed-5"><a class="header" href="#removed-5">Removed</a></h3>
 <ul>
 <li>➖  remove direct dependency to hashbrown</li>
 </ul>
-<h3><a class="header" href="#fixed-7" id="fixed-7">Fixed</a></h3>
+<h3 id="fixed-16"><a class="header" href="#fixed-16">Fixed</a></h3>
 <ul>
 <li>💚  (ci) try to fix azure-pipelines by downgrade image vm + disable cache</li>
 <li>✏️  fix typo in commit-message</li>
@@ -592,7 +1044,7 @@
 <li>✏️  (README) typo</li>
 <li>🐛  move dependencies only for cli</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-9" id="miscellaneous-9">Miscellaneous</a></h3>
+<h3 id="miscellaneous-26"><a class="header" href="#miscellaneous-26">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.5.0</li>
 <li>🚧  add sub-command èinspectè to provide information about ffizer (cache, configuration)</li>
@@ -621,17 +1073,17 @@
 <li>🚧  (cargo-release) start next development iteration 1.4.1-dev</li>
 </ul>
 <p><a name="1.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-140" id="version-140">Version 1.4.0</a></h2>
-<h3><a class="header" href="#changed-10" id="changed-10">Changed</a></h3>
+<h2 id="version-140"><a class="header" href="#version-140">Version 1.4.0</a></h2>
+<h3 id="changed-24"><a class="header" href="#changed-24">Changed</a></h3>
 <ul>
 <li>🚸  display &quot;plan to execute&quot; in as a colorized table (more readable)</li>
 <li>🔧  change the way to commit update of doc (env is set after dependencies task)</li>
 </ul>
-<h3><a class="header" href="#fixed-8" id="fixed-8">Fixed</a></h3>
+<h3 id="fixed-17"><a class="header" href="#fixed-17">Fixed</a></h3>
 <ul>
 <li>🐛  restore the behavior to use the remote_path ignoring subfolder when retrieve git repo</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-10" id="miscellaneous-10">Miscellaneous</a></h3>
+<h3 id="miscellaneous-27"><a class="header" href="#miscellaneous-27">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.4.0</li>
 <li>🔊  add more info on handlebars error</li>
@@ -640,29 +1092,29 @@
 <li>🚧  (cargo-release) start next development iteration 1.3.2-dev</li>
 </ul>
 <p><a name="1.3.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-131" id="version-131">Version 1.3.1</a></h2>
-<h3><a class="header" href="#changed-11" id="changed-11">Changed</a></h3>
+<h2 id="version-131"><a class="header" href="#version-131">Version 1.3.1</a></h2>
+<h3 id="changed-25"><a class="header" href="#changed-25">Changed</a></h3>
 <ul>
 <li>⬆️  Bump libc from 0.2.61 to 0.2.62</li>
 </ul>
-<h3><a class="header" href="#fixed-9" id="fixed-9">Fixed</a></h3>
+<h3 id="fixed-18"><a class="header" href="#fixed-18">Fixed</a></h3>
 <ul>
 <li>🐛  (README) fix instruction for installation via cargo.</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-11" id="miscellaneous-11">Miscellaneous</a></h3>
+<h3 id="miscellaneous-28"><a class="header" href="#miscellaneous-28">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.3.1</li>
 <li>📦  to generate archive without &quot;./&quot; as prefix (to workaround an issue in self_update)</li>
 <li>🚧  (cargo-release) start next development iteration 1.3.1-dev</li>
 </ul>
 <p><a name="1.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-130" id="version-130">Version 1.3.0</a></h2>
-<h3><a class="header" href="#added-5" id="added-5">Added</a></h3>
+<h2 id="version-130"><a class="header" href="#version-130">Version 1.3.0</a></h2>
+<h3 id="added-11"><a class="header" href="#added-11">Added</a></h3>
 <ul>
 <li>✨  add support of select (combobox) for variable's value</li>
 <li>✨  (variables) allow variable to be hidden</li>
 </ul>
-<h3><a class="header" href="#changed-12" id="changed-12">Changed</a></h3>
+<h3 id="changed-26"><a class="header" href="#changed-26">Changed</a></h3>
 <ul>
 <li>⬆️  Bump directories from 2.0.1 to 2.0.2</li>
 <li>👽  update code to match change in self_update</li>
@@ -679,15 +1131,15 @@
 <li>⬆️  Bump regex from 1.1.9 to 1.2.0</li>
 <li>⬆️  Bump openssl from 0.10.23 to 0.10.24</li>
 </ul>
-<h3><a class="header" href="#breaking-changes-2" id="breaking-changes-2">Breaking changes</a></h3>
+<h3 id="breaking-changes-3"><a class="header" href="#breaking-changes-3">Breaking changes</a></h3>
 <ul>
 <li>💥  change error handling, move from <code>failure</code> to  <code>std::error::Error</code> and <code>snafu</code></li>
 </ul>
-<h3><a class="header" href="#fixed-10" id="fixed-10">Fixed</a></h3>
+<h3 id="fixed-19"><a class="header" href="#fixed-19">Fixed</a></h3>
 <ul>
 <li>✏️  README fix syntax to be readable by crates.io</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-12" id="miscellaneous-12">Miscellaneous</a></h3>
+<h3 id="miscellaneous-29"><a class="header" href="#miscellaneous-29">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.3.0</li>
 <li>📝  (book) update</li>
@@ -697,13 +1149,13 @@
 <li>🚧  (cargo-release) start next development iteration 1.2.1-dev</li>
 </ul>
 <p><a name="1.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-120" id="version-120">Version 1.2.0</a></h2>
-<h3><a class="header" href="#added-6" id="added-6">Added</a></h3>
+<h2 id="version-120"><a class="header" href="#version-120">Version 1.2.0</a></h2>
+<h3 id="added-12"><a class="header" href="#added-12">Added</a></h3>
 <ul>
 <li>✨  allow template content to be into a subfolder <code>template</code> #79</li>
 <li>➕  use hashbrown (like handlebars) to replace std BTreeMap, HashMap, HashSet</li>
 </ul>
-<h3><a class="header" href="#changed-13" id="changed-13">Changed</a></h3>
+<h3 id="changed-27"><a class="header" href="#changed-27">Changed</a></h3>
 <ul>
 <li>♻️  use handlebars helpers externalized into handlebars_misc_helpers</li>
 <li>♻️  move handlebars/hbs into a module folder and split into submodules</li>
@@ -715,12 +1167,12 @@
 <li>⬆️  Bump slog from 2.4.1 to 2.5.1</li>
 <li>⬆️  Bump slog-term from 2.4.0 to 2.4.1</li>
 </ul>
-<h3><a class="header" href="#fixed-11" id="fixed-11">Fixed</a></h3>
+<h3 id="fixed-20"><a class="header" href="#fixed-20">Fixed</a></h3>
 <ul>
 <li>🐛  adjust version of dependencies to existing value</li>
 <li>✏️  fix typo in badge</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-13" id="miscellaneous-13">Miscellaneous</a></h3>
+<h3 id="miscellaneous-30"><a class="header" href="#miscellaneous-30">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.2.0</li>
 <li>📝  update book</li>
@@ -728,8 +1180,8 @@
 <li>🚧  (cargo-release) start next development iteration 1.1.1-dev</li>
 </ul>
 <p><a name="1.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-110" id="version-110">Version 1.1.0</a></h2>
-<h3><a class="header" href="#changed-14" id="changed-14">Changed</a></h3>
+<h2 id="version-110"><a class="header" href="#version-110">Version 1.1.0</a></h2>
+<h3 id="changed-28"><a class="header" href="#changed-28">Changed</a></h3>
 <ul>
 <li>⬆️  Bump git2 from 0.8.0 to 0.9.1 &amp; git2_credentials from 0.2.0 to 0.3.0</li>
 <li>⬆️  Bump libc from 0.2.58 to 0.2.59</li>
@@ -763,23 +1215,23 @@
 <li>⬆️  Bump reqwest from 0.9.16 to 0.9.17</li>
 <li>⬆️  Bump openssl from 0.10.21 to 0.10.22</li>
 </ul>
-<h3><a class="header" href="#fixed-12" id="fixed-12">Fixed</a></h3>
+<h3 id="fixed-21"><a class="header" href="#fixed-21">Fixed</a></h3>
 <ul>
 <li>🐛  fix Cargo warning about exclude</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-14" id="miscellaneous-14">Miscellaneous</a></h3>
+<h3 id="miscellaneous-31"><a class="header" href="#miscellaneous-31">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.1.0</li>
 <li>🚧  (cargo-release) start next development iteration 1.0.1-dev</li>
 </ul>
 <p><a name="1.0.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-100" id="version-100">Version 1.0.0</a></h2>
-<h3><a class="header" href="#added-7" id="added-7">Added</a></h3>
+<h2 id="version-100"><a class="header" href="#version-100">Version 1.0.0</a></h2>
+<h3 id="added-13"><a class="header" href="#added-13">Added</a></h3>
 <ul>
 <li>➕  use git2_credentials (extract of existing code)</li>
 <li>✅  (ci) enable test_remote on ci build</li>
 </ul>
-<h3><a class="header" href="#changed-15" id="changed-15">Changed</a></h3>
+<h3 id="changed-29"><a class="header" href="#changed-29">Changed</a></h3>
 <ul>
 <li>⬆️  Bump serde from 1.0.90 to 1.0.91</li>
 <li>⬆️  Bump git2_credentials from 0.1.1 to 0.2.0</li>
@@ -797,7 +1249,7 @@
 <li>⬆️  Bump reqwest from 0.9.12 to 0.9.13</li>
 <li>⬆️  Bump regex from 1.1.2 to 1.1.5</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-15" id="miscellaneous-15">Miscellaneous</a></h3>
+<h3 id="miscellaneous-32"><a class="header" href="#miscellaneous-32">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.0.0</li>
 <li>🚧  (build) prepare 1.0.0</li>
@@ -805,40 +1257,40 @@
 <li>🚧  (cargo-release) start next development iteration 0.12.2-dev</li>
 </ul>
 <p><a name="0.12.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0121" id="version-0121">Version 0.12.1</a></h2>
-<h3><a class="header" href="#changed-16" id="changed-16">Changed</a></h3>
+<h2 id="version-0121"><a class="header" href="#version-0121">Version 0.12.1</a></h2>
+<h3 id="changed-30"><a class="header" href="#changed-30">Changed</a></h3>
 <ul>
 <li>⬆️  Bump assert_cmd from 0.11.0 to 0.11.1</li>
 </ul>
-<h3><a class="header" href="#removed-4" id="removed-4">Removed</a></h3>
+<h3 id="removed-6"><a class="header" href="#removed-6">Removed</a></h3>
 <ul>
 <li>🔇  remove xdb! call</li>
 <li>🔥  (ci) remove travis configuration</li>
 <li>🔇  (ci) remove verbose mode during github-upload-flow</li>
 </ul>
-<h3><a class="header" href="#fixed-13" id="fixed-13">Fixed</a></h3>
+<h3 id="fixed-22"><a class="header" href="#fixed-22">Fixed</a></h3>
 <ul>
 <li>✏️  fix typo in log</li>
 <li>🐛  report error (instead of crash) when error during computation of rendered path</li>
 <li>🐛  fix the folder use to clone when subfolder is defined (cause by refactor)</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-16" id="miscellaneous-16">Miscellaneous</a></h3>
+<h3 id="miscellaneous-33"><a class="header" href="#miscellaneous-33">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.12.1</li>
 <li>📝  (docs) add information about template_configuration</li>
 <li>🚧  (cargo-release) start next development iteration 0.12.1-dev</li>
 </ul>
 <p><a name="0.12.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0120" id="version-0120">Version 0.12.0</a></h2>
-<h3><a class="header" href="#changed-17" id="changed-17">Changed</a></h3>
+<h2 id="version-0120"><a class="header" href="#version-0120">Version 0.12.0</a></h2>
+<h3 id="changed-31"><a class="header" href="#changed-31">Changed</a></h3>
 <ul>
 <li>⬆️  Bump reqwest from 0.9.11 to 0.9.12</li>
 </ul>
-<h3><a class="header" href="#fixed-14" id="fixed-14">Fixed</a></h3>
+<h3 id="fixed-23"><a class="header" href="#fixed-23">Fixed</a></h3>
 <ul>
 <li>🐛  (git) fix authentication via ssh, https</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-17" id="miscellaneous-17">Miscellaneous</a></h3>
+<h3 id="miscellaneous-34"><a class="header" href="#miscellaneous-34">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.12.0</li>
 <li>📝  (CHANGELOG) update</li>
@@ -846,12 +1298,12 @@
 <li>🚧  (cargo-release) start next development iteration 0.11.4-dev</li>
 </ul>
 <p><a name="0.11.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0113" id="version-0113">Version 0.11.3</a></h2>
-<h3><a class="header" href="#fixed-15" id="fixed-15">Fixed</a></h3>
+<h2 id="version-0113"><a class="header" href="#version-0113">Version 0.11.3</a></h2>
+<h3 id="fixed-24"><a class="header" href="#fixed-24">Fixed</a></h3>
 <ul>
 <li>🐛  (git) remove folder if error during git retieve</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-18" id="miscellaneous-18">Miscellaneous</a></h3>
+<h3 id="miscellaneous-35"><a class="header" href="#miscellaneous-35">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.11.3</li>
 <li>⚗  (ci) try fix for github-upload</li>
@@ -859,24 +1311,24 @@
 <li>🚧  (cargo-release) start next development iteration 0.11.3-dev</li>
 </ul>
 <p><a name="0.11.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0112" id="version-0112">Version 0.11.2</a></h2>
-<h3><a class="header" href="#fixed-16" id="fixed-16">Fixed</a></h3>
+<h2 id="version-0112"><a class="header" href="#version-0112">Version 0.11.2</a></h2>
+<h3 id="fixed-25"><a class="header" href="#fixed-25">Fixed</a></h3>
 <ul>
 <li>🐛  (ci) try to fix github-upload-flow</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-19" id="miscellaneous-19">Miscellaneous</a></h3>
+<h3 id="miscellaneous-36"><a class="header" href="#miscellaneous-36">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.11.2</li>
 <li>🚧  (cargo-release) start next development iteration 0.11.2-dev</li>
 </ul>
 <p><a name="0.11.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0111" id="version-0111">Version 0.11.1</a></h2>
-<h3><a class="header" href="#added-8" id="added-8">Added</a></h3>
+<h2 id="version-0111"><a class="header" href="#version-0111">Version 0.11.1</a></h2>
+<h3 id="added-14"><a class="header" href="#added-14">Added</a></h3>
 <ul>
 <li>✨  (hbs) add helper env_var</li>
 <li>✨  default_value can be composed of previously defined value</li>
 </ul>
-<h3><a class="header" href="#changed-18" id="changed-18">Changed</a></h3>
+<h3 id="changed-32"><a class="header" href="#changed-32">Changed</a></h3>
 <ul>
 <li>⬆️  (build) update cargo.lock</li>
 <li>🔧  (ci) try to fix upload of asset on github (for windows, mac, linux)</li>
@@ -885,7 +1337,7 @@
 <li>🔧  (cargo) tried to decrease size of executable</li>
 <li>⬆️  Bump structopt from 0.2.14 to 0.2.15</li>
 </ul>
-<h3><a class="header" href="#fixed-17" id="fixed-17">Fixed</a></h3>
+<h3 id="fixed-26"><a class="header" href="#fixed-26">Fixed</a></h3>
 <ul>
 <li>🐛  (test) fix test about env_var</li>
 <li>🐛  path_helpers canonicalize existing path</li>
@@ -893,7 +1345,7 @@
 <li>🐛  try to static link openssl</li>
 <li>🐛  fix the download of git repository</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-20" id="miscellaneous-20">Miscellaneous</a></h3>
+<h3 id="miscellaneous-37"><a class="header" href="#miscellaneous-37">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.11.1</li>
 <li>🚀  (cargo-release) version 0.11.0</li>
@@ -903,28 +1355,28 @@
 <li>🚧  (cargo-release) start next development iteration 0.10.3-dev</li>
 </ul>
 <p><a name="0.10.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0102" id="version-0102">Version 0.10.2</a></h2>
-<h3><a class="header" href="#changed-19" id="changed-19">Changed</a></h3>
+<h2 id="version-0102"><a class="header" href="#version-0102">Version 0.10.2</a></h2>
+<h3 id="changed-33"><a class="header" href="#changed-33">Changed</a></h3>
 <ul>
 <li>⬆️  Bump reqwest from 0.9.10 to 0.9.11</li>
 </ul>
-<h3><a class="header" href="#removed-5" id="removed-5">Removed</a></h3>
+<h3 id="removed-7"><a class="header" href="#removed-7">Removed</a></h3>
 <ul>
 <li>🔥  (cirrus) remove upload script</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-21" id="miscellaneous-21">Miscellaneous</a></h3>
+<h3 id="miscellaneous-38"><a class="header" href="#miscellaneous-38">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.10.2</li>
 <li>⚗  (travis) try named cache to optimize</li>
 <li>🚧  (cargo-release) start next development iteration 0.10.2-dev</li>
 </ul>
 <p><a name="0.10.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0101" id="version-0101">Version 0.10.1</a></h2>
-<h3><a class="header" href="#added-9" id="added-9">Added</a></h3>
+<h2 id="version-0101"><a class="header" href="#version-0101">Version 0.10.1</a></h2>
+<h3 id="added-15"><a class="header" href="#added-15">Added</a></h3>
 <ul>
 <li>👷  (azure) set up CI with Azure Pipelines</li>
 </ul>
-<h3><a class="header" href="#changed-20" id="changed-20">Changed</a></h3>
+<h3 id="changed-34"><a class="header" href="#changed-34">Changed</a></h3>
 <ul>
 <li>🔧  (make) use profile and platform</li>
 <li>🔧  (make) move upload to github as part of make</li>
@@ -935,11 +1387,11 @@
 <li>🔧  (travis) try to workaround the timeout (on windows)</li>
 <li>🔧  (cirrus) try a windows &amp; osx setup</li>
 </ul>
-<h3><a class="header" href="#removed-6" id="removed-6">Removed</a></h3>
+<h3 id="removed-8"><a class="header" href="#removed-8">Removed</a></h3>
 <ul>
 <li>🔥  (cirrus) remove cirrus-ci configuration</li>
 </ul>
-<h3><a class="header" href="#fixed-18" id="fixed-18">Fixed</a></h3>
+<h3 id="fixed-27"><a class="header" href="#fixed-27">Fixed</a></h3>
 <ul>
 <li>🐛  (azure) profile injection cross platform</li>
 <li>🐛  (azure) fix typo in profile injection</li>
@@ -950,7 +1402,7 @@
 <li>✏️  (README) syntax error</li>
 <li>🐛  (travis) always build the zip to not fail during release</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-22" id="miscellaneous-22">Miscellaneous</a></h3>
+<h3 id="miscellaneous-39"><a class="header" href="#miscellaneous-39">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.10.1</li>
 <li>🚧  (cirrus) disable codecov on cirrus</li>
@@ -960,8 +1412,8 @@
 <li>🚧  (cargo-release) start next development iteration 0.10.1-dev</li>
 </ul>
 <p><a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0100" id="version-0100">Version 0.10.0</a></h2>
-<h3><a class="header" href="#added-10" id="added-10">Added</a></h3>
+<h2 id="version-0100"><a class="header" href="#version-0100">Version 0.10.0</a></h2>
+<h3 id="added-16"><a class="header" href="#added-16">Added</a></h3>
 <ul>
 <li>👷  (travis) increase cache timeout (try to fix for windows)</li>
 <li>👷  (cirrus) try to setup codecov</li>
@@ -978,7 +1430,7 @@
 <li>✨  (imports) allow template to be composed by other template</li>
 <li>👷  increase timeout when builing on travis</li>
 </ul>
-<h3><a class="header" href="#changed-21" id="changed-21">Changed</a></h3>
+<h3 id="changed-35"><a class="header" href="#changed-35">Changed</a></h3>
 <ul>
 <li>🎨  use Upper Case for lazy static ref</li>
 <li>⬆️  Bump serde from 1.0.88 to 1.0.89</li>
@@ -1017,11 +1469,11 @@
 <li>⬆️  Bump indicatif from 0.10.3 to 0.11.0</li>
 <li>⬆️  Bump console from 0.7.1 to 0.7.2</li>
 </ul>
-<h3><a class="header" href="#removed-7" id="removed-7">Removed</a></h3>
+<h3 id="removed-9"><a class="header" href="#removed-9">Removed</a></h3>
 <ul>
 <li>🔇  (scripts) remove trace when run getLatest.sh</li>
 </ul>
-<h3><a class="header" href="#fixed-19" id="fixed-19">Fixed</a></h3>
+<h3 id="fixed-28"><a class="header" href="#fixed-28">Fixed</a></h3>
 <ul>
 <li>🐛  fix getLatest.sh for linux</li>
 <li>🐛  remove .unwrap() inside main code</li>
@@ -1029,7 +1481,7 @@
 <li>✏️  (README) fix typo</li>
 <li>🐛  (travis) fix syntax error</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-23" id="miscellaneous-23">Miscellaneous</a></h3>
+<h3 id="miscellaneous-40"><a class="header" href="#miscellaneous-40">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.10.0</li>
 <li>📦  set the right version (0.10.0 not yet release)</li>
@@ -1048,8 +1500,8 @@
 <li>📝  (book) move part of content of README into book</li>
 </ul>
 <p><a name="0.9.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-090" id="version-090">Version 0.9.0</a></h2>
-<h3><a class="header" href="#changed-22" id="changed-22">Changed</a></h3>
+<h2 id="version-090"><a class="header" href="#version-090">Version 0.9.0</a></h2>
+<h3 id="changed-36"><a class="header" href="#changed-36">Changed</a></h3>
 <ul>
 <li>🎨  apply clippy suggestion</li>
 <li>⬆️  Bump git2 from 0.7.5 to 0.8.0</li>
@@ -1059,24 +1511,24 @@
 <li>⬆️  Bump serde_derive from 1.0.80 to 1.0.81</li>
 <li>⬆️  Bump serde from 1.0.80 to 1.0.81</li>
 </ul>
-<h3><a class="header" href="#breaking-changes-3" id="breaking-changes-3">Breaking changes</a></h3>
+<h3 id="breaking-changes-4"><a class="header" href="#breaking-changes-4">Breaking changes</a></h3>
 <ul>
 <li>💥  cli change to support subcommand (apply &amp; upgrade)</li>
 </ul>
 <p><a name="0.8.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-080" id="version-080">Version 0.8.0</a></h2>
-<h3><a class="header" href="#changed-23" id="changed-23">Changed</a></h3>
+<h2 id="version-080"><a class="header" href="#version-080">Version 0.8.0</a></h2>
+<h3 id="changed-37"><a class="header" href="#changed-37">Changed</a></h3>
 <ul>
 <li>⬆️  move to rust edition 2018</li>
 <li>🚸  (cli) use human_panic...</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-24" id="miscellaneous-24">Miscellaneous</a></h3>
+<h3 id="miscellaneous-41"><a class="header" href="#miscellaneous-41">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 </ul>
 <p><a name="0.7.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-071" id="version-071">Version 0.7.1</a></h2>
-<h3><a class="header" href="#changed-24" id="changed-24">Changed</a></h3>
+<h2 id="version-071"><a class="header" href="#version-071">Version 0.7.1</a></h2>
+<h3 id="changed-38"><a class="header" href="#changed-38">Changed</a></h3>
 <ul>
 <li>⬆️  Bump regex from 1.0.6 to 1.1.0</li>
 <li>⬆️  Bump indicatif from 0.10.2 to 0.10.3</li>
@@ -1084,14 +1536,14 @@
 <li>⬆️  Bump console from 0.7.0 to 0.7.1</li>
 <li>⬆️  upgrade dependencies</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-25" id="miscellaneous-25">Miscellaneous</a></h3>
+<h3 id="miscellaneous-42"><a class="header" href="#miscellaneous-42">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📝  (README) add a template to the list</li>
 </ul>
 <p><a name="0.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-070" id="version-070">Version 0.7.0</a></h2>
-<h3><a class="header" href="#added-11" id="added-11">Added</a></h3>
+<h2 id="version-070"><a class="header" href="#version-070">Version 0.7.0</a></h2>
+<h3 id="added-17"><a class="header" href="#added-17">Added</a></h3>
 <ul>
 <li>✨  (cfg) can use handlebars into ignores'entry and default_value in ffizer.yaml</li>
 <li>👷  (travis) try to fix random timeout on windows (6)</li>
@@ -1102,18 +1554,18 @@
 <li>👷  (travis) try to fix random timeout on windows</li>
 <li>✨  (render) add helper to transform path</li>
 </ul>
-<h3><a class="header" href="#changed-25" id="changed-25">Changed</a></h3>
+<h3 id="changed-39"><a class="header" href="#changed-39">Changed</a></h3>
 <ul>
 <li>🎨  (e2e) compare content of file as string (vs vec[u8]) to ease debug</li>
 <li>🎨  (e2e) capture stderr &amp; stdout</li>
 <li>⬆️  Bump tempfile from 3.0.4 to 3.0.5</li>
 <li>⬆️  Bump indicatif from 0.9.0 to 0.10.1</li>
 </ul>
-<h3><a class="header" href="#fixed-20" id="fixed-20">Fixed</a></h3>
+<h3 id="fixed-29"><a class="header" href="#fixed-29">Fixed</a></h3>
 <ul>
 <li>✏️  (README) fixing typo</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-26" id="miscellaneous-26">Miscellaneous</a></h3>
+<h3 id="miscellaneous-43"><a class="header" href="#miscellaneous-43">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>🚧  (cfg) allow to use handlebars and cli info into part of ffizer.yml</li>
@@ -1122,66 +1574,66 @@
 <li>📦  (cargo) try to exclude tests</li>
 </ul>
 <p><a name="0.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-060" id="version-060">Version 0.6.0</a></h2>
-<h3><a class="header" href="#added-12" id="added-12">Added</a></h3>
+<h2 id="version-060"><a class="header" href="#version-060">Version 0.6.0</a></h2>
+<h3 id="added-18"><a class="header" href="#added-18">Added</a></h3>
 <ul>
 <li>✨  (render) add helper to do http request and a preconfigured to request gitignore.io</li>
 <li>✨  #6 (render) add helper to transform string</li>
 </ul>
-<h3><a class="header" href="#changed-26" id="changed-26">Changed</a></h3>
+<h3 id="changed-40"><a class="header" href="#changed-40">Changed</a></h3>
 <ul>
 <li>🔧  (e2e) disable remote test by default</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-27" id="miscellaneous-27">Miscellaneous</a></h3>
+<h3 id="miscellaneous-44"><a class="header" href="#miscellaneous-44">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 </ul>
 <p><a name="0.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-050" id="version-050">Version 0.5.0</a></h2>
-<h3><a class="header" href="#changed-27" id="changed-27">Changed</a></h3>
+<h2 id="version-050"><a class="header" href="#version-050">Version 0.5.0</a></h2>
+<h3 id="changed-41"><a class="header" href="#changed-41">Changed</a></h3>
 <ul>
 <li>🚸  (cli) clean display to user (happy path only)</li>
 <li>⬆️  Bump dialoguer from 0.2.0 to 0.3.0</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-28" id="miscellaneous-28">Miscellaneous</a></h3>
+<h3 id="miscellaneous-45"><a class="header" href="#miscellaneous-45">Miscellaneous</a></h3>
 <ul>
 <li>📝  (README) update doc (help, usage,...)</li>
 </ul>
 <p><a name="0.4.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-042" id="version-042">Version 0.4.2</a></h2>
-<h3><a class="header" href="#added-13" id="added-13">Added</a></h3>
+<h2 id="version-042"><a class="header" href="#version-042">Version 0.4.2</a></h2>
+<h3 id="added-19"><a class="header" href="#added-19">Added</a></h3>
 <ul>
 <li>✨  (cli) add support of source subfolder</li>
 </ul>
-<h3><a class="header" href="#changed-28" id="changed-28">Changed</a></h3>
+<h3 id="changed-42"><a class="header" href="#changed-42">Changed</a></h3>
 <ul>
 <li>⬆️  Bump assert_cmd from 0.10.1 to 0.10.2</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-29" id="miscellaneous-29">Miscellaneous</a></h3>
+<h3 id="miscellaneous-46"><a class="header" href="#miscellaneous-46">Miscellaneous</a></h3>
 <ul>
 <li>📦  (release) customize release profile</li>
 <li>📝  (README) update features list (states &amp; planned)</li>
 </ul>
 <p><a name="0.4.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-041" id="version-041">Version 0.4.1</a></h2>
-<h3><a class="header" href="#added-14" id="added-14">Added</a></h3>
+<h2 id="version-041"><a class="header" href="#version-041">Version 0.4.1</a></h2>
+<h3 id="added-20"><a class="header" href="#added-20">Added</a></h3>
 <ul>
 <li>✨  (cli) add --rev to specify the git revision</li>
 </ul>
-<h3><a class="header" href="#fixed-21" id="fixed-21">Fixed</a></h3>
+<h3 id="fixed-30"><a class="header" href="#fixed-30">Fixed</a></h3>
 <ul>
 <li>🐛  (git) do not remove existing cache before success clone</li>
 </ul>
 <p><a name="0.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-040" id="version-040">Version 0.4.0</a></h2>
-<h3><a class="header" href="#added-15" id="added-15">Added</a></h3>
+<h2 id="version-040"><a class="header" href="#version-040">Version 0.4.0</a></h2>
+<h3 id="added-21"><a class="header" href="#added-21">Added</a></h3>
 <ul>
 <li>👷  (travis) remove build for i686</li>
 <li>👷  (travis) try to fix compilation on i686</li>
 <li>✨  (cli) add offline mode</li>
 <li>✨  (source) accept remote git repository as source for template</li>
 </ul>
-<h3><a class="header" href="#changed-29" id="changed-29">Changed</a></h3>
+<h3 id="changed-43"><a class="header" href="#changed-43">Changed</a></h3>
 <ul>
 <li>🎨  (git) comment unused code</li>
 <li>♻️  move Uri into SourceUri</li>
@@ -1189,7 +1641,7 @@
 <li>🎨  (e2e) test the executable via cli</li>
 <li>⬆️  Bump dialoguer from 0.1.0 to 0.2.0</li>
 </ul>
-<h3><a class="header" href="#fixed-22" id="fixed-22">Fixed</a></h3>
+<h3 id="fixed-31"><a class="header" href="#fixed-31">Fixed</a></h3>
 <ul>
 <li>🐛  (windows) try to fix bug when git clone</li>
 <li>🐛  detection of file to &quot;Ignores&quot; is done during the scan</li>
@@ -1197,7 +1649,7 @@
 <li>🐛  fix due to change in api of dialoguer</li>
 <li>🐛  fix file order priority</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-30" id="miscellaneous-30">Miscellaneous</a></h3>
+<h3 id="miscellaneous-47"><a class="header" href="#miscellaneous-47">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📦  (cargo) clean travis info</li>
@@ -1207,20 +1659,20 @@
 <li>🚧  prepare to support several form of template uri</li>
 </ul>
 <p><a name="0.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-030" id="version-030">Version 0.3.0</a></h2>
-<h3><a class="header" href="#added-16" id="added-16">Added</a></h3>
+<h2 id="version-030"><a class="header" href="#version-030">Version 0.3.0</a></h2>
+<h3 id="added-22"><a class="header" href="#added-22">Added</a></h3>
 <ul>
 <li>✨  (cli) add experimental flags to always accept default value for variables</li>
 <li>✨  (cli) add flags to control confirmation (always, never, auto)</li>
 <li>✨  (cfg) allow to ignore (glob) file and directy</li>
 <li>✅  (e2e) add 2 tests to show every features (need some improvement)</li>
 </ul>
-<h3><a class="header" href="#changed-30" id="changed-30">Changed</a></h3>
+<h3 id="changed-44"><a class="header" href="#changed-44">Changed</a></h3>
 <ul>
 <li>⬆️  Bump walkdir from 2.2.6 to 2.2.7</li>
 <li>♻️  (cli) move Cmd into Ctx.cmd_opt: CmdOpt</li>
 </ul>
-<h3><a class="header" href="#fixed-23" id="fixed-23">Fixed</a></h3>
+<h3 id="fixed-32"><a class="header" href="#fixed-32">Fixed</a></h3>
 <ul>
 <li>🐛  fixe processing order of files</li>
 <li>🐛  (render) use the rendered path for *.ffizer.hbs</li>
@@ -1228,18 +1680,18 @@
 <li>✏️  (README) fix title level</li>
 <li>🐛  (travis) ‘cargo publish’ doesn’t work on windows</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-31" id="miscellaneous-31">Miscellaneous</a></h3>
+<h3 id="miscellaneous-48"><a class="header" href="#miscellaneous-48">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📝  (README) add TOC</li>
 </ul>
 <p><a name="0.2.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-021" id="version-021">Version 0.2.1</a></h2>
-<h3><a class="header" href="#fixed-24" id="fixed-24">Fixed</a></h3>
+<h2 id="version-021"><a class="header" href="#version-021">Version 0.2.1</a></h2>
+<h3 id="fixed-33"><a class="header" href="#fixed-33">Fixed</a></h3>
 <ul>
 <li>🐛  (cargo) expected at most 5 keywords per crate</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-32" id="miscellaneous-32">Miscellaneous</a></h3>
+<h3 id="miscellaneous-49"><a class="header" href="#miscellaneous-49">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📝  (README) update badges</li>
@@ -1247,44 +1699,44 @@
 <li>📦  (travis) generate archive without target path</li>
 </ul>
 <p><a name="0.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-020" id="version-020">Version 0.2.0</a></h2>
-<h3><a class="header" href="#added-17" id="added-17">Added</a></h3>
+<h2 id="version-020"><a class="header" href="#version-020">Version 0.2.0</a></h2>
+<h3 id="added-23"><a class="header" href="#added-23">Added</a></h3>
 <ul>
 <li>✨  (render) file name and folder name could be rendered</li>
 <li>👷  (appveyor) remove appveyor as CI</li>
 <li>👷  (travis) try a workaround to deploy windows (2)</li>
 </ul>
-<h3><a class="header" href="#changed-31" id="changed-31">Changed</a></h3>
+<h3 id="changed-45"><a class="header" href="#changed-45">Changed</a></h3>
 <ul>
 <li>♻️  (error) use failure to manage the error</li>
 </ul>
-<h3><a class="header" href="#fixed-25" id="fixed-25">Fixed</a></h3>
+<h3 id="fixed-34"><a class="header" href="#fixed-34">Fixed</a></h3>
 <ul>
 <li>✏️  (README) wrong project name, reformulate</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-33" id="miscellaneous-33">Miscellaneous</a></h3>
+<h3 id="miscellaneous-50"><a class="header" href="#miscellaneous-50">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>🚧  (render) basic implementation to support *.ffizer.hbs</li>
 <li>🚧  read a configuration file (.ffizer.yaml) from the template folder</li>
 </ul>
 <p><a name="0.1.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-012" id="version-012">Version 0.1.2</a></h2>
-<h3><a class="header" href="#added-18" id="added-18">Added</a></h3>
+<h2 id="version-012"><a class="header" href="#version-012">Version 0.1.2</a></h2>
+<h3 id="added-24"><a class="header" href="#added-24">Added</a></h3>
 <ul>
 <li>👷  (travis) try a workaround to deploy windows (3)</li>
 <li>👷  (travis) try a workaround to deploy windows (2)</li>
 </ul>
 <p><a name="0.1.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-011" id="version-011">Version 0.1.1</a></h2>
-<h3><a class="header" href="#added-19" id="added-19">Added</a></h3>
+<h2 id="version-011"><a class="header" href="#version-011">Version 0.1.1</a></h2>
+<h3 id="added-25"><a class="header" href="#added-25">Added</a></h3>
 <ul>
 <li>👷  (travis) try a workaround to deploy windows</li>
 <li>👷  (travis) fix the api_key</li>
 </ul>
 <p><a name="0.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-010" id="version-010">Version 0.1.0</a></h2>
-<h3><a class="header" href="#added-20" id="added-20">Added</a></h3>
+<h2 id="version-010"><a class="header" href="#version-010">Version 0.1.0</a></h2>
+<h3 id="added-26"><a class="header" href="#added-26">Added</a></h3>
 <ul>
 <li>👷  (travis) try to add windows support</li>
 <li>✨  (cli) ask confirmation before apply plan</li>
@@ -1295,19 +1747,19 @@
 <li>✨  (main) setup of log + cli arguments read</li>
 <li>🎉  init</li>
 </ul>
-<h3><a class="header" href="#changed-32" id="changed-32">Changed</a></h3>
+<h3 id="changed-46"><a class="header" href="#changed-46">Changed</a></h3>
 <ul>
 <li>💄  (cli) add a progress bar for the execution (experimental)</li>
 <li>🚸  (cli) complete description</li>
 <li>🎨  (main) main is a wrapper for the lib</li>
 <li>🚚  rename project from fgen to ffizer fgen already exists</li>
 </ul>
-<h3><a class="header" href="#fixed-26" id="fixed-26">Fixed</a></h3>
+<h3 id="fixed-35"><a class="header" href="#fixed-35">Fixed</a></h3>
 <ul>
 <li>🐛  (README) fix appveyor badge</li>
 <li>🐛  (cli) use flags instead of args, correct description</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-34" id="miscellaneous-34">Miscellaneous</a></h3>
+<h3 id="miscellaneous-51"><a class="header" href="#miscellaneous-51">Miscellaneous</a></h3>
 <ul>
 <li>📦  (cargo) prepare info for publishing</li>
 <li>📝  (README) udapte</li>
@@ -1328,13 +1780,10 @@
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="editors_setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -1342,45 +1791,50 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="editors_setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
             </nav>
 
         </div>
 
-        
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
 
-        
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
-        
 
-        
+
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
 
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        <script type="text/javascript" src="mermaid-init.js"></script>
 
-        
 
     </body>
 </html>

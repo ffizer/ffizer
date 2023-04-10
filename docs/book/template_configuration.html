@@ -4,35 +4,24 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Configuration - ffizer</title>
-        
-        
 
 
         <!-- Custom HTML head -->
         
-
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        
         <link rel="icon" href="favicon.svg">
-        
-        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        
         <link rel="stylesheet" href="css/print.css" media="print">
-        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        
         <link rel="stylesheet" href="fonts/fonts.css">
-        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -40,9 +29,10 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
+        <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
-        
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -101,8 +91,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -117,30 +106,29 @@
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">ffizer</h1>
 
                     <div class="right-buttons">
-                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -148,7 +136,6 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
@@ -161,7 +148,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
+                        <h1 id="configuration"><a class="header" href="#configuration">Configuration</a></h1>
 <p>The configuration is:</p>
 <ul>
 <li>optional</li>
@@ -175,8 +162,8 @@
 ignores:
   - .git # exclude .git of the template host
 </code></pre>
-<h2><a class="header" href="#sections" id="sections">Sections</a></h2>
-<h3><a class="header" href="#variables" id="variables">variables</a></h3>
+<h2 id="sections"><a class="header" href="#sections">Sections</a></h2>
+<h3 id="variables"><a class="header" href="#variables">variables</a></h3>
 <p>List the variables usable into the <code>.ffizer.hbs</code> template file.
 Variables are defined by:</p>
 <ul>
@@ -217,14 +204,14 @@ Variables are defined by:</p>
 <pre><code class="language-yaml">  - name: foo
     default_value: &quot;&quot;
 </code></pre>
-<h3><a class="header" href="#ignores" id="ignores">ignores</a></h3>
+<h3 id="ignores"><a class="header" href="#ignores">ignores</a></h3>
 <p>List patterns of file path (relative to root of the template) that should be ignored when search for file to be copied or rendered from the template into the destination.</p>
 <p>To ignore .git folder from the template (useful for template hosted on root of a git repository)</p>
 <pre><code class="language-yaml">ignores:
   - .git/*
   - .git # exclude .git of the template host
 </code></pre>
-<h3><a class="header" href="#imports" id="imports">imports</a></h3>
+<h3 id="imports"><a class="header" href="#imports">imports</a></h3>
 <p>It is possible to imports templates into a template. It is useful to reuse templates or to compose template from other template.</p>
 <p>The <code>imports</code> section is a list of templates:</p>
 <pre><code class="language-yaml">imports:
@@ -249,7 +236,7 @@ imports:
     rev: &quot;master&quot;
     subfolder: &quot;gitignore_io&quot;
 </code></pre>
-<h3><a class="header" href="#use_template_dir" id="use_template_dir">use_template_dir</a></h3>
+<h3 id="use_template_dir"><a class="header" href="#use_template_dir">use_template_dir</a></h3>
 <p>By default, content of the template is mixed with its optional metadata (<code>.ffizer.yaml</code>, ...). So it means that if you have a <code>README.md</code> both as the template description and as template content (a README.md to generate), you have to follow this layout:</p>
 <pre><code class="language-txt">+- README.md.ffizer.hbs (or README.md.ffizer.raw)
 +- README.md
@@ -273,17 +260,13 @@ imports:
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="how_to.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
                             <a rel="next" href="schema_of_ffizer_yaml.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -291,49 +274,53 @@ imports:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="how_to.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
                     <a rel="next" href="schema_of_ffizer_yaml.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
 
-        
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
-        
 
-        
+
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
 
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        <script type="text/javascript" src="mermaid-init.js"></script>
 
-        
 
     </body>
 </html>

@@ -4,35 +4,24 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Built-in Functions - ffizer</title>
-        
-        
 
 
         <!-- Custom HTML head -->
         
-
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        
         <link rel="icon" href="favicon.svg">
-        
-        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        
         <link rel="stylesheet" href="css/print.css" media="print">
-        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        
         <link rel="stylesheet" href="fonts/fonts.css">
-        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -40,9 +29,10 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
+        <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
-        
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -101,8 +91,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -117,30 +106,29 @@
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">ffizer</h1>
 
                     <div class="right-buttons">
-                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -148,7 +136,6 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
@@ -161,7 +148,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#template-helpers--functions" id="template-helpers--functions">Template Helpers / Functions</a></h1>
+                        <h1 id="template-helpers--functions"><a class="header" href="#template-helpers--functions">Template Helpers / Functions <!-- omit in toc --></a></h1>
 <p>Helpers extend the template to generate or to transform content.</p>
 <p><strong>The helpers from <a href="https://crates.io/crates/handlebars_misc_helpers">handlebars_misc_helpers</a> are included. This page is a copy of <a href="https://github.com/davidB/handlebars_misc_helpers/blob/master/README.md">handlebars_misc_helpers/README.md at master · davidB/handlebars_misc_helpers</a>, and it can be can be out-of-date.</strong></p>
 <p>Few helpers are included, but if you need more helpers, ask via an issue or a PR.</p>
@@ -177,8 +164,23 @@
 // -&gt; 2018
 </code></pre>
 <p>see <a href="https://handlebarsjs.com/">Handlebars templating language</a></p>
-<h2><a class="header" href="#string-transformation" id="string-transformation">String transformation</a></h2>
-<table><thead><tr><th>helper signature</th><th>usage sample</th><th>sample out</th></tr></thead><tbody>
+<ul>
+<li><a href="#string-transformation">String transformation</a></li>
+<li><a href="#http-content">Http content</a></li>
+<li><a href="#path-extraction">Path extraction</a></li>
+<li><a href="#file">File</a></li>
+<li><a href="#environment-variable">Environment variable</a></li>
+<li><a href="#json--yaml--toml">JSON &amp; YAML &amp; TOML</a>
+<ul>
+<li><a href="#helpers">Helpers</a></li>
+<li><a href="#blocks">Blocks</a></li>
+<li><a href="#edition-via-jsonnet">Edition via jsonnet</a></li>
+</ul>
+</li>
+<li><a href="#assign">Assign</a></li>
+</ul>
+<h2 id="string-transformation"><a class="header" href="#string-transformation">String transformation</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>helper signature</th><th>usage sample</th><th>sample out</th></tr></thead><tbody>
 <tr><td><code>replace s:String from:String to:String</code></td><td><code>replace &quot;Hello old&quot; &quot;old&quot; &quot;new&quot;</code></td><td><code>&quot;Hello new&quot;</code></td></tr>
 <tr><td><code>to_lower_case s:String</code></td><td><code>to_lower_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;hello foo-bars&quot;</code></td></tr>
 <tr><td><code>to_upper_case s:String</code></td><td><code>to_upper_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;HELLO FOO-BARS&quot;</code></td></tr>
@@ -201,31 +203,36 @@
 <tr><td><code>enquote symbol:String s:String</code></td><td><code>enquote &quot;&quot; &quot;foo&quot;</code></td><td><code>&quot;\&quot;foo\&quot;&quot;</code></td></tr>
 <tr><td><code>first_non_empty s:String+</code></td><td><code>first_non_empty &quot;&quot; null &quot;foo&quot; &quot;bar&quot;</code></td><td><code>&quot;foo&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#http-content" id="http-content">Http content</a></h2>
+</div>
+<h2 id="http-content"><a class="header" href="#http-content">Http content</a></h2>
 <p>Helper able to render body response from an http request.</p>
-<table><thead><tr><th>helper signature</th><th>usage sample</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>helper signature</th><th>usage sample</th></tr></thead><tbody>
 <tr><td><code>http_get url:String</code></td><td><code>http_get &quot;http://hello/...&quot;</code></td></tr>
 <tr><td><code>gitignore_io templates:String</code></td><td><code>gitignore_io &quot;rust,visualstudiocode&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#path-extraction" id="path-extraction">Path extraction</a></h2>
+</div>
+<h2 id="path-extraction"><a class="header" href="#path-extraction">Path extraction</a></h2>
 <p>Helper able to extract (or transform) path (defined as string).</p>
 <p>for the same input: <code>&quot;/hello/bar/foo.txt&quot;</code></p>
-<table><thead><tr><th>helper_name</th><th>sample output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>helper_name</th><th>sample output</th></tr></thead><tbody>
 <tr><td>file_name</td><td><code>&quot;foo.txt&quot;</code></td></tr>
 <tr><td>parent</td><td><code>&quot;/hello/bar&quot;</code></td></tr>
 <tr><td>extension</td><td><code>&quot;txt&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#file" id="file">File</a></h2>
+</div>
+<h2 id="file"><a class="header" href="#file">File</a></h2>
 <p>Helper to read file content.</p>
-<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
 <tr><td><code>{{ read_to_str &quot;/foo/bar&quot; }}</code></td><td>content of file <code>/foo/bar</code></td></tr>
 <tr><td><code>{{ read_to_str &quot;file/does/not/exist&quot; }}</code></td><td>empty string</td></tr>
 </tbody></table>
-<h2><a class="header" href="#environment-variable" id="environment-variable">Environment variable</a></h2>
+</div>
+<h2 id="environment-variable"><a class="header" href="#environment-variable">Environment variable</a></h2>
 <p>Helper able to get environment variables.</p>
-<table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
 <tr><td>env_var</td><td><code>env_var &quot;HOME&quot;</code></td></tr>
 </tbody></table>
+</div>
 <p>Specials environment variables are predefined (some of them come from <a href="https://doc.rust-lang.org/std/env/consts/index.html"><code>std::env::consts</code> - Rust</a>):</p>
 <table>
     <thead>
@@ -298,8 +305,8 @@
         </tr>
     </tbody>
 </table>
-<h2><a class="header" href="#json--yaml--toml" id="json--yaml--toml">JSON &amp; YAML &amp; TOML</a></h2>
-<h3><a class="header" href="#helpers" id="helpers">Helpers</a></h3>
+<h2 id="json--yaml--toml"><a class="header" href="#json--yaml--toml">JSON &amp; YAML &amp; TOML</a></h2>
+<h3 id="helpers"><a class="header" href="#helpers">Helpers</a></h3>
 <ul>
 <li><code>json_query query:String data:Json</code>: Helper able to extract information from json using <a href="http://jmespath.org/">JMESPath</a> syntax for <code>query</code>.</li>
 <li><code>json_str_query query:String data:String</code>: Helper able to extract information from json using <a href="http://jmespath.org/">JMESPath</a> syntax for <code>query</code>, data follows the requested <code>format</code>.</li>
@@ -314,7 +321,7 @@
 <li><code>&quot;toml&quot;</code></li>
 <li><code>&quot;toml_pretty&quot;</code></li>
 </ul>
-<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
 <tr><td><code>{{ json_query &quot;foo&quot; {} }}</code></td><td>``</td></tr>
 <tr><td><code>{{ json_to_str ( json_query &quot;foo&quot; {&quot;foo&quot;:{&quot;bar&quot;:{&quot;baz&quot;:true}}} ) }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
 <tr><td><code>{{ json_to_str ( json_query &quot;foo&quot; (str_to_json &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; ) ) }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
@@ -323,7 +330,8 @@
 <tr><td><code>{{ json_str_query &quot;foo&quot; &quot;foo:\n bar:\n  baz: true\n&quot; format=&quot;yaml&quot;}}</code></td><td><code>bar:\n  baz: true\n</code></td></tr>
 <tr><td><code>{{ json_to_str ( str_to_json &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; format=&quot;json&quot;) format=&quot;yaml&quot;}}</code></td><td><code>foo:\n  bar:\n    baz: true\n</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#blocks" id="blocks">Blocks</a></h3>
+</div>
+<h3 id="blocks"><a class="header" href="#blocks">Blocks</a></h3>
 <table>
 <tr>
 <td><pre><code>{{#from_json format="toml"}}
@@ -378,7 +386,7 @@ foo:
 </tr>
 </table>
 <p>Note: YAML &amp; TOML content are used as input and output format for json data. So capabilities are limited to what json support (eg. no date-time type like in TOML).</p>
-<h3><a class="header" href="#edition-via-jsonnet" id="edition-via-jsonnet">Edition via jsonnet</a></h3>
+<h3 id="edition-via-jsonnet"><a class="header" href="#edition-via-jsonnet">Edition via jsonnet</a></h3>
 <p>For more advanced edition of json, you can use jsonnet.</p>
 <blockquote>
 <p>A data templating language for app and tool developers</p>
@@ -411,31 +419,27 @@ v {
 }</code></pre></td>
 </tr>
 </table>
-<h2><a class="header" href="#assign" id="assign">Assign</a></h2>
+<h2 id="assign"><a class="header" href="#assign">Assign</a></h2>
 <p>Helper able to assign (to set) a variable to use later in the template.</p>
-<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
 <tr><td><code>{{ assign &quot;foo&quot; &quot;{}&quot; }}</code></td><td>``</td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; &quot;{}&quot; }}{{ foo }}</code></td><td><code>{}</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; &quot;hello world&quot; }}{{ foo }}</code></td><td><code>hello world</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; {} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; {&quot;bar&quot;: 33} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 </tbody></table>
-
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="builtin_variables.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
                             <a rel="next" href="editors_setup.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -443,49 +447,53 @@ v {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="builtin_variables.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
                     <a rel="next" href="editors_setup.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
 
-        
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
-        
 
-        
+
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
 
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        <script type="text/javascript" src="mermaid-init.js"></script>
 
-        
 
     </body>
 </html>

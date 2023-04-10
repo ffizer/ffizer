@@ -5,7 +5,7 @@ src = "src"
 title = "ffizer"
 
 [rust]
-edition = "2018"
+edition = "2021"
 
 [build]
 create-missing = false
@@ -13,3 +13,25 @@ create-missing = false
 [preprocessor.index]
 
 [preprocessor.links]
+
+[preprocessor.catppuccin]
+assets_version = "0.1.1" # DO NOT EDIT: Managed by `mdbook-catppuccin install`
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "2.0.0"    # do not edit: managed by `mdbook-admonish install`
+on_failure = "bail"
+after = ["links"]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output]
+
+[output.html]
+additional-css = [
+    "./theme/catppuccin.css",
+    "./theme/catppuccin-highlight.css",
+    "./theme/mdbook-admonish.css",
+]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]

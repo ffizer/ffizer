@@ -115,9 +115,26 @@ script = ['''
   gitmoji-changelog -r x.y.z-dev -o CHANGELOG.md .
   ''']
 
+[tasks.install-mdbook]
+install_crate = { crate_name = "mdbook", binary = "mdbook", test_arg = "--help" }
+
+[tasks.install-mdbook-mermaid]
+install_crate = "mdbook-mermaid"
+
+[tasks.install-mdbook-admonish]
+install_crate = "mdbook-admonish"
+
+[tasks.install-mdbook-catppuccin]
+install_crate = "mdbook-catppuccin"
+
 [tasks.update-book]
 category = "Publish"
-install_crate = { crate_name = "mdbook", binary = "mdbook", test_arg = "--help" }
+dependencies = [
+  "install-mdbook",
+  "install-mdbook-catppuccin",
+  "install-mdbook-admonish",
+  "install-mdbook-mermaid",
+]
 script = ['''
   cd docs
   mdbook clean

@@ -4,37 +4,25 @@
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>ffizer</title>
-        
         <meta name="robots" content="noindex" />
-        
-        
 
 
         <!-- Custom HTML head -->
         
-
-
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        
         <link rel="icon" href="favicon.svg">
-        
-        
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
-        
         <link rel="stylesheet" href="css/print.css" media="print">
-        
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        
         <link rel="stylesheet" href="fonts/fonts.css">
-        
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -42,9 +30,10 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
+        <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
-        
     </head>
     <body>
         <!-- Provide site root to javascript -->
@@ -103,8 +92,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar-hover-placeholder"></div>
+                                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -119,30 +107,29 @@
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">ffizer</h1>
 
                     <div class="right-buttons">
-                        
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -150,7 +137,6 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
@@ -163,7 +149,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#img-srchttpsrawgithubusercontentcomffizerffizermasterdocssrcimageslogosvgrawtrue-altffizer-----omit-in-toc---" id="img-srchttpsrawgithubusercontentcomffizerffizermasterdocssrcimageslogosvgrawtrue-altffizer-----omit-in-toc---"><img src="https://raw.githubusercontent.com/ffizer/ffizer/master/docs/src/images/logo.svg?raw=true" alt="ffizer" /> <!-- omit in toc --></a></h1>
+                        <h1 id=""><a class="header" href="#"><img src="https://raw.githubusercontent.com/ffizer/ffizer/master/docs/src/images/logo.svg?raw=true" alt="ffizer" /> <!-- omit in toc --></a></h1>
 <!-- copy badges from:
 - [`repostatus.org`](https://www.repostatus.org/#active)
 - [`Shields.io`: Quality metadata badges for open source projects](https://shields.io/#/)
@@ -200,7 +186,7 @@
 <li><a href="overview.html#few-templates">Few templates</a></li>
 <li><a href="overview.html#build">Build</a></li>
 </ul>
-<h2><a class="header" href="#features" id="features">Features</a></h2>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
 <li><em>Create or update</em> files and folder from one (or several) template(s).</li>
 <li>A native executable (cli)
@@ -248,73 +234,68 @@
 </ul>
 <p><a href="https://github.com/ffizer/ffizer/issues/">Suggestions are welcomes</a> ;-)</p>
 <p>A list of alternatives is available on the <a href="https://github.com/ffizer/ffizer/wiki/Alternatives">wiki</a>, feel free to complete / correct.</p>
-<h2><a class="header" href="#usages" id="usages">Usages</a></h2>
-<h3><a class="header" href="#install" id="install">Install</a></h3>
+<h2 id="usages"><a class="header" href="#usages">Usages</a></h2>
+<h3 id="install"><a class="header" href="#install">Install</a></h3>
 <pre><code class="language-sh">curl https://raw.githubusercontent.com/ffizer/ffizer/master/scripts/getLatest.sh | bash
 </code></pre>
 <p>Or download the binary for your platform from <a href="https://github.com/ffizer/ffizer/releases">github releases</a>, then un-archive it and place it your PATH.</p>
-<h4><a class="header" href="#via-homebrew-macos--linux" id="via-homebrew-macos--linux">via homebrew (MacOs &amp; Linux)</a></h4>
-<pre><code class="language-sh">brew tap ffizer/ffizer
-brew install ffizer-bin
+<h4 id="via-homebrew-macos--linux"><a class="header" href="#via-homebrew-macos--linux">via homebrew (MacOs &amp; Linux)</a></h4>
+<pre><code class="language-sh">brew install ffizer/ffizer/ffizer-bin
 ffizer upgrade
 </code></pre>
-<h4><a class="header" href="#via-cargo" id="via-cargo">via cargo</a></h4>
-<pre><code class="language-sh">cargo install ffizer --force --features cli
-</code></pre>
-<h3><a class="header" href="#run" id="run">Run</a></h3>
-<pre><code class="language-txt">➜  ffizer --help
+<h4 id="via-cargo"><a class="header" href="#via-cargo">via cargo</a></h4>
+<pre><code class="language-sh"># install pre-build binary via cargo-binstall
+cargo binstall ffizer
 
-ffizer 2.1.0
-https://github.com/ffizer/ffizer
+# install from source
+cargo install ffizer --force --features cli
+</code></pre>
+<h3 id="run"><a class="header" href="#run">Run</a></h3>
+<pre><code class="language-txt">❯ ffizer --help
+
 ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)
 
-USAGE:
-    ffizer [FLAGS] &lt;SUBCOMMAND&gt;
+Usage: ffizer [OPTIONS] &lt;COMMAND&gt;
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-    -v, --verbose    Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+Commands:
+  apply             Apply a template into a target directory
+  upgrade           Self upgrade ffizer executable
+  inspect           Inspect configuration, caches,... (wip)
+  show-json-schema  Show the json schema of the .ffizer.yaml files
+  test-samples      test a template against its samples
+  help              Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    apply               Apply a template into a target directory
-    help                Prints this message or the help of the given subcommand(s)
-    inspect             Inspect configuration, caches,... (wip)
-    show-json-schema    Show the json schema of the .ffizer.yaml files
-    test-samples        test a template against its samples
-    upgrade             Self upgrade ffizer executable
+Options:
+  -v, --verbose...  Verbose mode (-v, -vv (very verbose / level debug), -vvv) print on stderr
+  -h, --help        Print help information
+  -V, --version     Print version information
+
+https://ffizer.github.io/ffizer/book/
 </code></pre>
-<h4><a class="header" href="#self-upgrade-the-executable" id="self-upgrade-the-executable">Self upgrade the executable</a></h4>
-<pre><code class="language-sh">➜  ffizer upgrade
+<h4 id="self-upgrade-the-executable"><a class="header" href="#self-upgrade-the-executable">Self upgrade the executable</a></h4>
+<pre><code class="language-sh">❯ ffizer upgrade
 </code></pre>
-<h4><a class="header" href="#apply-a-template-to-create-or-update" id="apply-a-template-to-create-or-update">Apply a template (to create or update)</a></h4>
-<pre><code class="language-sh">➜  ffizer apply --help
+<h4 id="apply-a-template-to-create-or-update"><a class="header" href="#apply-a-template-to-create-or-update">Apply a template (to create or update)</a></h4>
+<pre><code class="language-sh">❯ ffizer apply --help
 
-ffizer-apply 2.1.0
-https://github.com/ffizer/ffizer
 Apply a template into a target directory
 
-USAGE:
-    ffizer apply [FLAGS] [OPTIONS] --destination &lt;dst-folder&gt; --source &lt;uri&gt;
+Usage: ffizer apply [OPTIONS] --source &lt;URI&gt; --destination &lt;FOLDER&gt;
 
-FLAGS:
-    -h, --help              Prints help information
-    -y, --no-interaction    should not ask for confirmation (to use default value, to apply plan, to override, to run
-                            script,...)
-        --offline           in offline, only local templates or cached templates are used
+Options:
+      --confirm &lt;CONFIRM&gt;          ask for plan confirmation [default: Never] [possible values: auto, always, never]
+      --update-mode &lt;UPDATE_MODE&gt;  mode to update existing file [default: Ask] [possible values: ask, keep, override, update-as-remote, current-as-local, show-diff, merge]
+  -y, --no-interaction             should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
+      --offline                    in offline, only local templates or cached templates are used
+  -s, --source &lt;URI&gt;               uri / path of the template
+      --rev &lt;REV&gt;                  git revision of the template [default: master]
+      --source-subfolder &lt;FOLDER&gt;  path of the folder under the source uri to use for template
+  -d, --destination &lt;FOLDER&gt;       destination folder (created if doesn't exist)
+  -v, --variables &lt;KEY_VALUE&gt;      set variable's value from cli (&quot;key=value&quot;)
+  -h, --help                       Print help information
+  -V, --version                    Print version information
 
-OPTIONS:
-        --confirm &lt;confirm&gt;               ask for plan confirmation [default: Never]  [possible values:
-                                          Auto, Always, Never]
-    -d, --destination &lt;dst-folder&gt;        destination folder (created if doesn't exist)
-    -v, --variables &lt;key-value&gt;...        set variable's value from cli (&quot;key=value&quot;)
-        --rev &lt;rev&gt;                       git revision of the template [default: master]
-        --source-subfolder &lt;subfolder&gt;    path of the folder under the source uri to use for template
-        --update-mode &lt;update-mode&gt;       mode to update existing file [default: Ask]  [possible values:
-                                          Ask, Keep, Override, UpdateAsRemote,
-                                          CurrentAsLocal, ShowDiff, Merge]
-    -s, --source &lt;uri&gt;                    uri / path of the template
 </code></pre>
 <ul>
 <li>
@@ -329,29 +310,29 @@ OPTIONS:
 <p>output</p>
 <pre><code class="language-sh">Configure variables
 
-project_name: my_project
+✔ project_name · my-project
+✔ package_name · my_project
 
 
 Plan to execute
 
-  - mkdir &quot;my_project/&quot;
-  - mkdir &quot;my_project/dir_1&quot;
-  - copyraw &quot;my_project/dir_1/file_1_1.txt&quot;
-  - mkdir &quot;my_project/dir_2_my_project&quot;
-  - copyraw &quot;my_project/dir_2_my_project/file_1_2.txt&quot;
-  - copyraw &quot;my_project/file_1.txt&quot;
-  - copyrender &quot;my_project/file_2.txt&quot;
-  - keep &quot;my_project/file_2.txt&quot;
-  - copyrender &quot;my_project/file_3.txt&quot;
-  - copyraw &quot;my_project/file_4_my_project.txt&quot;
-  - copyrender &quot;my_project/file_5_my_project.txt&quot;
-  - copyraw &quot;my_project/file_6.hbs&quot;
+  - make dir        my_project
+  - make dir         ├─dir_1
+  - add file         │  └─file_1_1.txt
+  - make dir         ├─dir_2_my-project
+  - add file         │  └─file_1_2.txt
+  - add file         ├─file_1.txt
+  - add file         ├─file_2.txt
+  - add file         ├─file_3.txt
+  - add file         ├─file_4_my_project.txt
+  - add file         ├─file_5_my-project.txt
+  - add file         └─file_6.hbs
 </code></pre>
 </li>
 </ul>
-<h3><a class="header" href="#authoring-a-template" id="authoring-a-template">Authoring a template</a></h3>
+<h3 id="authoring-a-template"><a class="header" href="#authoring-a-template">Authoring a template</a></h3>
 <p>Start with <a href="https://ffizer.github.io/ffizer/book/authoring_tutorial.html">Template Authoring Tutorial</a></p>
-<h2><a class="header" href="#few-templates" id="few-templates">Few templates</a></h2>
+<h2 id="few-templates"><a class="header" href="#few-templates">Few templates</a></h2>
 <ul>
 <li>Any git repositories (in this case ffizer is like <code>git clone ... &amp;&amp; cd ... &amp;&amp; rm -Rf .git</code>)</li>
 <li>Any local folder (in this case ffizer is like <code>cp -R ... ...</code>)</li>
@@ -371,7 +352,7 @@ templates_default)
 </ul>
 </li>
 </ul>
-<h2><a class="header" href="#build" id="build">Build</a></h2>
+<h2 id="build"><a class="header" href="#build">Build</a></h2>
 <pre><code class="language-sh">cargo install cargo-make --force
 cargo make ci-flow
 </code></pre>
@@ -381,12 +362,12 @@ git add CHANGELOG.md
 git commit -m ':memo: (CHANGELOG) update'
 </code></pre>
 <p>Release a new version by bump <code>patch</code> (or <code>minor</code>or <code>major</code>)</p>
-<pre><code class="language-sh">cargo make publish -- patch --dry-run
-cargo make publish -- patch
+<pre><code class="language-sh">cargo make publish patch # dry-run
+cargo make publish --execute patch
 </code></pre>
-<h1><a class="header" href="#templates-authoring" id="templates-authoring">Templates Authoring</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="templates-authoring"><a class="header" href="#templates-authoring">Templates Authoring</a></h1>
 <p>The documentation is a <strong>Work In Progress</strong>, feel free to ask details, missing info or to submit content (via Pull Request).</p>
-<h2><a class="header" href="#some-templates" id="some-templates">Some templates</a></h2>
+<h2 id="some-templates"><a class="header" href="#some-templates">Some templates</a></h2>
 <ul>
 <li>An empty dir, but it generates an empty dir ;-)</li>
 <li>Any git repositories (in this case ffizer is like <code>git clone ... &amp;&amp; cd ... &amp;&amp; rm -Rf .git</code>)</li>
@@ -407,7 +388,7 @@ templates_default)
 </ul>
 </li>
 </ul>
-<h1><a class="header" href="#tutorial-how-to-create-a-template-for-ffizer----omit-in-toc---" id="tutorial-how-to-create-a-template-for-ffizer----omit-in-toc---">Tutorial: How to create a template for ffizer <!-- omit in toc --></a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tutorial-how-to-create-a-template-for-ffizer"><a class="header" href="#tutorial-how-to-create-a-template-for-ffizer">Tutorial: How to create a template for ffizer <!-- omit in toc --></a></h1>
 <ul>
 <li><a href="authoring_tutorial.html#begin-with-a-existing-sample">Begin with a existing sample</a></li>
 <li><a href="authoring_tutorial.html#clean-the-content-of-my-templates-folder">Clean the content of <code>my-templates</code> folder</a></li>
@@ -418,14 +399,12 @@ templates_default)
 <li><a href="authoring_tutorial.html#compose-with-an-external-template">Compose with an external template</a></li>
 <li><a href="authoring_tutorial.html#next">Next</a></li>
 </ul>
-<h2><a class="header" href="#begin-with-a-existing-sample" id="begin-with-a-existing-sample">Begin with a existing sample</a></h2>
-<p>Create the folder for the template by copying the existing folder (project)
-that you would like to generate with the future template.</p>
+<h2 id="begin-with-a-existing-sample"><a class="header" href="#begin-with-a-existing-sample">Begin with a existing sample</a></h2>
+<p>Create the folder for the template by copying the existing folder (project) that you would like to generate with the future template.</p>
 <pre><code class="language-sh">cp -R my-existing-project my-template
 cd my-template
 </code></pre>
-<p>If you don't have an existing sample you can start with the following code,
-just to have something 😉.</p>
+<p>If you don't have an existing sample you can start with the following code, just to have something 😉.</p>
 <pre><code class="language-sh">mkdir my-template
 cd my-template
 
@@ -433,15 +412,13 @@ cat &gt;README.md &lt;&lt;EOF
 Hello World
 EOF
 </code></pre>
-<h2><a class="header" href="#clean-the-content-of-my-templates-folder" id="clean-the-content-of-my-templates-folder">Clean the content of <code>my-templates</code> folder</a></h2>
+<h2 id="clean-the-content-of-my-templates-folder"><a class="header" href="#clean-the-content-of-my-templates-folder">Clean the content of <code>my-templates</code> folder</a></h2>
 <ul>
 <li>remove files and folder that you don't want to be part of the template</li>
 <li>maybe add  missing files and folder</li>
 </ul>
-<h2><a class="header" href="#test-the-template" id="test-the-template">Test the template</a></h2>
-<p>At this point you have a valid template but it's also a sample of what the
-template can produce. Use it to create a sample that can show a possible output,
-and a test to validate what ffizer + <code>my-template</code> can generate.</p>
+<h2 id="test-the-template"><a class="header" href="#test-the-template">Test the template</a></h2>
+<p>At this point you have a valid template but it's also a sample of what the template can produce. Use it to create a sample that can show a possible output, and a test to validate what ffizer + <code>my-template</code> can generate.</p>
 <pre><code class="language-sh"># create the folder for samples (the name of folder should be `.ffizer.samples.d`)
 mkdir .ffizer.samples.d
 
@@ -453,11 +430,10 @@ rsync -rv --exclude=.ffizer.samples.d . .ffizer.samples.d/my-sample.expected
 # from `my-templates`
 ffizer test-samples --source .
 </code></pre>
-<h2><a class="header" href="#enable-git-versionning" id="enable-git-versionning">Enable git versionning</a></h2>
+<h2 id="enable-git-versionning"><a class="header" href="#enable-git-versionning">Enable git versionning</a></h2>
 <pre><code class="language-sh">git init
 </code></pre>
-<p>A new folder <code>.git</code> was created and it should not be part of the template.
-To ignore this folder, you need to add a configuration for ffizer with this information.</p>
+<p>A new folder <code>.git</code> was created and it should not be part of the template. To ignore this folder, you need to add a configuration for ffizer with this information.</p>
 <pre><code class="language-sh">cat &gt;.ffizer.yaml &lt;&lt;EOF
 ignores:
   - .git # exclude .git of the template host
@@ -465,17 +441,13 @@ ignores:
 EOF
 </code></pre>
 <p><em>An other alternatives would be to move the template, but not the sample under a <code>template</code> folder and to configure <code>use_template_dir: true</code></em></p>
-<p>Now you can add test again, and commit.</p>
+<p>Now you can test again, and commit.</p>
 <pre><code class="language-sh">ffizer test-samples --source .
 git add .
 git commit -m &quot;:tada: initialize the template&quot;
 </code></pre>
-<h2><a class="header" href="#publish-on-remote-git-repository" id="publish-on-remote-git-repository">Publish on remote git repository</a></h2>
-<p>ffizer support templates hosted on local file system or on remote git repositories
-(accessible via ssh or https). To share your template you can create and push
-your local repository to your favorite host (github, gitlab, bitbucket,...)
-following the same workflow than for any git repository
-(instructions are provided by the hosting service).</p>
+<h2 id="publish-on-remote-git-repository"><a class="header" href="#publish-on-remote-git-repository">Publish on remote git repository</a></h2>
+<p>ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,...) following the same workflow than for any git repository (instructions are provided by the hosting service).</p>
 <pre><code class="language-sh"># adapt the following parameters for your case
 git remote add origin git@github.com:xxxx/my_template.git
 git push -u origin main
@@ -483,12 +455,8 @@ git push -u origin main
 # you can also test a remote template
 ffizer test-samples --source git@github.com:xxxx/my_template.git
 </code></pre>
-<h2><a class="header" href="#parametrize-the-template-with-variables" id="parametrize-the-template-with-variables">Parametrize the template with variables</a></h2>
-<p>The interest of a template is to be more than a <code>cp -R</code>, or a <code>git clone</code>.
-The first expected feature is to be able to render some parametrized content.
-ffizer renders only files with <code>.ffizer.hbs</code> as part of the filename (it could be at end or before final extension),
-the part <code>.ffizer.hbs</code> will be removed from the final name after rendering.
-<a href="https://handlebarsjs.com/guide/">Handlebars</a> syntax is used for template string.</p>
+<h2 id="parametrize-the-template-with-variables"><a class="header" href="#parametrize-the-template-with-variables">Parametrize the template with variables</a></h2>
+<p>The interest of a template is to be more than a <code>cp -R</code>, or a <code>git clone</code>. The first expected feature is to be able to render some parametrized content. ffizer renders only files with <code>.ffizer.hbs</code> as part of the filename (it could be at end or before final extension), the part <code>.ffizer.hbs</code> will be removed from the final name after rendering. <a href="https://handlebarsjs.com/guide/">Handlebars</a> syntax is used for template string.</p>
 <pre><code class="language-sh"># adapt to your case
 mv README.md README.ffizer.hbs.md
 cat &gt;README.ffizer.hbs.md &lt;&lt;EOF
@@ -565,7 +533,7 @@ ffizer test-samples --source .
 </code></pre>
 <p>Test is back to OK, with your parametrized template.</p>
 <p>File with <code>.ffizer.hbs</code> are not the only place where you can use handlebars rendering. It can also be used in file or foldername (see <a href="./how_to.html">How to...</a>) and into some part of the configuration file <code>.ffizer.yaml</code> (see <a href="./template_configuration.html">Configuration</a>).</p>
-<h2><a class="header" href="#compose-with-an-external-template" id="compose-with-an-external-template">Compose with an external template</a></h2>
+<h2 id="compose-with-an-external-template"><a class="header" href="#compose-with-an-external-template">Compose with an external template</a></h2>
 <p>To Avoid to duplicate content and configuration between template, you can import the content of one or several other templates into your template. In this tutorial, you will add a template that generate <code>.gitignore</code> files from <code>.gitignore.io</code> (now branded as part of topcal).</p>
 <p>To that you should add a section <code>imports</code>:</p>
 <pre><code class="language-sh">cat &gt;.ffizer.yaml &lt;&lt;EOF
@@ -629,12 +597,8 @@ ffizer test-samples --source .
 <p>You can now remove the result of your previous manual run.</p>
 <pre><code class="language-sh">rm -Rf ../my-template-t*
 </code></pre>
-<h2><a class="header" href="#next" id="next">Next</a></h2>
-<p>It's the end of this tutorial but I hope not the end of your journey with ffizer.
-Now you know the basics to create, to test, to parametrize and to publish
-a template. You can take a look to existing templates and
-you can continue to read the ffizer's book, you could learn how to customize ask of value for variable, how to display selection,
-how to display a message, how to run command, how to read value of variable from existing file in the project,...</p>
+<h2 id="next"><a class="header" href="#next">Next</a></h2>
+<p>It's the end of this tutorial but I hope not the end of your journey with ffizer. Now you know the basics to create, to test, to parametrize and to publish a template. You can take a look to existing templates and you can continue to read the ffizer's book, you could learn how to customize ask of value for variable, how to display selection, how to display a message, how to run command, how to read value of variable from existing file in the project,...</p>
 <p>I forgot you can also continue to work with your current template:</p>
 <ul>
 <li>publish / share the new revision of your template</li>
@@ -644,7 +608,7 @@ how to display a message, how to run command, how to read value of variable from
 <li>improve the user experience on update</li>
 <li>...</li>
 </ul>
-<h1><a class="header" href="#how-to----omit-in-toc---" id="how-to----omit-in-toc---">How to... <!-- omit in toc --></a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="how-to"><a class="header" href="#how-to">How to... <!-- omit in toc --></a></h1>
 <ul>
 <li><a href="how_to.html#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></li>
 <li><a href="how_to.html#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></li>
@@ -657,7 +621,7 @@ how to display a message, how to run command, how to read value of variable from
 <li><a href="how_to.html#how-to-test-my-template-">How to test my template ?</a></li>
 <li><a href="how_to.html#how-to-host-template-on-github-">How to host template on github ?</a></li>
 </ul>
-<h2><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project-" id="how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></h2>
+<h2 id="how-to-name-a-folder-as-a-package-name-of-the-project-"><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></h2>
 <p>Define a <code>package_name</code> variable with a sensible value (eg snake case of the project name).</p>
 <pre><code class="language-yaml">variables:
   - name: project_name
@@ -668,13 +632,13 @@ how to display a message, how to run command, how to read value of variable from
 <p>And use it as name of the folder.</p>
 <pre><code class="language-sh">mkdir 'src/{{ package_name }}`
 </code></pre>
-<h2><a class="header" href="#how-to-display-a-message-after-filesgeneration-" id="how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></h2>
+<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - message: |
       Thanks for using my awesome template.
 </code></pre>
-<h2><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-" id="how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></h2>
+<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - cmd: |
@@ -692,7 +656,7 @@ how to display a message, how to run command, how to read value of variable from
 <li>Each <code>cmd</code> block is displayed to the user to confirm
 if (s)he accepts to run it or not.</li>
 </ul>
-<h2><a class="header" href="#how-to-import-a-sibling-template-" id="how-to-import-a-sibling-template-">How to import a sibling template ?</a></h2>
+<h2 id="how-to-import-a-sibling-template-"><a class="header" href="#how-to-import-a-sibling-template-">How to import a sibling template ?</a></h2>
 <p>If your git repository host several templates, one template can import a sibling
 template by specifying the absolute value or by using built-in variables</p>
 <pre><code class="language-yaml">imports:
@@ -700,13 +664,13 @@ template by specifying the absolute value or by using built-in variables</p>
     rev: &quot;{{ ffizer_src_rev }}&quot;
     subfolder: &quot;template_2&quot;
 </code></pre>
-<h2><a class="header" href="#how-to-update-existing-jsonyamltoml-content-" id="how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></h2>
-<h2><a class="header" href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-" id="how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></h2>
-<h2><a class="header" href="#how-to-made-ignore-files-conditional-" id="how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></h2>
-<h2><a class="header" href="#how-to-include-a-git-folder-as-part-of-the-template-" id="how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></h2>
-<h2><a class="header" href="#how-to-test-my-template-" id="how-to-test-my-template-">How to test my template ?</a></h2>
-<h2><a class="header" href="#how-to-host-template-on-github-" id="how-to-host-template-on-github-">How to host template on github ?</a></h2>
-<h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
+<h2 id="how-to-update-existing-jsonyamltoml-content-"><a class="header" href="#how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></h2>
+<h2 id="how-to-retrieve-value-from-existing-jsonyamltoml-content-"><a class="header" href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></h2>
+<h2 id="how-to-made-ignore-files-conditional-"><a class="header" href="#how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></h2>
+<h2 id="how-to-include-a-git-folder-as-part-of-the-template-"><a class="header" href="#how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></h2>
+<h2 id="how-to-test-my-template-"><a class="header" href="#how-to-test-my-template-">How to test my template ?</a></h2>
+<h2 id="how-to-host-template-on-github-"><a class="header" href="#how-to-host-template-on-github-">How to host template on github ?</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="configuration"><a class="header" href="#configuration">Configuration</a></h1>
 <p>The configuration is:</p>
 <ul>
 <li>optional</li>
@@ -720,8 +684,8 @@ template by specifying the absolute value or by using built-in variables</p>
 ignores:
   - .git # exclude .git of the template host
 </code></pre>
-<h2><a class="header" href="#sections" id="sections">Sections</a></h2>
-<h3><a class="header" href="#variables" id="variables">variables</a></h3>
+<h2 id="sections"><a class="header" href="#sections">Sections</a></h2>
+<h3 id="variables"><a class="header" href="#variables">variables</a></h3>
 <p>List the variables usable into the <code>.ffizer.hbs</code> template file.
 Variables are defined by:</p>
 <ul>
@@ -762,14 +726,14 @@ Variables are defined by:</p>
 <pre><code class="language-yaml">  - name: foo
     default_value: &quot;&quot;
 </code></pre>
-<h3><a class="header" href="#ignores" id="ignores">ignores</a></h3>
+<h3 id="ignores"><a class="header" href="#ignores">ignores</a></h3>
 <p>List patterns of file path (relative to root of the template) that should be ignored when search for file to be copied or rendered from the template into the destination.</p>
 <p>To ignore .git folder from the template (useful for template hosted on root of a git repository)</p>
 <pre><code class="language-yaml">ignores:
   - .git/*
   - .git # exclude .git of the template host
 </code></pre>
-<h3><a class="header" href="#imports" id="imports">imports</a></h3>
+<h3 id="imports"><a class="header" href="#imports">imports</a></h3>
 <p>It is possible to imports templates into a template. It is useful to reuse templates or to compose template from other template.</p>
 <p>The <code>imports</code> section is a list of templates:</p>
 <pre><code class="language-yaml">imports:
@@ -794,7 +758,7 @@ imports:
     rev: &quot;master&quot;
     subfolder: &quot;gitignore_io&quot;
 </code></pre>
-<h3><a class="header" href="#use_template_dir" id="use_template_dir">use_template_dir</a></h3>
+<h3 id="use_template_dir"><a class="header" href="#use_template_dir">use_template_dir</a></h3>
 <p>By default, content of the template is mixed with its optional metadata (<code>.ffizer.yaml</code>, ...). So it means that if you have a <code>README.md</code> both as the template description and as template content (a README.md to generate), you have to follow this layout:</p>
 <pre><code class="language-txt">+- README.md.ffizer.hbs (or README.md.ffizer.raw)
 +- README.md
@@ -813,167 +777,30 @@ imports:
 <p>And to add into <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">use_template_dir: true
 </code></pre>
-<h1><a class="header" href="#the-schema-of-ffizeryaml" id="the-schema-of-ffizeryaml">The Schema of .ffizer.yaml</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-schema-of-ffizeryaml"><a class="header" href="#the-schema-of-ffizeryaml">The Schema of .ffizer.yaml</a></h1>
 <p>The json schema of the <code>.ffizer.yaml</code> is defined in <a href="https://ffizer.github.io/ffizer/ffizer.schema.json">ffizer.schema.json</a>.
 The schema could be used for validation and auto completion into your editor.</p>
 <p>The schema is registered at <a href="https://www.schemastore.org/json/">JSON Schema Store</a>.</p>
 <p>The schema is also available via cli.</p>
 <pre><code class="language-sh">ffizer show-json-schema
 </code></pre>
-<pre><code class="language-json">{
-  &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
-  &quot;title&quot;: &quot;TemplateCfg&quot;,
-  &quot;type&quot;: &quot;object&quot;,
-  &quot;properties&quot;: {
-    &quot;ignores&quot;: {
-      &quot;description&quot;: &quot;list of path from the current template to ignore&quot;,
-      &quot;default&quot;: [],
-      &quot;type&quot;: &quot;array&quot;,
-      &quot;items&quot;: {
-        &quot;type&quot;: &quot;string&quot;
-      }
-    },
-    &quot;imports&quot;: {
-      &quot;description&quot;: &quot;list of template to import and to apply as part of this template&quot;,
-      &quot;default&quot;: [],
-      &quot;type&quot;: &quot;array&quot;,
-      &quot;items&quot;: {
-        &quot;$ref&quot;: &quot;#/definitions/ImportCfg&quot;
-      }
-    },
-    &quot;scripts&quot;: {
-      &quot;description&quot;: &quot;list of the scripts to apply at end of generation&quot;,
-      &quot;default&quot;: [],
-      &quot;type&quot;: &quot;array&quot;,
-      &quot;items&quot;: {
-        &quot;$ref&quot;: &quot;#/definitions/ScriptCfg&quot;
-      }
-    },
-    &quot;use_template_dir&quot;: {
-      &quot;description&quot;: &quot;set to true if the template content is under a `template` folder (not mixed with metadata)&quot;,
-      &quot;default&quot;: false,
-      &quot;type&quot;: &quot;boolean&quot;
-    },
-    &quot;variables&quot;: {
-      &quot;description&quot;: &quot;list of variables/parameters of the template&quot;,
-      &quot;default&quot;: [],
-      &quot;type&quot;: &quot;array&quot;,
-      &quot;items&quot;: {
-        &quot;$ref&quot;: &quot;#/definitions/VariableCfg&quot;
-      }
-    }
-  },
-  &quot;additionalProperties&quot;: false,
-  &quot;definitions&quot;: {
-    &quot;AnyValue&quot;: true,
-    &quot;ImportCfg&quot;: {
-      &quot;description&quot;: &quot;define a template layer to import&quot;,
-      &quot;type&quot;: &quot;object&quot;,
-      &quot;required&quot;: [
-        &quot;uri&quot;
-      ],
-      &quot;properties&quot;: {
-        &quot;rev&quot;: {
-          &quot;type&quot;: [
-            &quot;string&quot;,
-            &quot;null&quot;
-          ]
-        },
-        &quot;subfolder&quot;: {
-          &quot;type&quot;: [
-            &quot;string&quot;,
-            &quot;null&quot;
-          ]
-        },
-        &quot;uri&quot;: {
-          &quot;type&quot;: &quot;string&quot;
-        }
-      }
-    },
-    &quot;ScriptCfg&quot;: {
-      &quot;type&quot;: &quot;object&quot;,
-      &quot;properties&quot;: {
-        &quot;cmd&quot;: {
-          &quot;description&quot;: &quot;command to execute&quot;,
-          &quot;type&quot;: [
-            &quot;string&quot;,
-            &quot;null&quot;
-          ]
-        },
-        &quot;message&quot;: {
-          &quot;description&quot;: &quot;message to display&quot;,
-          &quot;type&quot;: [
-            &quot;string&quot;,
-            &quot;null&quot;
-          ]
-        }
-      }
-    },
-    &quot;VariableCfg&quot;: {
-      &quot;type&quot;: &quot;object&quot;,
-      &quot;required&quot;: [
-        &quot;name&quot;
-      ],
-      &quot;properties&quot;: {
-        &quot;ask&quot;: {
-          &quot;description&quot;: &quot;sentence to ask the value (default to the name on variable)&quot;,
-          &quot;type&quot;: [
-            &quot;string&quot;,
-            &quot;null&quot;
-          ]
-        },
-        &quot;default_value&quot;: {
-          &quot;description&quot;: &quot;optionnal default value&quot;,
-          &quot;anyOf&quot;: [
-            {
-              &quot;$ref&quot;: &quot;#/definitions/AnyValue&quot;
-            },
-            {
-              &quot;type&quot;: &quot;null&quot;
-            }
-          ]
-        },
-        &quot;hidden&quot;: {
-          &quot;description&quot;: &quot;is the variable hidden to the user (could be usefull to cache shared variable/data)&quot;,
-          &quot;type&quot;: [
-            &quot;string&quot;,
-            &quot;null&quot;
-          ]
-        },
-        &quot;name&quot;: {
-          &quot;description&quot;: &quot;name of variable used in the template&quot;,
-          &quot;type&quot;: &quot;string&quot;
-        },
-        &quot;select_in_values&quot;: {
-          &quot;description&quot;: &quot;if non-empty then the value should selected into the list of value&quot;,
-          &quot;anyOf&quot;: [
-            {
-              &quot;$ref&quot;: &quot;#/definitions/AnyValue&quot;
-            },
-            {
-              &quot;type&quot;: &quot;null&quot;
-            }
-          ]
-        }
-      }
-    }
-  }
-}
-</code></pre>
-<h1><a class="header" href="#the-predefined-variables" id="the-predefined-variables">The predefined variables</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-predefined-variables"><a class="header" href="#the-predefined-variables">The predefined variables</a></h1>
 <p>Some variables are predefined and they can be used into <code>.ffizer.yaml</code> into by example
 the <code>imports</code> section or <code>default_value</code> via handlebars expression.</p>
-<ul>
-<li><code>ffizer_dst_folder</code> contains the value from cli arg <code>--destination</code></li>
-<li><code>ffizer_src_rev</code> contains the value from cli arg <code>--rev</code></li>
-<li><code>ffizer_src_uri</code> contains the value from cli arg <code>--source</code></li>
-</ul>
+<div class="table-wrapper"><table><thead><tr><th>variable</th><th>value of</th></tr></thead><tbody>
+<tr><td><code>ffizer_dst_folder</code></td><td>cli arg <code>--destination</code> as string</td></tr>
+<tr><td><code>ffizer_src_rev</code></td><td>cli arg <code>--rev</code> as string (could be null)</td></tr>
+<tr><td><code>ffizer_src_uri</code></td><td>cli arg <code>--source</code> as string</td></tr>
+<tr><td><code>ffizer_src_subfolder</code></td><td>cli arg <code>--source-subfolder</code> as string (could be null)</td></tr>
+<tr><td><code>ffizer_version</code></td><td>the current version of ffizer as string</td></tr>
+</tbody></table>
+</div>
 <p>The following sample combine a helper function <code>file_name</code> with <code>ffizer_dst_folder</code>.</p>
 <pre><code class="language-yaml">variables:
   - name: project_name
     default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
 </code></pre>
-<h1><a class="header" href="#template-helpers--functions" id="template-helpers--functions">Template Helpers / Functions</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="template-helpers--functions"><a class="header" href="#template-helpers--functions">Template Helpers / Functions <!-- omit in toc --></a></h1>
 <p>Helpers extend the template to generate or to transform content.</p>
 <p><strong>The helpers from <a href="https://crates.io/crates/handlebars_misc_helpers">handlebars_misc_helpers</a> are included. This page is a copy of <a href="https://github.com/davidB/handlebars_misc_helpers/blob/master/README.md">handlebars_misc_helpers/README.md at master · davidB/handlebars_misc_helpers</a>, and it can be can be out-of-date.</strong></p>
 <p>Few helpers are included, but if you need more helpers, ask via an issue or a PR.</p>
@@ -989,8 +816,23 @@ the <code>imports</code> section or <code>default_value</code> via handlebars ex
 // -&gt; 2018
 </code></pre>
 <p>see <a href="https://handlebarsjs.com/">Handlebars templating language</a></p>
-<h2><a class="header" href="#string-transformation" id="string-transformation">String transformation</a></h2>
-<table><thead><tr><th>helper signature</th><th>usage sample</th><th>sample out</th></tr></thead><tbody>
+<ul>
+<li><a href="builtin_functions.html#string-transformation">String transformation</a></li>
+<li><a href="builtin_functions.html#http-content">Http content</a></li>
+<li><a href="builtin_functions.html#path-extraction">Path extraction</a></li>
+<li><a href="builtin_functions.html#file">File</a></li>
+<li><a href="builtin_functions.html#environment-variable">Environment variable</a></li>
+<li><a href="builtin_functions.html#json--yaml--toml">JSON &amp; YAML &amp; TOML</a>
+<ul>
+<li><a href="builtin_functions.html#helpers">Helpers</a></li>
+<li><a href="builtin_functions.html#blocks">Blocks</a></li>
+<li><a href="builtin_functions.html#edition-via-jsonnet">Edition via jsonnet</a></li>
+</ul>
+</li>
+<li><a href="builtin_functions.html#assign">Assign</a></li>
+</ul>
+<h2 id="string-transformation"><a class="header" href="#string-transformation">String transformation</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>helper signature</th><th>usage sample</th><th>sample out</th></tr></thead><tbody>
 <tr><td><code>replace s:String from:String to:String</code></td><td><code>replace &quot;Hello old&quot; &quot;old&quot; &quot;new&quot;</code></td><td><code>&quot;Hello new&quot;</code></td></tr>
 <tr><td><code>to_lower_case s:String</code></td><td><code>to_lower_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;hello foo-bars&quot;</code></td></tr>
 <tr><td><code>to_upper_case s:String</code></td><td><code>to_upper_case &quot;Hello foo-bars&quot;</code></td><td><code>&quot;HELLO FOO-BARS&quot;</code></td></tr>
@@ -1013,31 +855,36 @@ the <code>imports</code> section or <code>default_value</code> via handlebars ex
 <tr><td><code>enquote symbol:String s:String</code></td><td><code>enquote &quot;&quot; &quot;foo&quot;</code></td><td><code>&quot;\&quot;foo\&quot;&quot;</code></td></tr>
 <tr><td><code>first_non_empty s:String+</code></td><td><code>first_non_empty &quot;&quot; null &quot;foo&quot; &quot;bar&quot;</code></td><td><code>&quot;foo&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#http-content" id="http-content">Http content</a></h2>
+</div>
+<h2 id="http-content"><a class="header" href="#http-content">Http content</a></h2>
 <p>Helper able to render body response from an http request.</p>
-<table><thead><tr><th>helper signature</th><th>usage sample</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>helper signature</th><th>usage sample</th></tr></thead><tbody>
 <tr><td><code>http_get url:String</code></td><td><code>http_get &quot;http://hello/...&quot;</code></td></tr>
 <tr><td><code>gitignore_io templates:String</code></td><td><code>gitignore_io &quot;rust,visualstudiocode&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#path-extraction" id="path-extraction">Path extraction</a></h2>
+</div>
+<h2 id="path-extraction"><a class="header" href="#path-extraction">Path extraction</a></h2>
 <p>Helper able to extract (or transform) path (defined as string).</p>
 <p>for the same input: <code>&quot;/hello/bar/foo.txt&quot;</code></p>
-<table><thead><tr><th>helper_name</th><th>sample output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>helper_name</th><th>sample output</th></tr></thead><tbody>
 <tr><td>file_name</td><td><code>&quot;foo.txt&quot;</code></td></tr>
 <tr><td>parent</td><td><code>&quot;/hello/bar&quot;</code></td></tr>
 <tr><td>extension</td><td><code>&quot;txt&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#file" id="file">File</a></h2>
+</div>
+<h2 id="file"><a class="header" href="#file">File</a></h2>
 <p>Helper to read file content.</p>
-<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
 <tr><td><code>{{ read_to_str &quot;/foo/bar&quot; }}</code></td><td>content of file <code>/foo/bar</code></td></tr>
 <tr><td><code>{{ read_to_str &quot;file/does/not/exist&quot; }}</code></td><td>empty string</td></tr>
 </tbody></table>
-<h2><a class="header" href="#environment-variable" id="environment-variable">Environment variable</a></h2>
+</div>
+<h2 id="environment-variable"><a class="header" href="#environment-variable">Environment variable</a></h2>
 <p>Helper able to get environment variables.</p>
-<table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>helper_name</th><th>usage</th></tr></thead><tbody>
 <tr><td>env_var</td><td><code>env_var &quot;HOME&quot;</code></td></tr>
 </tbody></table>
+</div>
 <p>Specials environment variables are predefined (some of them come from <a href="https://doc.rust-lang.org/std/env/consts/index.html"><code>std::env::consts</code> - Rust</a>):</p>
 <table>
     <thead>
@@ -1110,8 +957,8 @@ the <code>imports</code> section or <code>default_value</code> via handlebars ex
         </tr>
     </tbody>
 </table>
-<h2><a class="header" href="#json--yaml--toml" id="json--yaml--toml">JSON &amp; YAML &amp; TOML</a></h2>
-<h3><a class="header" href="#helpers" id="helpers">Helpers</a></h3>
+<h2 id="json--yaml--toml"><a class="header" href="#json--yaml--toml">JSON &amp; YAML &amp; TOML</a></h2>
+<h3 id="helpers"><a class="header" href="#helpers">Helpers</a></h3>
 <ul>
 <li><code>json_query query:String data:Json</code>: Helper able to extract information from json using <a href="http://jmespath.org/">JMESPath</a> syntax for <code>query</code>.</li>
 <li><code>json_str_query query:String data:String</code>: Helper able to extract information from json using <a href="http://jmespath.org/">JMESPath</a> syntax for <code>query</code>, data follows the requested <code>format</code>.</li>
@@ -1126,7 +973,7 @@ the <code>imports</code> section or <code>default_value</code> via handlebars ex
 <li><code>&quot;toml&quot;</code></li>
 <li><code>&quot;toml_pretty&quot;</code></li>
 </ul>
-<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
 <tr><td><code>{{ json_query &quot;foo&quot; {} }}</code></td><td>``</td></tr>
 <tr><td><code>{{ json_to_str ( json_query &quot;foo&quot; {&quot;foo&quot;:{&quot;bar&quot;:{&quot;baz&quot;:true}}} ) }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
 <tr><td><code>{{ json_to_str ( json_query &quot;foo&quot; (str_to_json &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; ) ) }}</code></td><td><code>{&quot;bar&quot;:{&quot;baz&quot;:true}}</code></td></tr>
@@ -1135,7 +982,8 @@ the <code>imports</code> section or <code>default_value</code> via handlebars ex
 <tr><td><code>{{ json_str_query &quot;foo&quot; &quot;foo:\n bar:\n  baz: true\n&quot; format=&quot;yaml&quot;}}</code></td><td><code>bar:\n  baz: true\n</code></td></tr>
 <tr><td><code>{{ json_to_str ( str_to_json &quot;{\&quot;foo\&quot;:{\&quot;bar\&quot;:{\&quot;baz\&quot;:true}}}&quot; format=&quot;json&quot;) format=&quot;yaml&quot;}}</code></td><td><code>foo:\n  bar:\n    baz: true\n</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#blocks" id="blocks">Blocks</a></h3>
+</div>
+<h3 id="blocks"><a class="header" href="#blocks">Blocks</a></h3>
 <table>
 <tr>
 <td><pre><code>{{#from_json format="toml"}}
@@ -1190,7 +1038,7 @@ foo:
 </tr>
 </table>
 <p>Note: YAML &amp; TOML content are used as input and output format for json data. So capabilities are limited to what json support (eg. no date-time type like in TOML).</p>
-<h3><a class="header" href="#edition-via-jsonnet" id="edition-via-jsonnet">Edition via jsonnet</a></h3>
+<h3 id="edition-via-jsonnet"><a class="header" href="#edition-via-jsonnet">Edition via jsonnet</a></h3>
 <p>For more advanced edition of json, you can use jsonnet.</p>
 <blockquote>
 <p>A data templating language for app and tool developers</p>
@@ -1223,18 +1071,18 @@ v {
 }</code></pre></td>
 </tr>
 </table>
-<h2><a class="header" href="#assign" id="assign">Assign</a></h2>
+<h2 id="assign"><a class="header" href="#assign">Assign</a></h2>
 <p>Helper able to assign (to set) a variable to use later in the template.</p>
-<table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>usage</th><th>output</th></tr></thead><tbody>
 <tr><td><code>{{ assign &quot;foo&quot; &quot;{}&quot; }}</code></td><td>``</td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; &quot;{}&quot; }}{{ foo }}</code></td><td><code>{}</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; &quot;hello world&quot; }}{{ foo }}</code></td><td><code>hello world</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; {} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; {&quot;bar&quot;: 33} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 </tbody></table>
-<h1><a class="header" href="#ideeditor-setup-suggestions" id="ideeditor-setup-suggestions">IDE/Editor setup' suggestions</a></h1>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="ideeditor-setup-suggestions"><a class="header" href="#ideeditor-setup-suggestions">IDE/Editor setup' suggestions</a></h1>
 <p>Use your favorite IDE/Editor.</p>
-<h2><a class="header" href="#editing-ffizeryaml" id="editing-ffizeryaml">Editing <code>.ffizer.yaml</code></a></h2>
+<h2 id="editing-ffizeryaml"><a class="header" href="#editing-ffizeryaml">Editing <code>.ffizer.yaml</code></a></h2>
 <ul>
 <li>
 <p>add support for yaml files</p>
@@ -1263,10 +1111,461 @@ Description: YAML Language Support by Red Hat, with built-in Kubernetes syntax s
 Publisher: redhat
 VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yaml
 </code></pre>
-<h1><a class="header" href="#changelog" id="changelog">Changelog</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <p><a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-xyz-dev" id="version-xyz-dev">Version x.y.z-dev</a></h2>
-<h3><a class="header" href="#added" id="added">Added</a></h3>
+<h2 id="version-xyz-dev"><a class="header" href="#version-xyz-dev">Version x.y.z-dev</a></h2>
+<p><a name="2.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-270"><a class="header" href="#version-270">Version 2.7.0</a></h2>
+<h3 id="changed"><a class="header" href="#changed">Changed</a></h3>
+<ul>
+<li>👽  update to use the clap 4 api</li>
+<li>⬆️  Bump clap from 3.2.22 to 4.0.18</li>
+<li>⬆️  Bump regex from 1.6.0 to 1.7.0</li>
+<li>⬆️  Bump assert_cmd from 2.0.4 to 2.0.7</li>
+<li>⬆️  Bump openssl from 0.10.42 to 0.10.44</li>
+<li>⬆️  Bump serde from 1.0.145 to 1.0.151</li>
+<li>⬆️  Bump serde_json from 1.0.85 to 1.0.89</li>
+<li>⬆️  Bump libc from 0.2.134 to 0.2.137</li>
+<li>⬆️  Bump serde_yaml from 0.9.13 to 0.9.14</li>
+<li>⬆️  Bump tracing from 0.1.36 to 0.1.37</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.15 to 0.3.16</li>
+<li>⬆️  Bump handlebars from 4.3.4 to 4.3.5</li>
+<li>⬆️  Bump libc from 0.2.133 to 0.2.134</li>
+<li>⬆️  Bump openssl from 0.10.41 to 0.10.42</li>
+<li>⬆️  Bump console from 0.15.1 to 0.15.2</li>
+<li>⬆️  Bump schemars from 0.8.10 to 0.8.11</li>
+<li>⬆️  Bump thiserror from 1.0.36 to 1.0.37</li>
+<li>⬆️  bump dependencies</li>
+<li>⬆️  Bump libc from 0.2.132 to 0.2.133</li>
+<li>⬆️  Bump self_update from 0.31.0 to 0.32.0</li>
+<li>⬆️  Bump serde_yaml from 0.9.11 to 0.9.13</li>
+<li>⬆️  Bump clap from 3.2.20 to 3.2.22</li>
+<li>⬆️  Bump thiserror from 1.0.34 to 1.0.35</li>
+</ul>
+<h3 id="fixed"><a class="header" href="#fixed">Fixed</a></h3>
+<ul>
+<li>🐛  use the value of CARGO_PKG_NAME at compile time for the cache</li>
+</ul>
+<h3 id="miscellaneous"><a class="header" href="#miscellaneous">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.7.0</li>
+<li>arrow-up  cargo update</li>
+<li>rotating-light  disable warning on &quot;http&quot; in test</li>
+<li>🚧  (cargo-release) start next development iteration 2.6.2-dev</li>
+</ul>
+<p><a name="2.6.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-261"><a class="header" href="#version-261">Version 2.6.1</a></h2>
+<h3 id="changed-1"><a class="header" href="#changed-1">Changed</a></h3>
+<ul>
+<li>⬆️  Bump git2 from 0.14 to 0.15</li>
+</ul>
+<h3 id="miscellaneous-1"><a class="header" href="#miscellaneous-1">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.6.1</li>
+<li>🚧  (cargo-release) start next development iteration 2.6.1-dev</li>
+</ul>
+<p><a name="2.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-260"><a class="header" href="#version-260">Version 2.6.0</a></h2>
+<h3 id="added"><a class="header" href="#added">Added</a></h3>
+<ul>
+<li>✨  add <code>check_ignores</code> to ignore files during test-sample</li>
+</ul>
+<h3 id="changed-2"><a class="header" href="#changed-2">Changed</a></h3>
+<ul>
+<li>🚨  improve code with clippy' suggestions</li>
+<li>⬆️  Bump libc from 0.2.126 to 0.2.132</li>
+<li>⬆️  Bump console from 0.15.0 to 0.15.1</li>
+<li>⬆️  Bump self_update from 0.30.0 to 0.31.0</li>
+<li>⬆️  Bump serde_yaml from 0.9.4 to 0.9.11</li>
+<li>⬆️  Bump schemars from 0.8.8 to 0.8.10</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.11 to 0.3.15</li>
+<li>⬆️  Bump serde from 1.0.142 to 1.0.144</li>
+<li>⬆️  Bump dialoguer from 0.10.0 to 0.10.2</li>
+<li>⬆️  Bump run_script from 0.9.0 to 0.10.0</li>
+<li>⬆️  Bump git2 from 0.14.2 to 0.14.4</li>
+<li>⬆️  Bump indicatif from 0.16.2 to 0.17.0</li>
+<li>⬆️  Bump serde_json from 1.0.81 to 1.0.85</li>
+<li>⬆️  Bump handlebars from 4.2.2 to 4.3.4</li>
+<li>⬆️  Bump pretty_assertions from 1.2.1 to 1.3.0</li>
+<li>⬆️  Bump clap from 3.1.18 to 3.2.2</li>
+<li>⬆️  Bump regex from 1.5.5 to 1.6.0</li>
+<li>⬆️  Bump serde_yaml from 0.8.23 to 0.9.4</li>
+<li>⬆️  Bump thiserror from 1.0.30 to 1.0.34</li>
+<li>⬆️  Bump globset from 0.4.8 to 0.4.9</li>
+<li>⬆️  Bump openssl-src from 111.17.0+1.1.1m to 111.20.0+1.1.1o</li>
+<li>⬆️  Bump libc from 0.2.124 to 0.2.126</li>
+<li>⬆️  Bump clap from 3.1.12 to 3.1.18</li>
+<li>⬆️  Bump serde_json from 1.0.79 to 1.0.81</li>
+<li>⬆️  Bump self_update from 0.29.0 to 0.30.0</li>
+<li>⬆️  Bump serde from 1.0.136 to 1.0.137</li>
+<li>⬆️  Bump clap from 3.1.6 to 3.1.12</li>
+<li>⬆️  Bump libc from 0.2.121 to 0.2.124</li>
+<li>⬆️  Bump tracing from 0.1.32 to 0.1.34</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.9 to 0.3.11</li>
+<li>⬆️  Bump pretty_assertions from 1.2.0 to 1.2.1</li>
+<li>⬆️  Bump self_update from 0.28.0 to 0.29.0</li>
+</ul>
+<h3 id="miscellaneous-2"><a class="header" href="#miscellaneous-2">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.6.0</li>
+<li>⚗  configure dependabot to only track direct dependencies</li>
+<li>🚧  (cargo-release) start next development iteration 2.5.2-dev</li>
+</ul>
+<p><a name="2.5.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-251"><a class="header" href="#version-251">Version 2.5.1</a></h2>
+<h3 id="changed-3"><a class="header" href="#changed-3">Changed</a></h3>
+<ul>
+<li>⬆️  Bump libc from 0.2.119 to 0.2.121</li>
+<li>⬆️  Bump actions/cache from 2 to 3</li>
+<li>⬆️  Bump actions/checkout from 2.4.0 to 3</li>
+</ul>
+<h3 id="fixed-1"><a class="header" href="#fixed-1">Fixed</a></h3>
+<ul>
+<li>🐛  preserve the original source definition when test-samples</li>
+</ul>
+<h3 id="miscellaneous-3"><a class="header" href="#miscellaneous-3">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.5.1</li>
+<li>pencil  update changelog</li>
+<li>pencil  update README</li>
+<li>🚧  (cargo-release) start next development iteration 2.5.1-dev</li>
+</ul>
+<p><a name="2.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-250"><a class="header" href="#version-250">Version 2.5.0</a></h2>
+<h3 id="changed-4"><a class="header" href="#changed-4">Changed</a></h3>
+<ul>
+<li>⬆️  upgrade  cargo.lock</li>
+<li>💄  show &quot;blank&quot;  for diff on <code>test-samples</code></li>
+<li>💄  accept more syntax for boolean variable from cli</li>
+<li>💄  allow to use label or value of item of <code>select_in_values</code> as <code>default_value</code></li>
+<li>💄  use color to prompt</li>
+<li>⬆️  Bump git2 from 0.13 to 0.14</li>
+</ul>
+<h3 id="removed"><a class="header" href="#removed">Removed</a></h3>
+<ul>
+<li>🔥  clean up makefile</li>
+</ul>
+<h3 id="fixed-2"><a class="header" href="#fixed-2">Fixed</a></h3>
+<ul>
+<li>🐛  for <code>ignores</code> value, ignore some blank caractere that could be introduced by yaml or handlebars syntax</li>
+</ul>
+<h3 id="miscellaneous-4"><a class="header" href="#miscellaneous-4">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.5.0</li>
+<li>poop  add workaround for a bug in git2 0.14</li>
+<li>🔊  add logs debug</li>
+<li>🚧  (cargo-release) start next development iteration 2.4.5-dev</li>
+</ul>
+<p><a name="2.4.4" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-244"><a class="header" href="#version-244">Version 2.4.4</a></h2>
+<h3 id="removed-1"><a class="header" href="#removed-1">Removed</a></h3>
+<ul>
+<li>🔥  remove task for github-upload and snapcraft push</li>
+</ul>
+<h3 id="miscellaneous-5"><a class="header" href="#miscellaneous-5">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.4</li>
+</ul>
+<p><a name="2.4.4-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-244-dev"><a class="header" href="#version-244-dev">Version 2.4.4-dev</a></h2>
+<p><a name="2.4.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-243"><a class="header" href="#version-243">Version 2.4.3</a></h2>
+<h3 id="changed-5"><a class="header" href="#changed-5">Changed</a></h3>
+<ul>
+<li>⬆️  Bump libc from 0.2.112 to 0.2.119</li>
+<li>⬆️  Bump pretty_assertions from 1.0.0 to 1.1.0</li>
+<li>⬆️  Bump clap from 3.1.1 to 3.1.2</li>
+<li>⬆️  Bump tracing-subscriber from 0.3.5 to 0.3.9</li>
+<li>⬆️  Bump tracing from 0.1.29 to 0.1.31</li>
+<li>⬆️  Bump assert_cmd from 2.0.2 to 2.0.4</li>
+<li>⬆️  Bump dialoguer from 0.9.0 to 0.10.0</li>
+<li>⬆️  Bump serde from 1.0.133 to 1.0.136</li>
+</ul>
+<h3 id="miscellaneous-6"><a class="header" href="#miscellaneous-6">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.3</li>
+<li>🚧  try to build cross-platform from ci/cd  (#491)</li>
+</ul>
+<p><a name="2.4.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-242"><a class="header" href="#version-242">Version 2.4.2</a></h2>
+<h3 id="added-1"><a class="header" href="#added-1">Added</a></h3>
+<ul>
+<li>✅  cargo update</li>
+<li>👷  add cache into workflows</li>
+</ul>
+<h3 id="changed-6"><a class="header" href="#changed-6">Changed</a></h3>
+<ul>
+<li>⬆️  Bump self_update from 0.27.0 to 0.28.0</li>
+<li>⬆️  Bump predicates from 2.1.0 to 2.1.1</li>
+<li>⬆️  Bump handlebars from 4.2.0 to 4.2.1</li>
+<li>⬆️  Bump serde_json from 1.0.74 to 1.0.79</li>
+<li>⬆️  Bump clap from 3.0.5 to 3.1.1</li>
+<li>⬆️  switch structopt + clap v2 to clap v3</li>
+<li>⬆️  bumps dialoguer from 0.8.0 to 0.9.0</li>
+<li>🚨  apply clippy suggestion</li>
+<li>⬆️  swith to rust edition 2021</li>
+<li>⬆️  upgrade tracing-subscriber</li>
+<li>⬆️  Bump assert_cmd from 2.0.1 to 2.0.2</li>
+<li>⬆️  Bump libc from 0.2.107 to 0.2.109</li>
+<li>⬆️  Bump handlebars from 4.1.4 to 4.1.6</li>
+<li>⬆️  Bump clap from 2.33.3 to 2.34.0</li>
+<li>⬆️  Bump tracing from 0.1.28 to 0.1.29</li>
+<li>⬆️  Bump structopt from 0.3.23 to 0.3.25</li>
+<li>⬆️  Bump actions/checkout from 2.3.5 to 2.4.0</li>
+<li>⬆️  Bump libc from 0.2.106 to 0.2.107</li>
+<li>⬆️  Bump handlebars from 4.1.3 to 4.1.4</li>
+<li>⬆️  Bump console from 0.14.1 to 0.15.0</li>
+<li>⬆️  Bump serde_json from 1.0.68 to 1.0.69</li>
+<li>⬆️  Bump schemars from 0.8.3 to 0.8.6</li>
+<li>⬆️  Bump actions/checkout from 2.3.4 to 2.3.5</li>
+<li>⬆️  Bump git2 from 0.13.22 to 0.13.23</li>
+<li>⬆️  Bump pretty_assertions from 0.7.2 to 1.0.0</li>
+<li>⬆️  Bump libc from 0.2.102 to 0.2.106</li>
+<li>⬆️  bump directories, patch version and transitive dependencies</li>
+<li>⬆️  Bump thiserror from 1.0.28 to 1.0.29</li>
+<li>⬆️  Bump serde_yaml from 0.8.20 to 0.8.21</li>
+<li>⬆️  Bump git2 from 0.13.21 to 0.13.22</li>
+<li>⬆️  Bump handlebars from 4.1.2 to 4.1.3</li>
+<li>⬆️  Bump run_script from 0.8.0 to 0.9.0</li>
+<li>⬆️  update dependencies</li>
+<li>⬆️  Bump predicates from 2.0.0 to 2.0.2</li>
+<li>⬆️  Bump handlebars from 4.1.0 to 4.1.2</li>
+<li>⬆️  Bump serde_json from 1.0.64 to 1.0.67</li>
+<li>⬆️  Bump serde from 1.0.126 to 1.0.130</li>
+<li>⬆️  Bump structopt from 0.3.22 to 0.3.23</li>
+<li>⬆️  Bump assert_cmd from 1.0.7 to 2.0.0</li>
+<li>⬆️  Bump predicates from 1.0.8 to 2.0.0</li>
+</ul>
+<h3 id="fixed-3"><a class="header" href="#fixed-3">Fixed</a></h3>
+<ul>
+<li>🐛  fix bugs and linting</li>
+</ul>
+<h3 id="miscellaneous-7"><a class="header" href="#miscellaneous-7">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.2</li>
+<li>⚗  try to build for mac m1 and linux-musl</li>
+<li>🚧  (cargo-release) start next development iteration 2.4.2-dev</li>
+</ul>
+<p><a name="2.4.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-241"><a class="header" href="#version-241">Version 2.4.1</a></h2>
+<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
+<ul>
+<li>✅  update and fixe test</li>
+<li>✨  allow to define select_in_values as an array of <code>{label, value}</code> + fix evaluation of select_in_values defined as a string</li>
+</ul>
+<h3 id="changed-7"><a class="header" href="#changed-7">Changed</a></h3>
+<ul>
+<li>⬆️  Bump globset from 0.4.6 to 0.4.7</li>
+</ul>
+<h3 id="miscellaneous-8"><a class="header" href="#miscellaneous-8">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.1</li>
+<li>🚧  (cargo-release) start next development iteration 2.4.1-dev</li>
+<li>🚀  (cargo-release) version 2.4.0</li>
+<li>pencil  simplify installation from brew</li>
+<li>🔊  enhance SerdeYamlError with context from tracing'Span</li>
+</ul>
+<p><a name="2.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-240"><a class="header" href="#version-240">Version 2.4.0</a></h2>
+<h3 id="added-3"><a class="header" href="#added-3">Added</a></h3>
+<ul>
+<li>✅  update and fixe test</li>
+<li>✨  allow to define select_in_values as an array of <code>{label, value}</code> + fix evaluation of select_in_values defined as a string</li>
+</ul>
+<h3 id="miscellaneous-9"><a class="header" href="#miscellaneous-9">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.4.0</li>
+<li>pencil  simplify installation from brew</li>
+<li>🔊  enhance SerdeYamlError with context from tracing'Span</li>
+<li>🚧  (cargo-release) start next development iteration 2.3.1-dev</li>
+</ul>
+<p><a name="2.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-230"><a class="header" href="#version-230">Version 2.3.0</a></h2>
+<h3 id="added-4"><a class="header" href="#added-4">Added</a></h3>
+<ul>
+<li>✅  improve git test to be less sensitive to local git configuration</li>
+<li>✅  update test for handlebar</li>
+</ul>
+<h3 id="changed-8"><a class="header" href="#changed-8">Changed</a></h3>
+<ul>
+<li>🚨  apply clippy suggestion</li>
+<li>⬆️  update cargo.lock</li>
+<li>⬆️  upgrade to handlebars 4.0</li>
+<li>🔧  define CODEOWNERS</li>
+<li>⬆️  fix + cargo update</li>
+<li>⬆️  Bump assert_cmd from 1.0.4 to 1.0.5</li>
+<li>⬆️  Bump libc from 0.2.94 to 0.2.95</li>
+<li>⬆️  Bump indicatif from 0.16.0 to 0.16.2</li>
+<li>⬆️  Bump run_script from 0.7.0 to 0.8.0</li>
+<li>⬆️  Bump thiserror from 1.0.24 to 1.0.25</li>
+<li>⬆️  Bump serde from 1.0.125 to 1.0.126</li>
+<li>⬆️  Bump assert_cmd from 1.0.3 to 1.0.4</li>
+<li>⬆️  Bump self_update from 0.26.0 to 0.27.0</li>
+<li>⬆️  Bump predicates from 1.0.7 to 1.0.8</li>
+<li>⬆️  Bump openssl from 0.10.33 to 0.10.34</li>
+<li>⬆️  Bump libc from 0.2.93 to 0.2.94</li>
+<li>⬆️  Bump indicatif from 0.15.0 to 0.16.0</li>
+<li>⬆️  Bump directories from 3.0.1 to 3.0.2</li>
+<li>⬆️  Bump git2_credentials from 0.7.1 to 0.7.2</li>
+<li>⬆️  Bump git2 from 0.13.17 to 0.13.18</li>
+<li>⬆️  Bump regex from 1.4.5 to 1.4.6</li>
+<li>⬆️  Bump libc from 0.2.92 to 0.2.93</li>
+<li>⬆️  Bump schemars from 0.8.2 to 0.8.3</li>
+<li>⬆️  Bump pretty_assertions from 0.7.1 to 0.7.2</li>
+<li>⬆️  Bump serde from 1.0.124 to 1.0.125</li>
+<li>⬆️  Bump walkdir from 2.3.1 to 2.3.2</li>
+<li>⬆️  Bump schemars from 0.8.0 to 0.8.2</li>
+<li>⬆️  Bump libc from 0.2.90 to 0.2.92</li>
+<li>⬆️  Bump dialoguer from 0.7.1 to 0.8.0</li>
+<li>⬆️  Bump libc from 0.2.88 to 0.2.90</li>
+<li>🎨  reformat tutorial (remove EOL that can break display on some renderer)</li>
+<li>⬆️  Bump openssl from 0.10.32 to 0.10.33</li>
+<li>⬆️  Bump regex from 1.4.3 to 1.4.5</li>
+<li>⬆️  Bump pretty_assertions from 0.6.1 to 0.7.1</li>
+<li>⬆️  Bump console from 0.14.0 to 0.14.1</li>
+<li>⬆️  Bump run_script from 0.6.4 to 0.7.0</li>
+<li>⬆️  Bump self_update from 0.25.0 to 0.26.0</li>
+<li>⬆️  Bump serde from 1.0.123 to 1.0.124</li>
+<li>⬆️  Bump libc from 0.2.86 to 0.2.88</li>
+<li>⬆️  Bump self_update from 0.24.0 to 0.25.0</li>
+<li>⬆️  Bump serde_json from 1.0.62 to 1.0.64</li>
+<li>⬆️  Bump run_script from 0.6.3 to 0.6.4</li>
+<li>⬆️  Bump handlebars from 3.5.2 to 3.5.3</li>
+<li>⬆️  Bump self_update from 0.23.0 to 0.24.0</li>
+<li>⬆️  Bump thiserror from 1.0.23 to 1.0.24</li>
+<li>⬆️  Bump serde_yaml from 0.8.16 to 0.8.17</li>
+<li>⬆️  Bump libc from 0.2.85 to 0.2.86</li>
+<li>⬆️  Bump slog-term from 2.7.0 to 2.8.0</li>
+<li>⬆️  Bump slog-term from 2.6.0 to 2.7.0</li>
+<li>⬆️  Bump serde_json from 1.0.61 to 1.0.62</li>
+<li>⬆️  Bump libc from 0.2.84 to 0.2.85</li>
+<li>⬆️  Bump assert_cmd from 1.0.2 to 1.0.3</li>
+<li>⬆️  Bump serde_yaml from 0.8.15 to 0.8.16</li>
+<li>⬆️  Bump libc from 0.2.82 to 0.2.84</li>
+<li>⬆️  Bump predicates from 1.0.6 to 1.0.7</li>
+<li>⬆️  Bump serde from 1.0.122 to 1.0.123</li>
+<li>⬆️  Bump serde from 1.0.119 to 1.0.122</li>
+<li>⬆️  Bump git2 from 0.13.15 to 0.13.17</li>
+<li>⬆️  Bump serde from 1.0.118 to 1.0.119</li>
+<li>⬆️  Bump tempfile from 3.1.0 to 3.2.0</li>
+<li>⬆️  Bump serde_yaml from 0.8.14 to 0.8.15</li>
+<li>⬆️  Bump libc from 0.2.81 to 0.2.82</li>
+<li>⬆️  Bump regex from 1.4.2 to 1.4.3</li>
+<li>⬆️  Bump self_update from 0.22.0 to 0.23.0</li>
+<li>⬆️  Bump serde_json from 1.0.60 to 1.0.61</li>
+<li>⬆️  Bump predicates from 1.0.5 to 1.0.6</li>
+<li>⬆️  Bump git2_credentials from 0.7.0 to 0.7.1</li>
+<li>⬆️  Bump handlebars from 3.5.1 to 3.5.2</li>
+<li>⬆️  Bump git2 from 0.13.14 to 0.13.15</li>
+<li>⬆️  Bump console from 0.13.0 to 0.14.0</li>
+<li>⬆️  Bump thiserror from 1.0.22 to 1.0.23</li>
+<li>⬆️  Bump git2 from 0.13.13 to 0.13.14</li>
+<li>⬆️  Bump openssl from 0.10.31 to 0.10.32</li>
+<li>⬆️  Bump git2 from 0.13.12 to 0.13.13</li>
+</ul>
+<h3 id="breaking-changes"><a class="header" href="#breaking-changes">Breaking changes</a></h3>
+<ul>
+<li>💥  replace slog by tracing</li>
+</ul>
+<h3 id="fixed-4"><a class="header" href="#fixed-4">Fixed</a></h3>
+<ul>
+<li>🏁  disable windows build (until fixe the issue with git clone on windows)</li>
+<li>🐛  migration to tracing report log to stdout instead of stderr</li>
+</ul>
+<h3 id="miscellaneous-10"><a class="header" href="#miscellaneous-10">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.3.0</li>
+<li>🚧  (cargo-release) start next development iteration 2.2.2-dev</li>
+</ul>
+<p><a name="2.2.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-221"><a class="header" href="#version-221">Version 2.2.1</a></h2>
+<h3 id="changed-9"><a class="header" href="#changed-9">Changed</a></h3>
+<ul>
+<li>⬆️  upgrade handlebars_misc_helpers to fix json-&gt;toml conversion</li>
+<li>🚸  add more info when error on git</li>
+<li>⬆️  cargo update</li>
+</ul>
+<h3 id="miscellaneous-11"><a class="header" href="#miscellaneous-11">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.2.1</li>
+<li>🚧  (cargo-release) start next development iteration 2.2.1-dev</li>
+</ul>
+<p><a name="2.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-220"><a class="header" href="#version-220">Version 2.2.0</a></h2>
+<h3 id="changed-10"><a class="header" href="#changed-10">Changed</a></h3>
+<ul>
+<li>🚸  improve the display of differences when run <code>test-samples</code></li>
+<li>🎨  format code</li>
+</ul>
+<h3 id="fixed-5"><a class="header" href="#fixed-5">Fixed</a></h3>
+<ul>
+<li>🐛  wrong ifo in the error</li>
+</ul>
+<h3 id="miscellaneous-12"><a class="header" href="#miscellaneous-12">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.2.0</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.4-dev</li>
+</ul>
+<p><a name="2.1.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-213"><a class="header" href="#version-213">Version 2.1.3</a></h2>
+<h3 id="changed-11"><a class="header" href="#changed-11">Changed</a></h3>
+<ul>
+<li>⬆️  Bump structopt from 0.3.20 to 0.3.21</li>
+<li>⬆️  Bump serde_json from 1.0.59 to 1.0.60</li>
+<li>⬆️  Bump serde from 1.0.117 to 1.0.118</li>
+<li>⬆️  Bump libc from 0.2.80 to 0.2.81</li>
+<li>⬆️  Bump assert_cmd from 1.0.1 to 1.0.2</li>
+<li>⬆️  Bump self_update from 0.20.0 to 0.22.0</li>
+<li>⬆️  Bump slog from 2.5.2 to 2.7.0</li>
+</ul>
+<h3 id="fixed-6"><a class="header" href="#fixed-6">Fixed</a></h3>
+<ul>
+<li>🐛  do not failed to compare binary file during test-samples</li>
+</ul>
+<h3 id="miscellaneous-13"><a class="header" href="#miscellaneous-13">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.1.3</li>
+<li>💡  link the book as homepage</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.3-dev</li>
+</ul>
+<p><a name="2.1.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-212"><a class="header" href="#version-212">Version 2.1.2</a></h2>
+<h3 id="added-5"><a class="header" href="#added-5">Added</a></h3>
+<ul>
+<li>✨  add preset variable &quot;ffizer_version&quot;</li>
+</ul>
+<h3 id="changed-12"><a class="header" href="#changed-12">Changed</a></h3>
+<ul>
+<li>👽  update config of cargo-release</li>
+<li>🚨  remove useless <code>use</code></li>
+<li>🚸  context info on error when set variables</li>
+</ul>
+<h3 id="fixed-7"><a class="header" href="#fixed-7">Fixed</a></h3>
+<ul>
+<li>🐛  evaluation of <code>ignores</code>section during compositing phase of the template generate incorrect value.Handlebars expression (eq, ne,...) don't raise error when undefined variabled are used (also in strict mode)</li>
+</ul>
+<h3 id="miscellaneous-14"><a class="header" href="#miscellaneous-14">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.1.2</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.2-dev</li>
+</ul>
+<p><a name="2.1.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-211"><a class="header" href="#version-211">Version 2.1.1</a></h2>
+<h3 id="changed-13"><a class="header" href="#changed-13">Changed</a></h3>
+<ul>
+<li>🍱  introduce logo</li>
+<li>⬆️  Bump actions/checkout from v2.3.3 to v2.3.4</li>
+<li>⬆️  Bump thiserror from 1.0.21 to 1.0.22</li>
+</ul>
+<h3 id="miscellaneous-15"><a class="header" href="#miscellaneous-15">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.1.1</li>
+<li>pencil  pre-publish update book, changelog</li>
+<li>🚧  (cargo-release) start next development iteration 2.1.1-dev</li>
+</ul>
+<p><a name="2.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-210"><a class="header" href="#version-210">Version 2.1.0</a></h2>
+<h3 id="added-6"><a class="header" href="#added-6">Added</a></h3>
 <ul>
 <li>✨  cli can show the json schema the of the <code>.ffizer.yaml</code></li>
 <li>✨  (cli) allow to specify value of variables from cli</li>
@@ -1274,7 +1573,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✨  allow to display a message</li>
 <li>✅  update test to reflect change in gitignore.io</li>
 </ul>
-<h3><a class="header" href="#changed" id="changed">Changed</a></h3>
+<h3 id="changed-14"><a class="header" href="#changed-14">Changed</a></h3>
 <ul>
 <li>🎨  remove some explicit clone</li>
 <li>⬆️  upgrade git2_credentials &amp; handlebars_misc_helpers</li>
@@ -1287,21 +1586,25 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  updates severals dependencies</li>
 <li>🍱  regenerate doc</li>
 </ul>
-<h3><a class="header" href="#breaking-changes" id="breaking-changes">Breaking changes</a></h3>
+<h3 id="breaking-changes-1"><a class="header" href="#breaking-changes-1">Breaking changes</a></h3>
 <ul>
 <li>💥  error handling  switch from <code>snafu</code> to <code>thiserror</code></li>
 </ul>
-<h3><a class="header" href="#removed" id="removed">Removed</a></h3>
+<h3 id="removed-2"><a class="header" href="#removed-2">Removed</a></h3>
 <ul>
 <li>🔥  remove credits and bom generation</li>
 </ul>
-<h3><a class="header" href="#fixed" id="fixed">Fixed</a></h3>
+<h3 id="fixed-8"><a class="header" href="#fixed-8">Fixed</a></h3>
 <ul>
+<li>🐛  prevent githb-page to use jekill and failed</li>
+<li>🐛  fix a bug on windows (due to UNC path conversion)</li>
 <li>💚  move data from a test to the right place</li>
 <li>🐛  replace the buggy code to &quot;git pull&quot; by the code example from git2.rs</li>
 </ul>
-<h3><a class="header" href="#miscellaneous" id="miscellaneous">Miscellaneous</a></h3>
+<h3 id="miscellaneous-16"><a class="header" href="#miscellaneous-16">Miscellaneous</a></h3>
 <ul>
+<li>🚀  (cargo-release) version 2.1.0</li>
+<li>pencil  pre-publish update book, changelog</li>
 <li>pencil  update the documentation and rewrite the tutorial</li>
 <li>🚧  support to include samples inside the template and to use them to test via <code>ffizer test-sample ...</code></li>
 <li>pencil  pre-publish update book, changelog</li>
@@ -1313,8 +1616,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 2.0.1-dev</li>
 </ul>
 <p><a name="2.0.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-200" id="version-200">Version 2.0.0</a></h2>
-<h3><a class="header" href="#changed-1" id="changed-1">Changed</a></h3>
+<h2 id="version-200"><a class="header" href="#version-200">Version 2.0.0</a></h2>
+<h3 id="changed-15"><a class="header" href="#changed-15">Changed</a></h3>
 <ul>
 <li>⬆️  update handlebars from 3.3 to 3.4</li>
 <li>👽  update configuration of release plugin</li>
@@ -1343,13 +1646,13 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump indicatif from 0.14.0 to 0.15.0</li>
 <li>⬆️  Bump serde_yaml from 0.8.12 to 0.8.13</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-1" id="miscellaneous-1">Miscellaneous</a></h3>
+<h3 id="miscellaneous-17"><a class="header" href="#miscellaneous-17">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 2.0.0</li>
 </ul>
 <p><a name="2.0.0-beta.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-200-beta3" id="version-200-beta3">Version 2.0.0-beta.3</a></h2>
-<h3><a class="header" href="#changed-2" id="changed-2">Changed</a></h3>
+<h2 id="version-200-beta3"><a class="header" href="#version-200-beta3">Version 2.0.0-beta.3</a></h2>
+<h3 id="changed-16"><a class="header" href="#changed-16">Changed</a></h3>
 <ul>
 <li>👽  update call to dialoguer API</li>
 <li>⬆️  Bump git2_credentials from 0.6.0 to 0.6.1</li>
@@ -1400,27 +1703,37 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump structopt from 0.3.11 to 0.3.12</li>
 <li>⬆️  Bump libc from 0.2.67 to 0.2.68</li>
 </ul>
-<h3><a class="header" href="#fixed-1" id="fixed-1">Fixed</a></h3>
+<h3 id="fixed-9"><a class="header" href="#fixed-9">Fixed</a></h3>
 <ul>
 <li>🐛  do not create folder in folder and crash on update</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-2" id="miscellaneous-2">Miscellaneous</a></h3>
+<h3 id="miscellaneous-18"><a class="header" href="#miscellaneous-18">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 2.0.0-beta.3</li>
 <li>poop  workaround to not failed if <code>ignores</code> is a not-evaluable path</li>
 <li>🚀  (cargo-release) version 2.0.0-beta.2</li>
 <li>📦  disable snapcraft (temporary ?)</li>
 </ul>
+<p><a name="2.0.0-beta.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
+<h2 id="version-200-beta2"><a class="header" href="#version-200-beta2">Version 2.0.0-beta.2</a></h2>
+<h3 id="fixed-10"><a class="header" href="#fixed-10">Fixed</a></h3>
+<ul>
+<li>🐛  do not create folder in folder and crash on update</li>
+</ul>
+<h3 id="miscellaneous-19"><a class="header" href="#miscellaneous-19">Miscellaneous</a></h3>
+<ul>
+<li>🚀  (cargo-release) version 2.0.0-beta.2</li>
+</ul>
 <p><a name="2.0.0-beta.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-200-beta1" id="version-200-beta1">Version 2.0.0-beta.1</a></h2>
-<h3><a class="header" href="#added-1" id="added-1">Added</a></h3>
+<h2 id="version-200-beta1"><a class="header" href="#version-200-beta1">Version 2.0.0-beta.1</a></h2>
+<h3 id="added-7"><a class="header" href="#added-7">Added</a></h3>
 <ul>
 <li>🎉  prepare 2.0.0 release</li>
 <li>✅  test e2e can now simulate run over an existing folder</li>
 <li>✨  shell <code>scripts</code> can be run after apply of templates</li>
 <li>✨  hbs template can be chained to transform content from existing file or from previous template layer</li>
 </ul>
-<h3><a class="header" href="#changed-3" id="changed-3">Changed</a></h3>
+<h3 id="changed-17"><a class="header" href="#changed-17">Changed</a></h3>
 <ul>
 <li>⬆️  Bump globset from 0.4.4 to 0.4.5</li>
 <li>⬆️  Bump predicates from 1.0.3 to 1.0.4</li>
@@ -1462,11 +1775,11 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump self_update from 0.10.0 to 0.11.0</li>
 <li>⬆️  Bump console from 0.9.1 to 0.9.2</li>
 </ul>
-<h3><a class="header" href="#removed-1" id="removed-1">Removed</a></h3>
+<h3 id="removed-3"><a class="header" href="#removed-3">Removed</a></h3>
 <ul>
 <li>🔥  remove useless file</li>
 </ul>
-<h3><a class="header" href="#fixed-2" id="fixed-2">Fixed</a></h3>
+<h3 id="fixed-11"><a class="header" href="#fixed-11">Fixed</a></h3>
 <ul>
 <li>🏁  try to fix test_3</li>
 <li>🏁  try to fix test_3 to show mutli-os cmd</li>
@@ -1481,7 +1794,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🏁  test on unix file permissions should not run on windows</li>
 <li>🐛  copy file permissions from template into destination</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-3" id="miscellaneous-3">Miscellaneous</a></h3>
+<h3 id="miscellaneous-20"><a class="header" href="#miscellaneous-20">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 2.0.0-beta.1</li>
 <li>pencil  (README) Alternatives sections moved to wiki</li>
@@ -1493,8 +1806,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.7.2-dev</li>
 </ul>
 <p><a name="1.7.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-171" id="version-171">Version 1.7.1</a></h2>
-<h3><a class="header" href="#changed-4" id="changed-4">Changed</a></h3>
+<h2 id="version-171"><a class="header" href="#version-171">Version 1.7.1</a></h2>
+<h3 id="changed-18"><a class="header" href="#changed-18">Changed</a></h3>
 <ul>
 <li>⬆️  upgrade self_update from 0.9.0 to 0.10.0</li>
 <li>⬆️  Bump structopt from 0.3.7 to 0.3.8</li>
@@ -1509,22 +1822,22 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump handlebars from 2.0.2 to 2.0.4</li>
 <li>⬆️  Bump run_script from 0.4.0 to 0.5.0</li>
 </ul>
-<h3><a class="header" href="#fixed-3" id="fixed-3">Fixed</a></h3>
+<h3 id="fixed-12"><a class="header" href="#fixed-12">Fixed</a></h3>
 <ul>
 <li>🐛  restore output of log on terminal</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-4" id="miscellaneous-4">Miscellaneous</a></h3>
+<h3 id="miscellaneous-21"><a class="header" href="#miscellaneous-21">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.7.1</li>
 <li>🚧  (cargo-release) start next development iteration 1.7.1-dev</li>
 </ul>
 <p><a name="1.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-170" id="version-170">Version 1.7.0</a></h2>
-<h3><a class="header" href="#added-2" id="added-2">Added</a></h3>
+<h2 id="version-170"><a class="header" href="#version-170">Version 1.7.0</a></h2>
+<h3 id="added-8"><a class="header" href="#added-8">Added</a></h3>
 <ul>
 <li>👷  add config for dependabot</li>
 </ul>
-<h3><a class="header" href="#changed-5" id="changed-5">Changed</a></h3>
+<h3 id="changed-19"><a class="header" href="#changed-19">Changed</a></h3>
 <ul>
 <li>🚨  apply clippy suggestion</li>
 <li>⬆️  Bump git2 from 0.10. 2 to 0.11.0</li>
@@ -1535,7 +1848,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump serde from 1.0.103 to 1.0.104</li>
 <li>⬆️  Bump assert_cmd from 0.11.1 to 0.12.0</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-5" id="miscellaneous-5">Miscellaneous</a></h3>
+<h3 id="miscellaneous-22"><a class="header" href="#miscellaneous-22">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.7.0</li>
 <li>💡  explain options of release profile</li>
@@ -1543,8 +1856,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.6.4-dev</li>
 </ul>
 <p><a name="1.6.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-163" id="version-163">Version 1.6.3</a></h2>
-<h3><a class="header" href="#changed-6" id="changed-6">Changed</a></h3>
+<h2 id="version-163"><a class="header" href="#version-163">Version 1.6.3</a></h2>
+<h3 id="changed-20"><a class="header" href="#changed-20">Changed</a></h3>
 <ul>
 <li>🔧  (ci) refactor the build and options (on mac_os)</li>
 <li>⬆️  Bump libc from 0.2.65 to 0.2.66</li>
@@ -1552,11 +1865,11 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump structopt from 0.3.4 to 0.3.5</li>
 <li>⬆️  Bump openssl from 0.10.25 to 0.10.26</li>
 </ul>
-<h3><a class="header" href="#fixed-4" id="fixed-4">Fixed</a></h3>
+<h3 id="fixed-13"><a class="header" href="#fixed-13">Fixed</a></h3>
 <ul>
 <li>🐛  trim pattern to ignore from template's config</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-6" id="miscellaneous-6">Miscellaneous</a></h3>
+<h3 id="miscellaneous-23"><a class="header" href="#miscellaneous-23">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.6.3</li>
 <li>🚀  (cargo-release) version 1.6.2</li>
@@ -1564,15 +1877,15 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.6.1-dev</li>
 </ul>
 <p><a name="1.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-160" id="version-160">Version 1.6.0</a></h2>
-<h3><a class="header" href="#added-3" id="added-3">Added</a></h3>
+<h2 id="version-160"><a class="header" href="#version-160">Version 1.6.0</a></h2>
+<h3 id="added-9"><a class="header" href="#added-9">Added</a></h3>
 <ul>
 <li>✅  remove the doc test of tree because tree is not available publicly</li>
 <li>✨  allow to use merge tool (as defined in git config) to merge updates</li>
 <li>✨  support several rules for the update of existing files (ask, override, keep, current-as-local, update-as-remote, show-diff)</li>
 <li>👷  try enable kcov+codecov  report on github-actions</li>
 </ul>
-<h3><a class="header" href="#changed-7" id="changed-7">Changed</a></h3>
+<h3 id="changed-21"><a class="header" href="#changed-21">Changed</a></h3>
 <ul>
 <li>⬆️  Bump git2 from 0.10.1 to 0.10.2</li>
 <li>💄  add description of update's option in selector</li>
@@ -1590,12 +1903,12 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>💄  display &quot;plan to execute&quot; with a tree and lines</li>
 <li>⬆️  Bump libc from 0.2.62 to 0.2.64</li>
 </ul>
-<h3><a class="header" href="#removed-2" id="removed-2">Removed</a></h3>
+<h3 id="removed-4"><a class="header" href="#removed-4">Removed</a></h3>
 <ul>
 <li>🔥  remove azure-pipelines definition (switch to github action)</li>
 <li>🔥  (cli) remove useless conf</li>
 </ul>
-<h3><a class="header" href="#fixed-5" id="fixed-5">Fixed</a></h3>
+<h3 id="fixed-14"><a class="header" href="#fixed-14">Fixed</a></h3>
 <ul>
 <li>🐛  (snapcraft) fix the build of the snap on github-action/ubuntu</li>
 <li>🍎  the cache and project dir should be under &quot;ffizer&quot;, not &quot;github&quot;</li>
@@ -1604,7 +1917,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🐛  on error the exit status should be non-zero</li>
 <li>🐛  fix url to retrieve the latest version</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-7" id="miscellaneous-7">Miscellaneous</a></h3>
+<h3 id="miscellaneous-24"><a class="header" href="#miscellaneous-24">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.6.0</li>
 <li>⚗  try a fix for the build of snap</li>
@@ -1615,30 +1928,30 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.5.2-dev</li>
 </ul>
 <p><a name="1.5.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-151" id="version-151">Version 1.5.1</a></h2>
-<h3><a class="header" href="#changed-8" id="changed-8">Changed</a></h3>
+<h2 id="version-151"><a class="header" href="#version-151">Version 1.5.1</a></h2>
+<h3 id="changed-22"><a class="header" href="#changed-22">Changed</a></h3>
 <ul>
 <li>👽  cargo-release change the default value of tag-name to include a v :-(</li>
 </ul>
-<h3><a class="header" href="#fixed-6" id="fixed-6">Fixed</a></h3>
+<h3 id="fixed-15"><a class="header" href="#fixed-15">Fixed</a></h3>
 <ul>
 <li>🐛  (ci) missing GITHUB_REPOSITORY on azure-pipeline so the tarball was not build &amp; uploaded</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-8" id="miscellaneous-8">Miscellaneous</a></h3>
+<h3 id="miscellaneous-25"><a class="header" href="#miscellaneous-25">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.5.1</li>
 <li>🚧  (cargo-release) start next development iteration 1.5.1-dev</li>
 </ul>
 <p><a name="v1.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-v150" id="version-v150">Version v1.5.0</a></h2>
+<h2 id="version-v150"><a class="header" href="#version-v150">Version v1.5.0</a></h2>
 <p><a name="1.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-150" id="version-150">Version 1.5.0</a></h2>
-<h3><a class="header" href="#added-4" id="added-4">Added</a></h3>
+<h2 id="version-150"><a class="header" href="#version-150">Version 1.5.0</a></h2>
+<h3 id="added-10"><a class="header" href="#added-10">Added</a></h3>
 <ul>
 <li>✅  skip the git test if git is not in the path</li>
 <li>👷  init github-action</li>
 </ul>
-<h3><a class="header" href="#changed-9" id="changed-9">Changed</a></h3>
+<h3 id="changed-23"><a class="header" href="#changed-23">Changed</a></h3>
 <ul>
 <li>🔧  (test) try to fix setup of git</li>
 <li>🔧  enable feature &quot;cli&quot; by default to work friendly with <code>cargo install</code> and  <code>topgrade</code></li>
@@ -1675,15 +1988,15 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump snafu from 0.4.4 to 0.5.0</li>
 <li>⬆️  Bump serde from 1.0.98 to 1.0.99</li>
 </ul>
-<h3><a class="header" href="#breaking-changes-1" id="breaking-changes-1">Breaking changes</a></h3>
+<h3 id="breaking-changes-2"><a class="header" href="#breaking-changes-2">Breaking changes</a></h3>
 <ul>
 <li>💥  prepare upgrade to structopt 0.3.0</li>
 </ul>
-<h3><a class="header" href="#removed-3" id="removed-3">Removed</a></h3>
+<h3 id="removed-5"><a class="header" href="#removed-5">Removed</a></h3>
 <ul>
 <li>➖  remove direct dependency to hashbrown</li>
 </ul>
-<h3><a class="header" href="#fixed-7" id="fixed-7">Fixed</a></h3>
+<h3 id="fixed-16"><a class="header" href="#fixed-16">Fixed</a></h3>
 <ul>
 <li>💚  (ci) try to fix azure-pipelines by downgrade image vm + disable cache</li>
 <li>✏️  fix typo in commit-message</li>
@@ -1694,7 +2007,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✏️  (README) typo</li>
 <li>🐛  move dependencies only for cli</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-9" id="miscellaneous-9">Miscellaneous</a></h3>
+<h3 id="miscellaneous-26"><a class="header" href="#miscellaneous-26">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.5.0</li>
 <li>🚧  add sub-command èinspectè to provide information about ffizer (cache, configuration)</li>
@@ -1723,17 +2036,17 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.4.1-dev</li>
 </ul>
 <p><a name="1.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-140" id="version-140">Version 1.4.0</a></h2>
-<h3><a class="header" href="#changed-10" id="changed-10">Changed</a></h3>
+<h2 id="version-140"><a class="header" href="#version-140">Version 1.4.0</a></h2>
+<h3 id="changed-24"><a class="header" href="#changed-24">Changed</a></h3>
 <ul>
 <li>🚸  display &quot;plan to execute&quot; in as a colorized table (more readable)</li>
 <li>🔧  change the way to commit update of doc (env is set after dependencies task)</li>
 </ul>
-<h3><a class="header" href="#fixed-8" id="fixed-8">Fixed</a></h3>
+<h3 id="fixed-17"><a class="header" href="#fixed-17">Fixed</a></h3>
 <ul>
 <li>🐛  restore the behavior to use the remote_path ignoring subfolder when retrieve git repo</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-10" id="miscellaneous-10">Miscellaneous</a></h3>
+<h3 id="miscellaneous-27"><a class="header" href="#miscellaneous-27">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.4.0</li>
 <li>🔊  add more info on handlebars error</li>
@@ -1742,29 +2055,29 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.3.2-dev</li>
 </ul>
 <p><a name="1.3.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-131" id="version-131">Version 1.3.1</a></h2>
-<h3><a class="header" href="#changed-11" id="changed-11">Changed</a></h3>
+<h2 id="version-131"><a class="header" href="#version-131">Version 1.3.1</a></h2>
+<h3 id="changed-25"><a class="header" href="#changed-25">Changed</a></h3>
 <ul>
 <li>⬆️  Bump libc from 0.2.61 to 0.2.62</li>
 </ul>
-<h3><a class="header" href="#fixed-9" id="fixed-9">Fixed</a></h3>
+<h3 id="fixed-18"><a class="header" href="#fixed-18">Fixed</a></h3>
 <ul>
 <li>🐛  (README) fix instruction for installation via cargo.</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-11" id="miscellaneous-11">Miscellaneous</a></h3>
+<h3 id="miscellaneous-28"><a class="header" href="#miscellaneous-28">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.3.1</li>
 <li>📦  to generate archive without &quot;./&quot; as prefix (to workaround an issue in self_update)</li>
 <li>🚧  (cargo-release) start next development iteration 1.3.1-dev</li>
 </ul>
 <p><a name="1.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-130" id="version-130">Version 1.3.0</a></h2>
-<h3><a class="header" href="#added-5" id="added-5">Added</a></h3>
+<h2 id="version-130"><a class="header" href="#version-130">Version 1.3.0</a></h2>
+<h3 id="added-11"><a class="header" href="#added-11">Added</a></h3>
 <ul>
 <li>✨  add support of select (combobox) for variable's value</li>
 <li>✨  (variables) allow variable to be hidden</li>
 </ul>
-<h3><a class="header" href="#changed-12" id="changed-12">Changed</a></h3>
+<h3 id="changed-26"><a class="header" href="#changed-26">Changed</a></h3>
 <ul>
 <li>⬆️  Bump directories from 2.0.1 to 2.0.2</li>
 <li>👽  update code to match change in self_update</li>
@@ -1781,15 +2094,15 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump regex from 1.1.9 to 1.2.0</li>
 <li>⬆️  Bump openssl from 0.10.23 to 0.10.24</li>
 </ul>
-<h3><a class="header" href="#breaking-changes-2" id="breaking-changes-2">Breaking changes</a></h3>
+<h3 id="breaking-changes-3"><a class="header" href="#breaking-changes-3">Breaking changes</a></h3>
 <ul>
 <li>💥  change error handling, move from <code>failure</code> to  <code>std::error::Error</code> and <code>snafu</code></li>
 </ul>
-<h3><a class="header" href="#fixed-10" id="fixed-10">Fixed</a></h3>
+<h3 id="fixed-19"><a class="header" href="#fixed-19">Fixed</a></h3>
 <ul>
 <li>✏️  README fix syntax to be readable by crates.io</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-12" id="miscellaneous-12">Miscellaneous</a></h3>
+<h3 id="miscellaneous-29"><a class="header" href="#miscellaneous-29">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.3.0</li>
 <li>📝  (book) update</li>
@@ -1799,13 +2112,13 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.2.1-dev</li>
 </ul>
 <p><a name="1.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-120" id="version-120">Version 1.2.0</a></h2>
-<h3><a class="header" href="#added-6" id="added-6">Added</a></h3>
+<h2 id="version-120"><a class="header" href="#version-120">Version 1.2.0</a></h2>
+<h3 id="added-12"><a class="header" href="#added-12">Added</a></h3>
 <ul>
 <li>✨  allow template content to be into a subfolder <code>template</code> #79</li>
 <li>➕  use hashbrown (like handlebars) to replace std BTreeMap, HashMap, HashSet</li>
 </ul>
-<h3><a class="header" href="#changed-13" id="changed-13">Changed</a></h3>
+<h3 id="changed-27"><a class="header" href="#changed-27">Changed</a></h3>
 <ul>
 <li>♻️  use handlebars helpers externalized into handlebars_misc_helpers</li>
 <li>♻️  move handlebars/hbs into a module folder and split into submodules</li>
@@ -1817,12 +2130,12 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump slog from 2.4.1 to 2.5.1</li>
 <li>⬆️  Bump slog-term from 2.4.0 to 2.4.1</li>
 </ul>
-<h3><a class="header" href="#fixed-11" id="fixed-11">Fixed</a></h3>
+<h3 id="fixed-20"><a class="header" href="#fixed-20">Fixed</a></h3>
 <ul>
 <li>🐛  adjust version of dependencies to existing value</li>
 <li>✏️  fix typo in badge</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-13" id="miscellaneous-13">Miscellaneous</a></h3>
+<h3 id="miscellaneous-30"><a class="header" href="#miscellaneous-30">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.2.0</li>
 <li>📝  update book</li>
@@ -1830,8 +2143,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 1.1.1-dev</li>
 </ul>
 <p><a name="1.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-110" id="version-110">Version 1.1.0</a></h2>
-<h3><a class="header" href="#changed-14" id="changed-14">Changed</a></h3>
+<h2 id="version-110"><a class="header" href="#version-110">Version 1.1.0</a></h2>
+<h3 id="changed-28"><a class="header" href="#changed-28">Changed</a></h3>
 <ul>
 <li>⬆️  Bump git2 from 0.8.0 to 0.9.1 &amp; git2_credentials from 0.2.0 to 0.3.0</li>
 <li>⬆️  Bump libc from 0.2.58 to 0.2.59</li>
@@ -1865,23 +2178,23 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump reqwest from 0.9.16 to 0.9.17</li>
 <li>⬆️  Bump openssl from 0.10.21 to 0.10.22</li>
 </ul>
-<h3><a class="header" href="#fixed-12" id="fixed-12">Fixed</a></h3>
+<h3 id="fixed-21"><a class="header" href="#fixed-21">Fixed</a></h3>
 <ul>
 <li>🐛  fix Cargo warning about exclude</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-14" id="miscellaneous-14">Miscellaneous</a></h3>
+<h3 id="miscellaneous-31"><a class="header" href="#miscellaneous-31">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.1.0</li>
 <li>🚧  (cargo-release) start next development iteration 1.0.1-dev</li>
 </ul>
 <p><a name="1.0.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-100" id="version-100">Version 1.0.0</a></h2>
-<h3><a class="header" href="#added-7" id="added-7">Added</a></h3>
+<h2 id="version-100"><a class="header" href="#version-100">Version 1.0.0</a></h2>
+<h3 id="added-13"><a class="header" href="#added-13">Added</a></h3>
 <ul>
 <li>➕  use git2_credentials (extract of existing code)</li>
 <li>✅  (ci) enable test_remote on ci build</li>
 </ul>
-<h3><a class="header" href="#changed-15" id="changed-15">Changed</a></h3>
+<h3 id="changed-29"><a class="header" href="#changed-29">Changed</a></h3>
 <ul>
 <li>⬆️  Bump serde from 1.0.90 to 1.0.91</li>
 <li>⬆️  Bump git2_credentials from 0.1.1 to 0.2.0</li>
@@ -1899,7 +2212,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump reqwest from 0.9.12 to 0.9.13</li>
 <li>⬆️  Bump regex from 1.1.2 to 1.1.5</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-15" id="miscellaneous-15">Miscellaneous</a></h3>
+<h3 id="miscellaneous-32"><a class="header" href="#miscellaneous-32">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 1.0.0</li>
 <li>🚧  (build) prepare 1.0.0</li>
@@ -1907,40 +2220,40 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 0.12.2-dev</li>
 </ul>
 <p><a name="0.12.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0121" id="version-0121">Version 0.12.1</a></h2>
-<h3><a class="header" href="#changed-16" id="changed-16">Changed</a></h3>
+<h2 id="version-0121"><a class="header" href="#version-0121">Version 0.12.1</a></h2>
+<h3 id="changed-30"><a class="header" href="#changed-30">Changed</a></h3>
 <ul>
 <li>⬆️  Bump assert_cmd from 0.11.0 to 0.11.1</li>
 </ul>
-<h3><a class="header" href="#removed-4" id="removed-4">Removed</a></h3>
+<h3 id="removed-6"><a class="header" href="#removed-6">Removed</a></h3>
 <ul>
 <li>🔇  remove xdb! call</li>
 <li>🔥  (ci) remove travis configuration</li>
 <li>🔇  (ci) remove verbose mode during github-upload-flow</li>
 </ul>
-<h3><a class="header" href="#fixed-13" id="fixed-13">Fixed</a></h3>
+<h3 id="fixed-22"><a class="header" href="#fixed-22">Fixed</a></h3>
 <ul>
 <li>✏️  fix typo in log</li>
 <li>🐛  report error (instead of crash) when error during computation of rendered path</li>
 <li>🐛  fix the folder use to clone when subfolder is defined (cause by refactor)</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-16" id="miscellaneous-16">Miscellaneous</a></h3>
+<h3 id="miscellaneous-33"><a class="header" href="#miscellaneous-33">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.12.1</li>
 <li>📝  (docs) add information about template_configuration</li>
 <li>🚧  (cargo-release) start next development iteration 0.12.1-dev</li>
 </ul>
 <p><a name="0.12.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0120" id="version-0120">Version 0.12.0</a></h2>
-<h3><a class="header" href="#changed-17" id="changed-17">Changed</a></h3>
+<h2 id="version-0120"><a class="header" href="#version-0120">Version 0.12.0</a></h2>
+<h3 id="changed-31"><a class="header" href="#changed-31">Changed</a></h3>
 <ul>
 <li>⬆️  Bump reqwest from 0.9.11 to 0.9.12</li>
 </ul>
-<h3><a class="header" href="#fixed-14" id="fixed-14">Fixed</a></h3>
+<h3 id="fixed-23"><a class="header" href="#fixed-23">Fixed</a></h3>
 <ul>
 <li>🐛  (git) fix authentication via ssh, https</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-17" id="miscellaneous-17">Miscellaneous</a></h3>
+<h3 id="miscellaneous-34"><a class="header" href="#miscellaneous-34">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.12.0</li>
 <li>📝  (CHANGELOG) update</li>
@@ -1948,12 +2261,12 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 0.11.4-dev</li>
 </ul>
 <p><a name="0.11.3" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0113" id="version-0113">Version 0.11.3</a></h2>
-<h3><a class="header" href="#fixed-15" id="fixed-15">Fixed</a></h3>
+<h2 id="version-0113"><a class="header" href="#version-0113">Version 0.11.3</a></h2>
+<h3 id="fixed-24"><a class="header" href="#fixed-24">Fixed</a></h3>
 <ul>
 <li>🐛  (git) remove folder if error during git retieve</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-18" id="miscellaneous-18">Miscellaneous</a></h3>
+<h3 id="miscellaneous-35"><a class="header" href="#miscellaneous-35">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.11.3</li>
 <li>⚗  (ci) try fix for github-upload</li>
@@ -1961,24 +2274,24 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 0.11.3-dev</li>
 </ul>
 <p><a name="0.11.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0112" id="version-0112">Version 0.11.2</a></h2>
-<h3><a class="header" href="#fixed-16" id="fixed-16">Fixed</a></h3>
+<h2 id="version-0112"><a class="header" href="#version-0112">Version 0.11.2</a></h2>
+<h3 id="fixed-25"><a class="header" href="#fixed-25">Fixed</a></h3>
 <ul>
 <li>🐛  (ci) try to fix github-upload-flow</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-19" id="miscellaneous-19">Miscellaneous</a></h3>
+<h3 id="miscellaneous-36"><a class="header" href="#miscellaneous-36">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.11.2</li>
 <li>🚧  (cargo-release) start next development iteration 0.11.2-dev</li>
 </ul>
 <p><a name="0.11.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0111" id="version-0111">Version 0.11.1</a></h2>
-<h3><a class="header" href="#added-8" id="added-8">Added</a></h3>
+<h2 id="version-0111"><a class="header" href="#version-0111">Version 0.11.1</a></h2>
+<h3 id="added-14"><a class="header" href="#added-14">Added</a></h3>
 <ul>
 <li>✨  (hbs) add helper env_var</li>
 <li>✨  default_value can be composed of previously defined value</li>
 </ul>
-<h3><a class="header" href="#changed-18" id="changed-18">Changed</a></h3>
+<h3 id="changed-32"><a class="header" href="#changed-32">Changed</a></h3>
 <ul>
 <li>⬆️  (build) update cargo.lock</li>
 <li>🔧  (ci) try to fix upload of asset on github (for windows, mac, linux)</li>
@@ -1987,7 +2300,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🔧  (cargo) tried to decrease size of executable</li>
 <li>⬆️  Bump structopt from 0.2.14 to 0.2.15</li>
 </ul>
-<h3><a class="header" href="#fixed-17" id="fixed-17">Fixed</a></h3>
+<h3 id="fixed-26"><a class="header" href="#fixed-26">Fixed</a></h3>
 <ul>
 <li>🐛  (test) fix test about env_var</li>
 <li>🐛  path_helpers canonicalize existing path</li>
@@ -1995,7 +2308,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🐛  try to static link openssl</li>
 <li>🐛  fix the download of git repository</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-20" id="miscellaneous-20">Miscellaneous</a></h3>
+<h3 id="miscellaneous-37"><a class="header" href="#miscellaneous-37">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.11.1</li>
 <li>🚀  (cargo-release) version 0.11.0</li>
@@ -2005,28 +2318,28 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 0.10.3-dev</li>
 </ul>
 <p><a name="0.10.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0102" id="version-0102">Version 0.10.2</a></h2>
-<h3><a class="header" href="#changed-19" id="changed-19">Changed</a></h3>
+<h2 id="version-0102"><a class="header" href="#version-0102">Version 0.10.2</a></h2>
+<h3 id="changed-33"><a class="header" href="#changed-33">Changed</a></h3>
 <ul>
 <li>⬆️  Bump reqwest from 0.9.10 to 0.9.11</li>
 </ul>
-<h3><a class="header" href="#removed-5" id="removed-5">Removed</a></h3>
+<h3 id="removed-7"><a class="header" href="#removed-7">Removed</a></h3>
 <ul>
 <li>🔥  (cirrus) remove upload script</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-21" id="miscellaneous-21">Miscellaneous</a></h3>
+<h3 id="miscellaneous-38"><a class="header" href="#miscellaneous-38">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.10.2</li>
 <li>⚗  (travis) try named cache to optimize</li>
 <li>🚧  (cargo-release) start next development iteration 0.10.2-dev</li>
 </ul>
 <p><a name="0.10.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0101" id="version-0101">Version 0.10.1</a></h2>
-<h3><a class="header" href="#added-9" id="added-9">Added</a></h3>
+<h2 id="version-0101"><a class="header" href="#version-0101">Version 0.10.1</a></h2>
+<h3 id="added-15"><a class="header" href="#added-15">Added</a></h3>
 <ul>
 <li>👷  (azure) set up CI with Azure Pipelines</li>
 </ul>
-<h3><a class="header" href="#changed-20" id="changed-20">Changed</a></h3>
+<h3 id="changed-34"><a class="header" href="#changed-34">Changed</a></h3>
 <ul>
 <li>🔧  (make) use profile and platform</li>
 <li>🔧  (make) move upload to github as part of make</li>
@@ -2037,11 +2350,11 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🔧  (travis) try to workaround the timeout (on windows)</li>
 <li>🔧  (cirrus) try a windows &amp; osx setup</li>
 </ul>
-<h3><a class="header" href="#removed-6" id="removed-6">Removed</a></h3>
+<h3 id="removed-8"><a class="header" href="#removed-8">Removed</a></h3>
 <ul>
 <li>🔥  (cirrus) remove cirrus-ci configuration</li>
 </ul>
-<h3><a class="header" href="#fixed-18" id="fixed-18">Fixed</a></h3>
+<h3 id="fixed-27"><a class="header" href="#fixed-27">Fixed</a></h3>
 <ul>
 <li>🐛  (azure) profile injection cross platform</li>
 <li>🐛  (azure) fix typo in profile injection</li>
@@ -2052,7 +2365,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✏️  (README) syntax error</li>
 <li>🐛  (travis) always build the zip to not fail during release</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-22" id="miscellaneous-22">Miscellaneous</a></h3>
+<h3 id="miscellaneous-39"><a class="header" href="#miscellaneous-39">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.10.1</li>
 <li>🚧  (cirrus) disable codecov on cirrus</li>
@@ -2062,8 +2375,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 0.10.1-dev</li>
 </ul>
 <p><a name="0.10.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-0100" id="version-0100">Version 0.10.0</a></h2>
-<h3><a class="header" href="#added-10" id="added-10">Added</a></h3>
+<h2 id="version-0100"><a class="header" href="#version-0100">Version 0.10.0</a></h2>
+<h3 id="added-16"><a class="header" href="#added-16">Added</a></h3>
 <ul>
 <li>👷  (travis) increase cache timeout (try to fix for windows)</li>
 <li>👷  (cirrus) try to setup codecov</li>
@@ -2080,7 +2393,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✨  (imports) allow template to be composed by other template</li>
 <li>👷  increase timeout when builing on travis</li>
 </ul>
-<h3><a class="header" href="#changed-21" id="changed-21">Changed</a></h3>
+<h3 id="changed-35"><a class="header" href="#changed-35">Changed</a></h3>
 <ul>
 <li>🎨  use Upper Case for lazy static ref</li>
 <li>⬆️  Bump serde from 1.0.88 to 1.0.89</li>
@@ -2119,11 +2432,11 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump indicatif from 0.10.3 to 0.11.0</li>
 <li>⬆️  Bump console from 0.7.1 to 0.7.2</li>
 </ul>
-<h3><a class="header" href="#removed-7" id="removed-7">Removed</a></h3>
+<h3 id="removed-9"><a class="header" href="#removed-9">Removed</a></h3>
 <ul>
 <li>🔇  (scripts) remove trace when run getLatest.sh</li>
 </ul>
-<h3><a class="header" href="#fixed-19" id="fixed-19">Fixed</a></h3>
+<h3 id="fixed-28"><a class="header" href="#fixed-28">Fixed</a></h3>
 <ul>
 <li>🐛  fix getLatest.sh for linux</li>
 <li>🐛  remove .unwrap() inside main code</li>
@@ -2131,7 +2444,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✏️  (README) fix typo</li>
 <li>🐛  (travis) fix syntax error</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-23" id="miscellaneous-23">Miscellaneous</a></h3>
+<h3 id="miscellaneous-40"><a class="header" href="#miscellaneous-40">Miscellaneous</a></h3>
 <ul>
 <li>🚀  (cargo-release) version 0.10.0</li>
 <li>📦  set the right version (0.10.0 not yet release)</li>
@@ -2150,8 +2463,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>📝  (book) move part of content of README into book</li>
 </ul>
 <p><a name="0.9.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-090" id="version-090">Version 0.9.0</a></h2>
-<h3><a class="header" href="#changed-22" id="changed-22">Changed</a></h3>
+<h2 id="version-090"><a class="header" href="#version-090">Version 0.9.0</a></h2>
+<h3 id="changed-36"><a class="header" href="#changed-36">Changed</a></h3>
 <ul>
 <li>🎨  apply clippy suggestion</li>
 <li>⬆️  Bump git2 from 0.7.5 to 0.8.0</li>
@@ -2161,24 +2474,24 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump serde_derive from 1.0.80 to 1.0.81</li>
 <li>⬆️  Bump serde from 1.0.80 to 1.0.81</li>
 </ul>
-<h3><a class="header" href="#breaking-changes-3" id="breaking-changes-3">Breaking changes</a></h3>
+<h3 id="breaking-changes-4"><a class="header" href="#breaking-changes-4">Breaking changes</a></h3>
 <ul>
 <li>💥  cli change to support subcommand (apply &amp; upgrade)</li>
 </ul>
 <p><a name="0.8.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-080" id="version-080">Version 0.8.0</a></h2>
-<h3><a class="header" href="#changed-23" id="changed-23">Changed</a></h3>
+<h2 id="version-080"><a class="header" href="#version-080">Version 0.8.0</a></h2>
+<h3 id="changed-37"><a class="header" href="#changed-37">Changed</a></h3>
 <ul>
 <li>⬆️  move to rust edition 2018</li>
 <li>🚸  (cli) use human_panic...</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-24" id="miscellaneous-24">Miscellaneous</a></h3>
+<h3 id="miscellaneous-41"><a class="header" href="#miscellaneous-41">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 </ul>
 <p><a name="0.7.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-071" id="version-071">Version 0.7.1</a></h2>
-<h3><a class="header" href="#changed-24" id="changed-24">Changed</a></h3>
+<h2 id="version-071"><a class="header" href="#version-071">Version 0.7.1</a></h2>
+<h3 id="changed-38"><a class="header" href="#changed-38">Changed</a></h3>
 <ul>
 <li>⬆️  Bump regex from 1.0.6 to 1.1.0</li>
 <li>⬆️  Bump indicatif from 0.10.2 to 0.10.3</li>
@@ -2186,14 +2499,14 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump console from 0.7.0 to 0.7.1</li>
 <li>⬆️  upgrade dependencies</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-25" id="miscellaneous-25">Miscellaneous</a></h3>
+<h3 id="miscellaneous-42"><a class="header" href="#miscellaneous-42">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📝  (README) add a template to the list</li>
 </ul>
 <p><a name="0.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-070" id="version-070">Version 0.7.0</a></h2>
-<h3><a class="header" href="#added-11" id="added-11">Added</a></h3>
+<h2 id="version-070"><a class="header" href="#version-070">Version 0.7.0</a></h2>
+<h3 id="added-17"><a class="header" href="#added-17">Added</a></h3>
 <ul>
 <li>✨  (cfg) can use handlebars into ignores'entry and default_value in ffizer.yaml</li>
 <li>👷  (travis) try to fix random timeout on windows (6)</li>
@@ -2204,18 +2517,18 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>👷  (travis) try to fix random timeout on windows</li>
 <li>✨  (render) add helper to transform path</li>
 </ul>
-<h3><a class="header" href="#changed-25" id="changed-25">Changed</a></h3>
+<h3 id="changed-39"><a class="header" href="#changed-39">Changed</a></h3>
 <ul>
 <li>🎨  (e2e) compare content of file as string (vs vec[u8]) to ease debug</li>
 <li>🎨  (e2e) capture stderr &amp; stdout</li>
 <li>⬆️  Bump tempfile from 3.0.4 to 3.0.5</li>
 <li>⬆️  Bump indicatif from 0.9.0 to 0.10.1</li>
 </ul>
-<h3><a class="header" href="#fixed-20" id="fixed-20">Fixed</a></h3>
+<h3 id="fixed-29"><a class="header" href="#fixed-29">Fixed</a></h3>
 <ul>
 <li>✏️  (README) fixing typo</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-26" id="miscellaneous-26">Miscellaneous</a></h3>
+<h3 id="miscellaneous-43"><a class="header" href="#miscellaneous-43">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>🚧  (cfg) allow to use handlebars and cli info into part of ffizer.yml</li>
@@ -2224,66 +2537,66 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>📦  (cargo) try to exclude tests</li>
 </ul>
 <p><a name="0.6.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-060" id="version-060">Version 0.6.0</a></h2>
-<h3><a class="header" href="#added-12" id="added-12">Added</a></h3>
+<h2 id="version-060"><a class="header" href="#version-060">Version 0.6.0</a></h2>
+<h3 id="added-18"><a class="header" href="#added-18">Added</a></h3>
 <ul>
 <li>✨  (render) add helper to do http request and a preconfigured to request gitignore.io</li>
 <li>✨  #6 (render) add helper to transform string</li>
 </ul>
-<h3><a class="header" href="#changed-26" id="changed-26">Changed</a></h3>
+<h3 id="changed-40"><a class="header" href="#changed-40">Changed</a></h3>
 <ul>
 <li>🔧  (e2e) disable remote test by default</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-27" id="miscellaneous-27">Miscellaneous</a></h3>
+<h3 id="miscellaneous-44"><a class="header" href="#miscellaneous-44">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 </ul>
 <p><a name="0.5.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-050" id="version-050">Version 0.5.0</a></h2>
-<h3><a class="header" href="#changed-27" id="changed-27">Changed</a></h3>
+<h2 id="version-050"><a class="header" href="#version-050">Version 0.5.0</a></h2>
+<h3 id="changed-41"><a class="header" href="#changed-41">Changed</a></h3>
 <ul>
 <li>🚸  (cli) clean display to user (happy path only)</li>
 <li>⬆️  Bump dialoguer from 0.2.0 to 0.3.0</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-28" id="miscellaneous-28">Miscellaneous</a></h3>
+<h3 id="miscellaneous-45"><a class="header" href="#miscellaneous-45">Miscellaneous</a></h3>
 <ul>
 <li>📝  (README) update doc (help, usage,...)</li>
 </ul>
 <p><a name="0.4.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-042" id="version-042">Version 0.4.2</a></h2>
-<h3><a class="header" href="#added-13" id="added-13">Added</a></h3>
+<h2 id="version-042"><a class="header" href="#version-042">Version 0.4.2</a></h2>
+<h3 id="added-19"><a class="header" href="#added-19">Added</a></h3>
 <ul>
 <li>✨  (cli) add support of source subfolder</li>
 </ul>
-<h3><a class="header" href="#changed-28" id="changed-28">Changed</a></h3>
+<h3 id="changed-42"><a class="header" href="#changed-42">Changed</a></h3>
 <ul>
 <li>⬆️  Bump assert_cmd from 0.10.1 to 0.10.2</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-29" id="miscellaneous-29">Miscellaneous</a></h3>
+<h3 id="miscellaneous-46"><a class="header" href="#miscellaneous-46">Miscellaneous</a></h3>
 <ul>
 <li>📦  (release) customize release profile</li>
 <li>📝  (README) update features list (states &amp; planned)</li>
 </ul>
 <p><a name="0.4.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-041" id="version-041">Version 0.4.1</a></h2>
-<h3><a class="header" href="#added-14" id="added-14">Added</a></h3>
+<h2 id="version-041"><a class="header" href="#version-041">Version 0.4.1</a></h2>
+<h3 id="added-20"><a class="header" href="#added-20">Added</a></h3>
 <ul>
 <li>✨  (cli) add --rev to specify the git revision</li>
 </ul>
-<h3><a class="header" href="#fixed-21" id="fixed-21">Fixed</a></h3>
+<h3 id="fixed-30"><a class="header" href="#fixed-30">Fixed</a></h3>
 <ul>
 <li>🐛  (git) do not remove existing cache before success clone</li>
 </ul>
 <p><a name="0.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-040" id="version-040">Version 0.4.0</a></h2>
-<h3><a class="header" href="#added-15" id="added-15">Added</a></h3>
+<h2 id="version-040"><a class="header" href="#version-040">Version 0.4.0</a></h2>
+<h3 id="added-21"><a class="header" href="#added-21">Added</a></h3>
 <ul>
 <li>👷  (travis) remove build for i686</li>
 <li>👷  (travis) try to fix compilation on i686</li>
 <li>✨  (cli) add offline mode</li>
 <li>✨  (source) accept remote git repository as source for template</li>
 </ul>
-<h3><a class="header" href="#changed-29" id="changed-29">Changed</a></h3>
+<h3 id="changed-43"><a class="header" href="#changed-43">Changed</a></h3>
 <ul>
 <li>🎨  (git) comment unused code</li>
 <li>♻️  move Uri into SourceUri</li>
@@ -2291,7 +2604,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🎨  (e2e) test the executable via cli</li>
 <li>⬆️  Bump dialoguer from 0.1.0 to 0.2.0</li>
 </ul>
-<h3><a class="header" href="#fixed-22" id="fixed-22">Fixed</a></h3>
+<h3 id="fixed-31"><a class="header" href="#fixed-31">Fixed</a></h3>
 <ul>
 <li>🐛  (windows) try to fix bug when git clone</li>
 <li>🐛  detection of file to &quot;Ignores&quot; is done during the scan</li>
@@ -2299,7 +2612,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🐛  fix due to change in api of dialoguer</li>
 <li>🐛  fix file order priority</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-30" id="miscellaneous-30">Miscellaneous</a></h3>
+<h3 id="miscellaneous-47"><a class="header" href="#miscellaneous-47">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📦  (cargo) clean travis info</li>
@@ -2309,20 +2622,20 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  prepare to support several form of template uri</li>
 </ul>
 <p><a name="0.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-030" id="version-030">Version 0.3.0</a></h2>
-<h3><a class="header" href="#added-16" id="added-16">Added</a></h3>
+<h2 id="version-030"><a class="header" href="#version-030">Version 0.3.0</a></h2>
+<h3 id="added-22"><a class="header" href="#added-22">Added</a></h3>
 <ul>
 <li>✨  (cli) add experimental flags to always accept default value for variables</li>
 <li>✨  (cli) add flags to control confirmation (always, never, auto)</li>
 <li>✨  (cfg) allow to ignore (glob) file and directy</li>
 <li>✅  (e2e) add 2 tests to show every features (need some improvement)</li>
 </ul>
-<h3><a class="header" href="#changed-30" id="changed-30">Changed</a></h3>
+<h3 id="changed-44"><a class="header" href="#changed-44">Changed</a></h3>
 <ul>
 <li>⬆️  Bump walkdir from 2.2.6 to 2.2.7</li>
 <li>♻️  (cli) move Cmd into Ctx.cmd_opt: CmdOpt</li>
 </ul>
-<h3><a class="header" href="#fixed-23" id="fixed-23">Fixed</a></h3>
+<h3 id="fixed-32"><a class="header" href="#fixed-32">Fixed</a></h3>
 <ul>
 <li>🐛  fixe processing order of files</li>
 <li>🐛  (render) use the rendered path for *.ffizer.hbs</li>
@@ -2330,18 +2643,18 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✏️  (README) fix title level</li>
 <li>🐛  (travis) ‘cargo publish’ doesn’t work on windows</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-31" id="miscellaneous-31">Miscellaneous</a></h3>
+<h3 id="miscellaneous-48"><a class="header" href="#miscellaneous-48">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📝  (README) add TOC</li>
 </ul>
 <p><a name="0.2.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-021" id="version-021">Version 0.2.1</a></h2>
-<h3><a class="header" href="#fixed-24" id="fixed-24">Fixed</a></h3>
+<h2 id="version-021"><a class="header" href="#version-021">Version 0.2.1</a></h2>
+<h3 id="fixed-33"><a class="header" href="#fixed-33">Fixed</a></h3>
 <ul>
 <li>🐛  (cargo) expected at most 5 keywords per crate</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-32" id="miscellaneous-32">Miscellaneous</a></h3>
+<h3 id="miscellaneous-49"><a class="header" href="#miscellaneous-49">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>📝  (README) update badges</li>
@@ -2349,44 +2662,44 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>📦  (travis) generate archive without target path</li>
 </ul>
 <p><a name="0.2.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-020" id="version-020">Version 0.2.0</a></h2>
-<h3><a class="header" href="#added-17" id="added-17">Added</a></h3>
+<h2 id="version-020"><a class="header" href="#version-020">Version 0.2.0</a></h2>
+<h3 id="added-23"><a class="header" href="#added-23">Added</a></h3>
 <ul>
 <li>✨  (render) file name and folder name could be rendered</li>
 <li>👷  (appveyor) remove appveyor as CI</li>
 <li>👷  (travis) try a workaround to deploy windows (2)</li>
 </ul>
-<h3><a class="header" href="#changed-31" id="changed-31">Changed</a></h3>
+<h3 id="changed-45"><a class="header" href="#changed-45">Changed</a></h3>
 <ul>
 <li>♻️  (error) use failure to manage the error</li>
 </ul>
-<h3><a class="header" href="#fixed-25" id="fixed-25">Fixed</a></h3>
+<h3 id="fixed-34"><a class="header" href="#fixed-34">Fixed</a></h3>
 <ul>
 <li>✏️  (README) wrong project name, reformulate</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-33" id="miscellaneous-33">Miscellaneous</a></h3>
+<h3 id="miscellaneous-50"><a class="header" href="#miscellaneous-50">Miscellaneous</a></h3>
 <ul>
 <li>📦  prepare release</li>
 <li>🚧  (render) basic implementation to support *.ffizer.hbs</li>
 <li>🚧  read a configuration file (.ffizer.yaml) from the template folder</li>
 </ul>
 <p><a name="0.1.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-012" id="version-012">Version 0.1.2</a></h2>
-<h3><a class="header" href="#added-18" id="added-18">Added</a></h3>
+<h2 id="version-012"><a class="header" href="#version-012">Version 0.1.2</a></h2>
+<h3 id="added-24"><a class="header" href="#added-24">Added</a></h3>
 <ul>
 <li>👷  (travis) try a workaround to deploy windows (3)</li>
 <li>👷  (travis) try a workaround to deploy windows (2)</li>
 </ul>
 <p><a name="0.1.1" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-011" id="version-011">Version 0.1.1</a></h2>
-<h3><a class="header" href="#added-19" id="added-19">Added</a></h3>
+<h2 id="version-011"><a class="header" href="#version-011">Version 0.1.1</a></h2>
+<h3 id="added-25"><a class="header" href="#added-25">Added</a></h3>
 <ul>
 <li>👷  (travis) try a workaround to deploy windows</li>
 <li>👷  (travis) fix the api_key</li>
 </ul>
 <p><a name="0.1.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
-<h2><a class="header" href="#version-010" id="version-010">Version 0.1.0</a></h2>
-<h3><a class="header" href="#added-20" id="added-20">Added</a></h3>
+<h2 id="version-010"><a class="header" href="#version-010">Version 0.1.0</a></h2>
+<h3 id="added-26"><a class="header" href="#added-26">Added</a></h3>
 <ul>
 <li>👷  (travis) try to add windows support</li>
 <li>✨  (cli) ask confirmation before apply plan</li>
@@ -2397,19 +2710,19 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>✨  (main) setup of log + cli arguments read</li>
 <li>🎉  init</li>
 </ul>
-<h3><a class="header" href="#changed-32" id="changed-32">Changed</a></h3>
+<h3 id="changed-46"><a class="header" href="#changed-46">Changed</a></h3>
 <ul>
 <li>💄  (cli) add a progress bar for the execution (experimental)</li>
 <li>🚸  (cli) complete description</li>
 <li>🎨  (main) main is a wrapper for the lib</li>
 <li>🚚  rename project from fgen to ffizer fgen already exists</li>
 </ul>
-<h3><a class="header" href="#fixed-26" id="fixed-26">Fixed</a></h3>
+<h3 id="fixed-35"><a class="header" href="#fixed-35">Fixed</a></h3>
 <ul>
 <li>🐛  (README) fix appveyor badge</li>
 <li>🐛  (cli) use flags instead of args, correct description</li>
 </ul>
-<h3><a class="header" href="#miscellaneous-34" id="miscellaneous-34">Miscellaneous</a></h3>
+<h3 id="miscellaneous-51"><a class="header" href="#miscellaneous-51">Miscellaneous</a></h3>
 <ul>
 <li>📦  (cargo) prepare info for publishing</li>
 <li>📝  (README) udapte</li>
@@ -2430,9 +2743,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
 
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -2440,49 +2751,52 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
 
-                
             </nav>
 
         </div>
 
-        
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
 
-        
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
-        
 
-        
+
         <script type="text/javascript">
             window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
 
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        <script type="text/javascript" src="mermaid-init.js"></script>
 
-        
-        
         <script type="text/javascript">
         window.addEventListener('load', function() {
             window.setTimeout(window.print, 100);
         });
         </script>
-        
-        
 
     </body>
 </html>

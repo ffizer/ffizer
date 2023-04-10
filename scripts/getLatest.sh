@@ -26,7 +26,7 @@ fail() {
 
 find_download_url() {
   local SUFFIX=$1
-  local URL=$(curl -s https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases/latest |
+  URL=$(curl -s https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases/latest |
     grep "browser_download_url.*${SUFFIX}" |
     cut -d : -f 2,3 |
     tr -d \" |
@@ -35,7 +35,7 @@ find_download_url() {
 }
 
 find_arch() {
-  local ARCH=$(uname -m)
+  ARCH=$(uname -m)
   case $ARCH in
   armv5*) ARCH="armv5" ;;
   armv6*) ARCH="armv6" ;;
@@ -50,14 +50,15 @@ find_arch() {
 }
 
 find_os() {
-  local OS=$(echo $(uname) | tr '[:upper:]' '[:lower:]')
+  UNAME=$(uname)
+  OS=$(echo "$UNAME" | tr '[:upper:]' '[:lower:]')
 
   case "$OS" in
   # Minimalist GNU for Windows
   mingw*) OS='windows' ;;
   msys*) OS='windows' ;;
   esac
-  echo $OS
+  echo "$OS"
 }
 
 find_suffix() {
@@ -71,7 +72,7 @@ find_suffix() {
   "arm64-linux.tgz") SUFFIX='aarch64-unknown-linux-musl.tgz' ;;
     # "x86_64-windows.tgz") SUFFIX='x86_64-pc-windows-msvc.zip';;
   esac
-  echo $SUFFIX
+  echo "$SUFFIX"
 }
 
 download_file() {
@@ -90,7 +91,7 @@ find_exec_dest_path() {
   if [ ! -w $DEST_DIR ]; then
     DEST_DIR=$(pwd)
   fi
-  echo ${DEST_DIR}
+  echo "${DEST_DIR}"
 }
 
 install_file() {
@@ -105,19 +106,19 @@ install_file() {
 }
 
 main() {
-  local EXE_DEST_DIR=$(find_exec_dest_path)
-  local EXE_DEST_FILE="${EXE_DEST_DIR}/${EXE_FILENAME}"
-  local ARCH=$(find_arch)
-  local OS=$(find_os)
-  local SUFFIX=$(find_suffix $ARCH $OS)
-  local FILE_URL=$(find_download_url $SUFFIX)
-  local FILE_PATH="/tmp/${GITHUB_USER}-${GITHUB_REPO}-latest-${SUFFIX}"
+  EXE_DEST_DIR=$(find_exec_dest_path)
+  EXE_DEST_FILE="${EXE_DEST_DIR}/${EXE_FILENAME}"
+  ARCH=$(find_arch)
+  OS=$(find_os)
+  SUFFIX=$(find_suffix "$ARCH" "$OS")
+  FILE_URL=$(find_download_url "$SUFFIX")
+  FILE_PATH="/tmp/${GITHUB_USER}-${GITHUB_REPO}-latest-${SUFFIX}"
   if [ -z "${FILE_URL}" ]; then
     fail "Did not find a release for your system: $OS $ARCH"
   fi
   download_file "${FILE_URL}" "${FILE_PATH}"
   install_file "${FILE_PATH}" "${EXE_DEST_FILE}"
-  rm -Rf ${FILE_PATH}
+  rm -Rf "${FILE_PATH}"
   echo "executable installed at ${EXE_DEST_FILE}"
   bye
 }

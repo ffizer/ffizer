@@ -66,7 +66,9 @@ find_suffix() {
   local SUFFIX="$ARCH-$OS.tgz"
   case "$SUFFIX" in
   "x86_64-darwin.tgz") SUFFIX='x86_64-apple-darwin.tgz' ;;
-  "x86_64-linux.tgz") SUFFIX='x86_64-unknown-linux-gnu.tgz' ;;
+  "arm64-darwin.tgz") SUFFIX='aarch64-apple-darwin.tgz' ;;
+  "x86_64-linux.tgz") SUFFIX='x86_64-unknown-linux-musl.tgz' ;;
+  "arm64-linux.tgz") SUFFIX='aarch64-unknown-linux-musl.tgz' ;;
     # "x86_64-windows.tgz") SUFFIX='x86_64-pc-windows-msvc.zip';;
   esac
   echo $SUFFIX

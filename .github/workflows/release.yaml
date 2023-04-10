@@ -19,7 +19,10 @@ jobs:
       matrix:
         rust_toolchain: ["stable"]
         os:
-          - target_platform: x86_64-unknown-linux-gnu
+          - target_platform: x86_64-unknown-linux-musl
+            imageName: ubuntu-latest
+            cross: "true"
+          - target_platform: aarch64-unknown-linux-musl
             imageName: ubuntu-latest
             cross: "true"
           - target_platform: x86_64-apple-darwin

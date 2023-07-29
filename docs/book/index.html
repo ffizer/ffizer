@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js frappé">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -33,12 +33,14 @@
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "frappé" : "frappé";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -64,7 +66,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('frappé')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -101,13 +103,13 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé (default)</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
@@ -121,6 +123,9 @@
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ffizer/ffizer" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
                     </div>
@@ -190,7 +195,7 @@
 <li><em>Create or update</em> files and folder from one (or several) template(s).</li>
 <li>A native executable (cli)
 <ul>
-<li>Install via download a standalone single file on system (no requirements like <code>python</code>, <code>ruby</code>, <code>nodejs</code>, <code>java</code>, ...).</li>
+<li>Install via download a standalone single file on system (no requirements like <code>python</code>, <code>ruby</code>, <code>nodejs</code>, <code>java</code>, …).</li>
 <li>Run as fast enough project generator.</li>
 <li>Run with dry mode (useful to test).</li>
 <li>Support self-upgrade.</li>
@@ -204,15 +209,15 @@
 <li>Templates Authoring
 <ul>
 <li>Can be used for any file &amp; folder generation (no specialization to one ecosystem).</li>
-<li>Can start as simple as a folder to copy &quot;as is&quot;.</li>
+<li>Can start as simple as a folder to copy “as is”.</li>
 <li>Can use the <a href="https://handlebarsjs.com/guide/">Handlebars</a> template syntax for file content, extended with functions:
 <ul>
-<li>To transform strings (toUpperCase, toLowerCase, Capitalize,...)</li>
+<li>To transform strings (toUpperCase, toLowerCase, Capitalize,…)</li>
 <li>To retrieve content via http get (like <code>.gitignore</code> from <a href="https://gitignore.io"><code>gitignore.io</code></a>, license from spdx)</li>
-<li>...</li>
+<li>…</li>
 </ul>
 </li>
-<li>Can replace variables part in file and folder's name</li>
+<li>Can replace variables part in file and folder’s name</li>
 <li>Can be composed of other templates (applied as layer)</li>
 <li>Can ignore file / folder under conditions</li>
 <li>Can store the content at the root of the folder or under the sub-folder <code>template</code></li>
@@ -221,7 +226,7 @@
 <li>Templates Hosting
 <ul>
 <li>On a local folder</li>
-<li>On a hosted git repository (public / private, <code>github</code> / <code>bitbucket</code>/ <code>gitlab</code> / ...)
+<li>On a hosted git repository (public / private, <code>github</code> / <code>bitbucket</code>/ <code>gitlab</code> / …)
 <ul>
 <li>At the root of the repository</li>
 <li>In a sub-folder of the repository</li>

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js frappé">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -33,12 +33,14 @@
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "frappé" : "frappé";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -64,7 +66,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('frappé')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -101,13 +103,13 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé (default)</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
@@ -121,6 +123,9 @@
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ffizer/ffizer" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
                     </div>
@@ -164,7 +169,7 @@
 <pre><code class="language-sh">cp -R my-existing-project my-template
 cd my-template
 </code></pre>
-<p>If you don't have an existing sample you can start with the following code, just to have something 😉.</p>
+<p>If you don’t have an existing sample you can start with the following code, just to have something 😉.</p>
 <pre><code class="language-sh">mkdir my-template
 cd my-template
 
@@ -174,11 +179,11 @@ EOF
 </code></pre>
 <h2 id="clean-the-content-of-my-templates-folder"><a class="header" href="#clean-the-content-of-my-templates-folder">Clean the content of <code>my-templates</code> folder</a></h2>
 <ul>
-<li>remove files and folder that you don't want to be part of the template</li>
+<li>remove files and folder that you don’t want to be part of the template</li>
 <li>maybe add  missing files and folder</li>
 </ul>
 <h2 id="test-the-template"><a class="header" href="#test-the-template">Test the template</a></h2>
-<p>At this point you have a valid template but it's also a sample of what the template can produce. Use it to create a sample that can show a possible output, and a test to validate what ffizer + <code>my-template</code> can generate.</p>
+<p>At this point you have a valid template but it’s also a sample of what the template can produce. Use it to create a sample that can show a possible output, and a test to validate what ffizer + <code>my-template</code> can generate.</p>
 <pre><code class="language-sh"># create the folder for samples (the name of folder should be `.ffizer.samples.d`)
 mkdir .ffizer.samples.d
 
@@ -207,7 +212,7 @@ git add .
 git commit -m &quot;:tada: initialize the template&quot;
 </code></pre>
 <h2 id="publish-on-remote-git-repository"><a class="header" href="#publish-on-remote-git-repository">Publish on remote git repository</a></h2>
-<p>ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,...) following the same workflow than for any git repository (instructions are provided by the hosting service).</p>
+<p>ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,…) following the same workflow than for any git repository (instructions are provided by the hosting service).</p>
 <pre><code class="language-sh"># adapt the following parameters for your case
 git remote add origin git@github.com:xxxx/my_template.git
 git push -u origin main
@@ -224,7 +229,7 @@ Hello {{env_var &quot;USERNAME&quot;}}
 EOF
 </code></pre>
 <p>At render time, the content between <code>{{</code> and  <code>}}</code> is evaluated, the sample bellow it call the function <code>env_var</code> with the parameter <code>&quot;USERNAME&quot;</code>, this function is <a href="./builtin_functions.html">built-in</a> into ffizer.</p>
-<p>If you run the test, an error should be raised, because the rendered content doesn't match the sample.</p>
+<p>If you run the test, an error should be raised, because the rendered content doesn’t match the sample.</p>
 <pre><code class="language-sh">&gt; ffizer test-samples --source .
 
 Configure variables
@@ -292,7 +297,7 @@ EOF
 ffizer test-samples --source .
 </code></pre>
 <p>Test is back to OK, with your parametrized template.</p>
-<p>File with <code>.ffizer.hbs</code> are not the only place where you can use handlebars rendering. It can also be used in file or foldername (see <a href="./how_to.html">How to...</a>) and into some part of the configuration file <code>.ffizer.yaml</code> (see <a href="./template_configuration.html">Configuration</a>).</p>
+<p>File with <code>.ffizer.hbs</code> are not the only place where you can use handlebars rendering. It can also be used in file or foldername (see <a href="./how_to.html">How to…</a>) and into some part of the configuration file <code>.ffizer.yaml</code> (see <a href="./template_configuration.html">Configuration</a>).</p>
 <h2 id="compose-with-an-external-template"><a class="header" href="#compose-with-an-external-template">Compose with an external template</a></h2>
 <p>To Avoid to duplicate content and configuration between template, you can import the content of one or several other templates into your template. In this tutorial, you will add a template that generate <code>.gitignore</code> files from <code>.gitignore.io</code> (now branded as part of topcal).</p>
 <p>To that you should add a section <code>imports</code>:</p>
@@ -320,8 +325,8 @@ EOF
 </code></pre>
 <p>You can notice the following points:</p>
 <ul>
-<li>the imported template ask for variable's value</li>
-<li>the ask is after your template's variables</li>
+<li>the imported template ask for variable’s value</li>
+<li>the ask is after your template’s variables</li>
 <li>the ask is not the variable name but a sentence</li>
 </ul>
 <p>because the <code>.ffizer.yaml</code> of the gitignore_io template includes</p>
@@ -358,7 +363,7 @@ ffizer test-samples --source .
 <pre><code class="language-sh">rm -Rf ../my-template-t*
 </code></pre>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
-<p>It's the end of this tutorial but I hope not the end of your journey with ffizer. Now you know the basics to create, to test, to parametrize and to publish a template. You can take a look to existing templates and you can continue to read the ffizer's book, you could learn how to customize ask of value for variable, how to display selection, how to display a message, how to run command, how to read value of variable from existing file in the project,...</p>
+<p>It’s the end of this tutorial but I hope not the end of your journey with ffizer. Now you know the basics to create, to test, to parametrize and to publish a template. You can take a look to existing templates and you can continue to read the ffizer’s book, you could learn how to customize ask of value for variable, how to display selection, how to display a message, how to run command, how to read value of variable from existing file in the project,…</p>
 <p>I forgot you can also continue to work with your current template:</p>
 <ul>
 <li>publish / share the new revision of your template</li>
@@ -366,7 +371,7 @@ ffizer test-samples --source .
 <li>extract template from your template or other stuff</li>
 <li>compose with other existing templates</li>
 <li>improve the user experience on update</li>
-<li>...</li>
+<li>…</li>
 </ul>
 
                     </main>

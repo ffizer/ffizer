@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js frappé">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -34,12 +34,14 @@
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "frappé" : "frappé";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -65,7 +67,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('frappé')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -102,13 +104,13 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé (default)</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
@@ -122,6 +124,9 @@
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ffizer/ffizer" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
                     </div>
@@ -191,7 +196,7 @@
 <li><em>Create or update</em> files and folder from one (or several) template(s).</li>
 <li>A native executable (cli)
 <ul>
-<li>Install via download a standalone single file on system (no requirements like <code>python</code>, <code>ruby</code>, <code>nodejs</code>, <code>java</code>, ...).</li>
+<li>Install via download a standalone single file on system (no requirements like <code>python</code>, <code>ruby</code>, <code>nodejs</code>, <code>java</code>, …).</li>
 <li>Run as fast enough project generator.</li>
 <li>Run with dry mode (useful to test).</li>
 <li>Support self-upgrade.</li>
@@ -205,15 +210,15 @@
 <li>Templates Authoring
 <ul>
 <li>Can be used for any file &amp; folder generation (no specialization to one ecosystem).</li>
-<li>Can start as simple as a folder to copy &quot;as is&quot;.</li>
+<li>Can start as simple as a folder to copy “as is”.</li>
 <li>Can use the <a href="https://handlebarsjs.com/guide/">Handlebars</a> template syntax for file content, extended with functions:
 <ul>
-<li>To transform strings (toUpperCase, toLowerCase, Capitalize,...)</li>
+<li>To transform strings (toUpperCase, toLowerCase, Capitalize,…)</li>
 <li>To retrieve content via http get (like <code>.gitignore</code> from <a href="https://gitignore.io"><code>gitignore.io</code></a>, license from spdx)</li>
-<li>...</li>
+<li>…</li>
 </ul>
 </li>
-<li>Can replace variables part in file and folder's name</li>
+<li>Can replace variables part in file and folder’s name</li>
 <li>Can be composed of other templates (applied as layer)</li>
 <li>Can ignore file / folder under conditions</li>
 <li>Can store the content at the root of the folder or under the sub-folder <code>template</code></li>
@@ -222,7 +227,7 @@
 <li>Templates Hosting
 <ul>
 <li>On a local folder</li>
-<li>On a hosted git repository (public / private, <code>github</code> / <code>bitbucket</code>/ <code>gitlab</code> / ...)
+<li>On a hosted git repository (public / private, <code>github</code> / <code>bitbucket</code>/ <code>gitlab</code> / …)
 <ul>
 <li>At the root of the repository</li>
 <li>In a sub-folder of the repository</li>
@@ -404,7 +409,7 @@ templates_default)
 <pre><code class="language-sh">cp -R my-existing-project my-template
 cd my-template
 </code></pre>
-<p>If you don't have an existing sample you can start with the following code, just to have something 😉.</p>
+<p>If you don’t have an existing sample you can start with the following code, just to have something 😉.</p>
 <pre><code class="language-sh">mkdir my-template
 cd my-template
 
@@ -414,11 +419,11 @@ EOF
 </code></pre>
 <h2 id="clean-the-content-of-my-templates-folder"><a class="header" href="#clean-the-content-of-my-templates-folder">Clean the content of <code>my-templates</code> folder</a></h2>
 <ul>
-<li>remove files and folder that you don't want to be part of the template</li>
+<li>remove files and folder that you don’t want to be part of the template</li>
 <li>maybe add  missing files and folder</li>
 </ul>
 <h2 id="test-the-template"><a class="header" href="#test-the-template">Test the template</a></h2>
-<p>At this point you have a valid template but it's also a sample of what the template can produce. Use it to create a sample that can show a possible output, and a test to validate what ffizer + <code>my-template</code> can generate.</p>
+<p>At this point you have a valid template but it’s also a sample of what the template can produce. Use it to create a sample that can show a possible output, and a test to validate what ffizer + <code>my-template</code> can generate.</p>
 <pre><code class="language-sh"># create the folder for samples (the name of folder should be `.ffizer.samples.d`)
 mkdir .ffizer.samples.d
 
@@ -447,7 +452,7 @@ git add .
 git commit -m &quot;:tada: initialize the template&quot;
 </code></pre>
 <h2 id="publish-on-remote-git-repository"><a class="header" href="#publish-on-remote-git-repository">Publish on remote git repository</a></h2>
-<p>ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,...) following the same workflow than for any git repository (instructions are provided by the hosting service).</p>
+<p>ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,…) following the same workflow than for any git repository (instructions are provided by the hosting service).</p>
 <pre><code class="language-sh"># adapt the following parameters for your case
 git remote add origin git@github.com:xxxx/my_template.git
 git push -u origin main
@@ -464,7 +469,7 @@ Hello {{env_var &quot;USERNAME&quot;}}
 EOF
 </code></pre>
 <p>At render time, the content between <code>{{</code> and  <code>}}</code> is evaluated, the sample bellow it call the function <code>env_var</code> with the parameter <code>&quot;USERNAME&quot;</code>, this function is <a href="./builtin_functions.html">built-in</a> into ffizer.</p>
-<p>If you run the test, an error should be raised, because the rendered content doesn't match the sample.</p>
+<p>If you run the test, an error should be raised, because the rendered content doesn’t match the sample.</p>
 <pre><code class="language-sh">&gt; ffizer test-samples --source .
 
 Configure variables
@@ -532,7 +537,7 @@ EOF
 ffizer test-samples --source .
 </code></pre>
 <p>Test is back to OK, with your parametrized template.</p>
-<p>File with <code>.ffizer.hbs</code> are not the only place where you can use handlebars rendering. It can also be used in file or foldername (see <a href="./how_to.html">How to...</a>) and into some part of the configuration file <code>.ffizer.yaml</code> (see <a href="./template_configuration.html">Configuration</a>).</p>
+<p>File with <code>.ffizer.hbs</code> are not the only place where you can use handlebars rendering. It can also be used in file or foldername (see <a href="./how_to.html">How to…</a>) and into some part of the configuration file <code>.ffizer.yaml</code> (see <a href="./template_configuration.html">Configuration</a>).</p>
 <h2 id="compose-with-an-external-template"><a class="header" href="#compose-with-an-external-template">Compose with an external template</a></h2>
 <p>To Avoid to duplicate content and configuration between template, you can import the content of one or several other templates into your template. In this tutorial, you will add a template that generate <code>.gitignore</code> files from <code>.gitignore.io</code> (now branded as part of topcal).</p>
 <p>To that you should add a section <code>imports</code>:</p>
@@ -560,8 +565,8 @@ EOF
 </code></pre>
 <p>You can notice the following points:</p>
 <ul>
-<li>the imported template ask for variable's value</li>
-<li>the ask is after your template's variables</li>
+<li>the imported template ask for variable’s value</li>
+<li>the ask is after your template’s variables</li>
 <li>the ask is not the variable name but a sentence</li>
 </ul>
 <p>because the <code>.ffizer.yaml</code> of the gitignore_io template includes</p>
@@ -598,7 +603,7 @@ ffizer test-samples --source .
 <pre><code class="language-sh">rm -Rf ../my-template-t*
 </code></pre>
 <h2 id="next"><a class="header" href="#next">Next</a></h2>
-<p>It's the end of this tutorial but I hope not the end of your journey with ffizer. Now you know the basics to create, to test, to parametrize and to publish a template. You can take a look to existing templates and you can continue to read the ffizer's book, you could learn how to customize ask of value for variable, how to display selection, how to display a message, how to run command, how to read value of variable from existing file in the project,...</p>
+<p>It’s the end of this tutorial but I hope not the end of your journey with ffizer. Now you know the basics to create, to test, to parametrize and to publish a template. You can take a look to existing templates and you can continue to read the ffizer’s book, you could learn how to customize ask of value for variable, how to display selection, how to display a message, how to run command, how to read value of variable from existing file in the project,…</p>
 <p>I forgot you can also continue to work with your current template:</p>
 <ul>
 <li>publish / share the new revision of your template</li>
@@ -606,17 +611,17 @@ ffizer test-samples --source .
 <li>extract template from your template or other stuff</li>
 <li>compose with other existing templates</li>
 <li>improve the user experience on update</li>
-<li>...</li>
+<li>…</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="how-to"><a class="header" href="#how-to">How to... <!-- omit in toc --></a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="how-to"><a class="header" href="#how-to">How to… <!-- omit in toc --></a></h1>
 <ul>
 <li><a href="how_to.html#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></li>
-<li><a href="how_to.html#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></li>
-<li><a href="how_to.html#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></li>
+<li><a href="how_to.html#how-to-display-a-message-after-filesgeneration-">How to display a message after files’generation ?</a></li>
+<li><a href="how_to.html#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files’generation ?</a></li>
 <li><a href="how_to.html#how-to-import-a-sibling-template-">How to import a sibling template ?</a></li>
 <li><a href="how_to.html#how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></li>
 <li><a href="how_to.html#how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></li>
-<li><a href="how_to.html#how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></li>
+<li><a href="how_to.html#how-to-made-ignore-files-conditional-">How to made “ignore files” conditional ?</a></li>
 <li><a href="how_to.html#how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></li>
 <li><a href="how_to.html#how-to-test-my-template-">How to test my template ?</a></li>
 <li><a href="how_to.html#how-to-host-template-on-github-">How to host template on github ?</a></li>
@@ -632,13 +637,13 @@ ffizer test-samples --source .
 <p>And use it as name of the folder.</p>
 <pre><code class="language-sh">mkdir 'src/{{ package_name }}`
 </code></pre>
-<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></h2>
+<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files’generation ?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - message: |
       Thanks for using my awesome template.
 </code></pre>
-<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></h2>
+<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files’generation ?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - cmd: |
@@ -666,7 +671,7 @@ template by specifying the absolute value or by using built-in variables</p>
 </code></pre>
 <h2 id="how-to-update-existing-jsonyamltoml-content-"><a class="header" href="#how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></h2>
 <h2 id="how-to-retrieve-value-from-existing-jsonyamltoml-content-"><a class="header" href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></h2>
-<h2 id="how-to-made-ignore-files-conditional-"><a class="header" href="#how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></h2>
+<h2 id="how-to-made-ignore-files-conditional-"><a class="header" href="#how-to-made-ignore-files-conditional-">How to made “ignore files” conditional ?</a></h2>
 <h2 id="how-to-include-a-git-folder-as-part-of-the-template-"><a class="header" href="#how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></h2>
 <h2 id="how-to-test-my-template-"><a class="header" href="#how-to-test-my-template-">How to test my template ?</a></h2>
 <h2 id="how-to-host-template-on-github-"><a class="header" href="#how-to-host-template-on-github-">How to host template on github ?</a></h2>
@@ -743,8 +748,8 @@ Variables are defined by:</p>
 </code></pre>
 <p>The order in the list define:</p>
 <ul>
-<li>the order to ask variables (and to find variables definition): first the variable of the root template, then the variables of the first import, the second import,... then the variables of the first import of the first imports.</li>
-<li>the order of files: first the file of the root template, then the files from the first import,... (same as variable)</li>
+<li>the order to ask variables (and to find variables definition): first the variable of the root template, then the variables of the first import, the second import,… then the variables of the first import of the first imports.</li>
+<li>the order of files: first the file of the root template, then the files from the first import,… (same as variable)</li>
 </ul>
 <!-- TODO insert a diagram of priority and order -->
 <p>The first variable definition found (following the order) is keep. So a higher level variables definition override the lower level. In the example below, the <code>ask</code>and the <code>default_value</code> override the definition of <code>gitignore_what</code> into the imported template.</p>
@@ -759,7 +764,7 @@ imports:
     subfolder: &quot;gitignore_io&quot;
 </code></pre>
 <h3 id="use_template_dir"><a class="header" href="#use_template_dir">use_template_dir</a></h3>
-<p>By default, content of the template is mixed with its optional metadata (<code>.ffizer.yaml</code>, ...). So it means that if you have a <code>README.md</code> both as the template description and as template content (a README.md to generate), you have to follow this layout:</p>
+<p>By default, content of the template is mixed with its optional metadata (<code>.ffizer.yaml</code>, …). So it means that if you have a <code>README.md</code> both as the template description and as template content (a README.md to generate), you have to follow this layout:</p>
 <pre><code class="language-txt">+- README.md.ffizer.hbs (or README.md.ffizer.raw)
 +- README.md
 +- .ffizer.yaml
@@ -968,7 +973,7 @@ the <code>imports</code> section or <code>default_value</code> via handlebars ex
 <p>The optional requested <code>format</code>, is the format of the string with data:</p>
 <ul>
 <li><code>&quot;json&quot;</code> (default if omitted)</li>
-<li><code>&quot;json_pretty&quot;</code> json with indentation,...</li>
+<li><code>&quot;json_pretty&quot;</code> json with indentation,…</li>
 <li><code>&quot;yaml&quot;</code></li>
 <li><code>&quot;toml&quot;</code></li>
 <li><code>&quot;toml_pretty&quot;</code></li>
@@ -1044,7 +1049,7 @@ foo:
 <p>A data templating language for app and tool developers</p>
 </blockquote>
 <ul>
-<li>See the doc of <a href="https://jsonnet.org/learning/tutorial.html">jsonnet</a> for more samples, syntax info,...</li>
+<li>See the doc of <a href="https://jsonnet.org/learning/tutorial.html">jsonnet</a> for more samples, syntax info,…</li>
 <li>This block can be combined with conversion helper/block for YAML &amp; TOML to provide edition capabilities for those format</li>
 <li>the output should a valid json, except if <code>string_output = false</code> is set as parameter of the block.</li>
 </ul>
@@ -1080,7 +1085,7 @@ v {
 <tr><td><code>{{ assign &quot;foo&quot; {} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 <tr><td><code>{{ assign &quot;foo&quot; {&quot;bar&quot;: 33} }}{{ foo }}</code></td><td><code>[object]</code></td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="ideeditor-setup-suggestions"><a class="header" href="#ideeditor-setup-suggestions">IDE/Editor setup' suggestions</a></h1>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="ideeditor-setup-suggestions"><a class="header" href="#ideeditor-setup-suggestions">IDE/Editor setup’ suggestions</a></h1>
 <p>Use your favorite IDE/Editor.</p>
 <h2 id="editing-ffizeryaml"><a class="header" href="#editing-ffizeryaml">Editing <code>.ffizer.yaml</code></a></h2>
 <ul>
@@ -1089,7 +1094,7 @@ v {
 </li>
 <li>
 <p>if possible configure to use <a href="https://www.schemastore.org/json/">schemastore json</a>
-to validate, to provide &quot;auto completion&quot; and tool tips</p>
+to validate, to provide “auto completion” and tool tips</p>
 </li>
 <li>
 <p>if your yaml plugin is not compatible with schemastore but it accepts json schema
@@ -1172,7 +1177,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 </ul>
 <h3 id="changed-2"><a class="header" href="#changed-2">Changed</a></h3>
 <ul>
-<li>🚨  improve code with clippy' suggestions</li>
+<li>🚨  improve code with clippy’ suggestions</li>
 <li>⬆️  Bump libc from 0.2.126 to 0.2.132</li>
 <li>⬆️  Bump console from 0.15.0 to 0.15.1</li>
 <li>⬆️  Bump self_update from 0.30.0 to 0.31.0</li>
@@ -1363,7 +1368,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚧  (cargo-release) start next development iteration 2.4.1-dev</li>
 <li>🚀  (cargo-release) version 2.4.0</li>
 <li>pencil  simplify installation from brew</li>
-<li>🔊  enhance SerdeYamlError with context from tracing'Span</li>
+<li>🔊  enhance SerdeYamlError with context from tracing’Span</li>
 </ul>
 <p><a name="2.4.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
 <h2 id="version-240"><a class="header" href="#version-240">Version 2.4.0</a></h2>
@@ -1376,7 +1381,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <ul>
 <li>🚀  (cargo-release) version 2.4.0</li>
 <li>pencil  simplify installation from brew</li>
-<li>🔊  enhance SerdeYamlError with context from tracing'Span</li>
+<li>🔊  enhance SerdeYamlError with context from tracing’Span</li>
 <li>🚧  (cargo-release) start next development iteration 2.3.1-dev</li>
 </ul>
 <p><a name="2.3.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
@@ -1542,7 +1547,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 </ul>
 <h3 id="fixed-7"><a class="header" href="#fixed-7">Fixed</a></h3>
 <ul>
-<li>🐛  evaluation of <code>ignores</code>section during compositing phase of the template generate incorrect value.Handlebars expression (eq, ne,...) don't raise error when undefined variabled are used (also in strict mode)</li>
+<li>🐛  evaluation of <code>ignores</code>section during compositing phase of the template generate incorrect value.Handlebars expression (eq, ne,…) don’t raise error when undefined variabled are used (also in strict mode)</li>
 </ul>
 <h3 id="miscellaneous-14"><a class="header" href="#miscellaneous-14">Miscellaneous</a></h3>
 <ul>
@@ -1799,8 +1804,8 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚀  (cargo-release) version 2.0.0-beta.1</li>
 <li>pencil  (README) Alternatives sections moved to wiki</li>
 <li>🔊  add log about the phase</li>
-<li>🔀  Merge branch 'dependabot/cargo/handlebars-3.0.1'</li>
-<li>🔀  Merge branch 'master' into dependabot/cargo/handlebars-3.0.1</li>
+<li>🔀  Merge branch ‘dependabot/cargo/handlebars-3.0.1’</li>
+<li>🔀  Merge branch ‘master’ into dependabot/cargo/handlebars-3.0.1</li>
 <li>🚧  add support for non-string value as variable</li>
 <li>⚗  try a workaround to be able to build without a missing fix in jmespath (to work with the latest serde_json)</li>
 <li>🚧  (cargo-release) start next development iteration 1.7.2-dev</li>
@@ -1867,7 +1872,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 </ul>
 <h3 id="fixed-13"><a class="header" href="#fixed-13">Fixed</a></h3>
 <ul>
-<li>🐛  trim pattern to ignore from template's config</li>
+<li>🐛  trim pattern to ignore from template’s config</li>
 </ul>
 <h3 id="miscellaneous-23"><a class="header" href="#miscellaneous-23">Miscellaneous</a></h3>
 <ul>
@@ -1888,7 +1893,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <h3 id="changed-21"><a class="header" href="#changed-21">Changed</a></h3>
 <ul>
 <li>⬆️  Bump git2 from 0.10.1 to 0.10.2</li>
-<li>💄  add description of update's option in selector</li>
+<li>💄  add description of update’s option in selector</li>
 <li>🚨  fix some code practice (thx clippy)</li>
 <li>⬆️  Bump structopt from 0.3.3 to 0.3.4</li>
 <li>⬆️  Bump self_update from 0.7.0 to 0.8.0</li>
@@ -2012,7 +2017,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>🚀  (cargo-release) version 1.5.0</li>
 <li>🚧  add sub-command èinspectè to provide information about ffizer (cache, configuration)</li>
 <li>⚗  (test) try to please the setup of azure/linux</li>
-<li>🔊  (test)  add info when test git'script fail</li>
+<li>🔊  (test)  add info when test git’script fail</li>
 <li>pencil  (README) move demo to the top</li>
 <li>⚗  (ci) restore installation of rustup on every platform</li>
 <li>pencil  pre-publish update book, changelog, bom</li>
@@ -2074,7 +2079,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <h2 id="version-130"><a class="header" href="#version-130">Version 1.3.0</a></h2>
 <h3 id="added-11"><a class="header" href="#added-11">Added</a></h3>
 <ul>
-<li>✨  add support of select (combobox) for variable's value</li>
+<li>✨  add support of select (combobox) for variable’s value</li>
 <li>✨  (variables) allow variable to be hidden</li>
 </ul>
 <h3 id="changed-26"><a class="header" href="#changed-26">Changed</a></h3>
@@ -2424,7 +2429,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>⬆️  Bump failure from 0.1.4 to 0.1.5</li>
 <li>⬆️  Bump serde_derive from 1.0.83 to 1.0.84</li>
 <li>⬆️  Bump serde from 1.0.83 to 1.0.84</li>
-<li>🎨  remove useless 'extern crate' with rust edition 2018</li>
+<li>🎨  remove useless ‘extern crate’ with rust edition 2018</li>
 <li>🎨  refactor cli opts and sub command</li>
 <li>⬆️  Bump failure from 0.1.3 to 0.1.4</li>
 <li>⬆️  Bump serde from 1.0.82 to 1.0.83</li>
@@ -2483,7 +2488,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <h3 id="changed-37"><a class="header" href="#changed-37">Changed</a></h3>
 <ul>
 <li>⬆️  move to rust edition 2018</li>
-<li>🚸  (cli) use human_panic...</li>
+<li>🚸  (cli) use human_panic…</li>
 </ul>
 <h3 id="miscellaneous-41"><a class="header" href="#miscellaneous-41">Miscellaneous</a></h3>
 <ul>
@@ -2508,7 +2513,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <h2 id="version-070"><a class="header" href="#version-070">Version 0.7.0</a></h2>
 <h3 id="added-17"><a class="header" href="#added-17">Added</a></h3>
 <ul>
-<li>✨  (cfg) can use handlebars into ignores'entry and default_value in ffizer.yaml</li>
+<li>✨  (cfg) can use handlebars into ignores’entry and default_value in ffizer.yaml</li>
 <li>👷  (travis) try to fix random timeout on windows (6)</li>
 <li>👷  (travis) try to fix random timeout on windows (5)</li>
 <li>👷  (travis) try to fix random timeout on windows (4)</li>
@@ -2560,7 +2565,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 </ul>
 <h3 id="miscellaneous-45"><a class="header" href="#miscellaneous-45">Miscellaneous</a></h3>
 <ul>
-<li>📝  (README) update doc (help, usage,...)</li>
+<li>📝  (README) update doc (help, usage,…)</li>
 </ul>
 <p><a name="0.4.2" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a></p>
 <h2 id="version-042"><a class="header" href="#version-042">Version 0.4.2</a></h2>
@@ -2581,7 +2586,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <h2 id="version-041"><a class="header" href="#version-041">Version 0.4.1</a></h2>
 <h3 id="added-20"><a class="header" href="#added-20">Added</a></h3>
 <ul>
-<li>✨  (cli) add --rev to specify the git revision</li>
+<li>✨  (cli) add –rev to specify the git revision</li>
 </ul>
 <h3 id="fixed-30"><a class="header" href="#fixed-30">Fixed</a></h3>
 <ul>
@@ -2735,7 +2740,7 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 <li>📝  (README) update alternatives list</li>
 <li>📝  (README) fix format</li>
 <li>📝  (README) ideas &quot;en vrac&quot;</li>
-<li>📝  (README) add ideas, motivations, alternatives,...</li>
+<li>📝  (README) add ideas, motivations, alternatives,…</li>
 </ul>
 <p><em>Generated by <a href="https://github.com/fabienjuif/gitmoji-changelog-rust">gitmoji-changelog (rust version)</a></em></p>
 
@@ -2794,7 +2799,9 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 
         <script type="text/javascript">
         window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
         });
         </script>
 

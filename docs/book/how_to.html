@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js frappé">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -33,12 +33,14 @@
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "frappé" : "frappé";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -64,7 +66,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('frappé')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -101,13 +103,13 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé (default)</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
@@ -121,6 +123,9 @@
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ffizer/ffizer" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
                     </div>
@@ -148,15 +153,15 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="how-to"><a class="header" href="#how-to">How to... <!-- omit in toc --></a></h1>
+                        <h1 id="how-to"><a class="header" href="#how-to">How to… <!-- omit in toc --></a></h1>
 <ul>
 <li><a href="#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></li>
-<li><a href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></li>
-<li><a href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></li>
+<li><a href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files’generation ?</a></li>
+<li><a href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files’generation ?</a></li>
 <li><a href="#how-to-import-a-sibling-template-">How to import a sibling template ?</a></li>
 <li><a href="#how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></li>
 <li><a href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></li>
-<li><a href="#how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></li>
+<li><a href="#how-to-made-ignore-files-conditional-">How to made “ignore files” conditional ?</a></li>
 <li><a href="#how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></li>
 <li><a href="#how-to-test-my-template-">How to test my template ?</a></li>
 <li><a href="#how-to-host-template-on-github-">How to host template on github ?</a></li>
@@ -172,13 +177,13 @@
 <p>And use it as name of the folder.</p>
 <pre><code class="language-sh">mkdir 'src/{{ package_name }}`
 </code></pre>
-<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files'generation ?</a></h2>
+<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files’generation ?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - message: |
       Thanks for using my awesome template.
 </code></pre>
-<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files'generation ?</a></h2>
+<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files’generation ?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - cmd: |
@@ -206,7 +211,7 @@ template by specifying the absolute value or by using built-in variables</p>
 </code></pre>
 <h2 id="how-to-update-existing-jsonyamltoml-content-"><a class="header" href="#how-to-update-existing-jsonyamltoml-content-">How to update existing json/yaml/toml content ?</a></h2>
 <h2 id="how-to-retrieve-value-from-existing-jsonyamltoml-content-"><a class="header" href="#how-to-retrieve-value-from-existing-jsonyamltoml-content-">How to retrieve value from existing json/yaml/toml content ?</a></h2>
-<h2 id="how-to-made-ignore-files-conditional-"><a class="header" href="#how-to-made-ignore-files-conditional-">How to made &quot;ignore files&quot; conditional ?</a></h2>
+<h2 id="how-to-made-ignore-files-conditional-"><a class="header" href="#how-to-made-ignore-files-conditional-">How to made “ignore files” conditional ?</a></h2>
 <h2 id="how-to-include-a-git-folder-as-part-of-the-template-"><a class="header" href="#how-to-include-a-git-folder-as-part-of-the-template-">How to include a <code>.git</code> folder as part of the template ?</a></h2>
 <h2 id="how-to-test-my-template-"><a class="header" href="#how-to-test-my-template-">How to test my template ?</a></h2>
 <h2 id="how-to-host-template-on-github-"><a class="header" href="#how-to-host-template-on-github-">How to host template on github ?</a></h2>

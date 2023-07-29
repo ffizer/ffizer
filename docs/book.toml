@@ -1,6 +1,7 @@
 [book]
 authors = ["David Bernard"]
 multilingual = false
+language = "en"
 src = "src"
 title = "ffizer"
 
@@ -35,3 +36,32 @@ additional-css = [
     "./theme/mdbook-admonish.css",
 ]
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
+mathjax-support = true
+site-url = "/mdBook/"
+git-repository-icon = "fa-github"
+git-repository-url = "https://github.com/ffizer/ffizer"
+# edit-url-template = "https://github.com/ffizer/ffizer/master/docs/{path}"
+# theme = "my-theme"
+default-theme = "Frappé"
+preferred-dark-theme = "Frappé"
+curly-quotes = true
+copy-fonts = true
+no-section-label = false
+# cname = "myproject.rs"
+# input-404 = "not-found.md"
+
+[output.html.search]
+limit-results = 20
+use-boolean-and = true
+boost-title = 2
+boost-hierarchy = 2
+boost-paragraph = 1
+expand = true
+heading-split-level = 2
+
+# [output.html.playground]
+# editable = true
+# line-numbers = true
+
+# [output.html.code.hidelines]
+# python = "~"

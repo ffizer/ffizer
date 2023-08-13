@@ -21,10 +21,10 @@ jobs:
         run: |
           mkdir -p target/all-apple-darwin/release
           cd artifacts
-          unzip -q ffizer-${{ inputs.version }}-x86_64-apple-darwin.zip
-          unzip -q ffizer-${{ inputs.version }}-aarch64-apple-darwin.zip
-          lipo -create ffizer-${{ inputs.version }}-x86_64-apple-darwin/bin/ffizer \
-            ffizer-${{ inputs.version }}-aarch64-apple-darwin/bin/ffizer \
+          tar -xzf ffizer_${{ inputs.version }}-x86_64-apple-darwin.tgz
+          unzip -q ffizer_${{ inputs.version }}-aarch64-apple-darwin.tgz
+          lipo -create ffizer_${{ inputs.version }}-x86_64-apple-darwin/ffizer \
+            ffizer_${{ inputs.version }}-aarch64-apple-darwin/ffizer \
             -output ../target/all-apple-darwin/release/ffizer
 
       - name: Assemble
@@ -42,7 +42,7 @@ jobs:
           retention-days: 1
           name: artifacts
           path: |
-            out/jreleaser/assemble/ffizer/archive/*.zip
+            out/jreleaser/assemble/ffizer/archive/*.tgz
 
       - name: JReleaser output
         if: always()

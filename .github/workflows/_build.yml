@@ -77,7 +77,7 @@ jobs:
           retention-days: 1
           name: artifacts
           path: |
-            out/jreleaser/assemble/helloworld/archive/*.zip
+            out/jreleaser/assemble/ffizer/archive/*.zip
 
       - name: JReleaser output
         if: always()

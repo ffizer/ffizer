@@ -1,0 +1,75 @@
+project:
+  name: ffizer
+  version: 2.10.3
+  description: ffizer is a files and folders initializer / generator.
+  longDescription: |
+    ffizer is a files and folders initializer / generator.
+    It creates or updates any kind (or part) of project from template(s)
+  authors:
+    - David Bernard
+  license: CC0-1.0
+  links:
+    homepage: https://ffizer.github.io/ffizer/book/
+    bugTracker: https://github.com/ffizer/ffizer/issues
+    donation:
+  inceptionYear: 2018
+  stereotype: CLI
+
+platform:
+  replacements:
+    "osx-x86_64": "x86_64-apple-darwin"
+    "osx-aarch_64": "aarch64-apple-darwin"
+    "osx": "all-apple-darwin"
+    "linux-x86_64": "x86_64-unknown-linux-gnu"
+    "linux-aarch_64": "aarch64-unknown-linux-gnu"
+    "windows-x86_64": "x86_64-pc-windows-msvc"
+    "linux_musl-x86_64": "x86_64-unknown-linux-musl"
+
+release:
+  github:
+    owner: ffizer
+    name: ffizer
+    overwrite: true
+    changelog:
+      formatted: ALWAYS
+      preset: gitmoji
+      format: "- {{commitShortHash}} {{commitTitle}}"
+      # contributors:
+      #   format: "- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}"
+
+assemble:
+  archive:
+    ffizer:
+      active: ALWAYS
+      formats: [ZIP, TGZ]
+      options:
+        longFileMode: POSIX
+        bigNumberMode: POSIX
+      distributionType: FLAT_BINARY
+      archiveName: "{{distributionName}}_{{projectVersion}}"
+      attachPlatform: true
+      fileSets:
+        - input: "target/{{ osPlatformReplaced }}/release"
+          # output: "."
+          includes: ["ffizer{.exe,}"]
+        # - input: "."
+        #   includes: ["LICENSE"]
+
+distributions:
+  ffizer:
+    type: FLAT_BINARY
+    executable:
+      windowsExtension: exe
+    artifacts:
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-all-apple-darwin.tgz"
+        platform: "osx"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-apple-darwin.tgz"
+        platform: "osx-aarch_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-apple-darwin.tgz"
+        platform: "osx-x86_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-pc-windows-msvc.zip"
+        platform: "windows-x86_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-unknown-linux-gnu.tgz"
+        platform: "linux-x86_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-unknown-linux-gnu.tgz"
+        platform: "linux-aarch_64"

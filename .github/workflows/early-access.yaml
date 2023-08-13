@@ -2,7 +2,7 @@ name: early-access
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   precheck:

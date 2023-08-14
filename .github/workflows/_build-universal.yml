@@ -42,6 +42,7 @@ jobs:
           retention-days: 1
           name: artifacts
           path: |
+            out/jreleaser/assemble/ffizer/archive/*.zip
             out/jreleaser/assemble/ffizer/archive/*.tgz
 
       - name: JReleaser output

@@ -22,7 +22,7 @@ jobs:
           mkdir -p target/all-apple-darwin/release
           cd artifacts
           tar -xzf ffizer_${{ inputs.version }}-x86_64-apple-darwin.tgz
-          unzip -q ffizer_${{ inputs.version }}-aarch64-apple-darwin.tgz
+          tar -xzf ffizer_${{ inputs.version }}-aarch64-apple-darwin.tgz
           lipo -create ffizer_${{ inputs.version }}-x86_64-apple-darwin/ffizer \
             ffizer_${{ inputs.version }}-aarch64-apple-darwin/ffizer \
             -output ../target/all-apple-darwin/release/ffizer

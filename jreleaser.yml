@@ -31,9 +31,10 @@ release:
     name: ffizer
     overwrite: true
     changelog:
+      enabled: false # disable due to "Failed to get value for commitTitle"
       formatted: ALWAYS
       preset: gitmoji
-      format: "- {{commitShortHash}} {{commitTitle}}"
+      # format: "- {{commitShortHash}} {{commitTitle}}"
       # contributors:
       #   format: "- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}"
 

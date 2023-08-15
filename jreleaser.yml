@@ -1,6 +1,6 @@
 project:
   name: ffizer
-  version: 2.10.3
+  version: 2-SNAPSHOT
   description: ffizer is a files and folders initializer / generator.
   longDescription: |
     ffizer is a files and folders initializer / generator.
@@ -30,6 +30,10 @@ release:
     owner: ffizer
     name: ffizer
     overwrite: true
+    tagName: "{{projectVersion}}" # default: `v{{projectVersion}}`
+    releaseName: "{{tagName}}" # default: `Release {{tagName}}`
+    skipTag: true
+    skipRelease: false
     changelog:
       enabled: false # disable due to "Failed to get value for commitTitle"
       formatted: ALWAYS
@@ -74,3 +78,16 @@ distributions:
         platform: "linux-x86_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-unknown-linux-gnu.tgz"
         platform: "linux-aarch_64"
+
+packagers:
+  asdf:
+    active: RELEASE
+    repository:
+      name: asdf-ffizer # asdf-duke
+  brew:
+    active: RELEASE
+    tap:
+      name: homebrew-ffizer # homebrew-tap
+    multiPlatform: true
+  # scoop:
+  #   active: ALWAYS

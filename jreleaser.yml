@@ -1,6 +1,6 @@
 project:
   name: ffizer
-  version: 2-SNAPSHOT
+  # version: 2-SNAPSHOT # to use system env
   description: ffizer is a files and folders initializer / generator.
   longDescription: |
     ffizer is a files and folders initializer / generator.

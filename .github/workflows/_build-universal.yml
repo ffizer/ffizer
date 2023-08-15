@@ -20,7 +20,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p target/all-apple-darwin/release
+          ls -l
           cd artifacts
+          ls -l
           tar -xzf ffizer_${{ inputs.version }}-x86_64-apple-darwin.tgz
           tar -xzf ffizer_${{ inputs.version }}-aarch64-apple-darwin.tgz
           lipo -create ffizer_${{ inputs.version }}-x86_64-apple-darwin/ffizer \

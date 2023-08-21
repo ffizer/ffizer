@@ -24,6 +24,7 @@ platform:
     "linux-aarch_64": "aarch64-unknown-linux-gnu"
     "windows-x86_64": "x86_64-pc-windows-msvc"
     "linux_musl-x86_64": "x86_64-unknown-linux-musl"
+    "linux_musl-aarch_64": "aarch64-unknown-linux-musl"
 
 release:
   github:
@@ -78,6 +79,10 @@ distributions:
         platform: "linux-x86_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-unknown-linux-gnu.tgz"
         platform: "linux-aarch_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-unknown-linux-musl.tgz"
+        platform: "linux_musl-x86_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-unknown-linux-musl.tgz"
+        platform: "linux_musl-aarch_64"
 
 packagers:
   asdf:
@@ -88,6 +93,7 @@ packagers:
     active: RELEASE
     tap:
       name: homebrew-ffizer # homebrew-tap
+    formulaName: FfizerBin
     multiPlatform: true
   # scoop:
   #   active: ALWAYS

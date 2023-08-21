@@ -1,8 +1,9 @@
 use crate::error::*;
-use git2::build::{CheckoutBuilder, RepoBuilder};
-use git2::{Config, FetchOptions, Repository};
+use git2::build::RepoBuilder;
+use git2::{Config, FetchOptions};
 use std::path::Path;
-use tracing::{debug, info, warn};
+use std::time::{Duration, SystemTime};
+use tracing::{info, warn};
 
 use super::GitError;
 
@@ -10,22 +11,20 @@ use super::GitError;
 // TODO id the directory is already present then fetch and rebase (if not in offline mode)
 #[tracing::instrument]
 pub fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitError> {
-    let mut fo = make_fetch_options()?;
-    if dst.join(".git").exists() {
-        info!("git reset cached template");
-        checkout(dst, rev)?;
-        info!("git pull cached template");
-        pull(dst, rev, &mut fo)?;
-    //until pull is fixed and work as expected
-    // let mut tmp = dst.to_path_buf().clone();
-    // tmp.set_extension("part");
-    // if tmp.exists() {
-    //     std::fs::remove_dir_all(&tmp)?;
-    // }
-    // clone(&tmp, url, "master", fo)?;
-    // checkout(&tmp, rev)?;
-    // std::fs::remove_dir_all(&dst)?;
-    // std::fs::rename(&tmp, &dst)?;
+    let fo = make_fetch_options()?;
+    if dst.exists() {
+        // HACK until pull is fixed, remove cache if older than ttl (5min) and clone
+        if dst
+            .metadata()
+            .ok()
+            .and_then(|m| m.modified().ok())
+            .and_then(|t| t.duration_since(SystemTime::now()).ok())
+            .map(|d| d > Duration::from_secs(5 * 60))
+            .unwrap_or(true)
+        {
+            std::fs::remove_dir_all(&dst)?;
+            clone(dst, url, rev, fo)?;
+        }
     } else {
         info!("git clone into cached template");
         clone(dst, url, rev, fo)?;
@@ -74,154 +73,6 @@ fn clone(
             let _ = std::fs::remove_dir_all(dst);
             err
         })?;
-    Ok(())
-}
-
-// from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn pull<P>(dst: P, rev: &Option<String>, fo: &mut FetchOptions) -> Result<(), git2::Error>
-where
-    P: AsRef<Path>,
-{
-    let repository = Repository::discover(dst.as_ref())?;
-
-    // fetch
-    //TODO detect the default branch
-    let rev = rev.as_deref().unwrap_or("master");
-    let mut revref = rev.to_string();
-    //FIXME workaround see https://github.com/rust-lang/git2-rs/issues/819
-    if revref.len() == 40 && revref.chars().all(|c| c.is_ascii_hexdigit()) {
-        revref = format!("+{}:{}", rev, rev);
-    }
-    let mut remote = repository.find_remote("origin")?;
-    remote.fetch(&[revref], Some(fo), None)?;
-    let reference = repository.find_reference("FETCH_HEAD")?;
-    let fetch_head_commit = repository.reference_to_annotated_commit(&reference)?;
-    do_merge(&repository, rev, fetch_head_commit)?;
-    Ok(())
-}
-
-// from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn fast_forward(
-    repo: &Repository,
-    lb: &mut git2::Reference,
-    rc: &git2::AnnotatedCommit,
-) -> Result<(), git2::Error> {
-    let name = match lb.name() {
-        Some(s) => s.to_string(),
-        None => String::from_utf8_lossy(lb.name_bytes()).to_string(),
-    };
-    let msg = format!("Fast-Forward: Setting {} to id: {}", name, rc.id());
-    debug!(msg = ?msg);
-    lb.set_target(rc.id(), &msg)?;
-    repo.set_head(&name)?;
-    repo.checkout_head(Some(
-        git2::build::CheckoutBuilder::default()
-            // For some reason the force is required to make the working directory actually get updated
-            // I suspect we should be adding some logic to handle dirty working directory states
-            // but this is just an example so maybe not.
-            .force(),
-    ))?;
-    Ok(())
-}
-
-// from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn normal_merge(
-    repo: &Repository,
-    local: &git2::AnnotatedCommit,
-    remote: &git2::AnnotatedCommit,
-) -> Result<(), git2::Error> {
-    let local_tree = repo.find_commit(local.id())?.tree()?;
-    let remote_tree = repo.find_commit(remote.id())?.tree()?;
-    let ancestor = repo
-        .find_commit(repo.merge_base(local.id(), remote.id())?)?
-        .tree()?;
-    let mut idx = repo.merge_trees(&ancestor, &local_tree, &remote_tree, None)?;
-
-    if idx.has_conflicts() {
-        warn!("merge conficts detected...");
-        repo.checkout_index(Some(&mut idx), None)?;
-        return Ok(());
-    }
-    let result_tree = repo.find_tree(idx.write_tree_to(repo)?)?;
-    // now create the merge commit
-    let msg = format!("Merge: {} into {}", remote.id(), local.id());
-    let sig = repo.signature()?;
-    let local_commit = repo.find_commit(local.id())?;
-    let remote_commit = repo.find_commit(remote.id())?;
-    // Do our merge commit and set current branch head to that commit.
-    let _merge_commit = repo.commit(
-        Some("HEAD"),
-        &sig,
-        &sig,
-        &msg,
-        &result_tree,
-        &[&local_commit, &remote_commit],
-    )?;
-    // Set working tree to match head.
-    repo.checkout_head(None)?;
-    Ok(())
-}
-
-// from https://github.com/rust-lang/git2-rs/blob/master/examples/pull.rs
-fn do_merge<'a>(
-    repo: &'a Repository,
-    remote_branch: &str,
-    fetch_commit: git2::AnnotatedCommit<'a>,
-) -> Result<(), git2::Error> {
-    // 1. do a merge analysis
-    let analysis = repo.merge_analysis(&[&fetch_commit])?;
-    debug!(analysis = ?&analysis.0);
-    // 2. Do the appopriate merge
-    if analysis.0.is_fast_forward() {
-        debug!("git merge: doing a fast forward");
-        // do a fast forward
-        let refname = format!("refs/heads/{}", remote_branch);
-        match repo.find_reference(&refname) {
-            Ok(mut r) => {
-                fast_forward(repo, &mut r, &fetch_commit)?;
-            }
-            Err(_) => {
-                // The branch doesn't exist so just set the reference to the
-                // commit directly. Usually this is because you are pulling
-                // into an empty repository.
-                repo.reference(
-                    &refname,
-                    fetch_commit.id(),
-                    true,
-                    &format!("Setting {} to {}", remote_branch, fetch_commit.id()),
-                )?;
-                repo.set_head(&refname)?;
-                repo.checkout_head(Some(
-                    git2::build::CheckoutBuilder::default()
-                        .allow_conflicts(true)
-                        .conflict_style_merge(true)
-                        .force(),
-                ))?;
-            }
-        };
-    } else if analysis.0.is_normal() {
-        debug!("git merge: doing normal merge");
-        // do a normal merge
-        let head_commit = repo.reference_to_annotated_commit(&repo.head()?)?;
-        normal_merge(repo, &head_commit, &fetch_commit)?;
-    } else {
-        debug!("git merge: nothing to do");
-    }
-    Ok(())
-}
-
-fn checkout<P>(dst: P, rev: &Option<String>) -> Result<(), git2::Error>
-where
-    P: AsRef<Path>,
-{
-    //TODO detect the default branch
-    let rev = rev.as_deref().unwrap_or("master");
-
-    let repository = Repository::discover(dst.as_ref())?;
-    let mut co = CheckoutBuilder::new();
-    co.force().remove_ignored(true).remove_untracked(true);
-    let treeish = repository.revparse_single(rev)?;
-    repository.checkout_tree(&treeish, Some(&mut co))?;
     Ok(())
 }
 

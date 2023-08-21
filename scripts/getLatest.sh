@@ -100,7 +100,17 @@ install_file() {
   TMP_DIR="/tmp/${GITHUB_USER}_${GITHUB_REPO}"
   mkdir -p "$TMP_DIR" || true
   tar xf "$FILE_PATH" -C "$TMP_DIR"
-  cp "$TMP_DIR/${EXE_FILENAME}" "${EXE_DEST_FILE}"
+  if [ -f "$TMP_DIR/${EXE_FILENAME}" ]; then
+    cp "$TMP_DIR/${EXE_FILENAME}" "${EXE_DEST_FILE}"
+  else
+    for dir in "$TMP_DIR"/*/; do
+      if [ -f "$dir${EXE_FILENAME}" ]; then
+        cp "$dir${EXE_FILENAME}" "${EXE_DEST_FILE}"
+        break
+      fi
+    done
+  fi
+
   chmod +x "${EXE_DEST_FILE}"
   rm -rf "$TMP_DIR"
 }

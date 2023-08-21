@@ -44,24 +44,6 @@ fn init_log(level_min: tracing::Level) {
 }
 
 #[tracing::instrument]
-fn upgrade() -> Result<(), Box<dyn Error>> {
-    let target = self_update::get_target();
-    // TODO extract repo info from CARGO_PKG_REPOSITORY
-    let status = self_update::backends::github::Update::configure()
-        .repo_owner("ffizer")
-        .repo_name("ffizer")
-        .target(target)
-        .bin_name("ffizer")
-        .show_download_progress(true)
-        //.current_version(self_update::cargo_crate_version!())
-        .current_version(env!("CARGO_PKG_VERSION"))
-        .build()?
-        .update()?;
-    info!(status = status.version(), "success");
-    Ok(())
-}
-
-#[tracing::instrument]
 fn apply(cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>> {
     let ctx = Ctx { cmd_opt };
     ffizer::process(&ctx)?;
@@ -100,7 +82,6 @@ fn main() {
 
     let r = match &cli_opts.cmd {
         Command::Apply(g) => apply(g.clone()),
-        Command::Upgrade => upgrade(),
         Command::Inspect => inspect(),
         Command::ShowJsonSchema => show_json_schema(),
         Command::TestSamples(g) => test_samples(g),

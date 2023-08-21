@@ -74,15 +74,9 @@ required-features = ["cli"]
 [target.'cfg(all(unix, not(target_os = "redox")))'.dependencies]
 libc = "0.2"
 openssl = { version = "0.10", features = ["vendored"] }
-# self_update = { version = "0.12.0", optional = true, features = ["archive-zip", "compression-zip-deflate"]}
-self_update = { version = "0.37", optional = true, features = [
-    "archive-tar",
-    "compression-flate2",
-] }
 
 [target.'cfg(windows)'.dependencies]
 winapi = "0.3"
-self_update = { version = "0.37", optional = true, features = ["archive-zip"] }
 
 # see https://github.com/johnthagen/min-sized-rust
 [profile.release]
@@ -98,13 +92,14 @@ codegen-units = 1
 
 [features]
 default = ["cli"]
-test_remote = []                                                               # feature has no explicit dependencies
-cli = ["git2", "dep:self_update", "dep:human-panic", "dep:tracing-subscriber"]
+test_remote = []                                            # feature has no explicit dependencies
+cli = ["git2", "dep:human-panic", "dep:tracing-subscriber"]
 git2 = ["dep:git2", "dep:git2_credentials"]
 
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/{ version }/{ name }_{ version }-{ target }{ archive-suffix }"
-bin-dir = "{ bin }{ binary-ext }"
+bin-dir = "{ name }_{ version }-{ target }/{ bin }{ binary-ext }"
+pkg-fmt = "tgz"
 
 [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
 pkg-fmt = "zip"

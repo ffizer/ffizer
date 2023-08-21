@@ -27,7 +27,6 @@ keywords: file generator, project template, project scaffolding, quick start, pr
     - [via homebrew (MacOs \& Linux)](#via-homebrew-macos--linux)
     - [via cargo](#via-cargo)
   - [Run](#run)
-    - [Self upgrade the executable](#self-upgrade-the-executable)
     - [Apply a template (to create or update)](#apply-a-template-to-create-or-update)
   - [Authoring a template](#authoring-a-template)
 - [Few templates](#few-templates)
@@ -40,7 +39,6 @@ keywords: file generator, project template, project scaffolding, quick start, pr
   - Install via download a standalone single file on system (no requirements like `python`, `ruby`, `nodejs`, `java`, ...).
   - Run as fast enough project generator.
   - Run with dry mode (useful to test).
-  - Support self-upgrade.
 - A rust library
   - Can be included into other tool
 - Templates Authoring
@@ -104,7 +102,6 @@ Usage: ffizer [OPTIONS] <COMMAND>
 
 Commands:
   apply             Apply a template into a target directory
-  upgrade           Self upgrade ffizer executable
   inspect           Inspect configuration, caches,... (wip)
   show-json-schema  Show the json schema of the .ffizer.yaml files
   test-samples      test a template against its samples
@@ -116,12 +113,6 @@ Options:
   -V, --version     Print version information
 
 https://ffizer.github.io/ffizer/book/
-```
-
-#### Self upgrade the executable
-
-```sh
-❯ ffizer upgrade
 ```
 
 #### Apply a template (to create or update)

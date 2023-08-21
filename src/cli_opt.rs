@@ -24,9 +24,6 @@ pub enum Command {
     /// Apply a template into a target directory
     Apply(ApplyOpts),
 
-    /// Self upgrade ffizer executable
-    Upgrade,
-
     /// Inspect configuration, caches,... (wip)
     Inspect,
 

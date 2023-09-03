@@ -91,7 +91,7 @@ packagers:
       name: asdf-ffizer # asdf-duke
   brew:
     active: RELEASE
-    tap:
+    repository:
       name: homebrew-ffizer # homebrew-tap
     formulaName: FfizerBin
     multiPlatform: true

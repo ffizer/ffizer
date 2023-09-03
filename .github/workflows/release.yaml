@@ -35,7 +35,14 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          VERSION="${{ github.event.inputs.version }}"
+          #if [ -z "$VERSION" ] ; then
+          #  VERSION="${{ github.ref }}" # from tag
+          #fi
+          if [ -z "$VERSION" ] ; then
+            VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
   build:
     needs: [precheck]
@@ -62,14 +69,15 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
 
-      - name: Commit version
-        run: |
-          sed -i -e "s/^version = "\(.*\)"/version = "${{ github.event.inputs.version }}/g" Cargo.toml
-          git add Cargo.toml
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
-          git push origin main
+      # - name: Commit version
+      #   if: github.event.inputs.version != null
+      #   run: |
+      #     sed -i -e "s/^version = "\(.*\)"/version = "${{ github.event.inputs.version }}/g" Cargo.toml
+      #     git add Cargo.toml
+      #     git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      #     git config --global user.name "GitHub Action"
+      #     git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
+      #     git push origin main
 
       - name: Release
         uses: jreleaser/release-action@v2

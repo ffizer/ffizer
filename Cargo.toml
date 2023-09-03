@@ -18,8 +18,8 @@ clap = { version = "4.3", features = ["derive"] }
 console = "0.15"
 dialoguer = "0.10"
 directories = "5.0"
-git2 = { version = "0.17", optional = true }
-git2_credentials = { version = "0.12", optional = true }
+git2 = { version = "0.18", optional = true }
+git2_credentials = { version = "0.13", optional = true }
 globset = "0.4"
 handlebars = "4.3"
 handlebars_misc_helpers = { version = "0.13", features = [

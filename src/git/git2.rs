@@ -8,7 +8,7 @@ use tracing::{info, warn};
 use super::GitError;
 
 /// clone a repository at a rev to a directory
-// TODO id the directory is already present then fetch and rebase (if not in offline mode)
+// TODO if the directory is already present then fetch and rebase (if not in offline mode)
 #[tracing::instrument]
 pub fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitError> {
     let fo = make_fetch_options()?;
@@ -22,7 +22,7 @@ pub fn retrieve(dst: &Path, url: &str, rev: &Option<String>) -> Result<(), GitEr
             .map(|d| d > Duration::from_secs(5 * 60))
             .unwrap_or(true)
         {
-            std::fs::remove_dir_all(&dst)?;
+            std::fs::remove_dir_all(dst)?;
             clone(dst, url, rev, fo)?;
         }
     } else {

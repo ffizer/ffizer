@@ -61,12 +61,10 @@ jobs:
       #     sed -i -e 's/^version = "\(.*\)"/version = "${{ inputs.version }}"/g' Cargo.toml
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           target: ${{ matrix.job.target }}
-          override: true
-          profile: minimal
 
       - uses: actions-rs/cargo@v1
         with:

@@ -36,7 +36,7 @@ release:
     tagName: "{{projectVersion}}" # default: `v{{projectVersion}}`
     releaseName: "{{tagName}}" # default: `Release {{tagName}}`
     skipTag: true
-    skipRelease: true
+    skipRelease: false
     changelog:
       enabled: false # disable due to "Failed to get value for commitTitle"
       formatted: ALWAYS

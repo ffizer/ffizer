@@ -31,10 +31,12 @@ release:
     owner: ffizer
     name: ffizer
     overwrite: true
+    update:
+      enabled: true
     tagName: "{{projectVersion}}" # default: `v{{projectVersion}}`
     releaseName: "{{tagName}}" # default: `Release {{tagName}}`
     skipTag: true
-    skipRelease: false
+    skipRelease: true
     changelog:
       enabled: false # disable due to "Failed to get value for commitTitle"
       formatted: ALWAYS

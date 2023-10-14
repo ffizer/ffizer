@@ -395,6 +395,11 @@ git commit -m ':memo: (CHANGELOG) update'
 <pre><code class="language-sh">cargo make publish patch # dry-run
 cargo make publish --execute patch
 </code></pre>
+<h2 id="docs"><a class="header" href="#docs">Docs</a></h2>
+<p>Documentation is handled by <a href="https://rust-lang.github.io/mdBook/">mdBook</a></p>
+<pre><code class="language-sh">cargo make update-book # build book in /docs
+cargo make serve-book # build book and serves it at http://localhost:3000
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="templates-authoring"><a class="header" href="#templates-authoring">Templates Authoring</a></h1>
 <p>The documentation is a <strong>Work In Progress</strong>, feel free to ask details, missing info or to submit content (via Pull Request).</p>
 <h2 id="some-templates"><a class="header" href="#some-templates">Some templates</a></h2>

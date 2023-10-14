@@ -57,12 +57,13 @@ where
             return Ok(());
         }
         Err(e) => {
-            error!("Oops, fail with git2: {e:?}");
+            error!("Oops, fail with git2: {e:?}. Will try with `git` if installed.");
         }
     }
 
     // Fallback to cli
     let result = if has_git_cli() {
+        info!("Cloning with installed `git` command.");
         cli::retrieve(dst, url, rev)
     } else {
         Err(GitError::GitNotFound)

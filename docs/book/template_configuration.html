@@ -32,6 +32,8 @@
         <link rel="stylesheet" href="./theme/catppuccin.css">
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="./theme/catppuccin-admonish.css">
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -160,12 +162,31 @@
 <li>stored into a yaml file named <code>.ffizer.yaml</code> at the root of the template.</li>
 <li>sections (top level entry) of the yaml are optionals</li>
 </ul>
-<pre><code class="language-yaml">variables:
-  - name: project
+<pre><code class="language-yaml"># Define variables for the project setup
+variables:
+  - name: project_name
     default_value: my-project
+  - name: Add extra features?
+    select_in_values: ['yes', 'no']
 
+# Specify the list of files to exclude during copying or rendering process
 ignores:
   - .git # exclude .git of the template host
+  - README.md
+
+# scripts to be executed after file generation
+scripts:
+  - cmd: echo &quot;{{ project_name }} generated!&quot;
+    default_confirm_answer: 'yes'
+  
+# Set to `true` to define the content root as `template` instead of the root folder
+use_template_dir: false
+
+# import other templates
+imports:
+  - uri: &quot;git@github.com:ffizer/templates_default.git&quot;
+    rev: &quot;master&quot;
+    subfolder: &quot;gitignore_io&quot;
 </code></pre>
 <h2 id="sections"><a class="header" href="#sections">Sections</a></h2>
 <h3 id="variables"><a class="header" href="#variables">variables</a></h3>
@@ -205,7 +226,7 @@ Variables are defined by:</p>
   - name: project_name
     default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
 </code></pre>
-<p>Every variables are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
+<p>Every variable are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
 <pre><code class="language-yaml">  - name: foo
     default_value: &quot;&quot;
 </code></pre>
@@ -216,6 +237,28 @@ Variables are defined by:</p>
   - .git/*
   - .git # exclude .git of the template host
 </code></pre>
+<h3 id="scripts"><a class="header" href="#scripts">scripts</a></h3>
+<p>Scripts allows you to run arbitrary commands after generating the files.</p>
+<pre><code class="language-yaml">scripts:
+  - cmd: echo &quot;{{ project_name }} generated!&quot;
+    default_confirm_answer: 'yes'
+  - cmd: |
+      {{#if (eq (env_var &quot;OS&quot;) &quot;windows&quot;) }}
+      echo Hello {{ who }}&gt; file2.txt
+      del file_to_delete.txt
+      {{else}}
+      echo &quot;Hello {{ who }}&quot; &gt; file2.txt
+      rm file_to_delete.txt
+      {{/if}}
+  - message: |
+      Thanks for using my awesome template.
+</code></pre>
+<ul>
+<li>You can include multiple <code>cmd</code> entries under the <code>scripts</code> section.</li>
+<li>Any <code>cmd</code> that results in an empty string after template rendering will be ignored.</li>
+<li>Each <code>cmd</code> instruction will be presented to the user for confirmation before being executed. If using <code>--no-interaction</code>, the default answer is used.</li>
+<li>Use the <code>message</code> field to print an arbitrary message</li>
+</ul>
 <h3 id="imports"><a class="header" href="#imports">imports</a></h3>
 <p>It is possible to imports templates into a template. It is useful to reuse templates or to compose template from other template.</p>
 <p>The <code>imports</code> section is a list of templates:</p>
@@ -290,22 +333,6 @@ imports:
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

@@ -32,6 +32,8 @@
         <link rel="stylesheet" href="./theme/catppuccin.css">
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="./theme/catppuccin-admonish.css">
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -166,7 +168,7 @@
 <li><a href="#how-to-test-my-template-">How to test my template ?</a></li>
 <li><a href="#how-to-host-template-on-github-">How to host template on github ?</a></li>
 </ul>
-<h2 id="how-to-name-a-folder-as-a-package-name-of-the-project-"><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></h2>
+<h2 id="how-to-name-a-folder-as-a-package-name-of-the-project"><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project">How to name a folder as a package name of the project?</a></h2>
 <p>Define a <code>package_name</code> variable with a sensible value (eg snake case of the project name).</p>
 <pre><code class="language-yaml">variables:
   - name: project_name
@@ -177,13 +179,14 @@
 <p>And use it as name of the folder.</p>
 <pre><code class="language-sh">mkdir 'src/{{ package_name }}`
 </code></pre>
-<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files’generation ?</a></h2>
+<h2 id="how-to-display-a-message-after-files-generation"><a class="header" href="#how-to-display-a-message-after-files-generation">How to display a message after files’ generation?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - message: |
       Thanks for using my awesome template.
 </code></pre>
-<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files’generation ?</a></h2>
+<p>See <a href="template_configuration.html#scripts">Configuration &gt; scripts</a> for more details.</p>
+<h2 id="how-to-run-a-set-of-commands-after-files-generation"><a class="header" href="#how-to-run-a-set-of-commands-after-files-generation">How to run a set of commands after files’ generation?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - cmd: |
@@ -195,13 +198,8 @@
       rm file_to_delete.txt
       {{/if}}
 </code></pre>
-<ul>
-<li>Having several entries under <code>scripts</code> with <code>cmd</code> is allowed.</li>
-<li>Empty <code>cmd</code> after template rendering are ignored.</li>
-<li>Each <code>cmd</code> block is displayed to the user to confirm
-if (s)he accepts to run it or not.</li>
-</ul>
-<h2 id="how-to-import-a-sibling-template-"><a class="header" href="#how-to-import-a-sibling-template-">How to import a sibling template ?</a></h2>
+<p>See <a href="template_configuration.html#scripts">Configuration &gt; scripts</a> for more details.</p>
+<h2 id="how-to-import-a-sibling-template"><a class="header" href="#how-to-import-a-sibling-template">How to import a sibling template?</a></h2>
 <p>If your git repository host several templates, one template can import a sibling
 template by specifying the absolute value or by using built-in variables</p>
 <pre><code class="language-yaml">imports:
@@ -245,22 +243,6 @@ template by specifying the absolute value or by using built-in variables</p>
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

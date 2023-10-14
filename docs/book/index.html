@@ -32,6 +32,8 @@
         <link rel="stylesheet" href="./theme/catppuccin.css">
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="./theme/catppuccin-admonish.css">
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -180,7 +182,6 @@
 </li>
 <li><a href="#run">Run</a>
 <ul>
-<li><a href="#self-upgrade-the-executable">Self upgrade the executable</a></li>
 <li><a href="#apply-a-template-to-create-or-update">Apply a template (to create or update)</a></li>
 </ul>
 </li>
@@ -198,7 +199,6 @@
 <li>Install via download a standalone single file on system (no requirements like <code>python</code>, <code>ruby</code>, <code>nodejs</code>, <code>java</code>, …).</li>
 <li>Run as fast enough project generator.</li>
 <li>Run with dry mode (useful to test).</li>
-<li>Support self-upgrade.</li>
 </ul>
 </li>
 <li>A rust library
@@ -264,7 +264,6 @@ Usage: ffizer [OPTIONS] &lt;COMMAND&gt;
 
 Commands:
   apply             Apply a template into a target directory
-  upgrade           Self upgrade ffizer executable
   inspect           Inspect configuration, caches,... (wip)
   show-json-schema  Show the json schema of the .ffizer.yaml files
   test-samples      test a template against its samples
@@ -276,9 +275,6 @@ Options:
   -V, --version     Print version information
 
 https://ffizer.github.io/ffizer/book/
-</code></pre>
-<h4 id="self-upgrade-the-executable"><a class="header" href="#self-upgrade-the-executable">Self upgrade the executable</a></h4>
-<pre><code class="language-sh">❯ ffizer upgrade
 </code></pre>
 <h4 id="apply-a-template-to-create-or-update"><a class="header" href="#apply-a-template-to-create-or-update">Apply a template (to create or update)</a></h4>
 <pre><code class="language-sh">❯ ffizer apply --help
@@ -393,22 +389,6 @@ cargo make publish --execute patch
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

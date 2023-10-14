@@ -2,3 +2,4 @@
 /out
 **/*.rs.bk
 .vscode
+.idea

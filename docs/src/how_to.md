@@ -11,7 +11,7 @@
 - [How to test my template ?](#how-to-test-my-template-)
 - [How to host template on github ?](#how-to-host-template-on-github-)
 
-## How to name a folder as a package name of the project ?
+## How to name a folder as a package name of the project?
 
 Define a `package_name` variable with a sensible value (eg snake case of the project name).
 
@@ -29,7 +29,7 @@ And use it as name of the folder.
 mkdir 'src/{{ package_name }}`
 ```
 
-## How to display a message after files'generation ?
+## How to display a message after files' generation?
 
 in `.ffizer.yaml`
 
@@ -39,7 +39,9 @@ scripts:
       Thanks for using my awesome template.
 ```
 
-## How to run a set of commands after files'generation ?
+See [Configuration > scripts](template_configuration.md#scripts) for more details.
+
+## How to run a set of commands after files' generation?
 
 in `.ffizer.yaml`
 
@@ -55,12 +57,9 @@ scripts:
       {{/if}}
 ```
 
-- Having several entries under `scripts` with `cmd` is allowed.
-- Empty `cmd` after template rendering are ignored.
-- Each `cmd` block is displayed to the user to confirm
-  if (s)he accepts to run it or not.
+See [Configuration > scripts](template_configuration.md#scripts) for more details.
 
-## How to import a sibling template ?
+## How to import a sibling template?
 
 If your git repository host several templates, one template can import a sibling
 template by specifying the absolute value or by using built-in variables

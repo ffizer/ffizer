@@ -33,6 +33,8 @@
         <link rel="stylesheet" href="./theme/catppuccin.css">
         <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
+        <link rel="stylesheet" href="./theme/catppuccin-admonish.css">
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -181,7 +183,6 @@
 </li>
 <li><a href="overview.html#run">Run</a>
 <ul>
-<li><a href="overview.html#self-upgrade-the-executable">Self upgrade the executable</a></li>
 <li><a href="overview.html#apply-a-template-to-create-or-update">Apply a template (to create or update)</a></li>
 </ul>
 </li>
@@ -199,7 +200,6 @@
 <li>Install via download a standalone single file on system (no requirements like <code>python</code>, <code>ruby</code>, <code>nodejs</code>, <code>java</code>, …).</li>
 <li>Run as fast enough project generator.</li>
 <li>Run with dry mode (useful to test).</li>
-<li>Support self-upgrade.</li>
 </ul>
 </li>
 <li>A rust library
@@ -265,7 +265,6 @@ Usage: ffizer [OPTIONS] &lt;COMMAND&gt;
 
 Commands:
   apply             Apply a template into a target directory
-  upgrade           Self upgrade ffizer executable
   inspect           Inspect configuration, caches,... (wip)
   show-json-schema  Show the json schema of the .ffizer.yaml files
   test-samples      test a template against its samples
@@ -277,9 +276,6 @@ Options:
   -V, --version     Print version information
 
 https://ffizer.github.io/ffizer/book/
-</code></pre>
-<h4 id="self-upgrade-the-executable"><a class="header" href="#self-upgrade-the-executable">Self upgrade the executable</a></h4>
-<pre><code class="language-sh">❯ ffizer upgrade
 </code></pre>
 <h4 id="apply-a-template-to-create-or-update"><a class="header" href="#apply-a-template-to-create-or-update">Apply a template (to create or update)</a></h4>
 <pre><code class="language-sh">❯ ffizer apply --help
@@ -626,7 +622,7 @@ ffizer test-samples --source .
 <li><a href="how_to.html#how-to-test-my-template-">How to test my template ?</a></li>
 <li><a href="how_to.html#how-to-host-template-on-github-">How to host template on github ?</a></li>
 </ul>
-<h2 id="how-to-name-a-folder-as-a-package-name-of-the-project-"><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project-">How to name a folder as a package name of the project ?</a></h2>
+<h2 id="how-to-name-a-folder-as-a-package-name-of-the-project"><a class="header" href="#how-to-name-a-folder-as-a-package-name-of-the-project">How to name a folder as a package name of the project?</a></h2>
 <p>Define a <code>package_name</code> variable with a sensible value (eg snake case of the project name).</p>
 <pre><code class="language-yaml">variables:
   - name: project_name
@@ -637,13 +633,14 @@ ffizer test-samples --source .
 <p>And use it as name of the folder.</p>
 <pre><code class="language-sh">mkdir 'src/{{ package_name }}`
 </code></pre>
-<h2 id="how-to-display-a-message-after-filesgeneration-"><a class="header" href="#how-to-display-a-message-after-filesgeneration-">How to display a message after files’generation ?</a></h2>
+<h2 id="how-to-display-a-message-after-files-generation"><a class="header" href="#how-to-display-a-message-after-files-generation">How to display a message after files’ generation?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - message: |
       Thanks for using my awesome template.
 </code></pre>
-<h2 id="how-to-run-a-set-of-commands-after-filesgeneration-"><a class="header" href="#how-to-run-a-set-of-commands-after-filesgeneration-">How to run a set of commands after files’generation ?</a></h2>
+<p>See <a href="template_configuration.html#scripts">Configuration &gt; scripts</a> for more details.</p>
+<h2 id="how-to-run-a-set-of-commands-after-files-generation"><a class="header" href="#how-to-run-a-set-of-commands-after-files-generation">How to run a set of commands after files’ generation?</a></h2>
 <p>in <code>.ffizer.yaml</code></p>
 <pre><code class="language-yaml">scripts:
   - cmd: |
@@ -655,13 +652,8 @@ ffizer test-samples --source .
       rm file_to_delete.txt
       {{/if}}
 </code></pre>
-<ul>
-<li>Having several entries under <code>scripts</code> with <code>cmd</code> is allowed.</li>
-<li>Empty <code>cmd</code> after template rendering are ignored.</li>
-<li>Each <code>cmd</code> block is displayed to the user to confirm
-if (s)he accepts to run it or not.</li>
-</ul>
-<h2 id="how-to-import-a-sibling-template-"><a class="header" href="#how-to-import-a-sibling-template-">How to import a sibling template ?</a></h2>
+<p>See <a href="template_configuration.html#scripts">Configuration &gt; scripts</a> for more details.</p>
+<h2 id="how-to-import-a-sibling-template"><a class="header" href="#how-to-import-a-sibling-template">How to import a sibling template?</a></h2>
 <p>If your git repository host several templates, one template can import a sibling
 template by specifying the absolute value or by using built-in variables</p>
 <pre><code class="language-yaml">imports:
@@ -682,12 +674,31 @@ template by specifying the absolute value or by using built-in variables</p>
 <li>stored into a yaml file named <code>.ffizer.yaml</code> at the root of the template.</li>
 <li>sections (top level entry) of the yaml are optionals</li>
 </ul>
-<pre><code class="language-yaml">variables:
-  - name: project
+<pre><code class="language-yaml"># Define variables for the project setup
+variables:
+  - name: project_name
     default_value: my-project
+  - name: Add extra features?
+    select_in_values: ['yes', 'no']
 
+# Specify the list of files to exclude during copying or rendering process
 ignores:
   - .git # exclude .git of the template host
+  - README.md
+
+# scripts to be executed after file generation
+scripts:
+  - cmd: echo &quot;{{ project_name }} generated!&quot;
+    default_confirm_answer: 'yes'
+  
+# Set to `true` to define the content root as `template` instead of the root folder
+use_template_dir: false
+
+# import other templates
+imports:
+  - uri: &quot;git@github.com:ffizer/templates_default.git&quot;
+    rev: &quot;master&quot;
+    subfolder: &quot;gitignore_io&quot;
 </code></pre>
 <h2 id="sections"><a class="header" href="#sections">Sections</a></h2>
 <h3 id="variables"><a class="header" href="#variables">variables</a></h3>
@@ -727,7 +738,7 @@ Variables are defined by:</p>
   - name: project_name
     default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
 </code></pre>
-<p>Every variables are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
+<p>Every variable are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
 <pre><code class="language-yaml">  - name: foo
     default_value: &quot;&quot;
 </code></pre>
@@ -738,6 +749,28 @@ Variables are defined by:</p>
   - .git/*
   - .git # exclude .git of the template host
 </code></pre>
+<h3 id="scripts"><a class="header" href="#scripts">scripts</a></h3>
+<p>Scripts allows you to run arbitrary commands after generating the files.</p>
+<pre><code class="language-yaml">scripts:
+  - cmd: echo &quot;{{ project_name }} generated!&quot;
+    default_confirm_answer: 'yes'
+  - cmd: |
+      {{#if (eq (env_var &quot;OS&quot;) &quot;windows&quot;) }}
+      echo Hello {{ who }}&gt; file2.txt
+      del file_to_delete.txt
+      {{else}}
+      echo &quot;Hello {{ who }}&quot; &gt; file2.txt
+      rm file_to_delete.txt
+      {{/if}}
+  - message: |
+      Thanks for using my awesome template.
+</code></pre>
+<ul>
+<li>You can include multiple <code>cmd</code> entries under the <code>scripts</code> section.</li>
+<li>Any <code>cmd</code> that results in an empty string after template rendering will be ignored.</li>
+<li>Each <code>cmd</code> instruction will be presented to the user for confirmation before being executed. If using <code>--no-interaction</code>, the default answer is used.</li>
+<li>Use the <code>message</code> field to print an arbitrary message</li>
+</ul>
 <h3 id="imports"><a class="header" href="#imports">imports</a></h3>
 <p>It is possible to imports templates into a template. It is useful to reuse templates or to compose template from other template.</p>
 <p>The <code>imports</code> section is a list of templates:</p>
@@ -2761,22 +2794,6 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

@@ -16,11 +16,11 @@ create-missing = false
 [preprocessor.links]
 
 [preprocessor.catppuccin]
-assets_version = "0.1.1" # DO NOT EDIT: Managed by `mdbook-catppuccin install`
+assets_version = "2.0.1" # DO NOT EDIT: Managed by `mdbook-catppuccin install`
 
 [preprocessor.admonish]
 command = "mdbook-admonish"
-assets_version = "2.0.0"    # do not edit: managed by `mdbook-admonish install`
+assets_version = "3.0.0" # do not edit: managed by `mdbook-admonish install`
 on_failure = "bail"
 after = ["links"]
 
@@ -33,7 +33,7 @@ command = "mdbook-mermaid"
 additional-css = [
     "./theme/catppuccin.css",
     "./theme/catppuccin-highlight.css",
-    "./theme/mdbook-admonish.css",
+    "./theme/mdbook-admonish.css", "./theme/catppuccin-admonish.css", "./mdbook-admonish.css",
 ]
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
 mathjax-support = true

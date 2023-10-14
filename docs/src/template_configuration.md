@@ -7,12 +7,31 @@ The configuration is:
 - sections (top level entry) of the yaml are optionals
 
 ```yaml
+# Define variables for the project setup
 variables:
-  - name: project
+  - name: project_name
     default_value: my-project
+  - name: Add extra features?
+    select_in_values: ['yes', 'no']
 
+# Specify the list of files to exclude during copying or rendering process
 ignores:
   - .git # exclude .git of the template host
+  - README.md
+
+# scripts to be executed after file generation
+scripts:
+  - cmd: echo "{{ project_name }} generated!"
+    default_confirm_answer: 'yes'
+  
+# Set to `true` to define the content root as `template` instead of the root folder
+use_template_dir: false
+
+# import other templates
+imports:
+  - uri: "git@github.com:ffizer/templates_default.git"
+    rev: "master"
+    subfolder: "gitignore_io"
 ```
 
 ## Sections
@@ -50,7 +69,7 @@ variables:
     default_value: "{{ file_name ffizer_dst_folder }}"
 ```
 
-Every variables are mandatory, to allow empty value `default_value` should be an empty string.
+Every variable are mandatory, to allow empty value `default_value` should be an empty string.
 
 ```yaml
   - name: foo
@@ -68,6 +87,31 @@ ignores:
   - .git/*
   - .git # exclude .git of the template host
 ```
+
+### scripts
+
+Scripts allows you to run arbitrary commands after generating the files.
+
+```yaml
+scripts:
+  - cmd: echo "{{ project_name }} generated!"
+    default_confirm_answer: 'yes'
+  - cmd: |
+      {{#if (eq (env_var "OS") "windows") }}
+      echo Hello {{ who }}> file2.txt
+      del file_to_delete.txt
+      {{else}}
+      echo "Hello {{ who }}" > file2.txt
+      rm file_to_delete.txt
+      {{/if}}
+  - message: |
+      Thanks for using my awesome template.
+```
+
+- You can include multiple `cmd` entries under the `scripts` section.
+- Any `cmd` that results in an empty string after template rendering will be ignored.
+- Each `cmd` instruction will be presented to the user for confirmation before being executed. If using `--no-interaction`, the default answer is used.
+- Use the `message` field to print an arbitrary message
 
 ### imports
 

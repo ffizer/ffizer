@@ -214,3 +214,13 @@ Release a new version by bump `patch` (or `minor`or `major`)
 cargo make publish patch # dry-run
 cargo make publish --execute patch
 ```
+
+## Docs
+
+Documentation is handled by [mdBook](https://rust-lang.github.io/mdBook/)
+
+```sh
+cargo make update-book # build book in /docs
+cargo make serve-book # build book and serves it at http://localhost:3000
+```
+

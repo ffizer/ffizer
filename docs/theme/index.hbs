@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="{{ language }}" class="sidebar-visible no-js {{ default_theme }}">
+<html lang="{{ language }}" class="{{ default_theme }}" dir="{{ text_direction }}">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -75,30 +75,37 @@
                     localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
                 }
             } catch (e) { }
-        </script>
+    </script>
 
-        <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+    <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('{{ default_theme }}')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
 
-        <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+    <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+      <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -108,16 +115,38 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+    <!-- Track and set sidebar scroll position -->
+    <script>
+        var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+        sidebarScrollbox.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+            }
+        }, { passive: true });
+        var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+        sessionStorage.removeItem('sidebar-scroll');
+        if (sidebarScrollTop) {
+            // preserve sidebar scroll position when navigating via links within sidebar
+            sidebarScrollbox.scrollTop = sidebarScrollTop;
+        } else {
+            // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+            var activeSection = document.querySelector('#sidebar .active');
+            if (activeSection) {
+                activeSection.scrollIntoView({ block: 'center' });
+            }
+        }
+    </script>
+
+    <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                 {{> header}}
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -136,32 +165,32 @@
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        {{/if}}
-                    </div>
+                    {{/if}}
+                </div>
 
-                    <h1 class="menu-title">{{ book_title }}</h1>
+                <h1 class="menu-title">{{ book_title }}</h1>
 
-                    <div class="right-buttons">
-                        {{#if print_enable}}
+                <div class="right-buttons">
+                    {{#if print_enable}}
                         <a href="{{ path_to_root }}print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        {{/if}}
-                        {{#if git_repository_url}}
+                    {{/if}}
+                    {{#if git_repository_url}}
                         <a href="{{git_repository_url}}" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa {{git_repository_icon}}"></i>
                         </a>
-                        {{/if}}
-                        {{#if git_repository_edit_url}}
+                    {{/if}}
+                    {{#if git_repository_edit_url}}
                         <a href="{{git_repository_edit_url}}" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
-                        {{/if}}
+                    {{/if}}
 
-                    </div>
                 </div>
+            </div>
 
-                {{#if search_enabled}}
+            {{#if search_enabled}}
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
                         <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
@@ -172,10 +201,10 @@
                         </ul>
                     </div>
                 </div>
-                {{/if}}
+            {{/if}}
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -197,7 +226,7 @@
                         {{/previous}}
 
                         {{#next}}
-                            <a rel="next" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         {{/next}}
@@ -221,7 +250,7 @@
                 {{/next}}
             </nav>
 
-        </div>
+    </div>
 
         {{#if live_reload_endpoint}}
         <!-- Livereload script (if served using the cli tool) -->
@@ -259,19 +288,19 @@
                 ga('send', 'pageview');
             }
         </script>
-        {{/if}}
+    {{/if}}
 
-        {{#if playground_line_numbers}}
-        <script type="text/javascript">
+    {{#if playground_line_numbers}}
+        <script>
             window.playground_line_numbers = true;
         </script>
-        {{/if}}
+    {{/if}}
 
-        {{#if playground_copyable}}
-        <script type="text/javascript">
+    {{#if playground_copyable}}
+        <script>
             window.playground_copyable = true;
         </script>
-        {{/if}}
+    {{/if}}
 
         {{#if playground_js}}
         <script src="{{ path_to_root }}ace.js" type="text/javascript" charset="utf-8"></script>
@@ -296,7 +325,7 @@
         <script type="text/javascript" src="{{ ../path_to_root }}{{this}}"></script>
         {{/each}}
 
-        {{#if is_print}}
+    {{#if is_print}}
         {{#if mathjax_support}}
         <script type="text/javascript">
         window.addEventListener('load', function() {
@@ -312,7 +341,7 @@
         });
         </script>
         {{/if}}
-        {{/if}}
+     {{/if}}
 
     </body>
 </html>

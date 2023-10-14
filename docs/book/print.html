@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js frappé">
+<html lang="en" class="frappe" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -43,7 +43,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "frappé" : "frappé";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "frappe" : "frappe";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,30 +60,37 @@
                     localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
                 }
             } catch (e) { }
-        </script>
+    </script>
 
-        <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+    <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
-            html.classList.remove('frappé')
+            html.classList.remove('frappe')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
 
-        <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+    <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+      <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -93,15 +100,37 @@
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+    <!-- Track and set sidebar scroll position -->
+    <script>
+        var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+        sidebarScrollbox.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+            }
+        }, { passive: true });
+        var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+        sessionStorage.removeItem('sidebar-scroll');
+        if (sidebarScrollTop) {
+            // preserve sidebar scroll position when navigating via links within sidebar
+            sidebarScrollbox.scrollTop = sidebarScrollTop;
+        } else {
+            // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+            var activeSection = document.querySelector('#sidebar .active');
+            if (activeSection) {
+                activeSection.scrollIntoView({ block: 'center' });
+            }
+        }
+    </script>
+
+    <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -112,18 +141,18 @@
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                    </div>
+                </div>
 
-                    <h1 class="menu-title">ffizer</h1>
+                <h1 class="menu-title">ffizer</h1>
 
-                    <div class="right-buttons">
+                <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
@@ -131,8 +160,8 @@
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
-                    </div>
                 </div>
+            </div>
 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
@@ -146,7 +175,7 @@
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -671,8 +700,8 @@ template by specifying the absolute value or by using built-in variables</p>
 <p>The configuration is:</p>
 <ul>
 <li>optional</li>
-<li>stored into a yaml file named <code>.ffizer.yaml</code> at the root of the template.</li>
-<li>sections (top level entry) of the yaml are optionals</li>
+<li>Saved within a yaml file named <code>.ffizer.yaml</code>, located at the root of the template.</li>
+<li>All sections (top level entries) of the yaml file are optional.</li>
 </ul>
 <pre><code class="language-yaml"># Define variables for the project setup
 variables:
@@ -738,7 +767,10 @@ Variables are defined by:</p>
   - name: project_name
     default_value: &quot;{{ file_name ffizer_dst_folder }}&quot;
 </code></pre>
-<p>Every variable are mandatory, to allow empty value <code>default_value</code> should be an empty string.</p>
+<ul>
+<li>Every variable is mandatory.</li>
+<li>To use an empty value <code>default_value</code> should be an empty string.</li>
+</ul>
 <pre><code class="language-yaml">  - name: foo
     default_value: &quot;&quot;
 </code></pre>
@@ -2792,12 +2824,28 @@ VS Marketplace Link: https://open-vsx.org/vscode/item?itemName=redhat.vscode-yam
 
             </nav>
 
-        </div>
+    </div>
 
-
-
-
+        <!-- Livereload script (if served using the cli tool) -->
         <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+
+        <script>
             window.playground_copyable = true;
         </script>
 

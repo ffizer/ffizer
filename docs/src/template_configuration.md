@@ -3,8 +3,8 @@
 The configuration is:
 
 - optional
-- stored into a yaml file named `.ffizer.yaml` at the root of the template.
-- sections (top level entry) of the yaml are optionals
+- Saved within a yaml file named `.ffizer.yaml`, located at the root of the template.
+- All sections (top level entries) of the yaml file are optional.
 
 ```yaml
 # Define variables for the project setup
@@ -69,7 +69,8 @@ variables:
     default_value: "{{ file_name ffizer_dst_folder }}"
 ```
 
-Every variable are mandatory, to allow empty value `default_value` should be an empty string.
+- Every variable is mandatory.
+- To use an empty value `default_value` should be an empty string.
 
 ```yaml
   - name: foo

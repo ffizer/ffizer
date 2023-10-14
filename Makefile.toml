@@ -160,6 +160,16 @@ script = ['''
   mdbook build
   ''']
 
+[tasks.serve-book]
+category = "Publish"
+dependencies = [
+  "update-book"
+]
+script = ['''
+  cd docs
+  mdbook serve --open
+  ''']
+
 [tasks.update-json-schema]
 category = "Publish"
 script = ['''

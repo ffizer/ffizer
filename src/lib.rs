@@ -31,6 +31,7 @@ use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tracing::{debug, warn};
@@ -60,6 +61,9 @@ pub struct Action {
 pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("extracting variables from cli",);
     let variables_from_cli = extract_variables(ctx)?;
+    debug!("extracting variables from history",);
+    // let variables_from_history = todo!("history stuff");
+    // let variables = compose_Variables()
     debug!("compositing templates");
     let mut template_composite =
         TemplateComposite::from_src(&variables_from_cli, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
@@ -230,7 +234,31 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             }
         }
     }
+    save_metadata(variables, ctx);
     Ok(())
+}
+
+fn save_metadata(variables: &Variables, ctx: &Ctx) {
+    let variables_to_save: Vec<serde_yaml::Mapping> = variables.tree().keys().filter_map(|k| {
+            match k {
+                s if !s.starts_with("ffizer") => {
+                    let mut map = serde_yaml::Mapping::new();
+                    map.insert("key".into(), serde_yaml::Value::String(k.into()));
+                    map.insert("value".into(), variables.tree().get(k)?.clone());
+                    Some(map)
+                },
+                _ => None
+            }
+        }
+    ).collect();
+    let mut output_tree: BTreeMap<String, Vec<serde_yaml::Mapping>> = BTreeMap::new();
+    output_tree.insert("variables".to_string(), variables_to_save);
+
+    let ffizer_folder = ctx.cmd_opt.dst_folder.join(".ffizer");
+    std::fs::create_dir(&ffizer_folder).expect("Could not create dir");
+
+    let f = std::fs::OpenOptions::new().write(true).create(true).open(ffizer_folder.join("variables.yaml")).expect("Could not open file.");
+    serde_yaml::to_writer(f, &output_tree).expect("Failed to write to file.");
 }
 
 fn mk_file_on_action(

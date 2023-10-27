@@ -1,6 +1,7 @@
 use crate::error::*;
 use serde::Serialize;
 use std::collections::BTreeMap;
+use std::iter::Iterator;
 use tracing::instrument;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -18,6 +19,10 @@ impl Variables {
 
     pub fn contains_key<K: Into<String>>(&mut self, key: K) -> bool {
         self.0.contains_key(&key.into())
+    }
+
+    pub fn tree(&self) -> &BTreeMap<String, serde_yaml::Value> {
+        &self.0
     }
 
     #[instrument]

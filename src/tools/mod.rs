@@ -115,16 +115,19 @@ impl EntryDiff {
             Difference::Presence { expect, actual } => {
                 if expect && !actual {
                     let path = self.expect_base_path.join(&self.relative_path);
-                    let is_dir = std::fs::metadata(&path)?.is_dir();
-                    if crate::ui::ask_to_update_sample("Accept to remove from sample ?")? {
-                        if is_dir {
-                            std::fs::remove_dir_all(&path)?;
+                    if let Ok(meta) = std::fs::metadata(&path) {
+                        if crate::ui::ask_to_update_sample("Accept to remove from sample ?")? {
+                            if meta.is_dir() {
+                                std::fs::remove_dir_all(&path)?;
+                            } else {
+                                std::fs::remove_file(&path)?;
+                            }
+                            true
                         } else {
-                            std::fs::remove_file(&path)?;
+                            false
                         }
-                        true
                     } else {
-                        false
+                        true // file is already deleted (likely by a previous instruction), consider as accepted
                     }
                 } else if crate::ui::ask_to_update_sample("Accept to add into sample ?")? {
                     let path = self.actual_base_path.join(&self.relative_path);
@@ -134,10 +137,6 @@ impl EntryDiff {
                     } else {
                         std::fs::copy(path, self.expect_base_path.join(&self.relative_path))?;
                     }
-                    std::fs::copy(
-                        self.actual_base_path.join(&self.relative_path),
-                        self.expect_base_path.join(&self.relative_path),
-                    )?;
                     true
                 } else {
                     false

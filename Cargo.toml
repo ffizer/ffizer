@@ -105,7 +105,7 @@ pkg-fmt = "tgz"
 pkg-fmt = "zip"
 
 [package.metadata.release]
-pre-release-commit-message = ":rocket: (cargo-release) version {{version}}"
+pre-release-commit-message = "🚀 (cargo-release) version {{version}}"
 tag-prefix = ""
 tag-name = "{{prefix}}{{version}}"
-tag-message = ":bookmark: {{version}}"
+tag-message = "🔖 {{version}}"

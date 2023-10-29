@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version"
+        description: "version to set"
         required: true
   push:
     tags:
@@ -18,19 +18,29 @@ permissions:
 
 jobs:
   precheck:
-    name: Precheck
+    # if: startsWith(github.event.head_commit.message, 'Releasing version') == true
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Cancel previous run
         uses: styfle/cancel-workflow-action@0.12.0
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-
+      # - name: Commit version
+      #   if: github.event.inputs.version != null
+      #   run: |
+      #     VERSION="${{ github.event.inputs.version }}"
+      #     # TODO replace `sed` by `toml_edit`, because `sed` can replace version of dependencies
+      #     sed -i -e "s/^version = "\(.*\)"/version = "$VERSION/g" Cargo.toml
+      #     git add Cargo.toml
+      #     git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      #     git config --global user.name "GitHub Action"
+      #     git commit -a -m "🚀 (github-workflow) version $VERSION"
+      #     git tag -a "$VERSION" -m "🔖 $VERSION"
+      #     git push --follow-tags
       - name: Version
         id: vars
         shell: bash
@@ -57,7 +67,6 @@ jobs:
       version: ${{ needs.precheck.outputs.VERSION }}
 
   release:
-    name: Release
     needs: [precheck, build, universal]
     runs-on: ubuntu-latest
     steps:
@@ -68,16 +77,6 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
-
-      # - name: Commit version
-      #   if: github.event.inputs.version != null
-      #   run: |
-      #     sed -i -e "s/^version = "\(.*\)"/version = "${{ github.event.inputs.version }}/g" Cargo.toml
-      #     git add Cargo.toml
-      #     git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      #     git config --global user.name "GitHub Action"
-      #     git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
-      #     git push origin main
 
       - name: Release
         uses: jreleaser/release-action@v2
@@ -91,6 +90,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
+          # retention-days: 1
           name: jreleaser-release
           path: |
             out/jreleaser/trace.log

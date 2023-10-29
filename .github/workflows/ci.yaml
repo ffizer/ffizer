@@ -53,13 +53,31 @@ jobs:
           target: ${{ matrix.os.target_platform }}
           # override: true
           # profile: ${{ matrix.os.profile_rustup }}
-      - uses: davidB/rust-cargo-make@v1
+      # - uses: davidB/rust-cargo-make@v1
       - name: Run tests
         run: cargo make --profile "${{ matrix.os.profile_ci_flow }}" ci-flow
+        # run: cargo test
         env:
           TARGET: ${{ matrix.os.target_platform }}
           # for list of xcode sdk see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners#xcode
           # DEVELOPER_DIR: "/Applications/Xcode_11.app/Contents/Developer"
-          CARGO_MAKE_RUN_CODECOV: "true"
+          # CARGO_MAKE_RUN_CODECOV: "true"
           # to have CODECOV_TOKEN go to https://codecov.io/gh/${GITHUB_USER}/${GITHUB_REPO}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          # CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  test:
+    name: coverage
+    runs-on: ubuntu-latest
+    container:
+      image: xd009642/tarpaulin:develop-nightly
+      options: --security-opt seccomp=unconfined
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate code coverage
+        run: |
+          cargo +nightly tarpaulin --verbose --all-features --workspace --timeout 120 --out xml
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}} # not required for public repos
+          fail_ci_if_error: true

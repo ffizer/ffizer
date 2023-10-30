@@ -19,6 +19,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
+pub const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer.d";
 pub const TEMPLATE_SAMPLES_DIRNAME: &str = ".ffizer.samples.d";
 
 impl template_cfg::TemplateCfg {
@@ -35,6 +36,8 @@ impl template_cfg::TemplateCfg {
         ignores.push(cfg_pattern);
         let samples_pattern = PathPattern::from_str(TEMPLATE_SAMPLES_DIRNAME)?;
         ignores.push(samples_pattern);
+        let storage_pattern = PathPattern::from_str(FFIZER_DATASTORE_DIRNAME)?;
+        ignores.push(storage_pattern);
         Ok(ignores)
     }
 

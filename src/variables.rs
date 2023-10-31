@@ -17,12 +17,16 @@ impl Variables {
         Ok(())
     }
 
-    pub fn contains_key<K: Into<String>>(&mut self, key: K) -> bool {
+    pub fn contains_key<K: Into<String>>(&self, key: K) -> bool {
         self.0.contains_key(&key.into())
     }
 
     pub fn tree(&self) -> &BTreeMap<String, serde_yaml::Value> {
         &self.0
+    }
+
+    pub fn get<K: Into<String>>(&self, key: K) -> Option<&serde_yaml::Value> {
+        self.0.get(&key.into())
     }
 
     #[instrument]

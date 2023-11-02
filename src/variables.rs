@@ -1,7 +1,6 @@
 use crate::error::*;
 use serde::Serialize;
 use std::collections::BTreeMap;
-use std::iter::Iterator;
 use tracing::instrument;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]

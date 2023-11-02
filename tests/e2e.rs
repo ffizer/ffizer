@@ -35,7 +35,11 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     expected_base: B,
     output: &std::process::Output,
 ) -> Result<(), Box<dyn Error>> {
-    let diffs = dir_diff_list::search_diff(actual_base, expected_base, &[PathPattern::from_str(".ffizer.d")?])?;
+    let diffs = dir_diff_list::search_diff(
+        actual_base,
+        expected_base,
+        &[PathPattern::from_str(".ffizer.d")?],
+    )?;
     if !diffs.is_empty() || !output.status.success() {
         dbg!(output);
     }

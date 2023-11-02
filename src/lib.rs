@@ -21,12 +21,12 @@ mod ui;
 mod variable_def;
 mod variables;
 
-pub use crate::ctx::Ctx;
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
+pub use crate::ctx::Ctx;
+pub use crate::path_pattern::PathPattern;
 pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
-pub use crate::path_pattern::PathPattern;
 
 use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
 use crate::error::*;
@@ -505,9 +505,9 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
 mod tests {
     use super::*;
     pub use crate::cli_opt::*;
+    use crate::ctx::tests::new_ctx_from;
     use spectral::prelude::*;
     use tempfile::TempDir;
-    use crate::ctx::tests::new_ctx_from;
 
     const DST_FOLDER_STR: &str = "test/dst";
     const CONTENT_BASE: &str = "{{ base }}";

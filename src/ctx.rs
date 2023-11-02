@@ -1,6 +1,6 @@
 use crate::cli_opt::*;
-use crate::variables::Variables;
 use crate::error::*;
+use crate::variables::Variables;
 use std::io::Write;
 
 #[derive(Debug, Clone, Default)]
@@ -12,13 +12,13 @@ pub const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer.d";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedVariables {
-    variables: Vec<SavedVariable>
+    variables: Vec<SavedVariable>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct SavedVariable {
     key: String,
-    value: serde_yaml::Value
+    value: serde_yaml::Value,
 }
 
 impl TryFrom<PersistedVariables> for Variables {
@@ -27,7 +27,7 @@ impl TryFrom<PersistedVariables> for Variables {
         let mut out = Variables::default();
         for saved_var in persisted.variables {
             out.insert(saved_var.key, saved_var.value)?;
-        };
+        }
         Ok(out)
     }
 }
@@ -35,13 +35,16 @@ impl TryFrom<PersistedVariables> for Variables {
 impl From<Variables> for PersistedVariables {
     fn from(variables: Variables) -> Self {
         let formatted_variables = variables
-        .tree()
-        .iter()
-        .map(|(k, v)| {
-            SavedVariable{key: k.into(), value: v.clone()}
-        })
-        .collect::<Vec<SavedVariable>>();
-        PersistedVariables{variables: formatted_variables}
+            .tree()
+            .iter()
+            .map(|(k, v)| SavedVariable {
+                key: k.into(),
+                value: v.clone(),
+            })
+            .collect::<Vec<SavedVariable>>();
+        PersistedVariables {
+            variables: formatted_variables,
+        }
     }
 }
 
@@ -92,7 +95,7 @@ pub fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
         .truncate(true)
         .create(true)
         .open(ffizer_folder.join("variables.yaml"))?;
-    serde_yaml::to_writer(f, dbg!(&PersistedVariables::from(variables_to_save)))?;
+    serde_yaml::to_writer(f, &PersistedVariables::from(variables_to_save))?;
     Ok(())
 }
 
@@ -103,12 +106,11 @@ pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
         .join(FFIZER_DATASTORE_DIRNAME)
         .join("variables.yaml");
     let variables = if metadata_path.exists() {
-        let metadata: PersistedVariables = {
-            let f = std::fs::OpenOptions::new().read(true).open(metadata_path)?;
-            serde_yaml::from_reader::<_, PersistedVariables>(f)?
+        let persisted: PersistedVariables = {
+            serde_yaml::from_reader(std::fs::OpenOptions::new().read(true).open(metadata_path)?)?
         };
 
-        Variables::try_from(metadata)?
+        Variables::try_from(persisted)?
     } else {
         Variables::default()
     };
@@ -132,13 +134,12 @@ pub fn get_cli_variables(ctx: &Ctx) -> Result<Variables> {
     Ok(variables)
 }
 
-
 #[cfg(test)]
-pub (crate) mod tests {
+pub(crate) mod tests {
     use super::*;
     pub use crate::cli_opt::*;
-    use tempfile::TempDir;
     use crate::PathBuf;
+    use tempfile::TempDir;
 
     pub fn new_ctx_from<T: Into<PathBuf>>(dst: T) -> Ctx {
         Ctx {
@@ -147,7 +148,7 @@ pub (crate) mod tests {
                 ..Default::default()
             },
         }
-    }    
+    }
 
     fn new_variables_for_test() -> Variables {
         let mut variables = Variables::default();
@@ -165,7 +166,9 @@ pub (crate) mod tests {
         let variables = new_variables_for_test();
 
         let mut variables_with_ffizer = variables.clone();
-        variables_with_ffizer.insert("ffizer_version", "0.0.0").unwrap();
+        variables_with_ffizer
+            .insert("ffizer_version", "0.0.0")
+            .unwrap();
 
         save_metadata(&variables_with_ffizer, &ctx).unwrap();
         let saved_variables = get_saved_variables(&ctx).unwrap();

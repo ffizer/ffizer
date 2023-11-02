@@ -169,8 +169,6 @@ pub enum Error {
         #[from]
         source: clap::Error,
     },
-    #[error("Config does not match expected format.")]
-    ConfigError { error: String },
 }
 
 impl From<serde_yaml::Error> for Error {

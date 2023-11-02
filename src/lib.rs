@@ -8,6 +8,7 @@ pub mod tools;
 
 mod cfg;
 mod cli_opt;
+mod ctx;
 mod files;
 mod git;
 mod graph;
@@ -20,6 +21,7 @@ mod ui;
 mod variable_def;
 mod variables;
 
+pub use crate::ctx::Ctx;
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
 pub use crate::source_loc::SourceLoc;
@@ -30,19 +32,10 @@ use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
-use cfg::FFIZER_DATASTORE_DIRNAME;
 use handlebars_misc_helpers::new_hbs;
-use serde_yaml::{Mapping, Value};
-use std::collections::BTreeMap;
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use tracing::{debug, warn};
-
-#[derive(Debug, Clone, Default)]
-pub struct Ctx {
-    pub cmd_opt: ApplyOpts,
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FileOperation {
@@ -63,7 +56,7 @@ pub struct Action {
 
 pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("extracting variables from context",);
-    let (confirmed_variables, suggested_variables) = extract_variables(ctx)?;
+    let (confirmed_variables, suggested_variables) = ctx::extract_variables(ctx)?;
     debug!("compositing templates");
 
     // Should the template import to determine variables also use the suggested variables?
@@ -91,7 +84,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         debug!("executing plan of rendering");
         execute(ctx, &actions, &used_variables)?;
         debug!("Saving metadata");
-        save_metadata(&used_variables, ctx)?;
+        ctx::save_metadata(&used_variables, ctx)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
     }
@@ -112,26 +105,6 @@ where
     let res = f();
     std::env::set_current_dir(current_dir)?;
     res
-}
-
-pub fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables)> {
-    let mut confirmed_variables = Variables::default();
-    confirmed_variables.insert(
-        "ffizer_dst_folder",
-        ctx.cmd_opt
-            .dst_folder
-            .to_str()
-            .expect("dst_folder to converted via to_str"),
-    )?;
-    confirmed_variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
-    confirmed_variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
-    confirmed_variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
-    confirmed_variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
-
-    confirmed_variables.append(&mut get_cli_variables(ctx)?);
-    let suggested_variables = get_saved_variables(ctx)?;
-
-    Ok((confirmed_variables, suggested_variables))
 }
 
 /// list actions to execute
@@ -235,113 +208,6 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
         }
     }
     Ok(())
-}
-
-fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
-    let ffizer_folder = ctx.cmd_opt.dst_folder.join(FFIZER_DATASTORE_DIRNAME);
-    if !ffizer_folder.exists() {
-        std::fs::create_dir(&ffizer_folder)?;
-    }
-    // Save ffizer version
-    {
-        let mut f = std::fs::OpenOptions::new()
-            .write(true)
-            .truncate(true)
-            .create(true)
-            .open(ffizer_folder.join("version.txt"))?;
-        if let Some(ffizer_version) = variables.get("ffizer_version").and_then(|x| x.as_str()) {
-            write!(f, "{}", ffizer_version)?;
-        }
-    }
-
-    // Save or update default variable values stored in
-    let mut variables_to_save = get_saved_variables(ctx)?;
-    variables_to_save.append(&mut variables.clone()); // update already existing keys
-    let formatted_variables = variables_to_save
-        .tree()
-        .iter()
-        .filter(|(k, _v)| !k.starts_with("ffizer_"))
-        .map(|(k, v)| {
-            let mut map = Mapping::new();
-            map.insert("key".into(), Value::String(k.into()));
-            map.insert("value".into(), v.clone());
-            map
-        })
-        .collect::<Vec<Mapping>>();
-
-    let mut output_tree: BTreeMap<String, Vec<Mapping>> = BTreeMap::new();
-    output_tree.insert("variables".to_string(), formatted_variables);
-
-    let f = std::fs::OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .create(true)
-        .open(ffizer_folder.join("variables.yaml"))?;
-    serde_yaml::to_writer(f, &output_tree)?;
-    Ok(())
-}
-
-fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
-    let mut variables = Variables::default();
-    let metadata_path = ctx
-        .cmd_opt
-        .dst_folder
-        .join(FFIZER_DATASTORE_DIRNAME)
-        .join("variables.yaml");
-    if metadata_path.exists() {
-        let metadata: Mapping = {
-            let f = std::fs::OpenOptions::new().read(true).open(metadata_path)?;
-            serde_yaml::from_reader::<_, Mapping>(f)?
-        };
-
-        let nodes = metadata
-            .get("variables")
-            .and_then(|v| v.as_sequence())
-            .ok_or(Error::ConfigError {
-                error: format!(
-                    "Did not find a sequence at key 'variables' in config {:?}",
-                    metadata
-                ),
-            })?;
-        for node in nodes
-            .iter()
-            .map(|x| {
-                x.as_mapping().ok_or(Error::ConfigError {
-                    error: format!("Failed to parse node as a mapping in sequence {:?}", nodes),
-                })
-            })
-            .collect::<Result<Vec<&Mapping>>>()?
-        {
-            let k = node
-                .get("key")
-                .and_then(|k| k.as_str())
-                .ok_or(Error::ConfigError {
-                    error: format!("Could not parse key 'key' in node {:?}", node),
-                })?;
-            let value = node.get("value").ok_or(Error::ConfigError {
-                error: format!("Could not parse key 'value' in node {:?}", node),
-            })?;
-            variables.insert(k, value)?;
-        }
-    }
-    Ok(variables)
-}
-
-fn get_cli_variables(ctx: &Ctx) -> Result<Variables> {
-    let mut variables = Variables::default();
-    ctx.cmd_opt
-        .key_value
-        .iter()
-        .map(|(k, v)| {
-            let v = match v.to_lowercase().trim() {
-                "true" | "y" | "yes" => "true",
-                "false" | "n" | "no" => "false",
-                _ => v.trim(),
-            };
-            variables.insert(k, Variables::value_from_str(v)?)
-        })
-        .collect::<Result<Vec<()>>>()?;
-    Ok(variables)
 }
 
 fn mk_file_on_action(
@@ -640,20 +506,12 @@ mod tests {
     pub use crate::cli_opt::*;
     use spectral::prelude::*;
     use tempfile::TempDir;
+    use crate::ctx::tests::new_ctx_from;
 
     const DST_FOLDER_STR: &str = "test/dst";
     const CONTENT_BASE: &str = "{{ base }}";
     const CONTENT_LOCAL: &str = "local";
     const CONTENT_REMOTE: &str = "remote";
-
-    fn new_ctx_for_test() -> Ctx {
-        Ctx {
-            cmd_opt: ApplyOpts {
-                dst_folder: PathBuf::from(DST_FOLDER_STR),
-                ..Default::default()
-            },
-        }
-    }
 
     fn new_variables_for_test() -> Variables {
         let mut variables = Variables::default();
@@ -662,21 +520,8 @@ mod tests {
         variables
     }
 
-    #[test]
-    fn test_save_metadata() {
-        let tmp_dir = TempDir::new().expect("create a temp dir");
-
-        let mut ctx = new_ctx_for_test();
-        ctx.cmd_opt.dst_folder = tmp_dir.into_path();
-
-        let variables = new_variables_for_test();
-
-        let mut variables_with_ffizer = variables.clone();
-        variables_with_ffizer.insert("ffizer_version", "0.0.0").unwrap();
-
-        save_metadata(&variables_with_ffizer, &ctx).unwrap();
-        let saved_variables = get_saved_variables(&ctx).unwrap();
-        assert_eq!(saved_variables, variables);
+    fn new_ctx_for_test() -> Ctx {
+        new_ctx_from(DST_FOLDER_STR)
     }
 
     #[test]

@@ -15,11 +15,11 @@ use crate::scripts::Script;
 use crate::source_loc::SourceLoc;
 use crate::source_uri::SourceUri;
 use crate::Result;
+use crate::ctx::FFIZER_DATASTORE_DIRNAME;
 use std::path::PathBuf;
 use std::str::FromStr;
 
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
-pub const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer.d";
 pub const TEMPLATE_SAMPLES_DIRNAME: &str = ".ffizer.samples.d";
 const DEFAULTS_IGNORE: [&str; 3] = [
     TEMPLATE_CFG_FILENAME,

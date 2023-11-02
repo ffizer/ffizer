@@ -1,8 +1,6 @@
 use crate::cli_opt::*;
 use crate::variables::Variables;
 use crate::error::*;
-use serde_yaml::{Mapping, Value};
-use std::collections::BTreeMap;
 use std::io::Write;
 
 #[derive(Debug, Clone, Default)]
@@ -11,6 +9,42 @@ pub struct Ctx {
 }
 
 pub const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer.d";
+
+#[derive(Debug, Serialize, Deserialize)]
+struct PersistedVariables {
+    variables: Vec<SavedVariable>
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct SavedVariable {
+    key: String,
+    value: serde_yaml::Value
+}
+
+impl TryFrom<PersistedVariables> for Variables {
+    type Error = crate::Error;
+    fn try_from(persisted: PersistedVariables) -> Result<Self> {
+        let mut out = Variables::default();
+        for saved_var in persisted.variables {
+            out.insert(saved_var.key, saved_var.value)?;
+        };
+        Ok(out)
+    }
+}
+
+impl From<Variables> for PersistedVariables {
+    fn from(variables: Variables) -> Self {
+        let formatted_variables = variables
+        .tree()
+        .iter()
+        .filter(|(k, _v)| !k.starts_with("ffizer_"))
+        .map(|(k, v)| {
+            SavedVariable{key: k.into(), value: v.clone()}
+        })
+        .collect::<Vec<SavedVariable>>();
+        PersistedVariables{variables: formatted_variables}
+    }
+}
 
 pub fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables)> {
     let mut confirmed_variables = Variables::default();
@@ -52,73 +86,33 @@ pub fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
     // Save or update default variable values stored in datastore
     let mut variables_to_save = get_saved_variables(ctx)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys
-    let formatted_variables = variables_to_save
-        .tree()
-        .iter()
-        .filter(|(k, _v)| !k.starts_with("ffizer_"))
-        .map(|(k, v)| {
-            let mut map = Mapping::new();
-            map.insert("key".into(), Value::String(k.into()));
-            map.insert("value".into(), v.clone());
-            map
-        })
-        .collect::<Vec<Mapping>>();
-
-    let mut output_tree: BTreeMap<String, Vec<Mapping>> = BTreeMap::new();
-    output_tree.insert("variables".to_string(), formatted_variables);
+    variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
 
     let f = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)
         .create(true)
         .open(ffizer_folder.join("variables.yaml"))?;
-    serde_yaml::to_writer(f, &output_tree)?;
+    serde_yaml::to_writer(f, dbg!(&PersistedVariables::from(variables_to_save)))?;
     Ok(())
 }
 
 pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
-    let mut variables = Variables::default();
     let metadata_path = ctx
         .cmd_opt
         .dst_folder
         .join(FFIZER_DATASTORE_DIRNAME)
         .join("variables.yaml");
-    if metadata_path.exists() {
-        let metadata: Mapping = {
+    let variables = if metadata_path.exists() {
+        let metadata: PersistedVariables = {
             let f = std::fs::OpenOptions::new().read(true).open(metadata_path)?;
-            serde_yaml::from_reader::<_, Mapping>(f)?
+            serde_yaml::from_reader::<_, PersistedVariables>(f)?
         };
 
-        let nodes = metadata
-            .get("variables")
-            .and_then(|v| v.as_sequence())
-            .ok_or(Error::ConfigError {
-                error: format!(
-                    "Did not find a sequence at key 'variables' in config {:?}",
-                    metadata
-                ),
-            })?;
-        for node in nodes
-            .iter()
-            .map(|x| {
-                x.as_mapping().ok_or(Error::ConfigError {
-                    error: format!("Failed to parse node as a mapping in sequence {:?}", nodes),
-                })
-            })
-            .collect::<Result<Vec<&Mapping>>>()?
-        {
-            let k = node
-                .get("key")
-                .and_then(|k| k.as_str())
-                .ok_or(Error::ConfigError {
-                    error: format!("Could not parse key 'key' in node {:?}", node),
-                })?;
-            let value = node.get("value").ok_or(Error::ConfigError {
-                error: format!("Could not parse key 'value' in node {:?}", node),
-            })?;
-            variables.insert(k, value)?;
-        }
-    }
+        Variables::try_from(metadata)?
+    } else {
+        Variables::default()
+    };
     Ok(variables)
 }
 

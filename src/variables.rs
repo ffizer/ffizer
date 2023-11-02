@@ -29,6 +29,13 @@ impl Variables {
         self.0.get(&key.into())
     }
 
+    pub fn retain<F>(&mut self, f: F)
+    where
+        F: FnMut(&String, &mut serde_yaml::Value) -> bool,
+    {
+        self.0.retain(f)
+    }
+
     #[instrument]
     pub fn value_from_str(s: &str) -> Result<serde_yaml::Value> {
         serde_yaml::from_str::<serde_yaml::Value>(s).map_err(Error::from)

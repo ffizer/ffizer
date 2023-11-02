@@ -1,10 +1,12 @@
 use assert_cmd::Command;
 use ffizer::tools::dir_diff_list;
+use ffizer::PathPattern;
 use predicates::prelude::*;
 use pretty_assertions::assert_eq;
 use std::error::Error;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use tempfile::tempdir;
 use test_generator::test_resources;
 
@@ -33,7 +35,7 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     expected_base: B,
     output: &std::process::Output,
 ) -> Result<(), Box<dyn Error>> {
-    let diffs = dir_diff_list::search_diff(actual_base, expected_base, &[])?;
+    let diffs = dir_diff_list::search_diff(actual_base, expected_base, &[PathPattern::from_str(".ffizer.d")?])?;
     if !diffs.is_empty() || !output.status.success() {
         dbg!(output);
     }

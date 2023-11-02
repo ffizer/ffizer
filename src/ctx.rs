@@ -141,7 +141,6 @@ pub (crate) mod tests {
     use tempfile::TempDir;
     use crate::PathBuf;
 
-    const DST_FOLDER_STR: &str = "test/dst";
     pub fn new_ctx_from<T: Into<PathBuf>>(dst: T) -> Ctx {
         Ctx {
             cmd_opt: ApplyOpts {
@@ -149,11 +148,7 @@ pub (crate) mod tests {
                 ..Default::default()
             },
         }
-    }
-    
-    fn new_ctx_for_test() -> Ctx {
-        new_ctx_from(DST_FOLDER_STR)
-    }
+    }    
 
     fn new_variables_for_test() -> Variables {
         let mut variables = Variables::default();
@@ -166,8 +161,7 @@ pub (crate) mod tests {
     fn test_save_load_metadata() {
         let tmp_dir = TempDir::new().expect("create a temp dir");
 
-        let mut ctx = new_ctx_for_test();
-        ctx.cmd_opt.dst_folder = tmp_dir.into_path();
+        let ctx = new_ctx_from(tmp_dir.into_path());
 
         let variables = new_variables_for_test();
 

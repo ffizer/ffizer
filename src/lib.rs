@@ -254,9 +254,9 @@ fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
         }
     }
 
-    // Save or update default variable values
-    let mut variables_to_save = dbg!(get_saved_variables(ctx)?);
-    variables_to_save.append(&mut variables.clone()); // override already saved variables with new ones
+    // Save or update default variable values stored in
+    let mut variables_to_save = get_saved_variables(ctx)?;
+    variables_to_save.append(&mut variables.clone()); // update already existing keys
     let formatted_variables = variables_to_save
         .tree()
         .iter()
@@ -270,7 +270,7 @@ fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
         .collect::<Vec<Mapping>>();
 
     let mut output_tree: BTreeMap<String, Vec<Mapping>> = BTreeMap::new();
-    output_tree.insert("variables".to_string(), dbg!(formatted_variables));
+    output_tree.insert("variables".to_string(), formatted_variables);
 
     let f = std::fs::OpenOptions::new()
         .write(true)
@@ -660,6 +660,23 @@ mod tests {
         variables.insert("prj", "myprj").expect("insert prj");
         variables.insert("base", "remote").expect("insert base");
         variables
+    }
+
+    #[test]
+    fn test_save_metadata() {
+        let tmp_dir = TempDir::new().expect("create a temp dir");
+
+        let mut ctx = new_ctx_for_test();
+        ctx.cmd_opt.dst_folder = tmp_dir.into_path();
+
+        let variables = new_variables_for_test();
+
+        let mut variables_with_ffizer = variables.clone();
+        variables_with_ffizer.insert("ffizer_version", "0.0.0").unwrap();
+
+        save_metadata(&variables_with_ffizer, &ctx).unwrap();
+        let saved_variables = get_saved_variables(&ctx).unwrap();
+        assert_eq!(saved_variables, variables);
     }
 
     #[test]

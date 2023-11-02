@@ -21,6 +21,11 @@ use std::str::FromStr;
 const TEMPLATE_CFG_FILENAME: &str = ".ffizer.yaml";
 pub const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer.d";
 pub const TEMPLATE_SAMPLES_DIRNAME: &str = ".ffizer.samples.d";
+const DEFAULTS_IGNORE: [&str; 3] = [
+    TEMPLATE_CFG_FILENAME,
+    FFIZER_DATASTORE_DIRNAME,
+    TEMPLATE_SAMPLES_DIRNAME,
+];
 
 impl template_cfg::TemplateCfg {
     pub(crate) fn find_ignores(&self) -> Result<Vec<PathPattern>> {
@@ -32,12 +37,12 @@ impl template_cfg::TemplateCfg {
             .filter(|v| !v.is_empty())
             .map(PathPattern::from_str)
             .collect::<Result<Vec<PathPattern>>>()?;
-        let cfg_pattern = PathPattern::from_str(TEMPLATE_CFG_FILENAME)?;
-        ignores.push(cfg_pattern);
-        let samples_pattern = PathPattern::from_str(TEMPLATE_SAMPLES_DIRNAME)?;
-        ignores.push(samples_pattern);
-        let storage_pattern = PathPattern::from_str(FFIZER_DATASTORE_DIRNAME)?;
-        ignores.push(storage_pattern);
+        ignores.extend(
+            DEFAULTS_IGNORE
+                .iter()
+                .map(|x| PathPattern::from_str(x))
+                .collect::<Result<Vec<PathPattern>>>()?,
+        );
         Ok(ignores)
     }
 

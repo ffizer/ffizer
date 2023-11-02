@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::iter::Iterator;
 use tracing::instrument;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct Variables(BTreeMap<String, serde_yaml::Value>);
 
 impl Variables {

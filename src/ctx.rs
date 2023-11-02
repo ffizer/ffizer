@@ -37,7 +37,6 @@ impl From<Variables> for PersistedVariables {
         let formatted_variables = variables
         .tree()
         .iter()
-        .filter(|(k, _v)| !k.starts_with("ffizer_"))
         .map(|(k, v)| {
             SavedVariable{key: k.into(), value: v.clone()}
         })

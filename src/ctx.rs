@@ -17,8 +17,8 @@ struct PersistedVariables {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct SavedVariable {
-    key: String,
-    value: serde_yaml::Value,
+    name: String,
+    default_value: serde_yaml::Value,
 }
 
 impl TryFrom<PersistedVariables> for Variables {
@@ -26,7 +26,7 @@ impl TryFrom<PersistedVariables> for Variables {
     fn try_from(persisted: PersistedVariables) -> Result<Self> {
         let mut out = Variables::default();
         for saved_var in persisted.variables {
-            out.insert(saved_var.key, saved_var.value)?;
+            out.insert(saved_var.name, saved_var.default_value)?;
         }
         Ok(out)
     }
@@ -38,8 +38,8 @@ impl From<Variables> for PersistedVariables {
             .tree()
             .iter()
             .map(|(k, v)| SavedVariable {
-                key: k.into(),
-                value: v.clone(),
+                name: k.into(),
+                default_value: v.clone(),
             })
             .collect::<Vec<SavedVariable>>();
         PersistedVariables {

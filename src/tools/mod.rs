@@ -240,8 +240,8 @@ impl SampleCfg {
             .iter()
             .map(|v| v.trim_matches(trim_chars))
             .filter(|v| !v.is_empty())
+            .chain([ctx::FFIZER_DATASTORE_DIRNAME]) // Ignore ffizer internal that may change from one ffizer version to another
             .map(PathPattern::from_str)
-            .chain([PathPattern::from_str(ctx::FFIZER_DATASTORE_DIRNAME)]) // Ignore ffizer internal that may change from one ffizer version to another
             .collect::<Result<Vec<PathPattern>>>()?;
         Ok(ignores)
     }

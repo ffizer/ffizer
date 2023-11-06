@@ -1,14 +1,16 @@
 use crate::cli_opt::*;
 use crate::error::*;
 use crate::variables::Variables;
-use std::io::Write;
+use std::fs;
 
 #[derive(Debug, Clone, Default)]
 pub struct Ctx {
     pub cmd_opt: ApplyOpts,
 }
 
-pub const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer.d";
+pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
+const VARIABLES_FILENAME: &str = "variables.yaml";
+const VERSION_FILENAME: &str = "version.txt";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedVariables {
@@ -74,27 +76,16 @@ pub fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
         std::fs::create_dir(&ffizer_folder)?;
     }
     // Save ffizer version
-    {
-        let mut f = std::fs::OpenOptions::new()
-            .write(true)
-            .truncate(true)
-            .create(true)
-            .open(ffizer_folder.join("version.txt"))?;
-        if let Some(ffizer_version) = variables.get("ffizer_version").and_then(|x| x.as_str()) {
-            write!(f, "{}", ffizer_version)?;
-        }
-    }
+    fs::write(
+        ffizer_folder.join(VERSION_FILENAME),
+        env!("CARGO_PKG_VERSION"),
+    )?;
 
     // Save or update default variable values stored in datastore
     let mut variables_to_save = get_saved_variables(ctx)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
-
-    let f = std::fs::OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .create(true)
-        .open(ffizer_folder.join("variables.yaml"))?;
+    let f = std::fs::File::create(ffizer_folder.join(VARIABLES_FILENAME))?;
     serde_yaml::to_writer(f, &PersistedVariables::from(variables_to_save))?;
     Ok(())
 }
@@ -104,11 +95,10 @@ pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
         .cmd_opt
         .dst_folder
         .join(FFIZER_DATASTORE_DIRNAME)
-        .join("variables.yaml");
+        .join(VARIABLES_FILENAME);
     let variables = if metadata_path.exists() {
-        let persisted: PersistedVariables = {
-            serde_yaml::from_reader(std::fs::OpenOptions::new().read(true).open(metadata_path)?)?
-        };
+        let persisted: PersistedVariables =
+            { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
 
         Variables::try_from(persisted)?
     } else {

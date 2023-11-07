@@ -70,7 +70,7 @@ pub fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables)> {
     Ok((confirmed_variables, suggested_variables))
 }
 
-pub fn save_metadata(variables: &Variables, ctx: &Ctx) -> Result<()> {
+pub fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     let ffizer_folder = ctx.cmd_opt.dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
         std::fs::create_dir(&ffizer_folder)?;
@@ -151,7 +151,7 @@ pub(crate) mod tests {
             .insert("ffizer_version", "0.0.0")
             .unwrap();
 
-        save_metadata(&variables_with_ffizer, &ctx).unwrap();
+        save_options(&variables_with_ffizer, &ctx).unwrap();
         let saved_variables = get_saved_variables(&ctx).unwrap();
         assert_eq!(saved_variables, variables);
     }

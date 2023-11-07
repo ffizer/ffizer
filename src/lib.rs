@@ -85,7 +85,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         debug!("executing plan of rendering");
         execute(ctx, &actions, &used_variables)?;
         debug!("Saving metadata");
-        ctx::save_metadata(&used_variables, ctx)?;
+        ctx::save_options(&used_variables, ctx)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
     }

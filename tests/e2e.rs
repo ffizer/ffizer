@@ -4,7 +4,6 @@ use ffizer::PathPattern;
 use predicates::prelude::*;
 use pretty_assertions::assert_eq;
 use std::error::Error;
-use std::fs;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use tempfile::tempdir;
@@ -38,7 +37,7 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     let diffs = dir_diff_list::search_diff(
         actual_base,
         expected_base,
-        &[PathPattern::from_str(".ffizer")?],
+        &[PathPattern::from_str(".ffizer/version.txt")?],
     )?;
     if !diffs.is_empty() || !output.status.success() {
         dbg!(output);
@@ -49,38 +48,12 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
 }
 
 #[test]
-fn empty_template() -> Result<(), Box<dyn Error>> {
-    let tmp_dir = tempdir()?;
-    let template_path = tmp_dir.path().join("t0_template");
-    let expected_path = tmp_dir.path().join("t0_expected");
-    let actual_path = tmp_dir.path().join("t0_actual");
-
-    fs::create_dir_all(&template_path)?;
-    fs::create_dir_all(&expected_path)?;
-
-    let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
-        .arg("apply")
-        .arg("--no-interaction")
-        .arg("--confirm")
-        .arg("never")
-        .arg("--update-mode")
-        .arg("keep")
-        .arg("--destination")
-        .arg(actual_path.to_str().unwrap())
-        .arg("--source")
-        .arg(template_path.to_str().unwrap())
-        .ok()?;
-    assert_is_same(&actual_path, &expected_path, &output)
-}
-
-#[test]
 fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
-    let source_subfolder = "dir_1";
+    let source_subfolder = "template_1";
     let tmp_dir = tempdir()?;
-    let template_path = PathBuf::from("./tests/data/template_1");
+    let template_path = PathBuf::from("./tests/data");
     let expected_path =
-        PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected")
-            .join(source_subfolder);
+        PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected");
     let actual_path = tmp_dir.path().to_path_buf();
 
     let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?

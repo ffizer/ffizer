@@ -239,8 +239,8 @@ impl SampleCfg {
             .unwrap_or_default()
             .iter()
             .map(|v| v.trim_matches(trim_chars))
-            .filter(|v| !v.is_empty())
             .chain([ctx::FFIZER_DATASTORE_DIRNAME]) // Ignore ffizer internal that may change from one ffizer version to another
+            .filter(|v| !v.is_empty())
             .map(PathPattern::from_str)
             .collect::<Result<Vec<PathPattern>>>()?;
         Ok(ignores)

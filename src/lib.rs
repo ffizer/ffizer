@@ -505,7 +505,6 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
 mod tests {
     use super::*;
     pub use crate::cli_opt::*;
-    use crate::ctx::tests::new_ctx_from;
     use spectral::prelude::*;
     use tempfile::TempDir;
 
@@ -519,6 +518,15 @@ mod tests {
         variables.insert("prj", "myprj").expect("insert prj");
         variables.insert("base", "remote").expect("insert base");
         variables
+    }
+
+    pub fn new_ctx_from<T: Into<PathBuf>>(dst: T) -> Ctx {
+        Ctx {
+            cmd_opt: ApplyOpts {
+                dst_folder: dst.into(),
+                ..Default::default()
+            },
+        }
     }
 
     fn new_ctx_for_test() -> Ctx {

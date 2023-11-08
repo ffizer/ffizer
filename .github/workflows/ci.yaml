@@ -54,9 +54,7 @@ jobs:
           # override: true
           # profile: ${{ matrix.os.profile_rustup }}
       # - uses: davidB/rust-cargo-make@v1
-      - name: Run tests
-        run: cargo make --profile "${{ matrix.os.profile_ci_flow }}" ci-flow
-        # run: cargo test
+      - run: cargo test
         env:
           TARGET: ${{ matrix.os.target_platform }}
           # for list of xcode sdk see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners#xcode
@@ -64,6 +62,12 @@ jobs:
           # CARGO_MAKE_RUN_CODECOV: "true"
           # to have CODECOV_TOKEN go to https://codecov.io/gh/${GITHUB_USER}/${GITHUB_REPO}
           # CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - run: cargo fmt --check
+        env:
+          TARGET: ${{ matrix.os.target_platform }}
+      - run: cargo cargo clippy --workspace --all-features --all-targets -- --deny warnings --allow deprecated --allow unknown-lints
+        env:
+          TARGET: ${{ matrix.os.target_platform }}
 
   test:
     name: coverage

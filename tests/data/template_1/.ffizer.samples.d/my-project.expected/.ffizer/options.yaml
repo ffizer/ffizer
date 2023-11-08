@@ -1,0 +1,5 @@
+variables:
+- name: package_name
+  default_value: my_project
+- name: project_name
+  default_value: my-project

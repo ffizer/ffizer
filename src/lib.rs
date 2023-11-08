@@ -8,6 +8,7 @@ pub mod tools;
 
 mod cfg;
 mod cli_opt;
+mod ctx;
 mod files;
 mod git;
 mod graph;
@@ -22,10 +23,12 @@ mod variables;
 
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
+pub use crate::ctx::Ctx;
+pub use crate::path_pattern::PathPattern;
 pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
 
-use crate::cfg::{render_composite, TemplateComposite};
+use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
 use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
@@ -34,11 +37,6 @@ use handlebars_misc_helpers::new_hbs;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tracing::{debug, warn};
-
-#[derive(Debug, Clone, Default)]
-pub struct Ctx {
-    pub cmd_opt: ApplyOpts,
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FileOperation {
@@ -58,27 +56,36 @@ pub struct Action {
 }
 
 pub fn process(ctx: &Ctx) -> Result<()> {
-    debug!("extracting variables from cli",);
-    let variables_from_cli = extract_variables(ctx)?;
+    debug!("extracting variables from context",);
+    let (confirmed_variables, suggested_variables) = ctx::extract_variables(ctx)?;
     debug!("compositing templates");
+
+    // Should the template import to determine variables also use the suggested variables?
     let mut template_composite =
-        TemplateComposite::from_src(&variables_from_cli, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
-    debug!(variables_from_cli = ?variables_from_cli, "asking variables");
-    let variables = ui::ask_variables(
-        ctx,
-        &template_composite.find_variablecfgs()?,
-        variables_from_cli,
-    )?;
+        TemplateComposite::from_src(&confirmed_variables, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
+    debug!(confirmed_variables = ?confirmed_variables, "asking variables");
+    let mut variable_configs = template_composite.find_variablecfgs()?;
+
+    // Updates defaults with suggested variables before asking.
+    variable_configs.iter_mut().for_each(|cfg| {
+        if let Some(v) = suggested_variables.get(&cfg.name) {
+            cfg.default_value = Some(VariableValueCfg(v.clone()))
+        }
+    });
+
+    let used_variables = ui::ask_variables(ctx, &variable_configs, confirmed_variables)?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)
-    debug!(variables = ?variables, "update template_composite with variables");
-    template_composite = render_composite(&template_composite, &variables, true)?;
+    debug!(variables = ?used_variables, "update template_composite with variables");
+    template_composite = render_composite(&template_composite, &used_variables, true)?;
     debug!("listing files from templates");
     let source_files = template_composite.find_sourcefiles()?;
     debug!("defining plan of rendering");
-    let actions = plan(ctx, source_files, &variables)?;
+    let actions = plan(ctx, source_files, &used_variables)?;
     if ui::confirm_plan(ctx, &actions)? {
         debug!("executing plan of rendering");
-        execute(ctx, &actions, &variables)?;
+        execute(ctx, &actions, &used_variables)?;
+        debug!("Saving metadata");
+        ctx::save_options(&used_variables, ctx)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
     }
@@ -99,35 +106,6 @@ where
     let res = f();
     std::env::set_current_dir(current_dir)?;
     res
-}
-
-pub fn extract_variables(ctx: &Ctx) -> Result<Variables> {
-    let mut variables = Variables::default();
-    variables.insert(
-        "ffizer_dst_folder",
-        ctx.cmd_opt
-            .dst_folder
-            .to_str()
-            .expect("dst_folder to converted via to_str"),
-    )?;
-    variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
-    variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
-    variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
-    variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
-
-    ctx.cmd_opt
-        .key_value
-        .iter()
-        .map(|(k, v)| {
-            let v = match v.to_lowercase().trim() {
-                "true" | "y" | "yes" => "true",
-                "false" | "n" | "no" => "false",
-                _ => v.trim(),
-            };
-            variables.insert(k, Variables::value_from_str(v)?)
-        })
-        .collect::<Result<Vec<()>>>()?;
-    Ok(variables)
 }
 
 /// list actions to execute
@@ -535,20 +513,24 @@ mod tests {
     const CONTENT_LOCAL: &str = "local";
     const CONTENT_REMOTE: &str = "remote";
 
-    fn new_ctx_for_test() -> Ctx {
-        Ctx {
-            cmd_opt: ApplyOpts {
-                dst_folder: PathBuf::from(DST_FOLDER_STR),
-                ..Default::default()
-            },
-        }
-    }
-
     fn new_variables_for_test() -> Variables {
         let mut variables = Variables::default();
         variables.insert("prj", "myprj").expect("insert prj");
         variables.insert("base", "remote").expect("insert base");
         variables
+    }
+
+    pub fn new_ctx_from<T: Into<PathBuf>>(dst: T) -> Ctx {
+        Ctx {
+            cmd_opt: ApplyOpts {
+                dst_folder: dst.into(),
+                ..Default::default()
+            },
+        }
+    }
+
+    fn new_ctx_for_test() -> Ctx {
+        new_ctx_from(DST_FOLDER_STR)
     }
 
     #[test]

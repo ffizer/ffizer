@@ -180,12 +180,12 @@ pub(crate) fn render_composite(
 
 fn render_imports_only(
     template_cfg: &TemplateCfg,
-    variables: &Variables,
+    input_variables: &Variables,
     log_warning: bool,
 ) -> Result<TemplateCfg> {
     let handlebars = new_hbs();
     let render = |v: &str| {
-        let r = handlebars.render_template(v, variables);
+        let r = handlebars.render_template(v, input_variables);
         match r {
             Ok(s) => s,
             Err(e) => {
@@ -196,12 +196,12 @@ fn render_imports_only(
             }
         }
     };
-    let variables = template_cfg.variables.clone();
+    let variables_cfg = template_cfg.variables.clone();
     let ignores = template_cfg.ignores.clone();
     let imports = template_cfg.imports.transforms_values(&render)?;
     let scripts = template_cfg.scripts.clone();
     Ok(TemplateCfg {
-        variables,
+        variables: variables_cfg,
         ignores,
         imports,
         scripts,

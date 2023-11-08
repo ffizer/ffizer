@@ -3,7 +3,7 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 use tracing::instrument;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct Variables(BTreeMap<String, serde_yaml::Value>);
 
 impl Variables {
@@ -16,8 +16,23 @@ impl Variables {
         Ok(())
     }
 
-    pub fn contains_key<K: Into<String>>(&mut self, key: K) -> bool {
+    pub fn contains_key<K: Into<String>>(&self, key: K) -> bool {
         self.0.contains_key(&key.into())
+    }
+
+    pub fn tree(&self) -> &BTreeMap<String, serde_yaml::Value> {
+        &self.0
+    }
+
+    pub fn get<K: Into<String>>(&self, key: K) -> Option<&serde_yaml::Value> {
+        self.0.get(&key.into())
+    }
+
+    pub fn retain<F>(&mut self, f: F)
+    where
+        F: FnMut(&String, &mut serde_yaml::Value) -> bool,
+    {
+        self.0.retain(f)
     }
 
     #[instrument]

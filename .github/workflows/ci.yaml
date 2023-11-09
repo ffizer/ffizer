@@ -65,7 +65,7 @@ jobs:
       - run: cargo fmt --check
         env:
           TARGET: ${{ matrix.os.target_platform }}
-      - run: cargo cargo clippy --workspace --all-features --all-targets -- --deny warnings --allow deprecated --allow unknown-lints
+      - run: cargo clippy --workspace --all-features --all-targets -- --deny warnings --allow deprecated --allow unknown-lints
         env:
           TARGET: ${{ matrix.os.target_platform }}
 

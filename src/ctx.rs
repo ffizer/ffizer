@@ -15,7 +15,11 @@ const VERSION_FILENAME: &str = "version.txt";
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedOptions {
     variables: Vec<PersistedVariable>,
+    srcs: Vec<PersistedSrc>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+struct PersistedSrc {}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedVariable {
@@ -23,54 +27,52 @@ struct PersistedVariable {
     default_value: serde_yaml::Value,
 }
 
-impl TryFrom<PersistedOptions> for Variables {
+impl TryFrom<Vec<PersistedVariable>> for Variables {
     type Error = crate::Error;
-    fn try_from(persisted: PersistedOptions) -> Result<Self> {
+    fn try_from(persisted: Vec<PersistedVariable>) -> Result<Self> {
         let mut out = Variables::default();
-        for saved_var in persisted.variables {
+        for saved_var in persisted {
             out.insert(saved_var.name, saved_var.default_value)?;
         }
         Ok(out)
     }
 }
 
-impl From<Variables> for PersistedOptions {
+impl From<Variables> for Vec<PersistedVariable> {
     fn from(variables: Variables) -> Self {
-        let formatted_variables = variables
+        variables
             .tree()
             .iter()
             .map(|(k, v)| PersistedVariable {
                 name: k.into(),
                 default_value: v.clone(),
             })
-            .collect::<Vec<PersistedVariable>>();
-        PersistedOptions {
-            variables: formatted_variables,
-        }
+            .collect::<Vec<PersistedVariable>>()
     }
 }
 
-pub fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables)> {
-    let mut confirmed_variables = Variables::default();
-    confirmed_variables.insert(
+pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Variables)> {
+    let mut default_variables = Variables::default();
+    default_variables.insert(
         "ffizer_dst_folder",
         ctx.cmd_opt
             .dst_folder
             .to_str()
             .expect("dst_folder to converted via to_str"),
     )?;
-    confirmed_variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
-    confirmed_variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
-    confirmed_variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
-    confirmed_variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
+    default_variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
+    default_variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
+    default_variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
+    default_variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
 
+    let mut confirmed_variables = Variables::default();
     confirmed_variables.append(&mut get_cli_variables(ctx)?);
     let suggested_variables = get_saved_variables(ctx)?;
 
-    Ok((confirmed_variables, suggested_variables))
+    Ok((default_variables, confirmed_variables, suggested_variables))
 }
 
-pub fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
+pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     let ffizer_folder = ctx.cmd_opt.dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
         std::fs::create_dir(&ffizer_folder)?;
@@ -85,8 +87,14 @@ pub fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     let mut variables_to_save = get_saved_variables(ctx)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
-    let f = std::fs::File::create(ffizer_folder.join(OPTIONS_FILENAME))?;
-    serde_yaml::to_writer(f, &PersistedOptions::from(variables_to_save))?;
+    let persisted_options = PersistedOptions {
+        variables: variables_to_save.into(),
+        srcs: vec![],
+    };
+    serde_yaml::to_writer(
+        std::fs::File::create(ffizer_folder.join(OPTIONS_FILENAME))?,
+        &persisted_options,
+    )?;
     Ok(())
 }
 
@@ -100,7 +108,7 @@ pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
         let persisted: PersistedOptions =
             { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
 
-        Variables::try_from(persisted)?
+        Variables::try_from(persisted.variables)?
     } else {
         Variables::default()
     };

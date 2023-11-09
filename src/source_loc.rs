@@ -7,7 +7,7 @@ use std::fs;
 use std::path::PathBuf;
 use tracing::warn;
 
-#[derive(Args, Debug, Default, Clone, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Args, Debug, Default, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[serde(deny_unknown_fields, default)]
 pub struct SourceLoc {
     /// uri / path of the template

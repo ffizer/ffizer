@@ -1,7 +1,11 @@
+use crate::SourceLoc;
+use crate::SourceUri;
 use crate::cli_opt::*;
 use crate::error::*;
 use crate::variables::Variables;
+use std::collections::BTreeMap;
 use std::fs;
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Default)]
 pub struct Ctx {
@@ -15,11 +19,46 @@ const VERSION_FILENAME: &str = "version.txt";
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedOptions {
     variables: Vec<PersistedVariable>,
-    srcs: Vec<PersistedSrc>,
+    srcs: BTreeMap<String, PersistedSrc>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct PersistedSrc {}
+struct PersistedSrc {
+    uri: PersistedUri,
+    rev: Option<String>,
+    subfolder: Option<PathBuf>
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct PersistedUri {
+    raw: String,
+    path: PathBuf,
+    host: Option<String>,
+}
+
+impl From<SourceUri> for PersistedUri {
+    fn from(value: SourceUri) -> Self {
+        PersistedUri { raw: value.raw, path: value.path, host: value.host }
+    }
+}
+
+impl From<PersistedUri> for SourceUri {
+    fn from (value: PersistedUri) -> Self {
+        SourceUri { raw: value.raw, path: value.path, host: value.host }
+    }
+}
+
+impl From<SourceLoc> for PersistedSrc {
+    fn from(value: SourceLoc) -> Self {
+        PersistedSrc { uri: value.uri.into(), rev: value.rev, subfolder: value.subfolder }
+    }
+}
+
+impl From<PersistedSrc> for SourceLoc {
+    fn from(value: PersistedSrc) -> Self {
+        SourceLoc { uri: value.uri.into(), rev: value.rev, subfolder: value.subfolder }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedVariable {
@@ -87,15 +126,38 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     let mut variables_to_save = get_saved_variables(ctx)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
+
+    let mut saved_srcs: BTreeMap<String, PersistedSrc> = get_saved_sources(ctx)?.into_iter().map(|(k, loc)| (k, PersistedSrc::from(loc))).collect();
+
+    let new_key = [ctx.cmd_opt.src.uri.raw.clone(), ctx.cmd_opt.src.subfolder.clone().unwrap_or_default().to_string_lossy().to_string()].join(":");
+    saved_srcs.insert(new_key, PersistedSrc::from(ctx.cmd_opt.src.clone()));
+
     let persisted_options = PersistedOptions {
         variables: variables_to_save.into(),
-        srcs: vec![],
+        srcs: saved_srcs,
     };
     serde_yaml::to_writer(
         std::fs::File::create(ffizer_folder.join(OPTIONS_FILENAME))?,
         &persisted_options,
     )?;
     Ok(())
+}
+
+pub fn get_saved_sources(ctx: &Ctx) -> Result<BTreeMap<String, SourceLoc>> {
+    let metadata_path = ctx
+        .cmd_opt
+        .dst_folder
+        .join(FFIZER_DATASTORE_DIRNAME)
+        .join(OPTIONS_FILENAME);
+    let sources = if metadata_path.exists() {
+        let persisted: PersistedOptions =
+            { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
+
+        persisted.srcs.into_iter().map(|(k, v)| (k, v.into())).collect()
+    } else {
+        BTreeMap::default()
+    };
+    Ok(sources)
 }
 
 pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {

@@ -1,8 +1,8 @@
-use crate::SourceLoc;
-use crate::SourceUri;
 use crate::cli_opt::*;
 use crate::error::*;
 use crate::variables::Variables;
+use crate::SourceLoc;
+use crate::SourceUri;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
@@ -26,7 +26,7 @@ struct PersistedOptions {
 struct PersistedSrc {
     uri: PersistedUri,
     rev: Option<String>,
-    subfolder: Option<PathBuf>
+    subfolder: Option<PathBuf>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -38,25 +38,41 @@ struct PersistedUri {
 
 impl From<SourceUri> for PersistedUri {
     fn from(value: SourceUri) -> Self {
-        PersistedUri { raw: value.raw, path: value.path, host: value.host }
+        PersistedUri {
+            raw: value.raw,
+            path: value.path,
+            host: value.host,
+        }
     }
 }
 
 impl From<PersistedUri> for SourceUri {
-    fn from (value: PersistedUri) -> Self {
-        SourceUri { raw: value.raw, path: value.path, host: value.host }
+    fn from(value: PersistedUri) -> Self {
+        SourceUri {
+            raw: value.raw,
+            path: value.path,
+            host: value.host,
+        }
     }
 }
 
 impl From<SourceLoc> for PersistedSrc {
     fn from(value: SourceLoc) -> Self {
-        PersistedSrc { uri: value.uri.into(), rev: value.rev, subfolder: value.subfolder }
+        PersistedSrc {
+            uri: value.uri.into(),
+            rev: value.rev,
+            subfolder: value.subfolder,
+        }
     }
 }
 
 impl From<PersistedSrc> for SourceLoc {
     fn from(value: PersistedSrc) -> Self {
-        SourceLoc { uri: value.uri.into(), rev: value.rev, subfolder: value.subfolder }
+        SourceLoc {
+            uri: value.uri.into(),
+            rev: value.rev,
+            subfolder: value.subfolder,
+        }
     }
 }
 
@@ -127,9 +143,22 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
 
-    let mut saved_srcs: BTreeMap<String, PersistedSrc> = get_saved_sources(ctx)?.into_iter().map(|(k, loc)| (k, PersistedSrc::from(loc))).collect();
+    let mut saved_srcs: BTreeMap<String, PersistedSrc> = get_saved_sources(ctx)?
+        .into_iter()
+        .map(|(k, loc)| (k, PersistedSrc::from(loc)))
+        .collect();
 
-    let new_key = [ctx.cmd_opt.src.uri.raw.clone(), ctx.cmd_opt.src.subfolder.clone().unwrap_or_default().to_string_lossy().to_string()].join(":");
+    let new_key = [
+        ctx.cmd_opt.src.uri.raw.clone(),
+        ctx.cmd_opt
+            .src
+            .subfolder
+            .clone()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string(),
+    ]
+    .join(":");
     saved_srcs.insert(new_key, PersistedSrc::from(ctx.cmd_opt.src.clone()));
 
     let persisted_options = PersistedOptions {
@@ -153,7 +182,11 @@ pub fn get_saved_sources(ctx: &Ctx) -> Result<BTreeMap<String, SourceLoc>> {
         let persisted: PersistedOptions =
             { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
 
-        persisted.srcs.into_iter().map(|(k, v)| (k, v.into())).collect()
+        persisted
+            .srcs
+            .into_iter()
+            .map(|(k, v)| (k, v.into()))
+            .collect()
     } else {
         BTreeMap::default()
     };

@@ -101,7 +101,7 @@ impl From<Variables> for Vec<PersistedVariable> {
     }
 }
 
-pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Variables)> {
+pub (crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Variables)> {
     let mut default_variables = Variables::default();
     default_variables.insert(
         "ffizer_dst_folder",
@@ -115,8 +115,7 @@ pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Vari
     default_variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
     default_variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
 
-    let mut confirmed_variables = Variables::default();
-    confirmed_variables.append(&mut get_cli_variables(ctx)?);
+    let confirmed_variables = get_cli_variables(ctx)?;
     let suggested_variables = get_saved_variables(ctx)?;
 
     Ok((default_variables, confirmed_variables, suggested_variables))
@@ -139,7 +138,7 @@ fn key_from_ctx(ctx: &Ctx) -> String {
     }
 }
 
-pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
+pub (crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     // Save or update default variable values stored in datastore
     let mut variables_to_save = get_saved_variables(ctx)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys
@@ -174,7 +173,7 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     Ok(())
 }
 
-pub fn get_saved_sources(ctx: &Ctx) -> Result<BTreeMap<String, SourceLoc>> {
+fn get_saved_sources(ctx: &Ctx) -> Result<BTreeMap<String, SourceLoc>> {
     let metadata_path = ctx
         .cmd_opt
         .dst_folder
@@ -195,7 +194,7 @@ pub fn get_saved_sources(ctx: &Ctx) -> Result<BTreeMap<String, SourceLoc>> {
     Ok(sources)
 }
 
-pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
+fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
     let metadata_path = ctx
         .cmd_opt
         .dst_folder
@@ -212,7 +211,7 @@ pub fn get_saved_variables(ctx: &Ctx) -> Result<Variables> {
     Ok(variables)
 }
 
-pub fn get_cli_variables(ctx: &Ctx) -> Result<Variables> {
+fn get_cli_variables(ctx: &Ctx) -> Result<Variables> {
     let mut variables = Variables::default();
     ctx.cmd_opt
         .key_value

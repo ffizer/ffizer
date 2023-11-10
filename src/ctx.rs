@@ -101,7 +101,7 @@ impl From<Variables> for Vec<PersistedVariable> {
     }
 }
 
-pub (crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Variables)> {
+pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Variables)> {
     let mut default_variables = Variables::default();
     default_variables.insert(
         "ffizer_dst_folder",
@@ -138,7 +138,7 @@ fn key_from_ctx(ctx: &Ctx) -> String {
     }
 }
 
-pub (crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
+pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     // Save or update default variable values stored in datastore
     let mut variables_to_save = get_saved_variables(ctx)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys

@@ -23,7 +23,6 @@ mod variables;
 
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
-pub use crate::ctx::Ctx;
 pub use crate::path_pattern::PathPattern;
 pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
@@ -53,6 +52,11 @@ pub struct Action {
     pub dst_path: ChildPath,
     // template: TemplateDef,
     pub operation: FileOperation,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct Ctx {
+    pub cmd_opt: ApplyOpts,
 }
 
 pub fn process(ctx: &Ctx) -> Result<()> {

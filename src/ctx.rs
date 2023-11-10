@@ -1,4 +1,4 @@
-use crate::cli_opt::*;
+use super::Ctx;
 use crate::error::*;
 use crate::variables::Variables;
 use crate::SourceLoc;
@@ -6,11 +6,6 @@ use crate::SourceUri;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
-
-#[derive(Debug, Clone, Default)]
-pub struct Ctx {
-    pub cmd_opt: ApplyOpts,
-}
 
 pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
 const OPTIONS_FILENAME: &str = "options.yaml";
@@ -127,7 +122,41 @@ pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Vari
     Ok((default_variables, confirmed_variables, suggested_variables))
 }
 
+fn key_from_uri(uri: &SourceUri) -> String {
+    format!(
+        "{}:{}",
+        uri.host.clone().unwrap_or("".to_string()),
+        uri.path.to_string_lossy()
+    )
+}
+
+fn key_from_ctx(ctx: &Ctx) -> String {
+    let uri_key = key_from_uri(&ctx.cmd_opt.src.uri);
+    if let Some(p) = ctx.cmd_opt.src.subfolder.clone() {
+        format!("{}@{}", p.to_string_lossy().into_owned(), uri_key)
+    } else {
+        uri_key
+    }
+}
+
 pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
+    // Save or update default variable values stored in datastore
+    let mut variables_to_save = get_saved_variables(ctx)?;
+    variables_to_save.append(&mut variables.clone()); // update already existing keys
+    variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
+
+    let mut saved_srcs: BTreeMap<String, PersistedSrc> = get_saved_sources(ctx)?
+        .into_iter()
+        .map(|(k, loc)| (k, loc.into()))
+        .collect();
+
+    saved_srcs.insert(key_from_ctx(ctx), ctx.cmd_opt.src.clone().into());
+
+    let persisted_options = PersistedOptions {
+        variables: variables_to_save.into(),
+        srcs: saved_srcs,
+    };
+
     let ffizer_folder = ctx.cmd_opt.dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
         std::fs::create_dir(&ffizer_folder)?;
@@ -138,33 +167,6 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
         env!("CARGO_PKG_VERSION"),
     )?;
 
-    // Save or update default variable values stored in datastore
-    let mut variables_to_save = get_saved_variables(ctx)?;
-    variables_to_save.append(&mut variables.clone()); // update already existing keys
-    variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
-
-    let mut saved_srcs: BTreeMap<String, PersistedSrc> = get_saved_sources(ctx)?
-        .into_iter()
-        .map(|(k, loc)| (k, PersistedSrc::from(loc)))
-        .collect();
-
-    let new_key = [
-        ctx.cmd_opt.src.uri.raw.clone(),
-        ctx.cmd_opt
-            .src
-            .subfolder
-            .clone()
-            .unwrap_or_default()
-            .to_string_lossy()
-            .to_string(),
-    ]
-    .join(":");
-    saved_srcs.insert(new_key, PersistedSrc::from(ctx.cmd_opt.src.clone()));
-
-    let persisted_options = PersistedOptions {
-        variables: variables_to_save.into(),
-        srcs: saved_srcs,
-    };
     serde_yaml::to_writer(
         std::fs::File::create(ffizer_folder.join(OPTIONS_FILENAME))?,
         &persisted_options,
@@ -228,26 +230,43 @@ pub fn get_cli_variables(ctx: &Ctx) -> Result<Variables> {
 }
 
 #[cfg(test)]
-pub(crate) mod tests {
+mod tests {
+    use rstest::*;
+    use similar_asserts::assert_eq;
+    use std::path::Path;
+    use std::str::FromStr;
+
     use super::*;
-    pub use crate::cli_opt::*;
+    use crate::cli_opt::ApplyOpts;
     use crate::tests::new_ctx_from;
     use tempfile::TempDir;
 
-    fn new_variables_for_test() -> Variables {
+    #[fixture]
+    fn variables() -> Variables {
         let mut variables = Variables::default();
         variables.insert("prj", "myprj").expect("insert prj");
         variables.insert("base", "remote").expect("insert base");
         variables
     }
 
-    #[test]
-    fn test_save_load_metadata() {
-        let tmp_dir = TempDir::new().expect("create a temp dir");
+    #[fixture]
+    fn tmp_dir() -> TempDir {
+        TempDir::new().expect("create a temp dir")
+    }
 
-        let ctx = new_ctx_from(tmp_dir.into_path());
+    fn new_ctx_from_src_dst(src: &SourceLoc, dst: &Path) -> Ctx {
+        Ctx {
+            cmd_opt: ApplyOpts {
+                src: src.clone(),
+                dst_folder: dst.to_path_buf(),
+                ..Default::default()
+            },
+        }
+    }
 
-        let variables = new_variables_for_test();
+    #[rstest]
+    fn test_save_load_variables(tmp_dir: TempDir, variables: Variables) {
+        let ctx = new_ctx_from(tmp_dir.path());
 
         let mut variables_with_ffizer = variables.clone();
         variables_with_ffizer
@@ -257,5 +276,89 @@ pub(crate) mod tests {
         save_options(&variables_with_ffizer, &ctx).unwrap();
         let saved_variables = get_saved_variables(&ctx).unwrap();
         assert_eq!(saved_variables, variables);
+    }
+
+    mod test_save_load_srcs {
+        use super::*;
+        use similar_asserts::assert_eq;
+
+        #[fixture]
+        fn local_source() -> SourceLoc {
+            SourceLoc {
+                uri: SourceUri::from_str("local_path").unwrap(),
+                rev: None,
+                subfolder: Some(PathBuf::from_str("some_subfolder").unwrap()),
+            }
+        }
+
+        #[fixture]
+        fn remote_source() -> SourceLoc {
+            SourceLoc {
+                uri: SourceUri::from_str("http://blabla.truc/a/path").unwrap(),
+                rev: None,
+                subfolder: None,
+            }
+        }
+
+        #[rstest]
+        fn single_use(
+            tmp_dir: TempDir,
+            variables: Variables,
+            #[from(local_source)] source_1: SourceLoc,
+        ) {
+            let ctx_1 = new_ctx_from_src_dst(&source_1, tmp_dir.path());
+
+            save_options(&variables, &ctx_1).unwrap();
+
+            let saved_sources = get_saved_sources(&ctx_1).unwrap();
+
+            let expected = BTreeMap::from([("some_subfolder@:local_path".to_string(), source_1)]);
+            assert_eq!(expected, saved_sources);
+        }
+
+        #[rstest]
+        fn multi_use(
+            tmp_dir: TempDir,
+            variables: Variables,
+            #[from(local_source)] source_1: SourceLoc,
+            #[from(remote_source)] source_2: SourceLoc,
+        ) {
+            let ctx_1 = new_ctx_from_src_dst(&source_1, tmp_dir.path());
+            let ctx_2 = new_ctx_from_src_dst(&source_2, tmp_dir.path());
+
+            save_options(&variables, &ctx_1).unwrap();
+            save_options(&variables, &ctx_2).unwrap();
+
+            let saved_sources = get_saved_sources(&ctx_1).unwrap();
+
+            let expected = BTreeMap::from([
+                ("some_subfolder@:local_path".to_string(), source_1),
+                ("blabla.truc:a/path".to_string(), source_2),
+            ]);
+            assert_eq!(expected, saved_sources);
+        }
+
+        #[rstest]
+        fn multi_use_with_replacement(
+            tmp_dir: TempDir,
+            variables: Variables,
+            #[from(local_source)] source_1: SourceLoc,
+        ) {
+            let source_2 = SourceLoc {
+                rev: Some("Some-other-branch".to_string()),
+                ..source_1.clone()
+            };
+
+            let ctx_1 = new_ctx_from_src_dst(&source_1, tmp_dir.path());
+            let ctx_2 = new_ctx_from_src_dst(&source_2, tmp_dir.path());
+
+            save_options(&variables, &ctx_1).unwrap();
+            save_options(&variables, &ctx_2).unwrap();
+
+            let saved_sources = get_saved_sources(&ctx_1).unwrap();
+
+            let expected = BTreeMap::from([("some_subfolder@:local_path".to_string(), source_2)]);
+            assert_eq!(expected, saved_sources);
+        }
     }
 }

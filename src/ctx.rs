@@ -122,21 +122,18 @@ pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Vari
     Ok((default_variables, confirmed_variables, suggested_variables))
 }
 
-fn key_from_uri(uri: &SourceUri) -> String {
-    format!(
-        "{}:{}",
-        uri.host.clone().unwrap_or("".to_string()),
-        uri.path.to_string_lossy()
+fn key_from_loc(source: &SourceLoc) -> (String, String, String) {
+    let uri = &source.uri;
+    (
+        uri.host.clone().unwrap_or_default(),
+        uri.path.to_string_lossy().into(),
+        source
+            .subfolder
+            .clone()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .into(),
     )
-}
-
-fn key_from_loc(source: &SourceLoc) -> String {
-    let uri_key = key_from_uri(&source.uri);
-    if let Some(p) = source.subfolder.clone() {
-        format!("{}@{}", p.to_string_lossy().into_owned(), uri_key)
-    } else {
-        uri_key
-    }
 }
 
 pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
@@ -145,7 +142,7 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
 
-    let new_key: String = key_from_loc(&ctx.cmd_opt.src);
+    let new_key = key_from_loc(&ctx.cmd_opt.src);
 
     let mut saved_srcs: Vec<PersistedSrc> = get_saved_sources(&ctx.cmd_opt.dst_folder)?
         .into_iter()

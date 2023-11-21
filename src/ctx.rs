@@ -3,9 +3,9 @@ use crate::error::*;
 use crate::variables::Variables;
 use crate::SourceLoc;
 use crate::SourceUri;
-use std::collections::BTreeMap;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::str::FromStr;
 
 pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
 const OPTIONS_FILENAME: &str = "options.yaml";
@@ -14,12 +14,12 @@ const VERSION_FILENAME: &str = "version.txt";
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedOptions {
     variables: Vec<PersistedVariable>,
-    srcs: BTreeMap<String, PersistedSrc>,
+    sources: Vec<PersistedSrc>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct PersistedSrc {
-    uri: PersistedUri,
+    uri: String,
     rev: Option<String>,
     subfolder: Option<PathBuf>,
 }
@@ -54,21 +54,22 @@ impl From<PersistedUri> for SourceUri {
 impl From<SourceLoc> for PersistedSrc {
     fn from(value: SourceLoc) -> Self {
         PersistedSrc {
-            uri: value.uri.into(),
+            uri: value.uri.raw,
             rev: value.rev,
             subfolder: value.subfolder,
         }
     }
 }
 
-impl From<PersistedSrc> for SourceLoc {
-    fn from(value: PersistedSrc) -> Self {
-        SourceLoc {
-            uri: value.uri.into(),
+impl TryFrom<PersistedSrc> for SourceLoc {
+    fn try_from(value: PersistedSrc) -> Result<Self> {
+        Ok(SourceLoc {
+            uri: SourceUri::from_str(&value.uri)?,
             rev: value.rev,
             subfolder: value.subfolder,
-        }
+        })
     }
+    type Error = crate::Error;
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -129,9 +130,9 @@ fn key_from_uri(uri: &SourceUri) -> String {
     )
 }
 
-fn key_from_ctx(ctx: &Ctx) -> String {
-    let uri_key = key_from_uri(&ctx.cmd_opt.src.uri);
-    if let Some(p) = ctx.cmd_opt.src.subfolder.clone() {
+fn key_from_loc(source: &SourceLoc) -> String {
+    let uri_key = key_from_uri(&source.uri);
+    if let Some(p) = source.subfolder.clone() {
         format!("{}@{}", p.to_string_lossy().into_owned(), uri_key)
     } else {
         uri_key
@@ -144,16 +145,19 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
 
-    let mut saved_srcs: BTreeMap<String, PersistedSrc> = get_saved_sources(ctx)?
+    let new_key: String = key_from_loc(&ctx.cmd_opt.src);
+
+    let mut saved_srcs: Vec<PersistedSrc> = get_saved_sources(&ctx.cmd_opt.dst_folder)?
         .into_iter()
-        .map(|(k, loc)| (k, loc.into()))
+        .filter(|loc| key_from_loc(loc) != new_key)
+        .map(|loc| loc.into())
         .collect();
 
-    saved_srcs.insert(key_from_ctx(ctx), ctx.cmd_opt.src.clone().into());
+    saved_srcs.push(ctx.cmd_opt.src.clone().into());
 
     let persisted_options = PersistedOptions {
         variables: variables_to_save.into(),
-        srcs: saved_srcs,
+        sources: saved_srcs,
     };
 
     let ffizer_folder = ctx.cmd_opt.dst_folder.join(FFIZER_DATASTORE_DIRNAME);
@@ -173,23 +177,19 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
     Ok(())
 }
 
-fn get_saved_sources(ctx: &Ctx) -> Result<BTreeMap<String, SourceLoc>> {
-    let metadata_path = ctx
-        .cmd_opt
-        .dst_folder
-        .join(FFIZER_DATASTORE_DIRNAME)
-        .join(OPTIONS_FILENAME);
+pub(crate) fn get_saved_sources(folder: &Path) -> Result<Vec<SourceLoc>> {
+    let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
     let sources = if metadata_path.exists() {
         let persisted: PersistedOptions =
             { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
 
         persisted
-            .srcs
+            .sources
             .into_iter()
-            .map(|(k, v)| (k, v.into()))
-            .collect()
+            .map(|v| -> Result<SourceLoc> { v.try_into() })
+            .collect::<Result<Vec<SourceLoc>>>()?
     } else {
-        BTreeMap::default()
+        Vec::default()
     };
     Ok(sources)
 }
@@ -309,9 +309,9 @@ mod tests {
 
             save_options(&variables, &ctx_1).unwrap();
 
-            let saved_sources = get_saved_sources(&ctx_1).unwrap();
+            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
 
-            let expected = BTreeMap::from([("some_subfolder@:local_path".to_string(), source_1)]);
+            let expected = vec![source_1];
             assert_eq!(expected, saved_sources);
         }
 
@@ -328,12 +328,9 @@ mod tests {
             save_options(&variables, &ctx_1).unwrap();
             save_options(&variables, &ctx_2).unwrap();
 
-            let saved_sources = get_saved_sources(&ctx_1).unwrap();
+            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
 
-            let expected = BTreeMap::from([
-                ("some_subfolder@:local_path".to_string(), source_1),
-                ("blabla.truc:a/path".to_string(), source_2),
-            ]);
+            let expected = vec![source_1, source_2];
             assert_eq!(expected, saved_sources);
         }
 
@@ -354,9 +351,9 @@ mod tests {
             save_options(&variables, &ctx_1).unwrap();
             save_options(&variables, &ctx_2).unwrap();
 
-            let saved_sources = get_saved_sources(&ctx_1).unwrap();
+            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
 
-            let expected = BTreeMap::from([("some_subfolder@:local_path".to_string(), source_2)]);
+            let expected = vec![source_2];
             assert_eq!(expected, saved_sources);
         }
     }

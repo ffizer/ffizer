@@ -3,11 +3,7 @@ variables:
   default_value: my_project
 - name: project_name
   default_value: my-project
-srcs:
-  template_1@:./tests/data:
-    uri:
-      raw: ./tests/data
-      path: ./tests/data
-      host: null
-    rev: master
-    subfolder: template_1
+sources:
+- uri: ./tests/data
+  rev: master
+  subfolder: template_1

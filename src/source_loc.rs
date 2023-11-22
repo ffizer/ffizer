@@ -99,11 +99,11 @@ impl fmt::Display for SourceLoc {
             self.rev
                 .as_ref()
                 .map(|s| format!("rev: '{}' ", s))
-                .unwrap_or_else(|| "".to_string()),
+                .unwrap_or_default(),
             self.subfolder
                 .as_ref()
                 .map(|s| format!("subfolder: '{}'", s.to_string_lossy()))
-                .unwrap_or_else(|| "".to_string())
+                .unwrap_or_default()
         )
     }
 }

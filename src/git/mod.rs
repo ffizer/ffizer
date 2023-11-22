@@ -8,9 +8,9 @@ use tracing::{error, info};
 use crate::error::Error;
 
 #[cfg(feature = "git2")]
-pub(self) mod git2;
+mod git2;
 
-pub(self) mod cli;
+mod cli;
 
 #[derive(Debug, thiserror::Error)]
 pub enum GitError {

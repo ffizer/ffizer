@@ -70,7 +70,6 @@ mod tests {
     use super::super::variable_cfg::VariableValueCfg;
     use super::*;
     use pretty_assertions::assert_eq;
-    use spectral::prelude::*;
 
     // TODO provide a PR for https://github.com/dtolnay/serde-yaml/issues/86
     //     #[test]
@@ -79,16 +78,16 @@ mod tests {
     // "#;
     //         let expected = TemplateCfg::default();
     //         let actual = TemplateCfg::from_str(cfg_str).unwrap();
-    //         assert_that!(&actual).is_equal_to(&expected);
+    //         assert_eq!(&expected, &actual);
     //     }
     #[test]
     fn various_assert_equals() {
         let v1_0 = Some(serde_yaml::to_value("v1").expect("yaml parsed"));
         let v1_1 = Some(serde_yaml::to_value("v1").expect("yaml parsed"));
         let v2_0 = Some(serde_yaml::to_value("v2").expect("yaml parsed"));
-        assert_that!(&v1_0).is_equal_to(&v1_0);
-        assert_that!(&v1_1).is_equal_to(&v1_0);
-        assert_that!(&v2_0).is_not_equal_to(&v1_0);
+        assert_eq!(&v1_0, &v1_0);
+        assert_eq!(&v1_0, &v1_1);
+        assert_ne!(&v1_0, &v2_0);
     }
 
     #[test]
@@ -121,8 +120,8 @@ mod tests {
             ..Default::default()
         });
         let actual = serde_yaml::from_str::<TemplateCfg>(cfg_str).unwrap();
-        assert_that!(&actual.variables).is_equal_to(&expected.variables);
-        assert_that!(&actual.use_template_dir).is_false();
+        assert_eq!(&expected.variables, &actual.variables);
+        assert_eq!(false, actual.use_template_dir);
     }
     //TODO
     // #[test]
@@ -169,8 +168,8 @@ mod tests {
     //         ..Default::default()
     //     });
     //     let actual = serde_yaml::from_str::<TemplateCfg>(&cfg_str).unwrap();
-    //     assert_that!(&actual.variables).is_equal_to(&variables);
-    //     assert_that!(&actual.use_template_dir).is_false();
+    //     assert_eq!(&variables, &actual.variables);
+    //     assert_eq!(false, &actual.use_template_dir);
     // }
 
     #[test]
@@ -214,7 +213,7 @@ mod tests {
         use_template_dir: false
         "#;
         let actual = serde_yaml::from_str::<TemplateCfg>(cfg_str).unwrap();
-        assert_that!(&actual.use_template_dir).is_false();
+        assert_eq!(false, actual.use_template_dir);
     }
 
     #[test]
@@ -223,7 +222,7 @@ mod tests {
         use_template_dir: true
         "#;
         let actual = serde_yaml::from_str::<TemplateCfg>(cfg_str).unwrap();
-        assert_that!(&actual.use_template_dir).is_true();
+        assert_eq!(true, actual.use_template_dir);
     }
 
     #[test]

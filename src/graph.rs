@@ -25,7 +25,7 @@ pub trait Graph {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use spectral::prelude::*;
+    use pretty_assertions::assert_eq;
     use std::collections::BTreeMap;
 
     struct MyGraph {
@@ -75,6 +75,9 @@ mod tests {
             "k1.2.2".to_owned(),
             "k1.1.2.1".to_owned(),
         ];
-        assert_that!(&(g.find_edges_ordered_by_depth(&"k1".to_owned()))).is_equal_to(&expected);
+        assert_eq!(
+            &expected,
+            &(g.find_edges_ordered_by_depth(&"k1".to_owned()))
+        );
     }
 }

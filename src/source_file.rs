@@ -133,7 +133,7 @@ pub(crate) fn optimize_sourcefiles(sources: &mut Vec<SourceFile>) {
 mod tests {
     use super::*;
     // pub use crate::cli_opt::*;
-    use spectral::prelude::*;
+    use pretty_assertions::assert_eq;
     // use tempfile::TempDir;
 
     #[test]
@@ -153,6 +153,6 @@ mod tests {
             SourceFile::from((ChildPath::new("./tests/test_1/template", "file_2.txt"), 0)),
         ];
         optimize_sourcefiles(&mut input);
-        assert_that!(&input).is_equal_to(&expected);
+        assert_eq!(&expected, &input);
     }
 }

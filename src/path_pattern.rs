@@ -42,20 +42,20 @@ impl PathPattern {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use spectral::prelude::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_pattern_with_glob() {
         let p = PathPattern::from_str("**/foo.bar").unwrap();
-        assert_that!(p.raw).is_equal_to("**/foo.bar".to_owned());
-        assert_that!(p.is_match("hello")).is_false();
-        assert_that!(p.is_match("hello/f/foo.bar")).is_true();
+        assert_eq!("**/foo.bar".to_owned(), p.raw);
+        assert_eq!(false, p.is_match("hello"));
+        assert_eq!(true, p.is_match("hello/f/foo.bar"));
     }
 
     #[test]
     fn test_pattern_are_trimmed() {
         let actual = PathPattern::from_str(" **/foo.bar").unwrap();
         let expected = PathPattern::from_str("**/foo.bar").unwrap();
-        assert_that!(&actual.raw).is_equal_to(&expected.raw);
+        assert_eq!(&expected.raw, &actual.raw);
     }
 }

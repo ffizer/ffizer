@@ -102,43 +102,56 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use spectral::prelude::*;
+    use pretty_assertions::assert_eq;
+    use rstest::*;
 
     #[test]
     fn test_is_ffizer_handlebars() {
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.hbs"))).is_false();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs/bar"))).is_false();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo_ffizer.hbs"))).is_false();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("fooffizer.hbs"))).is_false();
+        assert_eq!(false, is_ffizer_handlebars(&PathBuf::from("foo.hbs")));
+        assert_eq!(
+            false,
+            is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs/bar"))
+        );
+        assert_eq!(
+            false,
+            is_ffizer_handlebars(&PathBuf::from("foo_ffizer.hbs"))
+        );
+        assert_eq!(false, is_ffizer_handlebars(&PathBuf::from("fooffizer.hbs")));
 
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs"))).is_true();
-        assert_that!(is_ffizer_handlebars(&PathBuf::from("bar/foo.ffizer.hbs"))).is_true();
+        assert_eq!(true, is_ffizer_handlebars(&PathBuf::from("foo.ffizer.hbs")));
+        assert_eq!(
+            true,
+            is_ffizer_handlebars(&PathBuf::from("bar/foo.ffizer.hbs"))
+        );
     }
 
-    #[test]
-    fn test_remove_special_suffix_on_filename() {
-        for (input, expected) in vec![
-            ("foo.hbs", "foo.hbs"),
-            ("foo.json.ffizer.hbs", "foo.json"),
-            ("foo.ffizer.hbs.json", "foo.json"),
-            ("foo.json.ffizer.raw", "foo.json"),
-            ("foo.ffizer.raw.json", "foo.json"),
-            ("foo.json.ffizer.raw", "foo.json"),
-            ("foo.ffizer.raw.ffizer.raw.json", "foo.ffizer.raw.json"),
-            ("foo.ffizer.raw.ffizer.hbs.json", "foo.ffizer.hbs.json"),
-            ("foo.json.ffizer.raw.ffizer.hbs", "foo.json.ffizer.hbs"),
-        ] {
-            assert_that!(remove_special_suffix_on_filename(input))
-                .is_equal_to(expected.to_string());
-        }
+    #[rstest]
+    #[case("foo.hbs", "foo.hbs")]
+    #[case("foo.json.ffizer.hbs", "foo.json")]
+    #[case("foo.ffizer.hbs.json", "foo.json")]
+    #[case("foo.json.ffizer.raw", "foo.json")]
+    #[case("foo.ffizer.raw.json", "foo.json")]
+    #[case("foo.json.ffizer.raw", "foo.json")]
+    #[case("foo.ffizer.raw.ffizer.raw.json", "foo.ffizer.raw.json")]
+    #[case("foo.ffizer.raw.ffizer.hbs.json", "foo.ffizer.hbs.json")]
+    #[case("foo.json.ffizer.raw.ffizer.hbs", "foo.json.ffizer.hbs")]
+    fn test_remove_special_suffix_on_filename(#[case] input: &str, #[case] expected: &str) {
+        assert_eq!(
+            expected.to_string(),
+            remove_special_suffix_on_filename(input)
+        );
     }
 
     #[test]
     fn test_add_suffix() -> Result<(), Box<dyn std::error::Error>> {
-        assert_that!(add_suffix(PathBuf::from("foo.ext1"), "")?)
-            .is_equal_to(&PathBuf::from("foo.ext1"));
-        assert_that!(add_suffix(PathBuf::from("foo.ext1"), ".REMOTE")?)
-            .is_equal_to(&PathBuf::from("foo.ext1.REMOTE"));
+        assert_eq!(
+            PathBuf::from("foo.ext1"),
+            add_suffix(PathBuf::from("foo.ext1"), "")?
+        );
+        assert_eq!(
+            PathBuf::from("foo.ext1.REMOTE"),
+            add_suffix(PathBuf::from("foo.ext1"), ".REMOTE")?
+        );
         Ok(())
     }
 }

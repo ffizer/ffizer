@@ -51,19 +51,29 @@ impl Variables {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use spectral::prelude::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_to_value() {
-        assert_that!(&Variables::value_from_str("v1").unwrap())
-            .is_equal_to(&serde_yaml::Value::String("v1".to_owned()));
-        assert_that!(&Variables::value_from_str("true").unwrap())
-            .is_equal_to(&serde_yaml::Value::Bool(true));
-        assert_that!(&Variables::value_from_str("false").unwrap())
-            .is_equal_to(&serde_yaml::Value::Bool(false));
-        assert_that!(&Variables::value_from_str("\"true\"").unwrap())
-            .is_equal_to(&serde_yaml::Value::String("true".to_owned()));
-        assert_that!(&Variables::value_from_str("42").unwrap())
-            .is_equal_to(&serde_yaml::to_value(42).unwrap());
+        assert_eq!(
+            &serde_yaml::Value::String("v1".to_owned()),
+            &Variables::value_from_str("v1").unwrap()
+        );
+        assert_eq!(
+            &serde_yaml::Value::Bool(true),
+            &Variables::value_from_str("true").unwrap()
+        );
+        assert_eq!(
+            &serde_yaml::Value::Bool(false),
+            &Variables::value_from_str("false").unwrap()
+        );
+        assert_eq!(
+            &serde_yaml::Value::String("true".to_owned()),
+            &Variables::value_from_str("\"true\"").unwrap()
+        );
+        assert_eq!(
+            &serde_yaml::to_value(42).unwrap(),
+            &Variables::value_from_str("42").unwrap()
+        );
     }
 }

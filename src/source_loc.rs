@@ -110,7 +110,7 @@ impl fmt::Display for SourceLoc {
 // #[cfg(test)]
 // mod tests {
 //     use super::*;
-//     use spectral::prelude::*;
+//     use pretty_assertions::assert_eq;
 //     use crate::source_uri::SourceUri;
 //     use std::str::FromStr;
 
@@ -121,7 +121,7 @@ impl fmt::Display for SourceLoc {
 //             rev: "master".to_owned(),
 //             subfolder: None,
 //         };
-//         assert_that!(&sut.as_local_path().unwrap()).ends_with("/com.github.ffizer/git/github.com/ffizer/ffizer/master");
+//         assert_eq!(true, &sut.as_local_path().unwrap().ends_with("/com.github.ffizer/git/github.com/ffizer/ffizer/master"));
 //         Ok(())
 //     }
 // }

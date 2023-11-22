@@ -505,7 +505,7 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
 mod tests {
     use super::*;
     pub use crate::cli_opt::*;
-    use spectral::prelude::*;
+    use pretty_assertions::assert_eq;
     use tempfile::TempDir;
 
     const DST_FOLDER_STR: &str = "test/dst";
@@ -540,7 +540,7 @@ mod tests {
         let src = ChildPath::new("test/src", "hello/sample.txt");
         let expected = ChildPath::new(DST_FOLDER_STR, "hello/sample.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
-        assert_that!(&actual).is_equal_to(&expected);
+        assert_eq!(&expected, &actual);
     }
 
     #[test]
@@ -550,7 +550,7 @@ mod tests {
         let src = ChildPath::new("test/src", "hello/sample.txt.ffizer.hbs");
         let expected = ChildPath::new(DST_FOLDER_STR, "hello/sample.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
-        assert_that!(&actual).is_equal_to(&expected);
+        assert_eq!(&expected, &actual);
     }
 
     #[test]
@@ -561,7 +561,7 @@ mod tests {
         let src = ChildPath::new("test/src", "hello/{{ prj }}.txt");
         let expected = ChildPath::new(DST_FOLDER_STR, "hello/myprj.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
-        assert_that!(&actual).is_equal_to(&expected);
+        assert_eq!(&expected, &actual);
     }
 
     #[test]
@@ -572,16 +572,21 @@ mod tests {
         let src = ChildPath::new("test/src", "hello/{{ prj }}/sample.txt");
         let expected = ChildPath::new(DST_FOLDER_STR, "hello/myprj/sample.txt");
         let actual = compute_dst_path(&ctx, &src, &variables).unwrap();
-        assert_that!(&actual).is_equal_to(&expected);
+        assert_eq!(&expected, &actual);
     }
 
     #[test]
     fn test_path_extension_extraction() {
         use std::ffi::OsStr;
 
-        assert_that!(PathBuf::from("foo.ext1").extension()).is_equal_to(Some(OsStr::new("ext1")));
-        assert_that!(PathBuf::from("foo.ext2.ext1").extension())
-            .is_equal_to(Some(OsStr::new("ext1")));
+        assert_eq!(
+            Some(OsStr::new("ext1")),
+            PathBuf::from("foo.ext1").extension()
+        );
+        assert_eq!(
+            Some(OsStr::new("ext1")),
+            PathBuf::from("foo.ext2.ext1").extension()
+        );
     }
 
     #[test]
@@ -591,7 +596,7 @@ mod tests {
 
         let sources: Vec<SourceFile> = vec![];
         let actions = plan(&ctx, sources, &variables)?;
-        assert_that!(&actions).is_empty();
+        assert_eq!(true, actions.is_empty());
         Ok(())
     }
 
@@ -613,7 +618,7 @@ mod tests {
             dst_path: ChildPath::new(DST_FOLDER_STR, "hello/file1.txt"),
             operation: FileOperation::AddFile,
         }];
-        assert_that!(&actions).is_equal_to(&expected);
+        assert_eq!(&expected, &actions);
         Ok(())
     }
 
@@ -629,22 +634,26 @@ mod tests {
         fs::write(&dst_path, CONTENT_BASE).expect("create dst file");
 
         let mut src_perms = fs::metadata(&src_path).unwrap().permissions();
-        assert_that(&(src_perms.mode() & 0o100)).is_equal_to(0);
+        assert_eq!(0, (src_perms.mode() & 0o100));
         src_perms.set_mode(src_perms.mode() | 0o100);
-        assert_that(&(src_perms.mode() & 0o100)).is_equal_to(0o100);
+        assert_eq!(0o100, (src_perms.mode() & 0o100));
         fs::set_permissions(&src_path, src_perms).expect("to set permissions");
 
-        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
-            .is_not_equal_to(fs::metadata(&src_path).unwrap().permissions());
+        assert_ne!(
+            fs::metadata(&src_path).unwrap().permissions(),
+            fs::metadata(&dst_path).unwrap().permissions()
+        );
 
         let dst_perms = fs::metadata(&dst_path).unwrap().permissions();
-        assert_that(&(dst_perms.mode() & 0o100)).is_equal_to(0);
+        assert_eq!(0, (dst_perms.mode() & 0o100));
         copy_file_permissions(&src_path, &dst_path).expect("copy file permissions");
         let dst_perms = fs::metadata(&dst_path).unwrap().permissions();
-        assert_that(&(dst_perms.mode() & 0o100)).is_equal_to(0o100);
+        assert_eq!(0o100, (dst_perms.mode() & 0o100));
 
-        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
-            .is_equal_to(fs::metadata(&src_path).unwrap().permissions());
+        assert_eq!(
+            fs::metadata(&src_path).unwrap().permissions(),
+            fs::metadata(&dst_path).unwrap().permissions()
+        );
     }
 
     #[test]
@@ -669,10 +678,15 @@ mod tests {
         let variables = new_variables_for_test();
 
         mk_file_on_action(&mut handlebars, &variables, &action, "").expect("mk_file is ok");
-        assert_that!(&dst_path).exists();
-        assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_BASE.to_owned());
-        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
-            .is_equal_to(fs::metadata(&src_path).unwrap().permissions());
+        assert_eq!(true, dst_path.exists());
+        assert_eq!(
+            CONTENT_BASE.to_owned(),
+            fs::read_to_string(&dst_path).unwrap()
+        );
+        assert_eq!(
+            fs::metadata(&src_path).unwrap().permissions(),
+            fs::metadata(&dst_path).unwrap().permissions()
+        );
     }
 
     #[test]
@@ -697,10 +711,15 @@ mod tests {
         let variables = new_variables_for_test();
 
         mk_file_on_action(&mut handlebars, &variables, &action, "").expect("mk_file is ok");
-        assert_that!(&dst_path).exists();
-        assert_that!(fs::read_to_string(&dst_path).unwrap()).is_equal_to(CONTENT_REMOTE.to_owned());
-        assert_that!(fs::metadata(&dst_path).unwrap().permissions())
-            .is_equal_to(fs::metadata(&src_path).unwrap().permissions());
+        assert_eq!(true, dst_path.exists());
+        assert_eq!(
+            CONTENT_REMOTE.to_owned(),
+            fs::read_to_string(&dst_path).unwrap()
+        );
+        assert_eq!(
+            fs::metadata(&src_path).unwrap().permissions(),
+            fs::metadata(&dst_path).unwrap().permissions()
+        );
     }
 
     fn setup_for_test_update() -> (TempDir, PathBuf, PathBuf, PathBuf) {
@@ -725,10 +744,12 @@ mod tests {
         let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
         update_file(&src_path, &local_path, &remote_path, &UpdateMode::Override)
             .expect("update without error");
-        assert_that!(&local_path).exists();
-        assert_that!(fs::read_to_string(&local_path).unwrap())
-            .is_equal_to(CONTENT_REMOTE.to_owned());
-        assert_that!(&remote_path).does_not_exist();
+        assert_eq!(true, local_path.exists());
+        assert_eq!(
+            CONTENT_REMOTE.to_owned(),
+            fs::read_to_string(&local_path).unwrap()
+        );
+        assert_eq!(false, remote_path.exists());
     }
 
     #[test]
@@ -737,10 +758,12 @@ mod tests {
         let (_tmp_dir, local_path, remote_path, src_path) = setup_for_test_update();
         update_file(&src_path, &local_path, &remote_path, &UpdateMode::Keep)
             .expect("update without error");
-        assert_that!(&local_path).exists();
-        assert_that!(fs::read_to_string(&local_path).unwrap())
-            .is_equal_to(CONTENT_LOCAL.to_owned());
-        assert_that!(&remote_path).does_not_exist();
+        assert_eq!(true, local_path.exists());
+        assert_eq!(
+            CONTENT_LOCAL.to_owned(),
+            fs::read_to_string(&local_path).unwrap()
+        );
+        assert_eq!(false, remote_path.exists());
     }
 
     #[test]
@@ -754,12 +777,16 @@ mod tests {
             &UpdateMode::UpdateAsRemote,
         )
         .expect("update without error");
-        assert_that!(&local_path).exists();
-        assert_that!(fs::read_to_string(&local_path).unwrap())
-            .is_equal_to(CONTENT_LOCAL.to_owned());
-        assert_that!(&remote_path).exists();
-        assert_that!(fs::read_to_string(&remote_path).unwrap())
-            .is_equal_to(CONTENT_REMOTE.to_owned());
+        assert_eq!(true, local_path.exists());
+        assert_eq!(
+            CONTENT_LOCAL.to_owned(),
+            fs::read_to_string(&local_path).unwrap()
+        );
+        assert_eq!(true, remote_path.exists());
+        assert_eq!(
+            CONTENT_REMOTE.to_owned(),
+            fs::read_to_string(&remote_path).unwrap()
+        );
     }
 
     #[test]
@@ -773,14 +800,18 @@ mod tests {
             &UpdateMode::CurrentAsLocal,
         )
         .expect("update without error");
-        assert_that!(&local_path).exists();
-        assert_that!(fs::read_to_string(&local_path).unwrap())
-            .is_equal_to(CONTENT_REMOTE.to_owned());
-        assert_that!(&remote_path).does_not_exist();
+        assert_eq!(true, local_path.exists());
+        assert_eq!(
+            CONTENT_REMOTE.to_owned(),
+            fs::read_to_string(&local_path).unwrap()
+        );
+        assert_eq!(false, remote_path.exists());
         let dot_local_path = files::add_suffix(&local_path, ".LOCAL").unwrap();
-        assert_that!(&dot_local_path).exists();
-        assert_that!(fs::read_to_string(&dot_local_path).unwrap())
-            .is_equal_to(CONTENT_LOCAL.to_owned());
+        assert_eq!(true, dot_local_path.exists());
+        assert_eq!(
+            CONTENT_LOCAL.to_owned(),
+            fs::read_to_string(&dot_local_path).unwrap()
+        );
     }
 
     // #[test]

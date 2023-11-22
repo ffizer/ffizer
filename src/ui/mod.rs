@@ -190,7 +190,7 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
             _ => {
                 let mut input = Input::with_theme(&(*PROMPT_THEME));
                 if let Some(default_value) = req.default_value {
-                    input.default(default_value.value);
+                    input = input.default(default_value.value);
                 }
                 input.with_prompt(&req.prompt).interact()?
             }
@@ -198,9 +198,9 @@ pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
         Ok(VariableResponse { value, idx: None })
     } else {
         let mut input = Select::with_theme(&(*PROMPT_THEME));
-        input.with_prompt(&req.prompt).items(&req.values);
+        input = input.with_prompt(&req.prompt).items(&req.values);
         if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
-            input.default(default_value);
+            input = input.default(default_value);
         }
         let idx = input.interact()?;
         Ok(VariableResponse {
@@ -338,7 +338,7 @@ where
                 ("try to merge existing local with remote template via merge tool (defined in the git's configuration)", UpdateMode::Merge),
     ];
     let mut input = Select::with_theme(&(*PROMPT_THEME));
-    input
+    input = input
         .with_prompt(&format!(
             "Modification of {:?} (use arrow + return to select option)",
             local.as_ref()

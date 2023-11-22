@@ -169,6 +169,11 @@ pub enum Error {
         #[from]
         source: clap::Error,
     },
+    #[error(transparent)]
+    Dialoguer {
+        #[from]
+        source: dialoguer::Error,
+    },
 }
 
 impl From<serde_yaml::Error> for Error {

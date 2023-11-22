@@ -1,5 +1,5 @@
 [tools]
-rust = "1.71"
+rust = "1.74"
 cargo-make = "0.36"
 mdbook = "0.4"
 jreleaser = "1.7"

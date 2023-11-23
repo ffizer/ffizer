@@ -20,50 +20,9 @@ pub struct PersistedSrc {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PersistedUri {
-    pub raw: String,
-    pub path: PathBuf,
-    pub host: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 pub struct PersistedVariable {
     pub name: String,
     pub default_value: serde_yaml::Value,
-}
-
-pub fn key_from_loc(source: &SourceLoc) -> (String, String, String) {
-    let uri = &source.uri;
-    (
-        uri.host.clone().unwrap_or_default(),
-        uri.path.to_string_lossy().into(),
-        source
-            .subfolder
-            .clone()
-            .unwrap_or_default()
-            .to_string_lossy()
-            .into(),
-    )
-}
-
-impl From<SourceUri> for PersistedUri {
-    fn from(value: SourceUri) -> Self {
-        PersistedUri {
-            raw: value.raw,
-            path: value.path,
-            host: value.host,
-        }
-    }
-}
-
-impl From<PersistedUri> for SourceUri {
-    fn from(value: PersistedUri) -> Self {
-        SourceUri {
-            raw: value.raw,
-            path: value.path,
-            host: value.host,
-        }
-    }
 }
 
 impl From<SourceLoc> for PersistedSrc {

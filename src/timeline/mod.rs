@@ -49,6 +49,20 @@ pub(crate) fn make_template(source_folder: &Path, target_folder: &Path) -> Resul
     })
 }
 
+fn key_from_loc(source: &SourceLoc) -> (String, String, String) {
+    let uri = &source.uri;
+    (
+        uri.host.clone().unwrap_or_default(),
+        uri.path.to_string_lossy().into(),
+        source
+            .subfolder
+            .clone()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .into(),
+    )
+}
+
 pub(crate) fn save_options(
     variables: &Variables,
     source: &SourceLoc,
@@ -70,9 +84,9 @@ pub(crate) fn save_options(
         saved_srcs = vec![source.clone().into()];
         saved_srcs.extend(
             get_saved_sources(dst_folder)?
-            .into_iter()
-            .filter(|loc| key_from_loc(loc) != new_key)
-            .map(|loc| loc.into())
+                .into_iter()
+                .filter(|loc| key_from_loc(loc) != new_key)
+                .map(|loc| loc.into()),
         );
     } else {
         saved_srcs = get_saved_sources(dst_folder)?

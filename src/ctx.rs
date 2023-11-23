@@ -10,26 +10,23 @@ pub(crate) struct VariablesFromCtx {
 }
 
 pub(crate) fn extract_variables(ctx: &Ctx) -> Result<VariablesFromCtx> {
-    let mut default_variables = Variables::default();
-    default_variables.insert(
+    let mut ctx_variables = Variables::default();
+    ctx_variables.insert(
         "ffizer_dst_folder",
         ctx.cmd_opt
             .dst_folder
             .to_str()
             .expect("dst_folder to converted via to_str"),
     )?;
-    default_variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
-    default_variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
-    default_variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
-    default_variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
-
-    let confirmed_variables = get_cli_variables(ctx)?;
-    let suggested_variables = get_saved_variables(&ctx.cmd_opt.dst_folder)?;
+    ctx_variables.insert("ffizer_src_uri", ctx.cmd_opt.src.uri.raw.clone())?;
+    ctx_variables.insert("ffizer_src_rev", ctx.cmd_opt.src.rev.clone())?;
+    ctx_variables.insert("ffizer_src_subfolder", ctx.cmd_opt.src.subfolder.clone())?;
+    ctx_variables.insert("ffizer_version", env!("CARGO_PKG_VERSION"))?;
 
     Ok(VariablesFromCtx {
-        src: default_variables,
-        cli: confirmed_variables,
-        saved: suggested_variables,
+        src: ctx_variables,
+        cli: get_cli_variables(ctx)?,
+        saved: get_saved_variables(&ctx.cmd_opt.dst_folder)?,
     })
 }
 

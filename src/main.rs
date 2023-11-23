@@ -4,6 +4,7 @@ use ffizer::ApplyOpts;
 use ffizer::CliOpts;
 use ffizer::Command;
 use ffizer::Ctx;
+use ffizer::ReapplyOpts;
 use ffizer::SourceLoc;
 use ffizer::TestSamplesOpts;
 use std::error::Error;
@@ -51,6 +52,12 @@ fn apply(cmd_opt: ApplyOpts) -> Result<(), Box<dyn Error>> {
 }
 
 #[tracing::instrument]
+fn reapply(cmd_opt: ReapplyOpts) -> Result<(), Box<dyn Error>> {
+    ffizer::reprocess(cmd_opt)?;
+    Ok(())
+}
+
+#[tracing::instrument]
 fn inspect() -> Result<(), Box<dyn Error>> {
     println!(
         "remote cache folder: {}",
@@ -85,6 +92,7 @@ fn main() {
         Command::Inspect => inspect(),
         Command::ShowJsonSchema => show_json_schema(),
         Command::TestSamples(g) => test_samples(g),
+        Command::Reapply(g) => reapply(g.clone()),
     };
     if let Err(e) = r {
         error!("cmd: {:#?}", &cli_opts);

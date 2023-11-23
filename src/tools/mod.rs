@@ -2,7 +2,7 @@ pub mod dir_diff_list;
 
 use crate::cli_opt::{ApplyOpts, CliOpts, Command, TestSamplesOpts};
 use crate::path_pattern::PathPattern;
-use crate::{ctx, error::*, SourceLoc};
+use crate::{error::*, timeline, SourceLoc};
 use clap::Parser;
 use dir_diff_list::Difference;
 use dir_diff_list::EntryDiff;
@@ -238,7 +238,7 @@ impl SampleCfg {
             .unwrap_or_default()
             .iter()
             .map(|v| v.trim_matches(trim_chars))
-            .chain([ctx::FFIZER_DATASTORE_DIRNAME]) // Ignore ffizer internal that may change from one ffizer version to another
+            .chain([timeline::FFIZER_DATASTORE_DIRNAME]) // Ignore ffizer internal that may change from one ffizer version to another
             .filter(|v| !v.is_empty())
             .map(PathPattern::from_str)
             .collect::<Result<Vec<PathPattern>>>()?;

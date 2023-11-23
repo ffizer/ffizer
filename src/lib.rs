@@ -17,6 +17,7 @@ mod scripts;
 mod source_file;
 mod source_loc;
 mod source_uri;
+mod timeline;
 mod ui;
 mod variable_def;
 mod variables;
@@ -35,6 +36,7 @@ use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::fs;
 use std::path::{Path, PathBuf};
+use tempfile::TempDir;
 use tracing::{debug, warn};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -57,6 +59,26 @@ pub struct Action {
 #[derive(Debug, Clone, Default)]
 pub struct Ctx {
     pub cmd_opt: ApplyOpts,
+}
+
+pub fn reprocess(cmd_opt: ReapplyOpts) -> Result<()> {
+    let source_folder = &cmd_opt.dst_folder;
+    let temp_dir = TempDir::with_prefix("dummy_")?;
+
+    let tmp_template = timeline::make_template(source_folder, temp_dir.path())?;
+    let new_ctx = Ctx {
+        cmd_opt: ApplyOpts {
+            confirm: cmd_opt.confirm,
+            src: tmp_template,
+            update_mode: cmd_opt.update_mode,
+            no_interaction: cmd_opt.no_interaction,
+            dst_folder: cmd_opt.dst_folder,
+            offline: cmd_opt.offline,
+            key_value: cmd_opt.key_value,
+        },
+    };
+    process(&new_ctx)?;
+    Ok(temp_dir.close()?)
 }
 
 pub fn process(ctx: &Ctx) -> Result<()> {
@@ -94,7 +116,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         debug!("executing plan of rendering");
         execute(ctx, &actions, &used_variables)?;
         debug!("Saving metadata");
-        ctx::save_options(&used_variables, ctx)?;
+        timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
     }

@@ -61,28 +61,28 @@ pub struct Ctx {
 
 pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("extracting variables from context",);
-    let (mut default_variables, mut confirmed_variables, suggested_variables) =
-        ctx::extract_variables(ctx)?;
+    let mut variables = ctx::extract_variables(ctx)?;
     debug!("compositing templates");
 
-    // Should the template import to determine variables also use the suggested variables?
     let mut template_composite =
-        TemplateComposite::from_src(&default_variables, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
+        TemplateComposite::from_src(&variables.src, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
 
-    confirmed_variables.append(&mut default_variables);
+    let mut confirmed_variables = variables.cli;
+    confirmed_variables.append(&mut variables.src);
+    let confirmed_variables = confirmed_variables; // make immutable
 
     debug!(confirmed_variables = ?confirmed_variables, "asking variables");
     let mut variable_configs = template_composite.find_variablecfgs()?;
 
     // Updates defaults with suggested variables before asking.
     variable_configs.iter_mut().for_each(|cfg| {
-        if let Some(v) = suggested_variables.get(&cfg.name) {
+        if let Some(v) = variables.saved.get(&cfg.name) {
             cfg.default_value = Some(VariableValueCfg(v.clone()))
         }
     });
+    let variable_configs = variable_configs; // make immutable
 
-    let used_variables = confirmed_variables;
-    let used_variables = ui::ask_variables(ctx, &variable_configs, used_variables)?;
+    let used_variables = ui::ask_variables(ctx, &variable_configs, confirmed_variables)?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)
     debug!(variables = ?used_variables, "update template_composite with variables");
     template_composite = render_composite(&template_composite, &used_variables, true)?;

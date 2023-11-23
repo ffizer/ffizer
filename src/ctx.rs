@@ -102,7 +102,13 @@ impl From<Variables> for Vec<PersistedVariable> {
     }
 }
 
-pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Variables)> {
+pub(crate) struct VariablesFromCtx {
+    pub src: Variables,
+    pub cli: Variables,
+    pub saved: Variables,
+}
+
+pub(crate) fn extract_variables(ctx: &Ctx) -> Result<VariablesFromCtx> {
     let mut default_variables = Variables::default();
     default_variables.insert(
         "ffizer_dst_folder",
@@ -119,7 +125,11 @@ pub(crate) fn extract_variables(ctx: &Ctx) -> Result<(Variables, Variables, Vari
     let confirmed_variables = get_cli_variables(ctx)?;
     let suggested_variables = get_saved_variables(ctx)?;
 
-    Ok((default_variables, confirmed_variables, suggested_variables))
+    Ok(VariablesFromCtx {
+        src: default_variables,
+        cli: confirmed_variables,
+        saved: suggested_variables,
+    })
 }
 
 fn key_from_loc(source: &SourceLoc) -> (String, String, String) {
@@ -150,7 +160,7 @@ pub(crate) fn save_options(variables: &Variables, ctx: &Ctx) -> Result<()> {
         .map(|loc| loc.into())
         .collect();
 
-    saved_srcs.push(ctx.cmd_opt.src.clone().into());
+    saved_srcs.insert(0, ctx.cmd_opt.src.clone().into());
 
     let persisted_options = PersistedOptions {
         variables: variables_to_save.into(),
@@ -327,7 +337,7 @@ mod tests {
 
             let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
 
-            let expected = vec![source_1, source_2];
+            let expected = vec![source_2, source_1];
             assert_eq!(expected, saved_sources);
         }
 

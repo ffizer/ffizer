@@ -8,7 +8,7 @@ use std::str::FromStr;
 // - http = "0.1.13" failed to parse "git@github.com:ffizer/ffizer.git"
 // - uriparse = "0.3.3" require rust nightly
 // - uri_parser = "0.2.0" use explicit lifetime for URI, too hard for intergration with CmdOpt
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
 pub struct SourceUri {
     pub raw: String,
     pub path: PathBuf,

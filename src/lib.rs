@@ -23,7 +23,6 @@ mod variables;
 
 pub use crate::cfg::provide_json_schema;
 pub use crate::cli_opt::*;
-pub use crate::ctx::Ctx;
 pub use crate::path_pattern::PathPattern;
 pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
@@ -55,23 +54,33 @@ pub struct Action {
     pub operation: FileOperation,
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct Ctx {
+    pub cmd_opt: ApplyOpts,
+}
+
 pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("extracting variables from context",);
-    let (confirmed_variables, suggested_variables) = ctx::extract_variables(ctx)?;
+    let mut variables = ctx::extract_variables(ctx)?;
     debug!("compositing templates");
 
-    // Should the template import to determine variables also use the suggested variables?
     let mut template_composite =
-        TemplateComposite::from_src(&confirmed_variables, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
+        TemplateComposite::from_src(&variables.src, ctx.cmd_opt.offline, &ctx.cmd_opt.src)?;
+
+    let mut confirmed_variables = variables.cli;
+    confirmed_variables.append(&mut variables.src);
+    let confirmed_variables = confirmed_variables; // make immutable
+
     debug!(confirmed_variables = ?confirmed_variables, "asking variables");
     let mut variable_configs = template_composite.find_variablecfgs()?;
 
     // Updates defaults with suggested variables before asking.
     variable_configs.iter_mut().for_each(|cfg| {
-        if let Some(v) = suggested_variables.get(&cfg.name) {
+        if let Some(v) = variables.saved.get(&cfg.name) {
             cfg.default_value = Some(VariableValueCfg(v.clone()))
         }
     });
+    let variable_configs = variable_configs; // make immutable
 
     let used_variables = ui::ask_variables(ctx, &variable_configs, confirmed_variables)?;
     // update cfg(s) with variables defined by user (use to update ignore, scripts,...)

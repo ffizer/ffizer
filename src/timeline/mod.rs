@@ -36,19 +36,13 @@ pub(crate) fn make_template_from_folder(
     source_folder: &Path,
     target_folder: &Path,
 ) -> Result<SourceLoc> {
-    let metadata_path = source_folder
-        .join(FFIZER_DATASTORE_DIRNAME)
-        .join(OPTIONS_FILENAME);
-    let options: PersistedOptions =
-        { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
-
+    let options = load_options(source_folder)?;
     let template_cfg = make_template(options);
 
     serde_yaml::to_writer(
         std::fs::File::create(target_folder.join(".ffizer.yaml"))?,
         &template_cfg,
     )?;
-
     std::fs::create_dir(target_folder.join("template"))?;
 
     Ok(SourceLoc {
@@ -72,15 +66,32 @@ fn key_from_loc(source: &SourceLoc) -> (String, String, String) {
     )
 }
 
-pub(crate) fn save_options(
+pub(crate) fn load_options(folder: &Path) -> Result<PersistedOptions> {
+    let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
+    if metadata_path.exists() {
+        Ok(serde_yaml::from_reader(std::fs::File::open(
+            metadata_path,
+        )?)?)
+    } else {
+        Ok(PersistedOptions::default())
+    }
+}
+
+pub(crate) fn make_new_options(
+    previous_opts: PersistedOptions,
     variables: &Variables,
     source: &SourceLoc,
-    dst_folder: &Path,
-) -> Result<()> {
-    // Save or update default variable values stored in datastore
-    let mut variables_to_save = get_saved_variables(dst_folder)?;
-    variables_to_save.append(&mut variables.clone()); // update already existing keys
-    variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
+) -> Result<PersistedOptions> {
+    let mut previous_variables: Variables = previous_opts.variables.try_into()?;
+    previous_variables.append(&mut variables.clone());
+    previous_variables.retain(|k, _v| !k.starts_with("ffizer_"));
+    let saved_variables: Vec<PersistedVariable> = previous_variables.into();
+
+    let previous_srcs: Vec<SourceLoc> = previous_opts
+        .sources
+        .into_iter()
+        .map(TryInto::try_into)
+        .collect::<Result<Vec<SourceLoc>>>()?;
 
     let is_dummy = source.uri.path.file_name().is_some_and(|x| {
         x.to_string_lossy()
@@ -88,28 +99,34 @@ pub(crate) fn save_options(
     });
 
     let saved_srcs: Vec<PersistedSrc> = if is_dummy {
-        get_saved_sources(dst_folder)?
-            .into_iter()
-            .map(Into::into)
-            .collect()
+        previous_srcs.into_iter().map(Into::into).collect()
     } else {
         let new_key = key_from_loc(source);
 
         vec![source.clone()]
             .into_iter()
             .chain(
-                get_saved_sources(dst_folder)?
+                previous_srcs
                     .into_iter()
                     .filter(|loc| key_from_loc(loc) != new_key),
             )
             .map(Into::into)
             .collect()
     };
-
-    let persisted_options = PersistedOptions {
-        variables: variables_to_save.into(),
+    Ok(PersistedOptions {
+        variables: saved_variables,
         sources: saved_srcs,
-    };
+    })
+}
+
+pub(crate) fn save_options(
+    variables: &Variables,
+    source: &SourceLoc,
+    dst_folder: &Path,
+) -> Result<()> {
+    let previous_options = load_options(dst_folder)?;
+
+    let options = make_new_options(previous_options, variables, source)?;
 
     let ffizer_folder = dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
@@ -123,39 +140,22 @@ pub(crate) fn save_options(
 
     serde_yaml::to_writer(
         std::fs::File::create(ffizer_folder.join(OPTIONS_FILENAME))?,
-        &persisted_options,
+        &options,
     )?;
     Ok(())
 }
 
+#[allow(dead_code)] // Used in testing
 pub(crate) fn get_saved_sources(folder: &Path) -> Result<Vec<SourceLoc>> {
-    let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
-    let sources = if metadata_path.exists() {
-        let persisted: PersistedOptions =
-            { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
-
-        persisted
-            .sources
-            .into_iter()
-            .map(|v| -> Result<SourceLoc> { v.try_into() })
-            .collect::<Result<Vec<SourceLoc>>>()?
-    } else {
-        Vec::default()
-    };
-    Ok(sources)
+    load_options(folder)?
+        .sources
+        .into_iter()
+        .map(TryInto::try_into)
+        .collect()
 }
 
 pub(crate) fn get_saved_variables(folder: &Path) -> Result<Variables> {
-    let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
-    let variables = if metadata_path.exists() {
-        let persisted: PersistedOptions =
-            { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
-
-        Variables::try_from(persisted.variables)?
-    } else {
-        Variables::default()
-    };
-    Ok(variables)
+    load_options(folder)?.variables.try_into()
 }
 
 #[cfg(test)]

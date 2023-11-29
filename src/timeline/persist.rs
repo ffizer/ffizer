@@ -6,7 +6,7 @@ use crate::variables::Variables;
 use crate::SourceLoc;
 use crate::SourceUri;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct PersistedOptions {
     pub variables: Vec<PersistedVariable>,
     pub sources: Vec<PersistedSrc>,

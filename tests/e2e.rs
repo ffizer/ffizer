@@ -47,30 +47,129 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     Ok(())
 }
 
-#[test]
-fn test_1_subfolder() -> Result<(), Box<dyn Error>> {
-    let source_subfolder = "template_1";
-    let tmp_dir = tempdir()?;
-    let template_path = PathBuf::from("./tests/data");
-    let expected_path =
-        PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected");
-    let actual_path = tmp_dir.path().to_path_buf();
+mod test_reapply {
+    use super::*;
+    use rstest::*;
+    use similar_asserts::assert_eq;
 
-    let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
-        .arg("apply")
-        .arg("--no-interaction")
-        .arg("--confirm")
-        .arg("never")
-        .arg("--update-mode")
-        .arg("keep")
-        .arg("--destination")
-        .arg(actual_path.to_str().unwrap())
-        .arg("--source")
-        .arg(template_path.to_str().unwrap())
-        .arg("--source-subfolder")
-        .arg(source_subfolder)
-        .ok()?;
-    assert_is_same(&actual_path, expected_path, &output)
+    #[rstest]
+    fn single_template_case() -> Result<(), Box<dyn Error>> {
+        let source_subfolder = "template_1";
+        let tmp_dir = tempdir()?;
+        let template_path = PathBuf::from("./tests/data");
+        let expected_path =
+            PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected");
+        let actual_path = tmp_dir.path().to_path_buf();
+
+        let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            .arg("apply")
+            .arg("--no-interaction")
+            .arg("--confirm")
+            .arg("never")
+            .arg("--update-mode")
+            .arg("keep")
+            .arg("--destination")
+            .arg(actual_path.to_str().unwrap())
+            .arg("--source")
+            .arg(template_path.to_str().unwrap())
+            .arg("--source-subfolder")
+            .arg(source_subfolder)
+            .ok()?;
+        assert_is_same(&actual_path, &expected_path, &output)?;
+
+        let tmp_dir_2 = tempdir()?;
+        let reapply_path = tmp_dir_2.path().to_path_buf();
+
+        Command::new("cp")
+            .arg("-r")
+            .arg(tmp_dir.path().join(".ffizer"))
+            .arg(tmp_dir_2.path().join(".ffizer"))
+            .ok()?;
+
+        let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            .arg("reapply")
+            .arg("--no-interaction")
+            .arg("--confirm")
+            .arg("never")
+            .arg("--update-mode")
+            .arg("keep")
+            .arg("--destination")
+            .arg(reapply_path.to_str().unwrap())
+            .ok()?;
+        assert_is_same(&reapply_path, &expected_path, &output_reapply)?;
+
+        Ok(())
+    }
+
+    #[rstest]
+    fn multi_template_case() -> Result<(), Box<dyn Error>> {
+        let tmp_dir_apply = tempdir()?;
+        let template_path = PathBuf::from("./tests/data/4compose");
+        let source_subfolder_1 = "template_1";
+        let source_subfolder_2 = "template_2";
+        let expected_path = PathBuf::from("./tests/data/reapply/expected");
+        let actual_path = tmp_dir_apply.path().to_path_buf();
+
+        let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            .arg("apply")
+            .arg("--no-interaction")
+            .arg("--confirm")
+            .arg("never")
+            .arg("--update-mode")
+            .arg("override")
+            .arg("--destination")
+            .arg(actual_path.to_str().unwrap())
+            .arg("--source")
+            .arg(template_path.to_str().unwrap())
+            .arg("--source-subfolder")
+            .arg(source_subfolder_2)
+            .arg("-v")
+            .arg("project_name=my-project")
+            .ok()?;
+
+        assert_eq!(output.status.success(), true);
+
+        let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            .arg("apply")
+            .arg("--no-interaction")
+            .arg("--confirm")
+            .arg("never")
+            .arg("--update-mode")
+            .arg("override")
+            .arg("--destination")
+            .arg(actual_path.to_str().unwrap())
+            .arg("--source")
+            .arg(template_path.to_str().unwrap())
+            .arg("--source-subfolder")
+            .arg(source_subfolder_1)
+            .arg("-v")
+            .arg("project_name=my-project")
+            .ok()?;
+
+        assert_is_same(&actual_path, &expected_path, &output)?;
+
+        let tmp_dir_reapply = tempdir()?;
+        let reapply_path = tmp_dir_reapply.path().to_path_buf();
+
+        Command::new("cp")
+            .arg("-r")
+            .arg(tmp_dir_apply.path().join(".ffizer"))
+            .arg(tmp_dir_reapply.path().join(".ffizer"))
+            .ok()?;
+
+        let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            .arg("reapply")
+            .arg("--no-interaction")
+            .arg("--confirm")
+            .arg("never")
+            .arg("--update-mode")
+            .arg("override")
+            .arg("--destination")
+            .arg(reapply_path.to_str().unwrap())
+            .ok()?;
+        assert_is_same(&reapply_path, &actual_path, &output_reapply)?;
+        Ok(())
+    }
 }
 
 #[cfg(feature = "test_remote")]

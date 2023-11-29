@@ -36,8 +36,11 @@ use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use tempfile::TempDir;
 use tracing::{debug, warn};
+
+pub(crate) const IGNORED_FOLDER_PREFIX: &str = "_ffizer_ignore";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FileOperation {
@@ -62,10 +65,15 @@ pub struct Ctx {
 }
 
 pub fn reprocess(cmd_opt: ReapplyOpts) -> Result<()> {
-    let source_folder = &cmd_opt.dst_folder;
-    let temp_dir = TempDir::with_prefix("dummy_")?;
+    let source = SourceLoc {
+        uri: SourceUri::from_str(&cmd_opt.dst_folder.to_string_lossy())?,
+        ..Default::default()
+    };
+    let source_folder = source.download(cmd_opt.offline)?;
+    let temp_dir = TempDir::with_prefix(IGNORED_FOLDER_PREFIX)?;
 
-    let tmp_template = timeline::make_template(source_folder, temp_dir.path())?;
+    let tmp_template =
+        timeline::make_template_from_folder(source_folder.as_path(), temp_dir.path())?;
     let new_ctx = Ctx {
         cmd_opt: ApplyOpts {
             confirm: cmd_opt.confirm,

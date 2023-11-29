@@ -94,7 +94,7 @@ pub struct ReapplyOpts {
     #[arg(
         short = 'd',
         long = "destination",
-        //default_value = "."
+        default_value = ".",
         value_name = "FOLDER"
     )]
     pub dst_folder: PathBuf,

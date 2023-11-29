@@ -12,15 +12,10 @@ pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
 const OPTIONS_FILENAME: &str = "options.yaml";
 const VERSION_FILENAME: &str = "version.txt";
 
-pub(crate) fn make_template(source_folder: &Path, target_folder: &Path) -> Result<SourceLoc> {
+pub(crate) fn make_template(options: PersistedOptions) -> TemplateCfg {
     // not ready for standalone command, only used as part of reapply for now
-    let metadata_path = source_folder
-        .join(FFIZER_DATASTORE_DIRNAME)
-        .join(OPTIONS_FILENAME);
-    let persisted: PersistedOptions =
-        { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
-
-    let imports: Vec<ImportCfg> = persisted
+    // does not use variables for now, it relies on the variables reimport during apply
+    let imports: Vec<ImportCfg> = options
         .sources
         .into_iter()
         .map(|source| ImportCfg {
@@ -30,11 +25,25 @@ pub(crate) fn make_template(source_folder: &Path, target_folder: &Path) -> Resul
         })
         .collect();
 
-    let template_cfg = TemplateCfg {
+    TemplateCfg {
         imports,
         use_template_dir: true,
-        ..Default::default() // No need to set default variables as they will be read from the target folder
-    };
+        ..Default::default() // No need to set default variables as they will be read from the target folder, this needs to be improved to make a true template
+    }
+}
+
+pub(crate) fn make_template_from_folder(
+    source_folder: &Path,
+    target_folder: &Path,
+) -> Result<SourceLoc> {
+    let metadata_path = source_folder
+        .join(FFIZER_DATASTORE_DIRNAME)
+        .join(OPTIONS_FILENAME);
+    let options: PersistedOptions =
+        { serde_yaml::from_reader(std::fs::File::open(metadata_path)?)? };
+
+    let template_cfg = make_template(options);
+
     serde_yaml::to_writer(
         std::fs::File::create(target_folder.join(".ffizer.yaml"))?,
         &template_cfg,
@@ -72,28 +81,30 @@ pub(crate) fn save_options(
     let mut variables_to_save = get_saved_variables(dst_folder)?;
     variables_to_save.append(&mut variables.clone()); // update already existing keys
     variables_to_save.retain(|k, _v| !k.starts_with("ffizer_"));
-    let mut saved_srcs: Vec<PersistedSrc>;
-    if !source
-        .uri
-        .path
-        .file_name()
-        .is_some_and(|x| x.to_string_lossy().starts_with("dummy_"))
-    {
+
+    let is_dummy = source.uri.path.file_name().is_some_and(|x| {
+        x.to_string_lossy()
+            .starts_with(crate::IGNORED_FOLDER_PREFIX)
+    });
+
+    let saved_srcs: Vec<PersistedSrc> = if is_dummy {
+        get_saved_sources(dst_folder)?
+            .into_iter()
+            .map(Into::into)
+            .collect()
+    } else {
         let new_key = key_from_loc(source);
 
-        saved_srcs = vec![source.clone().into()];
-        saved_srcs.extend(
-            get_saved_sources(dst_folder)?
-                .into_iter()
-                .filter(|loc| key_from_loc(loc) != new_key)
-                .map(|loc| loc.into()),
-        );
-    } else {
-        saved_srcs = get_saved_sources(dst_folder)?
+        vec![source.clone()]
             .into_iter()
-            .map(|loc| loc.into())
-            .collect();
-    }
+            .chain(
+                get_saved_sources(dst_folder)?
+                    .into_iter()
+                    .filter(|loc| key_from_loc(loc) != new_key),
+            )
+            .map(Into::into)
+            .collect()
+    };
 
     let persisted_options = PersistedOptions {
         variables: variables_to_save.into(),
@@ -153,6 +164,7 @@ mod tests {
     use similar_asserts::assert_eq;
     use std::path::PathBuf;
 
+    use super::persist;
     use super::*;
     use crate::cli_opt::ApplyOpts;
     use crate::tests::new_ctx_from;
@@ -279,6 +291,86 @@ mod tests {
 
             let expected = vec![source_2];
             assert_eq!(expected, saved_sources);
+        }
+    }
+
+    mod test_make_template {
+        use super::*;
+        use similar_asserts::assert_eq;
+
+        #[rstest]
+        fn empty() {
+            let options = persist::PersistedOptions {
+                variables: vec![],
+                sources: vec![],
+            };
+
+            let expected = TemplateCfg {
+                use_template_dir: true,
+                ..Default::default()
+            };
+
+            assert_eq!(expected, make_template(options))
+        }
+
+        #[rstest]
+        fn single_source() {
+            let options = persist::PersistedOptions {
+                variables: vec![],
+                sources: vec![PersistedSrc {
+                    uri: "path/to/foo".to_string(),
+                    rev: None,
+                    subfolder: None,
+                }],
+            };
+
+            let expected = TemplateCfg {
+                imports: vec![ImportCfg {
+                    uri: "path/to/foo".to_string(),
+                    rev: None,
+                    subfolder: None,
+                }],
+                use_template_dir: true,
+                ..Default::default()
+            };
+            assert_eq!(expected, make_template(options))
+        }
+
+        #[rstest]
+        fn multi_source() {
+            let options = persist::PersistedOptions {
+                variables: vec![],
+                sources: vec![
+                    PersistedSrc {
+                        uri: "path/to/foo".to_string(),
+                        rev: None,
+                        subfolder: None,
+                    },
+                    PersistedSrc {
+                        uri: "http://blabla.truc/a/path".into(),
+                        rev: Some("master".into()),
+                        subfolder: Some(PathBuf::from_str("some_subfolder").unwrap()),
+                    },
+                ],
+            };
+
+            let expected = TemplateCfg {
+                imports: vec![
+                    ImportCfg {
+                        uri: "path/to/foo".to_string(),
+                        rev: None,
+                        subfolder: None,
+                    },
+                    ImportCfg {
+                        uri: "http://blabla.truc/a/path".into(),
+                        rev: Some("master".into()),
+                        subfolder: Some("some_subfolder".into()),
+                    },
+                ],
+                use_template_dir: true,
+                ..Default::default()
+            };
+            assert_eq!(expected, make_template(options))
         }
     }
 }

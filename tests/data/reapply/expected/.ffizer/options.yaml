@@ -1,0 +1,10 @@
+variables:
+- name: project_name
+  default_value: my-project
+sources:
+- uri: ./tests/data/4compose
+  rev: master
+  subfolder: template_1
+- uri: ./tests/data/4compose
+  rev: master
+  subfolder: template_2

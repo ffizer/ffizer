@@ -59,7 +59,7 @@ mod test_reapply {
         let template_path = PathBuf::from("./tests/data");
         let expected_path =
             PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected");
-        let actual_path = tmp_dir.path().to_path_buf();
+        let apply_result_path = tmp_dir.path().to_path_buf();
 
         let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
             .arg("apply")
@@ -69,22 +69,22 @@ mod test_reapply {
             .arg("--update-mode")
             .arg("keep")
             .arg("--destination")
-            .arg(actual_path.to_str().unwrap())
+            .arg(apply_result_path.to_str().unwrap())
             .arg("--source")
             .arg(template_path.to_str().unwrap())
             .arg("--source-subfolder")
             .arg(source_subfolder)
             .ok()?;
-        assert_is_same(&actual_path, &expected_path, &output)?;
+        assert_is_same(&apply_result_path, &expected_path, &output)?;
 
         let tmp_dir_2 = tempdir()?;
-        let reapply_path = tmp_dir_2.path().to_path_buf();
+        let reapply_result_path = tmp_dir_2.path().to_path_buf();
 
         Command::new("cp")
             .arg("-r")
             .arg(tmp_dir.path().join(".ffizer"))
             .arg(tmp_dir_2.path().join(".ffizer"))
-            .ok()?;
+            .ok()?; // not likely to work on windows systems
 
         let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
             .arg("reapply")
@@ -94,9 +94,9 @@ mod test_reapply {
             .arg("--update-mode")
             .arg("keep")
             .arg("--destination")
-            .arg(reapply_path.to_str().unwrap())
+            .arg(reapply_result_path.to_str().unwrap())
             .ok()?;
-        assert_is_same(&reapply_path, &expected_path, &output_reapply)?;
+        assert_is_same(&reapply_result_path, &expected_path, &output_reapply)?;
 
         Ok(())
     }
@@ -108,7 +108,7 @@ mod test_reapply {
         let source_subfolder_1 = "template_1";
         let source_subfolder_2 = "template_2";
         let expected_path = PathBuf::from("./tests/data/reapply/expected");
-        let actual_path = tmp_dir_apply.path().to_path_buf();
+        let apply_result_path = tmp_dir_apply.path().to_path_buf();
 
         let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
             .arg("apply")
@@ -118,7 +118,7 @@ mod test_reapply {
             .arg("--update-mode")
             .arg("override")
             .arg("--destination")
-            .arg(actual_path.to_str().unwrap())
+            .arg(apply_result_path.to_str().unwrap())
             .arg("--source")
             .arg(template_path.to_str().unwrap())
             .arg("--source-subfolder")
@@ -137,7 +137,7 @@ mod test_reapply {
             .arg("--update-mode")
             .arg("override")
             .arg("--destination")
-            .arg(actual_path.to_str().unwrap())
+            .arg(apply_result_path.to_str().unwrap())
             .arg("--source")
             .arg(template_path.to_str().unwrap())
             .arg("--source-subfolder")
@@ -146,10 +146,10 @@ mod test_reapply {
             .arg("project_name=my-project")
             .ok()?;
 
-        assert_is_same(&actual_path, &expected_path, &output)?;
+        assert_is_same(&apply_result_path, &expected_path, &output)?;
 
         let tmp_dir_reapply = tempdir()?;
-        let reapply_path = tmp_dir_reapply.path().to_path_buf();
+        let reapply_result_path = tmp_dir_reapply.path().to_path_buf();
 
         Command::new("cp")
             .arg("-r")
@@ -165,9 +165,9 @@ mod test_reapply {
             .arg("--update-mode")
             .arg("override")
             .arg("--destination")
-            .arg(reapply_path.to_str().unwrap())
+            .arg(reapply_result_path.to_str().unwrap())
             .ok()?;
-        assert_is_same(&reapply_path, &actual_path, &output_reapply)?;
+        assert_is_same(&reapply_result_path, &apply_result_path, &output_reapply)?;
         Ok(())
     }
 }

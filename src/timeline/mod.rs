@@ -82,10 +82,12 @@ pub(crate) fn make_new_options(
     variables: &Variables,
     source: &SourceLoc,
 ) -> Result<PersistedOptions> {
-    let mut previous_variables: Variables = previous_opts.variables.try_into()?;
-    previous_variables.append(&mut variables.clone());
-    previous_variables.retain(|k, _v| !k.starts_with("ffizer_"));
-    let saved_variables: Vec<PersistedVariable> = previous_variables.into();
+    let variables_to_save: Vec<PersistedVariable> = {
+        let mut vars: Variables = previous_opts.variables.try_into()?;
+        vars.append(&mut variables.clone());
+        vars.retain(|k, _v| !k.starts_with("ffizer_"));
+        vars.into()
+    };
 
     let previous_srcs: Vec<SourceLoc> = previous_opts
         .sources
@@ -114,7 +116,7 @@ pub(crate) fn make_new_options(
             .collect()
     };
     Ok(PersistedOptions {
-        variables: saved_variables,
+        variables: variables_to_save,
         sources: saved_srcs,
     })
 }

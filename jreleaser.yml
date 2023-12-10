@@ -100,7 +100,5 @@ packagers:
       name: homebrew-ffizer # homebrew-tap
     formulaName: FfizerBin
     multiPlatform: true
-    cask:
-      enabled: false
   # scoop:
   #   active: ALWAYS

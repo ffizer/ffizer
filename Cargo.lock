@@ -446,7 +446,7 @@ checksum = "25cbce373ec4653f1a01a31e8a5e5ec0c622dc27ff9c4e6606eefef5cbbed4a5"
 
 [[package]]
 name = "ffizer"
-version = "2.11.4"
+version = "2.12.0"
 dependencies = [
  "assert_cmd",
  "clap",

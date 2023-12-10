@@ -11,7 +11,7 @@ on:
         required: true
   push:
     tags:
-      - "[0-9]+.[0-9]+.[0-9]+*"
+      - "[0-9]+\\.[0-9]+\\.[0-9]+.*"
 
 permissions:
   contents: write
@@ -84,7 +84,7 @@ jobs:
           arguments: release -PartifactsDir=artifacts -PskipArchiveResolver
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.JRELEASER_GITHUB_TOKEN }}
 
       - name: JReleaser output
         if: always()

@@ -54,7 +54,7 @@ assemble:
       options:
         longFileMode: POSIX
         bigNumberMode: POSIX
-      distributionType: BINARY
+      distributionType: FLAT_BINARY # when set to BINARY, packager brew is skipped, archive is not able to remove top level folder, so never flat
       archiveName: "{{distributionName}}_{{projectVersion}}"
       attachPlatform: true
       fileSets:
@@ -66,7 +66,7 @@ assemble:
 
 distributions:
   ffizer:
-    type: BINARY
+    type: BINARY # because use of an archive
     executable:
       windowsExtension: exe
     artifacts:
@@ -89,12 +89,12 @@ distributions:
 
 packagers:
   asdf:
-    active: ALWAYS # RELEASE
+    active: NEVER # RELEASE
     repository:
       active: ALWAYS # RELEASE
       name: asdf-ffizer # asdf-duke
   brew:
-    active: ALWAYS # RELEASE
+    active: ALWAYS
     repository:
       active: ALWAYS # RELEASE
       name: homebrew-ffizer # homebrew-tap

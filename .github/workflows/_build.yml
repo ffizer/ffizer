@@ -67,15 +67,15 @@ jobs:
           target: ${{ matrix.job.target }}
 
       - run: cargo build --release "--target=${{ matrix.job.target }}"
-        if: !matrix.job.use-cross
-
-      - run: cross build --release "--target=${{ matrix.job.target }}""
-        if: matrix.job.use-cross
+        if: ${{ !matrix.job.use-cross }}
 
       - uses: taiki-e/install-action@v2
-        if: matrix.job.use-cross
+        if: ${{ matrix.job.use-cross }}
         with:
           tool: cross
+
+      - run: cross build --release "--target=${{ matrix.job.target }}""
+        if: ${{ matrix.job.use-cross }}
 
       - name: Assemble
         uses: jreleaser/release-action@v2

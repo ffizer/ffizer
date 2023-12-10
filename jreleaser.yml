@@ -54,7 +54,7 @@ assemble:
       options:
         longFileMode: POSIX
         bigNumberMode: POSIX
-      distributionType: FLAT_BINARY # when set to BINARY, packager brew is skipped, archive is not able to remove top level folder, so never flat
+      distributionType: BINARY
       archiveName: "{{distributionName}}_{{projectVersion}}"
       attachPlatform: true
       fileSets:
@@ -70,17 +70,27 @@ distributions:
     executable:
       windowsExtension: exe
     artifacts:
+      # .zip for Homebrew (doesn't support .tgz, .tar.gz)
+      # .tgz for cargo-binstall
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-all-apple-darwin.tgz"
         platform: "osx"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-apple-darwin.tgz"
         platform: "osx-aarch_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-apple-darwin.zip"
+        platform: "osx-aarch_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-apple-darwin.tgz"
+        platform: "osx-x86_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-apple-darwin.zip"
         platform: "osx-x86_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-pc-windows-msvc.zip"
         platform: "windows-x86_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-unknown-linux-gnu.tgz"
         platform: "linux-x86_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-unknown-linux-gnu.zip"
+        platform: "linux-x86_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-unknown-linux-gnu.tgz"
+        platform: "linux-aarch_64"
+      - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-aarch64-unknown-linux-gnu.zip"
         platform: "linux-aarch_64"
       - path: "{{artifactsDir}}/{{distributionName}}_{{projectVersion}}-x86_64-unknown-linux-musl.tgz"
         platform: "linux_musl-x86_64"

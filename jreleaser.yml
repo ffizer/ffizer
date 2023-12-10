@@ -89,12 +89,14 @@ distributions:
 
 packagers:
   asdf:
-    active: RELEASE
+    active: ALWAYS # RELEASE
     repository:
+      active: ALWAYS # RELEASE
       name: asdf-ffizer # asdf-duke
   brew:
-    active: RELEASE
+    active: ALWAYS # RELEASE
     repository:
+      active: ALWAYS # RELEASE
       name: homebrew-ffizer # homebrew-tap
     formulaName: FfizerBin
     multiPlatform: true

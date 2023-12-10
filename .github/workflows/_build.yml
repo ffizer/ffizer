@@ -66,11 +66,16 @@ jobs:
           toolchain: stable
           target: ${{ matrix.job.target }}
 
-      - uses: actions-rs/cargo@v1
+      - run: cargo build --release "--target=${{ matrix.job.target }}"
+        if: !matrix.job.use-cross
+
+      - run: cross build --release "--target=${{ matrix.job.target }}""
+        if: matrix.job.use-cross
+
+      - uses: taiki-e/install-action@v2
+        if: matrix.job.use-cross
         with:
-          use-cross: ${{ matrix.job.use-cross }}
-          command: build
-          args: --release --target=${{ matrix.job.target }}
+          tool: cross
 
       - name: Assemble
         uses: jreleaser/release-action@v2

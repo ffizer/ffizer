@@ -81,7 +81,7 @@ jobs:
       - name: Release
         uses: jreleaser/release-action@v2
         with:
-          arguments: release -PartifactsDir=artifacts -PskipArchiveResolver
+          arguments: full-release -PartifactsDir=artifacts -PskipArchiveResolver
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.JRELEASER_GITHUB_TOKEN }}

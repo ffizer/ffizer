@@ -54,19 +54,19 @@ assemble:
       options:
         longFileMode: POSIX
         bigNumberMode: POSIX
-      distributionType: FLAT_BINARY
+      distributionType: BINARY
       archiveName: "{{distributionName}}_{{projectVersion}}"
       attachPlatform: true
       fileSets:
         - input: "target/{{ osPlatformReplaced }}/release"
-          # output: "."
+          output: ""
           includes: ["ffizer{.exe,}"]
         # - input: "."
         #   includes: ["LICENSE"]
 
 distributions:
   ffizer:
-    type: FLAT_BINARY
+    type: BINARY
     executable:
       windowsExtension: exe
     artifacts:
@@ -98,5 +98,7 @@ packagers:
       name: homebrew-ffizer # homebrew-tap
     formulaName: FfizerBin
     multiPlatform: true
+    cask:
+      enabled: false
   # scoop:
   #   active: ALWAYS

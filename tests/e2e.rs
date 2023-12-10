@@ -301,13 +301,13 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
 
 #[cfg(feature = "test_remote")]
 #[test]
-fn test_1_remote_commitsha1() -> Result<(), Box<dyn Error>> {
+fn test_1_remote_commithash() -> Result<(), Box<dyn Error>> {
     Command::cargo_bin(env!("CARGO_PKG_NAME"))?
         .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
         .arg("--rev")
-        .arg("3ab3bc67b5fab58ceecc031f7ed0eb29c0e0fff8")
+        .arg("3ab3bc67b5fab58ceecc031f7ed0eb29c0e0fff8") // Devskim: ignore DS173237
         .ok()?;
     Ok(())
 }

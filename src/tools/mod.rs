@@ -96,15 +96,15 @@ impl EntryDiff {
                 crate::ui::show_difference_text(expect, actual, true);
             }
             Difference::BinaryContent {
-                expect_md5,
-                actual_md5,
+                expect_digest,
+                actual_digest,
             } => {
                 println!(
                     "difference detected on: {} (detected as binary file)\n",
                     self.relative_path.to_string_lossy()
                 );
-                println!("expected md5: {}", expect_md5);
-                println!("actual md5: {}", actual_md5);
+                println!("expected digest: {}", expect_digest);
+                println!("actual digest: {}", actual_digest);
             }
         }
     }

@@ -1,5 +1,6 @@
 use crate::error::*;
 use crate::path_pattern::PathPattern;
+use md5 as digest; // DevSkim: ignore DS126858
 use std::cmp::Ordering;
 use std::fs;
 use std::fs::FileType;
@@ -34,8 +35,8 @@ pub enum Difference {
         actual: String,
     },
     BinaryContent {
-        expect_md5: String,
-        actual_md5: String,
+        expect_digest: String,
+        actual_digest: String,
     },
     //Permission
 }
@@ -162,15 +163,17 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
 }
 
 fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Difference>> {
-    let expect_md5 = md5::compute(fs::read(&expect_path).map_err(|source| Error::ReadFile {
-        path: expect_path.clone(),
-        source,
-    })?);
-    let actual_md5 = md5::compute(fs::read(&actual_path).map_err(|source| Error::ReadFile {
-        path: actual_path.clone(),
-        source,
-    })?);
-    if expect_md5 == actual_md5 {
+    let expect_digest =
+        digest::compute(fs::read(&expect_path).map_err(|source| Error::ReadFile {
+            path: expect_path.clone(),
+            source,
+        })?);
+    let actual_digest =
+        digest::compute(fs::read(&actual_path).map_err(|source| Error::ReadFile {
+            path: actual_path.clone(),
+            source,
+        })?);
+    if expect_digest == actual_digest {
         Ok(None)
     } else {
         match fs::read_to_string(&expect_path) {
@@ -195,8 +198,8 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
             // content is maybe binary
             Err(e) if e.kind() == io::ErrorKind::InvalidData => {
                 Ok(Some(Difference::BinaryContent {
-                    actual_md5: format!("{:x}", actual_md5),
-                    expect_md5: format!("{:x}", expect_md5),
+                    actual_digest: format!("{:x}", actual_digest),
+                    expect_digest: format!("{:x}", expect_digest),
                 }))
             }
             // other error

@@ -9,7 +9,7 @@ use super::import_cfg::ImportCfg;
 use super::script_cfg::ScriptCfg;
 use super::variable_cfg::VariableCfg;
 
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, JsonSchema)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq, JsonSchema)]
 #[serde(deny_unknown_fields, default)]
 pub struct TemplateCfg {
     /// list of variables/parameters of the template

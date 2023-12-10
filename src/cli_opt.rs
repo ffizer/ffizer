@@ -24,6 +24,9 @@ pub enum Command {
     /// Apply a template into a target directory
     Apply(ApplyOpts),
 
+    /// Reapply templates that were previously applied to a target directory
+    Reapply(ReapplyOpts),
+
     /// Inspect configuration, caches,... (wip)
     Inspect,
 
@@ -60,6 +63,38 @@ pub struct ApplyOpts {
         short = 'd',
         long = "destination",
         //default_value = "."
+        value_name = "FOLDER"
+    )]
+    pub dst_folder: PathBuf,
+
+    /// set variable's value from cli ("key=value")
+    #[arg(short = 'v', long = "variables", value_parser = parse_keyvalue)]
+    pub key_value: Vec<(String, String)>,
+}
+
+#[derive(Args, Debug, Default, Clone)]
+pub struct ReapplyOpts {
+    /// ask for plan confirmation
+    #[arg(long, default_value = "Never", value_enum, ignore_case = true)]
+    pub confirm: AskConfirmation,
+
+    /// mode to update existing file
+    #[arg(long, default_value = "Ask", value_enum, ignore_case = true)]
+    pub update_mode: UpdateMode,
+
+    /// should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
+    #[arg(short = 'y', long = "no-interaction")]
+    pub no_interaction: bool,
+
+    /// in offline, only local templates or cached templates are used
+    #[arg(long = "offline")]
+    pub offline: bool,
+
+    /// destination folder (created if doesn't exist)
+    #[arg(
+        short = 'd',
+        long = "destination",
+        default_value = ".",
         value_name = "FOLDER"
     )]
     pub dst_folder: PathBuf,

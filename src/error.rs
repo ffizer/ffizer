@@ -174,6 +174,11 @@ pub enum Error {
         #[from]
         source: dialoguer::Error,
     },
+    #[error(transparent)]
+    HashError {
+        #[from]
+        source: cid::multihash::Error,
+    }
 }
 
 impl From<serde_yaml::Error> for Error {

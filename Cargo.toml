@@ -14,6 +14,7 @@ exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
 edition = "2021"
 
 [dependencies]
+cid = { version = "0.11.0", features = ["serde", "serde-codec"] }
 clap = { version = "4.4", features = ["derive"] }
 console = "0.15"
 dialoguer = "0.11"
@@ -32,11 +33,13 @@ human-panic = { version = "1.1", optional = true }
 indicatif = "0.17"
 lazy_static = "1.4"
 md5 = "0.7"
+multihash-codetable = { version = "0.1.1", features = ["digest", "sha2"] }
 pathdiff = "0.2.1"
 regex = "1.7"
 run_script = "0.10"
 schemars = "0.8"
 serde = { version = "1.0", features = ["derive"] }
+serde_bytes = "0.11.12"
 serde_json = "1.0"
 serde_plain = "1.0"
 serde_yaml = "0.9"

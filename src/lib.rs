@@ -35,6 +35,7 @@ use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::timeline::load_file_infos;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
@@ -196,7 +197,8 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
-    let past_files = load_file_infos(&ctx.cmd_opt.dst_folder)?;
+    let past_final_files = load_file_infos(&ctx.cmd_opt.dst_folder)?;
+    let mut definitive_files = BTreeMap::new();
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
@@ -216,11 +218,24 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
+                let base_folder = &ctx.cmd_opt.dst_folder;
                 let (local, remote) = mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
-                let current_file = timeline::make_file_info(&ctx.cmd_opt.dst_folder, local.strip_prefix(&ctx.cmd_opt.dst_folder)?)?;
 
-                let update_mode = match past_files.get(&current_file.key) {
-                    Some(i) if i.hash == current_file.hash => &UpdateMode::Override,
+                let local_file = timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?;
+                let key = &local_file.key;
+
+                let remote_file = timeline::make_file_info(base_folder, remote.strip_prefix(base_folder)?)?;
+                // let past_remote_file = remote_files.get(key);
+                let past_file = past_final_files.get(key);
+
+                dbg!(&local_file);
+                dbg!(&remote_file);
+                dbg!(&key);
+
+                // override if the file hasn't changed since last application
+                let update_mode = match past_file { 
+//                    Some(past) if local_file.hash == remote_file.hash => &ctx.cmd_opt.update_mode,
+                    Some(past) if past.hash == local_file.hash => &UpdateMode::Override,
                     _ => &ctx.cmd_opt.update_mode
                 };
 
@@ -248,6 +263,9 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                         update_mode,
                     )?
                 }
+
+                definitive_files.insert(key.clone(), timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?);
+                // 
             }
         }
     }

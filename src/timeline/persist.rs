@@ -12,12 +12,6 @@ pub struct PersistedOptions {
     pub sources: Vec<PersistedSrc>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
-pub struct FileInfo {
-    pub key: String,
-    pub hash: u64,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PersistedSrc {
     pub uri: String,

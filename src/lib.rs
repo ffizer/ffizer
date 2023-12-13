@@ -32,6 +32,7 @@ use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
 use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
+use crate::timeline::load_file_infos;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::fs;
@@ -114,12 +115,13 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     debug!("defining plan of rendering");
     let actions = plan(ctx, source_files, &used_variables)?;
     if ui::confirm_plan(ctx, &actions)? {
-        debug!("executing plan of rendering");
-        execute(ctx, &actions, &used_variables)?;
         debug!("Saving metadata");
         timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
+        debug!("executing plan of rendering");
+        execute(ctx, &actions, &used_variables)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
+        timeline::save_file_infos(&ctx.cmd_opt.dst_folder)?;
     }
     Ok(())
 }
@@ -194,6 +196,8 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
+    let past_files = load_file_infos(&ctx.cmd_opt.dst_folder)?;
+
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
             FileOperation::Nothing => (),
@@ -213,6 +217,13 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
                 let (local, remote) = mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
+                let current_file = timeline::make_file_info(&ctx.cmd_opt.dst_folder, local.strip_prefix(&ctx.cmd_opt.dst_folder)?)?;
+
+                let update_mode = match past_files.get(&current_file.key) {
+                    Some(i) if i.hash == current_file.hash => &UpdateMode::Override,
+                    _ => &ctx.cmd_opt.update_mode
+                };
+
                 let local_digest =
                     md5::compute(fs::read(&local).map_err(|source| Error::ReadFile {
                         path: local.clone(),
@@ -234,7 +245,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                         &PathBuf::from(a.src[0].childpath()),
                         &local,
                         &remote,
-                        &ctx.cmd_opt.update_mode,
+                        update_mode,
                     )?
                 }
             }

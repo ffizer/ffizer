@@ -1,25 +1,31 @@
 use self::persist::*;
 use crate::cfg::{ImportCfg, TemplateCfg};
+use crate::tools::dir_diff_list::walk_dir;
 use crate::variables::Variables;
-use crate::{Result, SourceLoc, SourceUri};
+use crate::{Result, SourceLoc, SourceUri, PathPattern};
+use crate::Error;
+use std::collections::BTreeMap;
+use std::hash::Hasher;
+use std::collections::hash_map::DefaultHasher;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
+use pathdiff::diff_paths;
 
 mod persist;
 
 pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
+const FILES_FILENAME: &str = "files.yaml";
 const OPTIONS_FILENAME: &str = "options.yaml";
 const VERSION_FILENAME: &str = "version.txt";
 
-pub(crate) fn make_template(options: PersistedOptions) -> TemplateCfg {
+pub(crate) fn make_template(sources: Vec<SourceLoc>) -> TemplateCfg {
     // not ready for standalone command, only used as part of reapply for now
     // does not use variables for now, it relies on the variables reimport during apply
-    let imports: Vec<ImportCfg> = options
-        .sources
+    let imports: Vec<ImportCfg> = sources
         .into_iter()
         .map(|source| ImportCfg {
-            uri: source.uri,
+            uri: source.uri.raw,
             rev: source.rev,
             subfolder: source.subfolder.map(|x| x.to_string_lossy().to_string()),
         })
@@ -37,7 +43,28 @@ pub(crate) fn make_template_from_folder(
     target_folder: &Path,
 ) -> Result<SourceLoc> {
     let options = load_options(source_folder)?;
-    let template_cfg = make_template(options);
+
+    let sources: Vec<SourceLoc> = options.sources.into_iter().map(|saved_src| -> Result<SourceLoc> {
+        let src = SourceLoc::try_from(saved_src)?;
+        if src.uri.host.is_none() && !src.uri.path.is_absolute() { // uri is local and relative, we need to make it relative to target_folder
+            let local_path = src.uri
+                .path
+                .canonicalize()
+                .map_err(|err| Error::CanonicalizePath {
+                    path: src.uri.path,
+                    source: err,
+                })?;
+            let relative_path = diff_paths(local_path, target_folder.canonicalize()?).unwrap();
+            Ok(SourceLoc {
+                uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
+                ..src
+            })
+        } else {
+            Ok(src)
+        }
+    }).collect::<Result<Vec<SourceLoc>>>()?;
+
+    let template_cfg = make_template(sources);
 
     serde_yaml::to_writer(
         std::fs::File::create(target_folder.join(".ffizer.yaml"))?,
@@ -69,9 +96,10 @@ fn key_from_loc(source: &SourceLoc) -> (String, String, String) {
 pub(crate) fn load_options(folder: &Path) -> Result<PersistedOptions> {
     let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
     if metadata_path.exists() {
-        Ok(serde_yaml::from_reader(std::fs::File::open(
+        let options = serde_yaml::from_reader(std::fs::File::open(
             metadata_path,
-        )?)?)
+        )?)?;
+        Ok(options)
     } else {
         Ok(PersistedOptions::default())
     }
@@ -127,9 +155,30 @@ pub(crate) fn save_options(
     dst_folder: &Path,
 ) -> Result<()> {
     let previous_options = load_options(dst_folder)?;
+    
+    let relative_source: SourceLoc;
+    let source: &SourceLoc = {
+        if source.uri.host.is_none() && !source.uri.path.is_absolute() { // uri is local and relative, we need to make it relative to dst_folder
+            let local_path = source.uri
+                .path
+                .canonicalize()
+                .map_err(|err| Error::CanonicalizePath {
+                    path: source.uri.path.clone(),
+                    source: err,
+                })?;
+            let relative_path = diff_paths(local_path, dst_folder.canonicalize()?).unwrap();
+            relative_source = SourceLoc {
+                uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
+                ..source.clone()
+            };
+            &relative_source
+        } else {
+            source
+        }
+    };
 
     let options = make_new_options(previous_options, variables, source)?;
-
+    
     let ffizer_folder = dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
         std::fs::create_dir(&ffizer_folder)?;
@@ -145,6 +194,52 @@ pub(crate) fn save_options(
         &options,
     )?;
     Ok(())
+}
+
+pub(crate) fn save_file_infos(target_folder: &Path) -> Result<()> {
+    let infos = make_file_infos(target_folder)?;
+    serde_yaml::to_writer(
+        std::fs::File::create(target_folder.join(FFIZER_DATASTORE_DIRNAME).join(FILES_FILENAME))?,
+        &infos,
+    )?;
+    Ok(())
+}
+
+pub(crate) fn load_file_infos(target_folder: &Path) -> Result<BTreeMap<String, FileInfo>> {
+    let path = target_folder.join(FFIZER_DATASTORE_DIRNAME).join(FILES_FILENAME);
+    if path.exists() {
+        Ok(serde_yaml::from_reader(std::fs::File::open(
+            path,
+        )?)?)
+    } else {
+        Ok(BTreeMap::default())
+    }
+   
+}
+
+pub(crate) fn make_file_info(base_folder: &Path, relative_path: &Path) -> Result<FileInfo> {
+    let mut hasher = DefaultHasher::new();
+    hasher.write(&fs::read(base_folder.join(relative_path))?);
+    let info = FileInfo {
+        key: relative_path.to_string_lossy().to_string(),
+        hash: hasher.finish(),
+    };
+    Ok(info)
+}
+
+
+pub(crate) fn make_file_infos(folder: &Path) -> Result<BTreeMap<String, FileInfo>> {
+    let entries = walk_dir(folder, &[PathPattern::from_str(".ffizer")?])?;
+
+    let mut infos = BTreeMap::new();
+    for entry in entries.into_iter() {
+        if entry.metadata()?.is_file() {
+            let relative_path = entry.path().strip_prefix(folder)?;
+            let file_info = make_file_info(folder, relative_path)?;
+            infos.insert(file_info.key.clone(), file_info);
+        }
+    }
+    Ok(infos)
 }
 
 #[allow(dead_code)] // Used in testing
@@ -166,7 +261,6 @@ mod tests {
     use similar_asserts::assert_eq;
     use std::path::PathBuf;
 
-    use super::persist;
     use super::*;
     use crate::cli_opt::ApplyOpts;
     use crate::tests::new_ctx_from;
@@ -302,29 +396,23 @@ mod tests {
 
         #[rstest]
         fn empty() {
-            let options = persist::PersistedOptions {
-                variables: vec![],
-                sources: vec![],
-            };
-
             let expected = TemplateCfg {
                 use_template_dir: true,
                 ..Default::default()
             };
 
-            assert_eq!(expected, make_template(options))
+            assert_eq!(expected, make_template(vec![]))
         }
 
         #[rstest]
-        fn single_source() {
-            let options = persist::PersistedOptions {
-                variables: vec![],
-                sources: vec![PersistedSrc {
-                    uri: "path/to/foo".to_string(),
+        fn single_source() -> Result<()> {
+            let sources = vec![
+                SourceLoc {
+                    uri: SourceUri::from_str("/path/to/foo")?,
                     rev: None,
-                    subfolder: None,
-                }],
-            };
+                    subfolder: None    
+                }
+            ];
 
             let expected = TemplateCfg {
                 imports: vec![ImportCfg {
@@ -335,26 +423,24 @@ mod tests {
                 use_template_dir: true,
                 ..Default::default()
             };
-            assert_eq!(expected, make_template(options))
+            assert_eq!(expected, make_template(sources));
+            Ok(())
         }
 
         #[rstest]
-        fn multi_source() {
-            let options = persist::PersistedOptions {
-                variables: vec![],
-                sources: vec![
-                    PersistedSrc {
-                        uri: "path/to/foo".to_string(),
-                        rev: None,
-                        subfolder: None,
-                    },
-                    PersistedSrc {
-                        uri: "http://blabla.truc/a/path".into(),
-                        rev: Some("master".into()),
-                        subfolder: Some(PathBuf::from_str("some_subfolder").unwrap()),
-                    },
-                ],
-            };
+        fn multi_source() -> Result<()> {
+            let sources = vec![
+                SourceLoc {
+                    uri: SourceUri::from_str("path/to/foo")?,
+                    rev: None,
+                    subfolder: None,
+                },
+                SourceLoc {
+                    uri: SourceUri::from_str("http://blabla.truc/a/path")?,
+                    rev: Some("master".into()),
+                    subfolder: Some(PathBuf::from_str("some_subfolder").unwrap()),
+                },
+            ];
 
             let expected = TemplateCfg {
                 imports: vec![
@@ -372,7 +458,8 @@ mod tests {
                 use_template_dir: true,
                 ..Default::default()
             };
-            assert_eq!(expected, make_template(options))
+            assert_eq!(expected, make_template(sources));
+            Ok(())
         }
     }
 }

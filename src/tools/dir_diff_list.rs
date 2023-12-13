@@ -211,7 +211,7 @@ fn compare_file(expect_path: PathBuf, actual_path: PathBuf) -> Result<Option<Dif
     }
 }
 
-fn walk_dir<P: AsRef<Path>>(
+pub(crate) fn walk_dir<P: AsRef<Path>>(
     path: P,
     ignores: &[PathPattern],
 ) -> Result<Vec<DirEntry>, walkdir::Error> {

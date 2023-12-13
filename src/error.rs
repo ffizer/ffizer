@@ -178,7 +178,7 @@ pub enum Error {
     HashError {
         #[from]
         source: cid::multihash::Error,
-    }
+    },
 }
 
 impl From<serde_yaml::Error> for Error {

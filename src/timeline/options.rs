@@ -1,11 +1,11 @@
-use crate::{Result,Error};
-use crate::timeline::{PersistedOptions, PersistedVariable, PersistedSrc, key_from_loc};
-use crate::timeline::{FFIZER_DATASTORE_DIRNAME,VERSION_FILENAME};
-use crate::{SourceLoc, Variables, SourceUri};
+use crate::timeline::{key_from_loc, PersistedOptions, PersistedSrc, PersistedVariable};
+use crate::timeline::{FFIZER_DATASTORE_DIRNAME, VERSION_FILENAME};
+use crate::{Error, Result};
+use crate::{SourceLoc, SourceUri, Variables};
 
+use std::fs;
 use std::path::Path;
 use std::str::FromStr;
-use std::fs;
 
 use pathdiff::diff_paths;
 
@@ -14,9 +14,7 @@ const OPTIONS_FILENAME: &str = "options.yaml";
 pub(crate) fn load_options(folder: &Path) -> Result<PersistedOptions> {
     let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
     if metadata_path.exists() {
-        let options = serde_yaml::from_reader(std::fs::File::open(
-            metadata_path,
-        )?)?;
+        let options = serde_yaml::from_reader(std::fs::File::open(metadata_path)?)?;
         Ok(options)
     } else {
         Ok(PersistedOptions::default())
@@ -73,17 +71,20 @@ pub(crate) fn save_options(
     dst_folder: &Path,
 ) -> Result<()> {
     let previous_options = load_options(dst_folder)?;
-    
+
     let relative_source: SourceLoc;
     let source: &SourceLoc = {
-        if source.uri.host.is_none() && !source.uri.path.is_absolute() { // uri is local and relative, we need to make it relative to dst_folder
-            let local_path = source.uri
-                .path
-                .canonicalize()
-                .map_err(|err| Error::CanonicalizePath {
-                    path: source.uri.path.clone(),
-                    source: err,
-                })?;
+        if source.uri.host.is_none() && !source.uri.path.is_absolute() {
+            // uri is local and relative, we need to make it relative to dst_folder
+            let local_path =
+                source
+                    .uri
+                    .path
+                    .canonicalize()
+                    .map_err(|err| Error::CanonicalizePath {
+                        path: source.uri.path.clone(),
+                        source: err,
+                    })?;
             let relative_path = diff_paths(local_path, dst_folder.canonicalize()?).unwrap();
             relative_source = SourceLoc {
                 uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
@@ -96,7 +97,7 @@ pub(crate) fn save_options(
     };
 
     let options = make_new_options(previous_options, variables, source)?;
-    
+
     let ffizer_folder = dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
         std::fs::create_dir(&ffizer_folder)?;

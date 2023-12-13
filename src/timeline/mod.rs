@@ -1,18 +1,17 @@
-pub(crate) mod persist;
 mod files;
 mod options;
+pub(crate) mod persist;
 
-pub(crate) use persist::*;
 pub(crate) use files::*;
 pub(crate) use options::*;
+pub(crate) use persist::*;
 
 use crate::cfg::{ImportCfg, TemplateCfg};
-use crate::{Result, SourceLoc, SourceUri};
 use crate::Error;
+use crate::{Result, SourceLoc, SourceUri};
+use pathdiff::diff_paths;
 use std::path::Path;
 use std::str::FromStr;
-use pathdiff::diff_paths;
-
 
 pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
 const VERSION_FILENAME: &str = "version.txt";
@@ -42,25 +41,31 @@ pub(crate) fn make_template_from_folder(
 ) -> Result<SourceLoc> {
     let options = load_options(source_folder)?;
 
-    let sources: Vec<SourceLoc> = options.sources.into_iter().map(|saved_src| -> Result<SourceLoc> {
-        let src = SourceLoc::try_from(saved_src)?;
-        if src.uri.host.is_none() && !src.uri.path.is_absolute() { // uri is local and relative, we need to make it relative to target_folder
-            let local_path = src.uri
-                .path
-                .canonicalize()
-                .map_err(|err| Error::CanonicalizePath {
-                    path: src.uri.path,
-                    source: err,
-                })?;
-            let relative_path = diff_paths(local_path, target_folder.canonicalize()?).unwrap();
-            Ok(SourceLoc {
-                uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
-                ..src
-            })
-        } else {
-            Ok(src)
-        }
-    }).collect::<Result<Vec<SourceLoc>>>()?;
+    let sources: Vec<SourceLoc> = options
+        .sources
+        .into_iter()
+        .map(|saved_src| -> Result<SourceLoc> {
+            let src = SourceLoc::try_from(saved_src)?;
+            if src.uri.host.is_none() && !src.uri.path.is_absolute() {
+                // uri is local and relative, we need to make it relative to target_folder
+                let local_path =
+                    src.uri
+                        .path
+                        .canonicalize()
+                        .map_err(|err| Error::CanonicalizePath {
+                            path: src.uri.path,
+                            source: err,
+                        })?;
+                let relative_path = diff_paths(local_path, target_folder.canonicalize()?).unwrap();
+                Ok(SourceLoc {
+                    uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
+                    ..src
+                })
+            } else {
+                Ok(src)
+            }
+        })
+        .collect::<Result<Vec<SourceLoc>>>()?;
 
     let template_cfg = make_template(sources);
 
@@ -120,13 +125,11 @@ mod tests {
 
         #[rstest]
         fn single_source() -> Result<()> {
-            let sources = vec![
-                SourceLoc {
-                    uri: SourceUri::from_str("/path/to/foo")?,
-                    rev: None,
-                    subfolder: None    
-                }
-            ];
+            let sources = vec![SourceLoc {
+                uri: SourceUri::from_str("/path/to/foo")?,
+                rev: None,
+                subfolder: None,
+            }];
 
             let expected = TemplateCfg {
                 imports: vec![ImportCfg {

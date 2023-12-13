@@ -32,13 +32,13 @@ use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
 use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
-use crate::timeline::load_file_infos;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
+use timeline::FileInfo;
 use tracing::{debug, warn};
 
 pub(crate) const IGNORED_FOLDER_PREFIX: &str = "_ffizer_ignore";
@@ -119,10 +119,19 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         debug!("Saving metadata");
         timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
         debug!("executing plan of rendering");
-        execute(ctx, &actions, &used_variables)?;
+        let (new_remote, new_final) = execute(ctx, &actions, &used_variables)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
-        timeline::save_file_infos(&ctx.cmd_opt.dst_folder)?;
+        timeline::save_source_infos(
+            new_final.into_values(),
+            &ctx.cmd_opt.dst_folder,
+            "final".into(),
+        )?;
+        timeline::save_source_infos(
+            new_remote.into_values(),
+            &ctx.cmd_opt.dst_folder,
+            "remote".into(),
+        )?;
     }
     Ok(())
 }
@@ -190,16 +199,26 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
 }
 
 //TODO accumulate Result (and error)
-fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
+fn execute(
+    ctx: &Ctx,
+    actions: &[Action],
+    variables: &Variables,
+) -> Result<(HashMap<String, FileInfo>, HashMap<String, FileInfo>)> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
-    let past_final_files = load_file_infos(&ctx.cmd_opt.dst_folder)?;
-    let mut definitive_files = BTreeMap::new();
+    // let source = &ctx.cmd_opt.src;
+    let target_folder = &ctx.cmd_opt.dst_folder;
+    let past_remote_files = timeline::get_source_infos(target_folder, "remote".into())?;
+    let past_final_files = timeline::get_source_infos(target_folder, "final".into())?;
+    let mut new_remote_files = HashMap::new();
+    let mut new_final_files = HashMap::new();
 
+    dbg!(&past_remote_files.len());
+    dbg!(&past_final_files.len());
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
             FileOperation::Nothing => (),
@@ -221,24 +240,31 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                 let base_folder = &ctx.cmd_opt.dst_folder;
                 let (local, remote) = mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
 
-                let local_file = timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?;
+                let local_file =
+                    timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?;
                 let key = &local_file.key;
 
-                let remote_file = timeline::make_file_info(base_folder, remote.strip_prefix(base_folder)?)?;
-                // let past_remote_file = remote_files.get(key);
-                let past_file = past_final_files.get(key);
+                let remote_file =
+                    timeline::make_file_info(base_folder, remote.strip_prefix(base_folder)?)?;
+                let past_remote_file = past_remote_files.get(&remote_file.key);
+                let past_final_file = past_final_files.get(&local_file.key);
 
-                dbg!(&local_file);
-                dbg!(&remote_file);
-                dbg!(&key);
-
-                // override if the file hasn't changed since last application
-                let update_mode = match past_file { 
-//                    Some(past) if local_file.hash == remote_file.hash => &ctx.cmd_opt.update_mode,
-                    Some(past) if past.hash == local_file.hash => &UpdateMode::Override,
-                    _ => &ctx.cmd_opt.update_mode
+                let update_mode = if past_remote_file.is_some_and(|x| x.hash == remote_file.hash) {
+                    // keep if the template hasn't changed since last time
+                    &UpdateMode::Keep
+                } else if past_final_file
+                    .zip(past_remote_file)
+                    .is_some_and(|(f, r)| f.hash == r.hash && r.hash == local_file.hash)
+                {
+                    // override if the user accepted remote last time and hasn't changed anything since
+                    &UpdateMode::Override
+                } else {
+                    &ctx.cmd_opt.update_mode
                 };
+                //dbg!(remote_file.hash == past_remote_file.unwrap().hash);
+                //dbg!(&update_mode);
 
+                //dbg!(past_final_file.unwrap().hash == past_remote_file.unwrap().hash);
                 let local_digest =
                     md5::compute(fs::read(&local).map_err(|source| Error::ReadFile {
                         path: local.clone(),
@@ -264,12 +290,16 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                     )?
                 }
 
-                definitive_files.insert(key.clone(), timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?);
-                // 
+                new_final_files.insert(
+                    key.clone(),
+                    timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?,
+                );
+                new_remote_files.insert(key.clone(), remote_file);
+                //
             }
         }
     }
-    Ok(())
+    Ok((new_remote_files, new_final_files))
 }
 
 fn mk_file_on_action(

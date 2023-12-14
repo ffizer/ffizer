@@ -34,7 +34,6 @@ use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
-use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
@@ -122,16 +121,8 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         let (new_remote, new_final) = execute(ctx, &actions, &used_variables)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
-        timeline::save_source_infos(
-            new_final.into_values(),
-            &ctx.cmd_opt.dst_folder,
-            "final".into(),
-        )?;
-        timeline::save_source_infos(
-            new_remote.into_values(),
-            &ctx.cmd_opt.dst_folder,
-            "remote".into(),
-        )?;
+        timeline::save_infos_for_source(new_final, &ctx.cmd_opt.dst_folder, "final".into())?;
+        timeline::save_infos_for_source(new_remote, &ctx.cmd_opt.dst_folder, "remote".into())?;
     }
     Ok(())
 }
@@ -203,7 +194,7 @@ fn execute(
     ctx: &Ctx,
     actions: &[Action],
     variables: &Variables,
-) -> Result<(HashMap<String, FileInfo>, HashMap<String, FileInfo>)> {
+) -> Result<(Vec<FileInfo>, Vec<FileInfo>)> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -212,13 +203,11 @@ fn execute(
 
     // let source = &ctx.cmd_opt.src;
     let target_folder = &ctx.cmd_opt.dst_folder;
-    let past_remote_files = timeline::get_source_infos(target_folder, "remote".into())?;
-    let past_final_files = timeline::get_source_infos(target_folder, "final".into())?;
-    let mut new_remote_files = HashMap::new();
-    let mut new_final_files = HashMap::new();
+    let past_remote_files = timeline::get_infos_for_source(target_folder, "remote".into())?;
+    let past_final_files = timeline::get_infos_for_source(target_folder, "final".into())?;
+    let mut new_remote_files = Vec::new();
+    let mut new_final_files = Vec::new();
 
-    dbg!(&past_remote_files.len());
-    dbg!(&past_final_files.len());
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
             FileOperation::Nothing => (),
@@ -233,69 +222,65 @@ fn execute(
                 )?
             }
             FileOperation::AddFile => {
-                mk_file_on_action(&mut handlebars, variables, a, "").map(|_| ())?
+                let (_, remote) = mk_file_on_action(&mut handlebars, variables, a, "")?;
+                let remote_file =
+                    timeline::make_file_info(target_folder, remote.strip_prefix(target_folder)?)?;
+                let final_file = remote_file.clone();
+                new_final_files.push(remote_file);
+                new_remote_files.push(final_file);
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
-                let base_folder = &ctx.cmd_opt.dst_folder;
-                let (local, remote) = mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
+                let (local_path, remote_path) =
+                    mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
 
-                let local_file =
-                    timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?;
-                let key = &local_file.key;
+                let local = timeline::make_file_info(
+                    target_folder,
+                    local_path.strip_prefix(target_folder)?,
+                )?;
+                let key = &local.key;
 
-                let remote_file =
-                    timeline::make_file_info(base_folder, remote.strip_prefix(base_folder)?)?;
-                let past_remote_file = past_remote_files.get(&remote_file.key);
-                let past_final_file = past_final_files.get(&local_file.key);
+                let remote = timeline::make_file_info(
+                    target_folder,
+                    remote_path.strip_prefix(target_folder)?,
+                )?
+                .with_key(key);
+                let past_remote_file = past_remote_files.get(key);
+                let past_final_file = past_final_files.get(key);
 
-                let update_mode = if past_remote_file.is_some_and(|x| x.hash == remote_file.hash) {
+                let update_mode = if past_remote_file.is_some_and(|x| *x == remote) {
                     // keep if the template hasn't changed since last time
                     &UpdateMode::Keep
                 } else if past_final_file
                     .zip(past_remote_file)
-                    .is_some_and(|(f, r)| f.hash == r.hash && r.hash == local_file.hash)
+                    .is_some_and(|(f, r)| *f == *r && *r == local)
                 {
                     // override if the user accepted remote last time and hasn't changed anything since
                     &UpdateMode::Override
                 } else {
                     &ctx.cmd_opt.update_mode
                 };
-                //dbg!(remote_file.hash == past_remote_file.unwrap().hash);
-                //dbg!(&update_mode);
 
-                //dbg!(past_final_file.unwrap().hash == past_remote_file.unwrap().hash);
-                let local_digest =
-                    md5::compute(fs::read(&local).map_err(|source| Error::ReadFile {
-                        path: local.clone(),
-                        source,
-                    })?);
-                let remote_digest =
-                    md5::compute(fs::read(&remote).map_err(|source| Error::ReadFile {
-                        path: remote.clone(),
-                        source,
-                    })?);
-                if local_digest == remote_digest {
-                    fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
-                        path: remote.clone(),
+                if local == remote {
+                    fs::remove_file(&remote_path).map_err(|source| Error::RemoveFile {
+                        path: remote_path.clone(),
                         source,
                     })?
                 } else {
                     update_file(
                         //FIXME to use all the source
                         &PathBuf::from(a.src[0].childpath()),
-                        &local,
-                        &remote,
+                        &local_path,
+                        &remote_path,
                         update_mode,
                     )?
                 }
 
-                new_final_files.insert(
-                    key.clone(),
-                    timeline::make_file_info(base_folder, local.strip_prefix(base_folder)?)?,
-                );
-                new_remote_files.insert(key.clone(), remote_file);
-                //
+                new_remote_files.push(remote);
+                new_final_files.push(timeline::make_file_info(
+                    target_folder,
+                    local_path.strip_prefix(target_folder)?,
+                )?);
             }
         }
     }

@@ -201,6 +201,8 @@ fn execute(
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
+    dbg!("Aaaaaaaaaa");
+
     // let source = &ctx.cmd_opt.src;
     let target_folder = &ctx.cmd_opt.dst_folder;
     let past_remote_files = timeline::get_infos_for_source(target_folder, "remote".into())?;

@@ -34,6 +34,7 @@ indicatif = "0.17"
 lazy_static = "1.4"
 md5 = "0.7"
 multihash-codetable = { version = "0.1.1", features = ["digest", "sha2"] }
+path-absolutize = "3.1.1"
 pathdiff = "0.2.1"
 regex = "1.7"
 run_script = "0.10"

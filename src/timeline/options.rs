@@ -1,15 +1,79 @@
-use crate::timeline::{key_from_loc, PersistedOptions, PersistedSrc, PersistedVariable};
+use crate::timeline::key_from_loc;
 use crate::timeline::{FFIZER_DATASTORE_DIRNAME, VERSION_FILENAME};
-use crate::{Error, Result};
+use crate::Result;
 use crate::{SourceLoc, SourceUri, Variables};
 
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-use pathdiff::diff_paths;
+use super::make_relative;
 
 const OPTIONS_FILENAME: &str = "options.yaml";
+
+#[derive(Debug, Serialize, Deserialize, Default)]
+pub struct PersistedOptions {
+    pub variables: Vec<PersistedVariable>,
+    pub sources: Vec<PersistedSrc>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PersistedSrc {
+    pub uri: String,
+    pub rev: Option<String>,
+    pub subfolder: Option<PathBuf>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PersistedVariable {
+    pub name: String,
+    pub default_value: serde_yaml::Value,
+}
+
+impl From<SourceLoc> for PersistedSrc {
+    fn from(value: SourceLoc) -> Self {
+        PersistedSrc {
+            uri: value.uri.raw,
+            rev: value.rev,
+            subfolder: value.subfolder,
+        }
+    }
+}
+
+impl TryFrom<PersistedSrc> for SourceLoc {
+    fn try_from(value: PersistedSrc) -> Result<Self> {
+        Ok(SourceLoc {
+            uri: SourceUri::from_str(&value.uri)?,
+            rev: value.rev,
+            subfolder: value.subfolder,
+        })
+    }
+    type Error = crate::Error;
+}
+
+impl TryFrom<Vec<PersistedVariable>> for Variables {
+    type Error = crate::Error;
+    fn try_from(persisted: Vec<PersistedVariable>) -> Result<Self> {
+        let mut out = Variables::default();
+        for saved_var in persisted {
+            out.insert(saved_var.name, saved_var.default_value)?;
+        }
+        Ok(out)
+    }
+}
+
+impl From<Variables> for Vec<PersistedVariable> {
+    fn from(variables: Variables) -> Self {
+        variables
+            .tree()
+            .iter()
+            .map(|(k, v)| PersistedVariable {
+                name: k.into(),
+                default_value: v.clone(),
+            })
+            .collect::<Vec<PersistedVariable>>()
+    }
+}
 
 pub(crate) fn load_options(folder: &Path) -> Result<PersistedOptions> {
     let metadata_path = folder.join(FFIZER_DATASTORE_DIRNAME).join(OPTIONS_FILENAME);
@@ -21,7 +85,7 @@ pub(crate) fn load_options(folder: &Path) -> Result<PersistedOptions> {
     }
 }
 
-pub(crate) fn make_new_options(
+pub(crate) fn update_options(
     previous_opts: PersistedOptions,
     variables: &Variables,
     source: &SourceLoc,
@@ -70,37 +134,16 @@ pub(crate) fn save_options(
     source: &SourceLoc,
     dst_folder: &Path,
 ) -> Result<()> {
+    dbg!(&dst_folder);
     let previous_options = load_options(dst_folder)?;
 
-    let relative_source: SourceLoc;
-    let source: &SourceLoc = {
-        if source.uri.host.is_none() && !source.uri.path.is_absolute() {
-            // uri is local and relative, we need to make it relative to dst_folder
-            let local_path =
-                source
-                    .uri
-                    .path
-                    .canonicalize()
-                    .map_err(|err| Error::CanonicalizePath {
-                        path: source.uri.path.clone(),
-                        source: err,
-                    })?;
-            let relative_path = diff_paths(local_path, dst_folder.canonicalize()?).unwrap();
-            relative_source = SourceLoc {
-                uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
-                ..source.clone()
-            };
-            &relative_source
-        } else {
-            source
-        }
-    };
+    let source: SourceLoc = make_relative(source.clone(), &std::env::current_dir()?, dst_folder)?;
 
-    let options = make_new_options(previous_options, variables, source)?;
+    let options = update_options(previous_options, variables, &source)?;
 
-    let ffizer_folder = dst_folder.join(FFIZER_DATASTORE_DIRNAME);
+    let ffizer_folder = dbg!(dst_folder.join(FFIZER_DATASTORE_DIRNAME));
     if !ffizer_folder.exists() {
-        std::fs::create_dir(&ffizer_folder)?;
+        std::fs::create_dir(dbg!(&ffizer_folder))?;
     }
     // Save ffizer version
     fs::write(
@@ -150,7 +193,9 @@ mod tests {
 
     #[fixture]
     fn tmp_dir() -> TempDir {
-        TempDir::new().expect("create a temp dir")
+        let t = TempDir::new().expect("create a temp dir");
+        dbg!(&t);
+        t
     }
 
     fn new_ctx_from_src_dst(src: &SourceLoc, dst: &Path) -> Ctx {
@@ -209,15 +254,19 @@ mod tests {
             tmp_dir: TempDir,
             variables: Variables,
             #[from(local_source)] source_1: SourceLoc,
-        ) {
+        ) -> Result<()> {
             let ctx_1 = new_ctx_from_src_dst(&source_1, tmp_dir.path());
 
-            save_options(&variables, &ctx_1.cmd_opt.src, &ctx_1.cmd_opt.dst_folder).unwrap();
+            save_options(&variables, &ctx_1.cmd_opt.src, &ctx_1.cmd_opt.dst_folder)?;
 
-            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
+            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder)?
+                .into_iter()
+                .map(|loc| make_relative(loc, &ctx_1.cmd_opt.dst_folder, &std::env::current_dir()?))
+                .collect::<Result<Vec<SourceLoc>>>()?;
 
             let expected = vec![source_1];
             assert_eq!(expected, saved_sources);
+            Ok(())
         }
 
         #[rstest]
@@ -226,17 +275,21 @@ mod tests {
             variables: Variables,
             #[from(local_source)] source_1: SourceLoc,
             #[from(remote_source)] source_2: SourceLoc,
-        ) {
+        ) -> Result<()> {
             let ctx_1 = new_ctx_from_src_dst(&source_1, tmp_dir.path());
             let ctx_2 = new_ctx_from_src_dst(&source_2, tmp_dir.path());
 
             save_options(&variables, &ctx_1.cmd_opt.src, &ctx_1.cmd_opt.dst_folder).unwrap();
             save_options(&variables, &ctx_2.cmd_opt.src, &ctx_2.cmd_opt.dst_folder).unwrap();
 
-            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
+            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder)?
+                .into_iter()
+                .map(|loc| make_relative(loc, &ctx_1.cmd_opt.dst_folder, &std::env::current_dir()?))
+                .collect::<Result<Vec<SourceLoc>>>()?;
 
             let expected = vec![source_2, source_1];
             assert_eq!(expected, saved_sources);
+            Ok(())
         }
 
         #[rstest]
@@ -244,7 +297,7 @@ mod tests {
             tmp_dir: TempDir,
             variables: Variables,
             #[from(local_source)] source_1: SourceLoc,
-        ) {
+        ) -> Result<()> {
             let source_2 = SourceLoc {
                 rev: Some("Some-other-branch".to_string()),
                 ..source_1.clone()
@@ -256,10 +309,14 @@ mod tests {
             save_options(&variables, &ctx_1.cmd_opt.src, &ctx_1.cmd_opt.dst_folder).unwrap();
             save_options(&variables, &ctx_2.cmd_opt.src, &ctx_2.cmd_opt.dst_folder).unwrap();
 
-            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder).unwrap();
+            let saved_sources = get_saved_sources(&ctx_1.cmd_opt.dst_folder)?
+                .into_iter()
+                .map(|loc| make_relative(loc, &ctx_1.cmd_opt.dst_folder, &std::env::current_dir()?))
+                .collect::<Result<Vec<SourceLoc>>>()?;
 
             let expected = vec![source_2];
             assert_eq!(expected, saved_sources);
+            Ok(())
         }
     }
 }

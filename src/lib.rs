@@ -117,14 +117,13 @@ pub fn process(ctx: &Ctx) -> Result<()> {
 
     if ui::confirm_plan(ctx, &actions)? {
         debug!("executing plan of rendering");
-        let (new_remote, new_final) = execute(ctx, &actions, &used_variables)?;
+        let new_metas = execute(ctx, &actions, &used_variables)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
         debug!("Saving metadata");
         timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
 
-        timeline::save_metas_for_source(new_final, &ctx.cmd_opt.dst_folder, "final".into())?;
-        timeline::save_metas_for_source(new_remote, &ctx.cmd_opt.dst_folder, "remote".into())?;
+        timeline::save_metas_for_source(new_metas, &ctx.cmd_opt.dst_folder, "global".into())?;
     }
     Ok(())
 }
@@ -213,7 +212,7 @@ fn execute(
     ctx: &Ctx,
     actions: &[Action],
     variables: &Variables,
-) -> Result<(Vec<FileMeta>, Vec<FileMeta>)> {
+) -> Result<Vec<(FileMeta, FileMeta)>> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -222,10 +221,8 @@ fn execute(
 
     // let source = &ctx.cmd_opt.src;
     let target_folder = &ctx.cmd_opt.dst_folder;
-    let past_remote_map = timeline::get_metas_for_source(target_folder, "remote".into())?;
-    let past_final_map = timeline::get_metas_for_source(target_folder, "final".into())?;
-    let mut new_remote_map = Vec::new();
-    let mut new_final_map = Vec::new();
+    let past_metas = timeline::get_stored_metas_for_source(target_folder, "global".into())?;
+    let mut new_metas = Vec::new();
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
@@ -244,8 +241,7 @@ fn execute(
                 let (_, remote) = mk_file_on_action(&mut handlebars, variables, a, "")?;
                 let remote_meta =
                     timeline::get_meta(target_folder, remote.strip_prefix(target_folder)?)?;
-                new_final_map.push(remote_meta.clone());
-                new_remote_map.push(remote_meta);
+                new_metas.push((remote_meta.clone(), remote_meta));
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
@@ -266,16 +262,12 @@ fn execute(
                         path: remote_path.clone(),
                         source,
                     })?;
-                    new_final_map.push(remote.clone());
-                    new_remote_map.push(remote);
+                    new_metas.push((remote.clone(), remote));
                     continue;
                 }
 
-                let past_remote = past_remote_map.get(key);
-                let past_final = past_final_map.get(key);
-
-                let update_mode = match (past_remote, past_final) {
-                    (Some(past_remote), Some(past_final))
+                let update_mode = match past_metas.get(key) {
+                    Some((past_remote, past_final))
                         if ctx.cmd_opt.update_mode == UpdateMode::Auto =>
                     {
                         decide_update_mode(&local, &remote, past_remote, past_final)
@@ -291,15 +283,14 @@ fn execute(
                     &update_mode,
                 )?;
 
-                new_remote_map.push(remote);
-                new_final_map.push(timeline::get_meta(
+                new_metas.push((remote, timeline::get_meta(
                     target_folder,
                     local_path.strip_prefix(target_folder)?,
-                )?);
+                )?));
             }
         }
     }
-    Ok((new_remote_map, new_final_map))
+    Ok(new_metas)
 }
 
 fn mk_file_on_action(

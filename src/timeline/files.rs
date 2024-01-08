@@ -27,27 +27,27 @@ impl FileMeta {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct TrackedFiles {
-    pub files: HashMap<String, HashMap<String, FileMeta>>,
+    pub files: HashMap<String, HashMap<String, (FileMeta, FileMeta)>>,
 }
 
 pub(crate) fn save_metas_for_source<T>(infos: T, target_folder: &Path, source: String) -> Result<()>
 where
-    T: IntoIterator<Item = FileMeta>,
+    T: IntoIterator<Item = (FileMeta, FileMeta)>,
 {
     let mut tracked = load_tracked(target_folder)?;
-    let mut map: HashMap<String, FileMeta> = HashMap::new();
+    let mut map: HashMap<String, (FileMeta, FileMeta)> = HashMap::new();
     for info in infos {
-        map.insert(info.key.clone(), info);
+        map.insert(info.0.key.clone(), info); // bad, should enforce keys to be identical
     }
     tracked.files.insert(source, map);
     save_tracked(&tracked, target_folder)?;
     Ok(())
 }
 
-pub(crate) fn get_metas_for_source(
+pub(crate) fn get_stored_metas_for_source(
     target_folder: &Path,
     source: String,
-) -> Result<HashMap<String, FileMeta>> {
+) -> Result<HashMap<String, (FileMeta, FileMeta)>> {
     let tracked = load_tracked(target_folder)?;
     let infos = tracked
         .files

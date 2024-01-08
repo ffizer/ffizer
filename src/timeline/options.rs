@@ -134,16 +134,15 @@ pub(crate) fn save_options(
     source: &SourceLoc,
     dst_folder: &Path,
 ) -> Result<()> {
-    dbg!(&dst_folder);
     let previous_options = load_options(dst_folder)?;
 
     let source: SourceLoc = make_relative(source.clone(), &std::env::current_dir()?, dst_folder)?;
 
     let options = update_options(previous_options, variables, &source)?;
 
-    let ffizer_folder = dbg!(dst_folder.join(FFIZER_DATASTORE_DIRNAME));
+    let ffizer_folder = dst_folder.join(FFIZER_DATASTORE_DIRNAME);
     if !ffizer_folder.exists() {
-        std::fs::create_dir(dbg!(&ffizer_folder))?;
+        std::fs::create_dir(&ffizer_folder)?;
     }
     // Save ffizer version
     fs::write(

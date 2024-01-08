@@ -37,7 +37,7 @@ use handlebars_misc_helpers::new_hbs;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
-use timeline::FileInfo;
+use timeline::FileMeta;
 use tracing::{debug, warn};
 
 pub(crate) const IGNORED_FOLDER_PREFIX: &str = "_ffizer_ignore";
@@ -114,15 +114,17 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     let source_files = template_composite.find_sourcefiles()?;
     debug!("defining plan of rendering");
     let actions = plan(ctx, source_files, &used_variables)?;
+
     if ui::confirm_plan(ctx, &actions)? {
-        debug!("Saving metadata");
-        timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
         debug!("executing plan of rendering");
         let (new_remote, new_final) = execute(ctx, &actions, &used_variables)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
-        timeline::save_infos_for_source(new_final, &ctx.cmd_opt.dst_folder, "final".into())?;
-        timeline::save_infos_for_source(new_remote, &ctx.cmd_opt.dst_folder, "remote".into())?;
+        debug!("Saving metadata");
+        timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
+
+        timeline::save_metas_for_source(new_final, &ctx.cmd_opt.dst_folder, "final".into())?;
+        timeline::save_metas_for_source(new_remote, &ctx.cmd_opt.dst_folder, "remote".into())?;
     }
     Ok(())
 }
@@ -189,26 +191,41 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
     Ok(actions)
 }
 
+fn decide_update_mode(
+    local: &FileMeta,
+    remote: &FileMeta,
+    past_remote: &FileMeta,
+    past_final: &FileMeta,
+) -> UpdateMode {
+    if past_remote == remote {
+        // keep if the template hasn't changed since last time
+        UpdateMode::Keep
+    } else if past_final == past_remote && past_final == local {
+        // override if the user accepted remote last time and hasn't changed anything since
+        UpdateMode::Override
+    } else {
+        UpdateMode::Ask
+    }
+}
+
 //TODO accumulate Result (and error)
 fn execute(
     ctx: &Ctx,
     actions: &[Action],
     variables: &Variables,
-) -> Result<(Vec<FileInfo>, Vec<FileInfo>)> {
+) -> Result<(Vec<FileMeta>, Vec<FileMeta>)> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
-    dbg!("Aaaaaaaaaa");
-
     // let source = &ctx.cmd_opt.src;
     let target_folder = &ctx.cmd_opt.dst_folder;
-    let past_remote_files = timeline::get_infos_for_source(target_folder, "remote".into())?;
-    let past_final_files = timeline::get_infos_for_source(target_folder, "final".into())?;
-    let mut new_remote_files = Vec::new();
-    let mut new_final_files = Vec::new();
+    let past_remote_map = timeline::get_metas_for_source(target_folder, "remote".into())?;
+    let past_final_map = timeline::get_metas_for_source(target_folder, "final".into())?;
+    let mut new_remote_map = Vec::new();
+    let mut new_final_map = Vec::new();
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
@@ -225,68 +242,64 @@ fn execute(
             }
             FileOperation::AddFile => {
                 let (_, remote) = mk_file_on_action(&mut handlebars, variables, a, "")?;
-                let remote_file =
-                    timeline::make_file_info(target_folder, remote.strip_prefix(target_folder)?)?;
-                let final_file = remote_file.clone();
-                new_final_files.push(remote_file);
-                new_remote_files.push(final_file);
+                let remote_meta =
+                    timeline::get_meta(target_folder, remote.strip_prefix(target_folder)?)?;
+                new_final_map.push(remote_meta.clone());
+                new_remote_map.push(remote_meta);
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
                 let (local_path, remote_path) =
                     mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
 
-                let local = timeline::make_file_info(
-                    target_folder,
-                    local_path.strip_prefix(target_folder)?,
-                )?;
+                let local =
+                    timeline::get_meta(target_folder, local_path.strip_prefix(target_folder)?)?;
                 let key = &local.key;
 
-                let remote = timeline::make_file_info(
-                    target_folder,
-                    remote_path.strip_prefix(target_folder)?,
-                )?
-                .with_key(key);
-                let past_remote_file = past_remote_files.get(key);
-                let past_final_file = past_final_files.get(key);
+                let remote =
+                    timeline::get_meta(target_folder, remote_path.strip_prefix(target_folder)?)?
+                        .with_key(key);
 
-                let update_mode = if past_remote_file.is_some_and(|x| *x == remote) {
-                    // keep if the template hasn't changed since last time
-                    &UpdateMode::Keep
-                } else if past_final_file
-                    .zip(past_remote_file)
-                    .is_some_and(|(f, r)| *f == *r && *r == local)
-                {
-                    // override if the user accepted remote last time and hasn't changed anything since
-                    &UpdateMode::Override
-                } else {
-                    &ctx.cmd_opt.update_mode
-                };
-
+                // If there are no changes, skip update
                 if local == remote {
                     fs::remove_file(&remote_path).map_err(|source| Error::RemoveFile {
                         path: remote_path.clone(),
                         source,
-                    })?
-                } else {
-                    update_file(
-                        //FIXME to use all the source
-                        &PathBuf::from(a.src[0].childpath()),
-                        &local_path,
-                        &remote_path,
-                        update_mode,
-                    )?
+                    })?;
+                    new_final_map.push(remote.clone());
+                    new_remote_map.push(remote);
+                    continue;
                 }
 
-                new_remote_files.push(remote);
-                new_final_files.push(timeline::make_file_info(
+                let past_remote = past_remote_map.get(key);
+                let past_final = past_final_map.get(key);
+
+                let update_mode = match (past_remote, past_final) {
+                    (Some(past_remote), Some(past_final))
+                        if ctx.cmd_opt.update_mode == UpdateMode::Auto =>
+                    {
+                        decide_update_mode(&local, &remote, past_remote, past_final)
+                    }
+                    _ => ctx.cmd_opt.update_mode.clone(),
+                };
+
+                update_file(
+                    //FIXME to use all the source
+                    &PathBuf::from(a.src[0].childpath()),
+                    &local_path,
+                    &remote_path,
+                    &update_mode,
+                )?;
+
+                new_remote_map.push(remote);
+                new_final_map.push(timeline::get_meta(
                     target_folder,
                     local_path.strip_prefix(target_folder)?,
                 )?);
             }
         }
     }
-    Ok((new_remote_files, new_final_files))
+    Ok((new_remote_map, new_final_map))
 }
 
 fn mk_file_on_action(
@@ -411,6 +424,9 @@ where
     let src = src.as_ref();
     loop {
         match mode {
+            UpdateMode::Auto => {
+                mode = UpdateMode::Ask;
+            }
             UpdateMode::Ask => {
                 mode = ui::ask_update_mode(local)?;
             }

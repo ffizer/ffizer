@@ -11,12 +11,12 @@ use multihash_codetable::{Code, MultihashDigest};
 const FILES_FILENAME: &str = "files.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub(crate) struct FileInfo {
+pub(crate) struct FileMeta {
     pub key: String,
     pub hash: Cid,
 }
 
-impl FileInfo {
+impl FileMeta {
     pub fn with_key(self, key: &String) -> Self {
         Self {
             key: key.to_owned(),
@@ -27,15 +27,15 @@ impl FileInfo {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct TrackedFiles {
-    pub files: HashMap<String, HashMap<String, FileInfo>>,
+    pub files: HashMap<String, HashMap<String, FileMeta>>,
 }
 
-pub(crate) fn save_infos_for_source<T>(infos: T, target_folder: &Path, source: String) -> Result<()>
+pub(crate) fn save_metas_for_source<T>(infos: T, target_folder: &Path, source: String) -> Result<()>
 where
-    T: IntoIterator<Item = FileInfo>,
+    T: IntoIterator<Item = FileMeta>,
 {
     let mut tracked = load_tracked(target_folder)?;
-    let mut map: HashMap<String, FileInfo> = HashMap::new();
+    let mut map: HashMap<String, FileMeta> = HashMap::new();
     for info in infos {
         map.insert(info.key.clone(), info);
     }
@@ -44,10 +44,10 @@ where
     Ok(())
 }
 
-pub(crate) fn get_infos_for_source(
+pub(crate) fn get_metas_for_source(
     target_folder: &Path,
     source: String,
-) -> Result<HashMap<String, FileInfo>> {
+) -> Result<HashMap<String, FileMeta>> {
     let tracked = load_tracked(target_folder)?;
     let infos = tracked
         .files
@@ -80,9 +80,9 @@ fn load_tracked(target_folder: &Path) -> Result<TrackedFiles> {
     }
 }
 
-pub(crate) fn make_file_info(base_folder: &Path, relative_path: &Path) -> Result<FileInfo> {
+pub(crate) fn get_meta(base_folder: &Path, relative_path: &Path) -> Result<FileMeta> {
     let h = Code::Sha2_256.digest(&fs::read(base_folder.join(relative_path))?);
-    let info = FileInfo {
+    let info = FileMeta {
         key: relative_path.to_string_lossy().to_string(),
         hash: Cid::new_v1(Code::Sha2_256.into(), h),
     };

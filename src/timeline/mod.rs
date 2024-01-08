@@ -16,20 +16,16 @@ pub(crate) const FFIZER_DATASTORE_DIRNAME: &str = ".ffizer";
 const VERSION_FILENAME: &str = "version.txt";
 
 pub(crate) fn make_relative(loc: SourceLoc, from: &Path, to: &Path) -> Result<SourceLoc> {
-/*     dbg!(&loc);
-    dbg!(&from);
-    dbg!(&to); */
     // It's a no op if loc is absolute or an url
     if loc.uri.host.is_none() && loc.uri.path.is_relative() {
         let source_path = loc.uri.path.absolutize_from(from)?;
 
         let new_base = to.absolutize()?;
 
-        let relative_path =
-            diff_paths(&source_path, &new_base).ok_or(Error::DiffPathError {
-                path: source_path.into(),
-                base: new_base.into(),
-            })?;
+        let relative_path = diff_paths(&source_path, &new_base).ok_or(Error::DiffPathError {
+            path: source_path.into(),
+            base: new_base.into(),
+        })?;
         Ok(SourceLoc {
             uri: SourceUri::from_str(&relative_path.to_string_lossy())?,
             ..loc
@@ -68,7 +64,9 @@ pub(crate) fn make_template_from_folder(
         .sources
         .into_iter()
         .map(SourceLoc::try_from)
-        .map(|result| result.and_then(|loc| make_relative(loc, &std::env::current_dir()?, target_folder)))
+        .map(|result| {
+            result.and_then(|loc| make_relative(loc, &std::env::current_dir()?, target_folder))
+        })
         .collect::<Result<Vec<SourceLoc>>>()?;
 
     let template_cfg = make_template(sources);

@@ -416,6 +416,7 @@ where
     loop {
         match mode {
             UpdateMode::Auto => {
+                // should not enter here
                 mode = UpdateMode::Ask;
             }
             UpdateMode::Ask => {

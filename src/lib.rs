@@ -32,12 +32,13 @@ use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
 use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
+use crate::timeline::path_as_key;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
-use timeline::FileMeta;
+use timeline::{FileHash, FileMeta};
 use tracing::{debug, warn};
 
 pub(crate) const IGNORED_FOLDER_PREFIX: &str = "_ffizer_ignore";
@@ -123,7 +124,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         debug!("Saving metadata");
         timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
 
-        timeline::save_metas_for_source(new_metas, &ctx.cmd_opt.dst_folder, "global".into())?;
+        timeline::save_metas_for_source(new_metas, &ctx.cmd_opt.dst_folder, "global")?;
     }
     Ok(())
 }
@@ -190,16 +191,11 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
     Ok(actions)
 }
 
-fn decide_update_mode(
-    local: &FileMeta,
-    remote: &FileMeta,
-    past_remote: &FileMeta,
-    past_final: &FileMeta,
-) -> UpdateMode {
-    if past_remote == remote {
+fn decide_update_mode(local: &FileHash, remote: &FileHash, past: &FileMeta) -> UpdateMode {
+    if past.remote == *remote {
         // keep if the template hasn't changed since last time
         UpdateMode::Keep
-    } else if past_final == past_remote && past_final == local {
+    } else if past.accepted == past.remote && past.accepted == *local {
         // override if the user accepted remote last time and hasn't changed anything since
         UpdateMode::Override
     } else {
@@ -208,11 +204,7 @@ fn decide_update_mode(
 }
 
 //TODO accumulate Result (and error)
-fn execute(
-    ctx: &Ctx,
-    actions: &[Action],
-    variables: &Variables,
-) -> Result<Vec<(FileMeta, FileMeta)>> {
+fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<FileMeta>> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -221,8 +213,8 @@ fn execute(
 
     // let source = &ctx.cmd_opt.src;
     let target_folder = &ctx.cmd_opt.dst_folder;
-    let past_metas = timeline::get_stored_metas_for_source(target_folder, "global".into())?;
-    let mut new_metas = Vec::new();
+    let past_metas = timeline::get_stored_metas_for_source(target_folder, "global")?;
+    let mut new_metas = Vec::with_capacity(actions.len());
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
@@ -238,23 +230,25 @@ fn execute(
                 )?
             }
             FileOperation::AddFile => {
-                let (_, remote) = mk_file_on_action(&mut handlebars, variables, a, "")?;
-                let remote_meta =
-                    timeline::get_meta(target_folder, remote.strip_prefix(target_folder)?)?;
-                new_metas.push((remote_meta.clone(), remote_meta));
+                let (_, remote_path) = mk_file_on_action(&mut handlebars, variables, a, "")?;
+                let key = path_as_key(remote_path.strip_prefix(target_folder)?);
+                let hash = timeline::get_hash(&remote_path)?;
+
+                new_metas.push(FileMeta {
+                    key,
+                    remote: hash.clone(),
+                    accepted: hash,
+                });
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
                 let (local_path, remote_path) =
                     mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
 
-                let local =
-                    timeline::get_meta(target_folder, local_path.strip_prefix(target_folder)?)?;
-                let key = &local.key;
+                let key = path_as_key(local_path.strip_prefix(target_folder)?);
 
-                let remote =
-                    timeline::get_meta(target_folder, remote_path.strip_prefix(target_folder)?)?
-                        .with_key(key);
+                let local = timeline::get_hash(&local_path)?;
+                let remote = timeline::get_hash(&remote_path)?;
 
                 // If there are no changes, skip update
                 if local == remote {
@@ -262,15 +256,17 @@ fn execute(
                         path: remote_path.clone(),
                         source,
                     })?;
-                    new_metas.push((remote.clone(), remote));
+                    new_metas.push(FileMeta {
+                        key,
+                        remote: remote.clone(),
+                        accepted: remote,
+                    });
                     continue;
                 }
 
-                let update_mode = match past_metas.get(key) {
-                    Some((past_remote, past_final))
-                        if ctx.cmd_opt.update_mode == UpdateMode::Auto =>
-                    {
-                        decide_update_mode(&local, &remote, past_remote, past_final)
+                let update_mode = match past_metas.get(&key) {
+                    Some(past) if ctx.cmd_opt.update_mode == UpdateMode::Auto => {
+                        decide_update_mode(&local, &remote, past)
                     }
                     _ => ctx.cmd_opt.update_mode.clone(),
                 };
@@ -283,10 +279,11 @@ fn execute(
                     &update_mode,
                 )?;
 
-                new_metas.push((remote, timeline::get_meta(
-                    target_folder,
-                    local_path.strip_prefix(target_folder)?,
-                )?));
+                new_metas.push(FileMeta {
+                    key,
+                    remote,
+                    accepted: timeline::get_hash(&local_path)?,
+                });
             }
         }
     }
@@ -416,8 +413,7 @@ where
     loop {
         match mode {
             UpdateMode::Auto => {
-                // should not enter here
-                mode = UpdateMode::Ask;
+                unreachable!("Auto should be handled before here");
             }
             UpdateMode::Ask => {
                 mode = ui::ask_update_mode(local)?;

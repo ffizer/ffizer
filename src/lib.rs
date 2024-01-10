@@ -32,7 +32,6 @@ use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
 use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
-use crate::timeline::path_as_key;
 use crate::variables::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::fs;
@@ -191,7 +190,11 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
     Ok(actions)
 }
 
-fn decide_update_mode(local: &FileHash, remote: &FileHash, past: &FileMeta) -> UpdateMode {
+fn auto_decide_update_mode(
+    local: &FileHash,
+    remote: &FileHash,
+    past: &FileMeta,
+) -> UpdateMode {
     if past.remote == *remote {
         // keep if the template hasn't changed since last time
         UpdateMode::Keep
@@ -231,7 +234,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
             }
             FileOperation::AddFile => {
                 let (_, remote_path) = mk_file_on_action(&mut handlebars, variables, a, "")?;
-                let key = path_as_key(remote_path.strip_prefix(target_folder)?);
+                let key = remote_path.strip_prefix(target_folder)?.to_path_buf();
                 let hash = timeline::get_hash(&remote_path)?;
 
                 new_metas.push(FileMeta {
@@ -245,7 +248,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
                 let (local_path, remote_path) =
                     mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
 
-                let key = path_as_key(local_path.strip_prefix(target_folder)?);
+                let key = local_path.strip_prefix(target_folder)?.to_owned();
 
                 let local = timeline::get_hash(&local_path)?;
                 let remote = timeline::get_hash(&remote_path)?;
@@ -266,7 +269,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
 
                 let update_mode = match past_metas.get(&key) {
                     Some(past) if ctx.cmd_opt.update_mode == UpdateMode::Auto => {
-                        decide_update_mode(&local, &remote, past)
+                        auto_decide_update_mode(&local, &remote, past)
                     }
                     _ => ctx.cmd_opt.update_mode.clone(),
                 };

@@ -1,7 +1,7 @@
 use crate::timeline::FFIZER_DATASTORE_DIRNAME;
 use crate::Result;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 use std::fs;
 use std::path::Path;
 
@@ -17,18 +17,14 @@ pub(crate) struct FileHash {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub(crate) struct FileMeta {
-    pub key: String,
+    pub key: PathBuf,
     pub remote: FileHash,
     pub accepted: FileHash,
 }
 
-pub(crate) fn path_as_key(path: &Path) -> String {
-    path.to_string_lossy().to_string()
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct TrackedFiles {
-    pub files: HashMap<String, HashMap<String, FileMeta>>,
+    pub files: HashMap<String, HashMap<PathBuf, FileMeta>>,
 }
 
 pub(crate) fn save_metas_for_source(
@@ -37,9 +33,9 @@ pub(crate) fn save_metas_for_source(
     source: &str,
 ) -> Result<()> {
     let mut tracked = load_tracked(target_folder)?;
-    let mut map: HashMap<String, FileMeta> = HashMap::new();
+    let mut map: HashMap<PathBuf, FileMeta> = HashMap::new();
     for info in infos {
-        map.insert(info.key.to_owned(), info); // bad, should enforce keys to be identical
+        map.insert(info.key.to_owned(), info);
     }
     tracked.files.insert(String::from(source), map);
     save_tracked(&tracked, target_folder)?;
@@ -49,7 +45,7 @@ pub(crate) fn save_metas_for_source(
 pub(crate) fn get_stored_metas_for_source(
     target_folder: &Path,
     source: &str,
-) -> Result<HashMap<String, FileMeta>> {
+) -> Result<HashMap<PathBuf, FileMeta>> {
     let infos = load_tracked(target_folder)?
         .files
         .remove(source)

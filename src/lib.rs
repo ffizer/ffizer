@@ -1,5 +1,4 @@
 // #![feature(backtrace)]
-
 #[macro_use]
 extern crate serde;
 
@@ -29,7 +28,7 @@ pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
 
 use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
-use crate::error::*;
+use crate::error::{Error, Result};
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
@@ -99,11 +98,11 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     let mut variable_configs = template_composite.find_variablecfgs()?;
 
     // Updates defaults with suggested variables before asking.
-    variable_configs.iter_mut().for_each(|cfg| {
+    for cfg in &mut variable_configs {
         if let Some(v) = variables.saved.get(&cfg.name) {
-            cfg.default_value = Some(VariableValueCfg(v.clone()))
+            cfg.default_value = Some(VariableValueCfg(v.clone()));
         }
-    });
+    }
     let variable_configs = variable_configs; // make immutable
 
     let used_variables = ui::ask_variables(ctx, &variable_configs, confirmed_variables)?;
@@ -235,7 +234,7 @@ fn execute(
                 copy_file_permissions(
                     PathBuf::from(a.src[0].childpath()),
                     PathBuf::from(&a.dst_path),
-                )?
+                )?;
             }
             FileOperation::AddFile => {
                 let (_, remote_path) = mk_file_on_action(&mut handlebars, variables, a, "")?;

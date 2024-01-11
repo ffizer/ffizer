@@ -122,8 +122,11 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         run_scripts(ctx, &template_composite)?;
         debug!("Saving metadata");
         timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
-
-        timeline::save_metas_for_source(new_metas, &ctx.cmd_opt.dst_folder, "global")?;
+        timeline::save_filemetas_for_source(
+            new_metas,
+            &ctx.cmd_opt.dst_folder,
+            &timeline::Source::Global,
+        )?;
     }
     Ok(())
 }
@@ -190,16 +193,14 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
     Ok(actions)
 }
 
-fn auto_decide_update_mode(
-    local: &FileHash,
-    remote: &FileHash,
-    past: &FileMeta,
-) -> UpdateMode {
+fn auto_decide_update_mode(local: &FileHash, remote: &FileHash, past: &FileMeta) -> UpdateMode {
     if past.remote == *remote {
         // keep if the template hasn't changed since last time
         UpdateMode::Keep
     } else if past.accepted == past.remote && past.accepted == *local {
         // override if the user accepted remote last time and hasn't changed anything since
+        // Known issue 1: this enables override for appending templates even if the new remote would be different from last time.
+        // Known issue 2: If template A was used then template B and we're now using template A again, we could accept A blindly based on user behaviour with B 
         UpdateMode::Override
     } else {
         UpdateMode::Ask
@@ -207,7 +208,11 @@ fn auto_decide_update_mode(
 }
 
 //TODO accumulate Result (and error)
-fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<FileMeta>> {
+fn execute(
+    ctx: &Ctx,
+    actions: &[Action],
+    variables: &Variables,
+) -> Result<Vec<(PathBuf, FileMeta)>> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
@@ -216,13 +221,13 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
 
     // let source = &ctx.cmd_opt.src;
     let target_folder = &ctx.cmd_opt.dst_folder;
-    let past_metas = timeline::get_stored_metas_for_source(target_folder, "global")?;
+    let past_metas =
+        timeline::get_stored_metas_for_source(target_folder, &timeline::Source::Global)?;
     let mut new_metas = Vec::with_capacity(actions.len());
 
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
-            FileOperation::Nothing => (),
-            FileOperation::Ignore => (),
+            FileOperation::Ignore | FileOperation::Nothing => continue,
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => {
                 let path = PathBuf::from(&a.dst_path);
@@ -237,11 +242,13 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
                 let key = remote_path.strip_prefix(target_folder)?.to_path_buf();
                 let hash = timeline::get_hash(&remote_path)?;
 
-                new_metas.push(FileMeta {
+                new_metas.push((
                     key,
-                    remote: hash.clone(),
-                    accepted: hash,
-                });
+                    FileMeta {
+                        remote: hash,
+                        accepted: hash,
+                    },
+                ));
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
@@ -259,11 +266,13 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
                         path: remote_path.clone(),
                         source,
                     })?;
-                    new_metas.push(FileMeta {
+                    new_metas.push((
                         key,
-                        remote: remote.clone(),
-                        accepted: remote,
-                    });
+                        FileMeta {
+                            remote,
+                            accepted: remote,
+                        },
+                    ));
                     continue;
                 }
 
@@ -282,11 +291,13 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<Vec<F
                     &update_mode,
                 )?;
 
-                new_metas.push(FileMeta {
+                new_metas.push((
                     key,
-                    remote,
-                    accepted: timeline::get_hash(&local_path)?,
-                });
+                    FileMeta {
+                        remote,
+                        accepted: timeline::get_hash(&local_path)?,
+                    },
+                ));
             }
         }
     }

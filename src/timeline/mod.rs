@@ -1,3 +1,7 @@
+#![warn(clippy::perf)]
+#![warn(clippy::pedantic)]
+#![allow(clippy::module_name_repetitions)]
+
 mod files;
 mod options;
 
@@ -122,7 +126,7 @@ mod tests {
                 ..Default::default()
             };
 
-            assert_eq!(expected, make_template(vec![]))
+            assert_eq!(expected, make_template(vec![]));
         }
 
         #[rstest]

@@ -56,10 +56,10 @@ assemble:
         bigNumberMode: POSIX
       distributionType: BINARY
       archiveName: "{{distributionName}}_{{projectVersion}}"
-      attachPlatform: true
+      attachPlatform: false
       fileSets:
         - input: "target/{{ osPlatformReplaced }}/release"
-          output: ""
+          output: "bin"
           includes: ["ffizer{.exe,}"]
         # - input: "."
         #   includes: ["LICENSE"]

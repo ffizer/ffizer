@@ -38,7 +38,7 @@ pub fn assert_is_same<A: AsRef<Path>, B: AsRef<Path>>(
     let diffs = dir_diff_list::search_diff(
         actual_base,
         expected_base,
-        &[PathPattern::from_str(".ffizer/version.txt")?],
+        &[PathPattern::from_str(".ffizer")?],
     )?;
     if !diffs.is_empty() || !output.status.success() {
         dbg!(output);

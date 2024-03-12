@@ -84,7 +84,7 @@ ffizer upgrade
 
 ```sh
 # install pre-build binary via cargo-binstall
-cargo binstall ffizer
+cargo-binstall ffizer
 
 # install from source
 cargo install ffizer --force --features cli

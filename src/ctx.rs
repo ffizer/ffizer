@@ -1,5 +1,5 @@
 use super::Ctx;
-use crate::error::*;
+use crate::error::Result;
 use crate::timeline::get_saved_variables;
 use crate::variables::Variables;
 

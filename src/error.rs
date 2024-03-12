@@ -174,6 +174,16 @@ pub enum Error {
         #[from]
         source: dialoguer::Error,
     },
+    #[error(transparent)]
+    HashError {
+        #[from]
+        source: cid::multihash::Error,
+    },
+    #[error("Failed to compute relative path.")]
+    DiffPathError {
+        path: std::path::PathBuf,
+        base: std::path::PathBuf,
+    },
 }
 
 impl From<serde_yaml::Error> for Error {

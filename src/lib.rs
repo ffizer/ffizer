@@ -1,5 +1,4 @@
 // #![feature(backtrace)]
-
 #[macro_use]
 extern crate serde;
 
@@ -29,7 +28,7 @@ pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
 
 use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
-use crate::error::*;
+use crate::error::{Error, Result};
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};
 use crate::variables::Variables;
@@ -37,6 +36,7 @@ use handlebars_misc_helpers::new_hbs;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tempfile::TempDir;
+use timeline::{FileHash, FileMeta};
 use tracing::{debug, warn};
 
 pub(crate) const IGNORED_FOLDER_PREFIX: &str = "_ffizer_ignore";
@@ -98,11 +98,11 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     let mut variable_configs = template_composite.find_variablecfgs()?;
 
     // Updates defaults with suggested variables before asking.
-    variable_configs.iter_mut().for_each(|cfg| {
+    for cfg in &mut variable_configs {
         if let Some(v) = variables.saved.get(&cfg.name) {
-            cfg.default_value = Some(VariableValueCfg(v.clone()))
+            cfg.default_value = Some(VariableValueCfg(v.clone()));
         }
-    });
+    }
     let variable_configs = variable_configs; // make immutable
 
     let used_variables = ui::ask_variables(ctx, &variable_configs, confirmed_variables)?;
@@ -113,13 +113,19 @@ pub fn process(ctx: &Ctx) -> Result<()> {
     let source_files = template_composite.find_sourcefiles()?;
     debug!("defining plan of rendering");
     let actions = plan(ctx, source_files, &used_variables)?;
+
     if ui::confirm_plan(ctx, &actions)? {
         debug!("executing plan of rendering");
-        execute(ctx, &actions, &used_variables)?;
-        debug!("Saving metadata");
-        timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
+        let new_metas = execute(ctx, &actions, &used_variables)?;
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
+        debug!("Saving metadata");
+        timeline::save_options(&used_variables, &ctx.cmd_opt.src, &ctx.cmd_opt.dst_folder)?;
+        timeline::save_filemetas_for_source(
+            new_metas,
+            &ctx.cmd_opt.dst_folder,
+            &timeline::Source::Global,
+        )?;
     }
     Ok(())
 }
@@ -186,18 +192,41 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
     Ok(actions)
 }
 
+fn auto_decide_update_mode(local: &FileHash, remote: &FileHash, past: &FileMeta) -> UpdateMode {
+    if past.remote == *remote {
+        // keep if the template hasn't changed since last time
+        UpdateMode::Keep
+    } else if past.accepted == past.remote && past.accepted == *local {
+        // override if the user accepted remote last time and hasn't changed anything since
+        // Known issue 1: this enables override for appending templates even if the new remote would be different from last time.
+        // Known issue 2: If template A was used then template B and we're now using template A again, we could accept A blindly based on user behaviour with B 
+        UpdateMode::Override
+    } else {
+        UpdateMode::Ask
+    }
+}
+
 //TODO accumulate Result (and error)
-fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
+fn execute(
+    ctx: &Ctx,
+    actions: &[Action],
+    variables: &Variables,
+) -> Result<Vec<(PathBuf, FileMeta)>> {
     use indicatif::ProgressBar;
 
     let pb = ProgressBar::new(actions.len() as u64);
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
+    // let source = &ctx.cmd_opt.src;
+    let target_folder = &ctx.cmd_opt.dst_folder;
+    let past_metas =
+        timeline::get_stored_metas_for_source(target_folder, &timeline::Source::Global)?;
+    let mut new_metas = Vec::with_capacity(actions.len());
+
     for a in pb.wrap_iter(actions.iter()) {
         match a.operation {
-            FileOperation::Nothing => (),
-            FileOperation::Ignore => (),
+            FileOperation::Ignore | FileOperation::Nothing => continue,
             // TODO bench performance vs create_dir (and keep create_dir_all for root aka relative is empty)
             FileOperation::MkDir => {
                 let path = PathBuf::from(&a.dst_path);
@@ -205,42 +234,73 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
                 copy_file_permissions(
                     PathBuf::from(a.src[0].childpath()),
                     PathBuf::from(&a.dst_path),
-                )?
+                )?;
             }
             FileOperation::AddFile => {
-                mk_file_on_action(&mut handlebars, variables, a, "").map(|_| ())?
+                let (_, remote_path) = mk_file_on_action(&mut handlebars, variables, a, "")?;
+                let key = remote_path.strip_prefix(target_folder)?.to_path_buf();
+                let hash = timeline::get_hash(&remote_path)?;
+
+                new_metas.push((
+                    key,
+                    FileMeta {
+                        remote: hash,
+                        accepted: hash,
+                    },
+                ));
             }
             FileOperation::UpdateFile => {
                 //TODO what to do if .LOCAL, .REMOTE already exist ?
-                let (local, remote) = mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
-                let local_digest =
-                    md5::compute(fs::read(&local).map_err(|source| Error::ReadFile {
-                        path: local.clone(),
+                let (local_path, remote_path) =
+                    mk_file_on_action(&mut handlebars, variables, a, ".REMOTE")?;
+
+                let key = local_path.strip_prefix(target_folder)?.to_owned();
+
+                let local = timeline::get_hash(&local_path)?;
+                let remote = timeline::get_hash(&remote_path)?;
+
+                // If there are no changes, skip update
+                if local == remote {
+                    fs::remove_file(&remote_path).map_err(|source| Error::RemoveFile {
+                        path: remote_path.clone(),
                         source,
-                    })?);
-                let remote_digest =
-                    md5::compute(fs::read(&remote).map_err(|source| Error::ReadFile {
-                        path: remote.clone(),
-                        source,
-                    })?);
-                if local_digest == remote_digest {
-                    fs::remove_file(&remote).map_err(|source| Error::RemoveFile {
-                        path: remote.clone(),
-                        source,
-                    })?
-                } else {
-                    update_file(
-                        //FIXME to use all the source
-                        &PathBuf::from(a.src[0].childpath()),
-                        &local,
-                        &remote,
-                        &ctx.cmd_opt.update_mode,
-                    )?
+                    })?;
+                    new_metas.push((
+                        key,
+                        FileMeta {
+                            remote,
+                            accepted: remote,
+                        },
+                    ));
+                    continue;
                 }
+
+                let update_mode = match past_metas.get(&key) {
+                    Some(past) if ctx.cmd_opt.update_mode == UpdateMode::Auto => {
+                        auto_decide_update_mode(&local, &remote, past)
+                    }
+                    _ => ctx.cmd_opt.update_mode.clone(),
+                };
+
+                update_file(
+                    //FIXME to use all the source
+                    &PathBuf::from(a.src[0].childpath()),
+                    &local_path,
+                    &remote_path,
+                    &update_mode,
+                )?;
+
+                new_metas.push((
+                    key,
+                    FileMeta {
+                        remote,
+                        accepted: timeline::get_hash(&local_path)?,
+                    },
+                ));
             }
         }
     }
-    Ok(())
+    Ok(new_metas)
 }
 
 fn mk_file_on_action(
@@ -365,6 +425,9 @@ where
     let src = src.as_ref();
     loop {
         match mode {
+            UpdateMode::Auto => {
+                unreachable!("Auto should be handled before here");
+            }
             UpdateMode::Ask => {
                 mode = ui::ask_update_mode(local)?;
             }

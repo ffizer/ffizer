@@ -32,7 +32,7 @@ impl Variables {
     where
         F: FnMut(&String, &mut serde_yaml::Value) -> bool,
     {
-        self.0.retain(f)
+        self.0.retain(f);
     }
 
     #[instrument]

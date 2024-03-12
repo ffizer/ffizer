@@ -44,7 +44,7 @@ pub struct ApplyOpts {
     pub confirm: AskConfirmation,
 
     /// mode to update existing file
-    #[arg(long, default_value = "Ask", value_enum, ignore_case = true)]
+    #[arg(long, default_value = "Auto", value_enum, ignore_case = true)]
     pub update_mode: UpdateMode,
 
     /// should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
@@ -79,7 +79,7 @@ pub struct ReapplyOpts {
     pub confirm: AskConfirmation,
 
     /// mode to update existing file
-    #[arg(long, default_value = "Ask", value_enum, ignore_case = true)]
+    #[arg(long, default_value = "Auto", value_enum, ignore_case = true)]
     pub update_mode: UpdateMode,
 
     /// should not ask for confirmation (to use default value, to apply plan, to override, to run script,...)
@@ -115,8 +115,10 @@ pub enum AskConfirmation {
 #[derive(Debug, Clone, PartialEq, Eq, ValueEnum, Default)]
 /// mode to process update of existing local file
 pub enum UpdateMode {
-    /// ask what to do
+    /// Let ffizer decide
     #[default]
+    Auto,
+    /// ask what to do
     Ask,
     /// keep existing local file (ignore template)
     Keep,

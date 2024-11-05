@@ -12,6 +12,10 @@ on:
 permissions:
   contents: read
 
+env:
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+
 jobs:
   build:
     runs-on: ${{ matrix.os.imageName }}
@@ -38,15 +42,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - uses: mozilla-actions/sccache-action@v0.0.6
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.rust_toolchain }}
@@ -68,6 +64,8 @@ jobs:
       - run: cargo clippy --workspace --all-features --all-targets -- --deny warnings --deny deprecated --allow unknown-lints
         env:
           TARGET: ${{ matrix.os.target_platform }}
+      - run: ${SCCACHE_PATH} --show-stats
+        shell: bash
 
   # test:
   #   name: coverage

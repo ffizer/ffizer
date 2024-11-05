@@ -345,7 +345,7 @@ fn log_should_report_error() -> Result<(), Box<dyn Error>> {
         .assert()
         .stderr(
             predicate::str::contains("source: RenderError")
-                .and(predicate::str::contains("reason: InvalidSyntax,")),
+                .and(predicate::str::contains("reason: InvalidSyntax")),
         )
         .failure();
     Ok(())

@@ -15,8 +15,8 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
+cliclack = "0.3"
 console = "0.15"
-dialoguer = "0.11"
 directories = "5.0"
 git2 = { version = "0.18", optional = true }
 git2_credentials = { version = "0.13", optional = true }
@@ -29,7 +29,6 @@ handlebars_misc_helpers = { version = "0.17", features = [
     "jsonnet",
 ], default-features = false }
 human-panic = { version = "2", optional = true }
-indicatif = "0.17"
 lazy_static = "1.4"
 md5 = "0.7"
 regex = "1.7"

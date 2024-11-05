@@ -121,6 +121,7 @@ pub fn process(ctx: &Ctx) -> Result<()> {
         debug!("running scripts");
         run_scripts(ctx, &template_composite)?;
     }
+    ui::outro("Done")?;
     Ok(())
 }
 
@@ -188,13 +189,15 @@ fn plan(ctx: &Ctx, source_files: Vec<SourceFile>, variables: &Variables) -> Resu
 
 //TODO accumulate Result (and error)
 fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
-    use indicatif::ProgressBar;
+    use cliclack::progress_bar;
 
-    let pb = ProgressBar::new(actions.len() as u64);
+    let progress = progress_bar(actions.len() as u64);
     let mut handlebars = new_hbs();
     debug!(?variables, "execute");
 
-    for a in pb.wrap_iter(actions.iter()) {
+    progress.start("Update files...");
+    for a in actions.iter() {
+        progress.inc(1);
         match a.operation {
             FileOperation::Nothing => (),
             FileOperation::Ignore => (),
@@ -240,6 +243,7 @@ fn execute(ctx: &Ctx, actions: &[Action], variables: &Variables) -> Result<()> {
             }
         }
     }
+    progress.stop("Update complete");
     Ok(())
 }
 

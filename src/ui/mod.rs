@@ -8,27 +8,14 @@ use crate::variable_def::LabelValue;
 use crate::variable_def::VariableDef;
 use crate::FileOperation;
 use crate::{Action, Ctx, Variables};
+use cliclack::confirm;
+use cliclack::input;
+use cliclack::note;
+use cliclack::select;
 use console::Style;
-use console::Term;
-use dialoguer::theme::ColorfulTheme;
-use dialoguer::Confirm;
-use dialoguer::Input;
-use dialoguer::Select;
 use handlebars_misc_helpers::new_hbs;
-use lazy_static::lazy_static;
 use std::borrow::Cow;
 use tracing::{debug, instrument, span, warn, Level};
-
-lazy_static! {
-    static ref TERM: Term = Term::stdout();
-    static ref TITLE_STYLE: Style = Style::new().bold();
-    static ref PROMPT_THEME: ColorfulTheme = ColorfulTheme::default();
-}
-
-fn write_title(s: &str) -> Result<()> {
-    TERM.write_line(&format!("\n\n{}\n", TITLE_STYLE.apply_to(s)))?;
-    Ok(())
-}
 
 #[derive(Debug)]
 pub struct VariableResponse {
@@ -46,11 +33,11 @@ pub struct VariableRequest {
 #[instrument]
 fn to_variabledef(v: &VariableCfg) -> Result<VariableDef> {
     let hidden: bool = match v.hidden {
-        None => false,
+        Option::None => false,
         Some(ref v) => serde_yaml::from_str(v)?,
     };
     let select_in_values: Vec<LabelValue> = match &v.select_in_values {
-        None => vec![],
+        Option::None => vec![],
         Some(v) => v.into(),
     };
 
@@ -75,6 +62,14 @@ fn to_variabledef(v: &VariableCfg) -> Result<VariableDef> {
     })
 }
 
+pub(crate) fn intro(title: &str) -> Result<()> {
+    cliclack::intro(title).map_err(Error::from)
+}
+
+pub(crate) fn outro(message: &str) -> Result<()> {
+    cliclack::outro(message).map_err(Error::from)
+}
+
 pub(crate) fn ask_variables(
     ctx: &Ctx,
     list_variables: &[VariableCfg],
@@ -84,7 +79,7 @@ pub(crate) fn ask_variables(
     variables.append(&mut init);
     let handlebars = new_hbs();
 
-    write_title("Configure variables")?;
+    intro("Configure variables")?;
     // TODO optimize to reduce clones
     for variable_cfg in list_variables.iter().cloned() {
         let _span_ = span!(Level::DEBUG, "ask_variables", ?variable_cfg).entered();
@@ -180,32 +175,35 @@ pub(crate) fn ask_variables(
 pub fn ask_variable_value(req: VariableRequest) -> Result<VariableResponse> {
     if req.values.is_empty() {
         let value = match req.default_value {
-            Some(v) if v.value == "true" || v.value == "false" => {
-                Confirm::with_theme(&(*PROMPT_THEME))
-                    .default(v.value == "true")
-                    .with_prompt(&req.prompt)
-                    .interact()
-                    .map(|r| r.to_string())?
-            }
+            Some(v) if v.value == "true" || v.value == "false" => confirm(&req.prompt)
+                .initial_value(v.value == "true")
+                .interact()
+                .map(|r| r.to_string())?,
             _ => {
-                let mut input = Input::with_theme(&(*PROMPT_THEME));
+                let mut input = input(&req.prompt);
                 if let Some(default_value) = req.default_value {
-                    input = input.default(default_value.value);
+                    input = input.default_input(&default_value.value);
                 }
-                input.with_prompt(&req.prompt).interact()?
+                input.interact()?
             }
         };
         Ok(VariableResponse { value, idx: None })
     } else {
-        let mut input = Select::with_theme(&(*PROMPT_THEME));
-        input = input.with_prompt(&req.prompt).items(&req.values);
-        if let Some(default_value) = req.default_value.and_then(|v| v.idx) {
-            input = input.default(default_value);
+        let mut input = select(&req.prompt).items(
+            req.values
+                .iter()
+                .map(|v| (v.clone(), v.clone(), ""))
+                .collect::<Vec<_>>()
+                .as_slice(),
+        );
+        if let Some(default_value) = req.default_value {
+            let ivalue = default_value.value.clone();
+            input = input.initial_value(ivalue);
         }
-        let idx = input.interact()?;
+        let selected = input.interact()?;
         Ok(VariableResponse {
-            value: req.values[idx].clone(),
-            idx: Some(idx),
+            value: selected.to_string(),
+            idx: req.values.iter().position(|v| v == &selected),
         })
     }
 }
@@ -223,28 +221,26 @@ fn format_operation(op: &FileOperation) -> Cow<'static, str> {
 
 //TODO add flag to filter display: all, changes, none
 pub fn confirm_plan(ctx: &Ctx, actions: &[Action]) -> Result<bool> {
-    write_title("Plan to execute")?;
     debug!(?actions, "plan");
     let prefixes = tree::provide_prefix(actions, |parent, item| {
         Some(parent.dst_path.relative.as_path()) == item.dst_path.relative.parent()
     });
+    let mut plan = String::new();
     for (a, prefix) in actions.iter().zip(prefixes.iter()) {
         let p = a.dst_path.base.join(&a.dst_path.relative);
-        let s = format!(
-            "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}",
+        plan.push_str(&format!(
+            "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}\n",
             format_operation(&a.operation),
             80,
             80,
             80,
             prefix,
             p.file_name().and_then(|v| v.to_str()).unwrap_or("???"),
-        );
-        TERM.write_line(&s)?;
+        ));
     }
+    note("Plan to execute", plan)?;
     let r = if ctx.cmd_opt.confirm == AskConfirmation::Always {
-        Confirm::with_theme(&(*PROMPT_THEME))
-            .with_prompt("Do you want to apply plan ?")
-            .interact()?
+        confirm("Do you want to apply plan ?").interact()?
     } else {
         //TODO implement a algo for auto, like if no change then no ask.
         true
@@ -317,7 +313,7 @@ struct Line(Option<usize>);
 impl std::fmt::Display for Line {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.0 {
-            None => write!(f, "    "),
+            Option::None => write!(f, "    "),
             Some(idx) => write!(f, "{:<4}", idx + 1),
         }
     }
@@ -337,29 +333,23 @@ where
                 ("rename existing local file with extension .LOCAL, add template file", UpdateMode::CurrentAsLocal),
                 ("try to merge existing local with remote template via merge tool (defined in the git's configuration)", UpdateMode::Merge),
     ];
-    let mut input = Select::with_theme(&(*PROMPT_THEME));
-    input = input
-        .with_prompt(format!(
-            "Modification of {:?} (use arrow + return to select option)",
-            local.as_ref()
-        ))
-        .items(
-            &values
-                .iter()
-                .map(|v| format!("{} - {}", v.1, v.0))
-                .collect::<Vec<_>>(),
-        )
-        .default(0);
-    let idx = input.interact()?;
+    let mut input = select(format!(
+        "Modification of {:?} (use arrow + return to select option)",
+        local.as_ref()
+    ))
+    .items(
+        &values
+            .iter()
+            .map(|v| (v.1.clone(), format!("{} - {}", v.1, v.0), ""))
+            .collect::<Vec<_>>(),
+    );
+    let selected = input.interact()?;
 
-    Ok(values[idx].1.clone())
+    Ok(selected)
 }
 
 pub fn ask_to_update_sample(msg: &str) -> Result<bool> {
-    Confirm::with_theme(&(*PROMPT_THEME))
-        .with_prompt(msg)
-        .interact()
-        .map_err(|e| e.into())
+    confirm(msg).interact().map_err(Error::from)
 }
 
 pub fn show_message(
@@ -367,8 +357,11 @@ pub fn show_message(
     template_name: impl std::fmt::Display,
     message: impl std::fmt::Display,
 ) -> Result<()> {
-    println!("\n message from template: {}\n\t{}", template_name, message);
-    Ok(())
+    note(
+        "",
+        format!("\n message from template: {}\n\t{}", template_name, message),
+    )
+    .map_err(Error::from)
 }
 
 pub fn confirm_run_script(
@@ -377,27 +370,18 @@ pub fn confirm_run_script(
     script: impl std::fmt::Display,
     default_confirm_answer: bool,
 ) -> Result<bool> {
-    // let s = format!(
-    //     "   - {} \x1B[38;2;{};{};{}m{}\x1B[0m{}",
-    //     format_operation(&a.operation),
-    //     80,
-    //     80,
-    //     80,
-    //     prefix,
-    //     p.file_name().and_then(|v| v.to_str()).unwrap_or("???"),
-    // );
-    // TERM.write_line(&s).context(crate::Io {})?;
-
-    println!(
-        "\n command to run:\n\t from template: {}\n\t commands:\n{}",
-        template_name, script
-    );
+    note(
+        "Run script",
+        format!(
+            "\n command to run:\n\t from template: {}\n\t commands:\n{}",
+            template_name, script,
+        ),
+    )?;
     if ctx.cmd_opt.no_interaction {
         Ok(default_confirm_answer)
     } else {
-        Confirm::with_theme(&(*PROMPT_THEME))
-            .with_prompt("Do you want to run the commands ?")
-            .default(default_confirm_answer)
+        confirm("Do you want to run the commands ?")
+            .initial_value(default_confirm_answer)
             .interact()
             .map_err(Error::from)
     }

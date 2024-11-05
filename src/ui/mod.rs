@@ -328,7 +328,7 @@ where
     P: AsRef<std::path::Path>,
 {
     // let values = UpdateMode::variants();
-    let values = vec![
+    let values = [
                 //("ask what to do", UpdateMode::Ask),
                 ("show diff then ask", UpdateMode::ShowDiff),
                 ("keep existing local file (ignore template)", UpdateMode::Keep),
@@ -339,7 +339,7 @@ where
     ];
     let mut input = Select::with_theme(&(*PROMPT_THEME));
     input = input
-        .with_prompt(&format!(
+        .with_prompt(format!(
             "Modification of {:?} (use arrow + return to select option)",
             local.as_ref()
         ))

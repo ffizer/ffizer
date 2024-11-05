@@ -68,10 +68,9 @@ fn clone(
     builder
         .fetch_options(fo)
         .clone(url.as_ref(), dst.as_ref())
-        .map_err(|err| {
+        .inspect_err(|_| {
             // remove dst folder on error
             let _ = std::fs::remove_dir_all(dst);
-            err
         })?;
     Ok(())
 }

@@ -29,9 +29,9 @@ jobs:
           ls -l
           tar -xzf ffizer_${{ inputs.version }}-x86_64-apple-darwin.tgz
           tar -xzf ffizer_${{ inputs.version }}-aarch64-apple-darwin.tgz
-          lipo -create ffizer_${{ inputs.version }}-x86_64-apple-darwin/ffizer \
+          lipo -create ffizer_${{ inputs.version }}-x86_64-apple-darwin/bin/ffizer \
             ffizer_${{ inputs.version }}-aarch64-apple-darwin/bin/ffizer \
-            -output ../target/all-apple-darwin/release/bin/ffizer
+            -output ../target/all-apple-darwin/release/ffizer
 
       - name: Assemble
         uses: jreleaser/release-action@v2

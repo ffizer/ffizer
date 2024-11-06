@@ -56,7 +56,7 @@ assemble:
         bigNumberMode: POSIX
       distributionType: BINARY
       archiveName: "{{distributionName}}_{{projectVersion}}"
-      attachPlatform: false
+      attachPlatform: true
       fileSets:
         - input: "target/{{ osPlatformReplaced }}/release"
           output: "bin"

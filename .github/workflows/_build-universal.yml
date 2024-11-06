@@ -16,6 +16,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
+          path: artifacts
           pattern: artifacts-*
           merge-multiple: true
 

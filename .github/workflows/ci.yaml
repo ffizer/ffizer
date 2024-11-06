@@ -46,7 +46,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.rust_toolchain }}
-          target: ${{ matrix.os.target_platform }}
+          targets: ${{ matrix.os.target_platform }}
           # override: true
           # profile: ${{ matrix.os.profile_rustup }}
       # - uses: davidB/rust-cargo-make@v1

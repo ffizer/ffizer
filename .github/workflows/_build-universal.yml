@@ -15,6 +15,9 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
+        with:
+          pattern: artifacts-*
+          merge-multiple: true
 
       - name: Build binary
         shell: bash
@@ -42,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: artifacts
+          name: artifacts-all-apple-darwin
           path: |
             out/jreleaser/assemble/ffizer/archive/*.zip
             out/jreleaser/assemble/ffizer/archive/*.tgz

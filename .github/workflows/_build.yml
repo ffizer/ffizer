@@ -64,7 +64,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          target: ${{ matrix.job.target }}
+          targets: ${{ matrix.job.target }}
 
       - run: cargo build --release "--target=${{ matrix.job.target }}"
         if: ${{ !matrix.job.use-cross }}
@@ -90,7 +90,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: artifacts
+          name: artifacts-${{ matrix.job.target }}
           path: |
             out/jreleaser/assemble/ffizer/archive/*.zip
             out/jreleaser/assemble/ffizer/archive/*.tgz

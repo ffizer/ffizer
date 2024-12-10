@@ -26,7 +26,7 @@ impl ChildPath {
     }
 }
 
-impl<'a> From<&'a ChildPath> for PathBuf {
+impl From<&ChildPath> for PathBuf {
     fn from(v: &ChildPath) -> Self {
         v.base.join(&v.relative)
     }
@@ -41,7 +41,7 @@ pub fn is_ffizer_handlebars(path: &Path) -> bool {
 
 pub fn remove_special_suffix(path: &Path) -> Result<PathBuf> {
     match path.file_name().and_then(|s| s.to_str()) {
-        None => Ok(path.to_path_buf()),
+        Option::None => Ok(path.to_path_buf()),
         Some(v) => {
             let file_name = remove_special_suffix_on_filename(v);
             Ok(path.with_file_name(file_name))

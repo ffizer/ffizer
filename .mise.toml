@@ -1,6 +1,6 @@
 [tools]
-rust = "1.82"
-cargo-make = "0.36"
+rust = "1.83"
+cargo-make = "0.37"
 mdbook = "0.4"
 java = "21"         # require by jreleaser
 jreleaser = "1.9"

@@ -39,7 +39,7 @@ serde_json = "1.0"
 serde_plain = "1.0"
 serde_yaml = "0.9"
 similar = { version = "2.2", features = ["unicode", "inline"] }
-tempfile = "3.14"
+tempfile = "3.15"
 thiserror = "2.0"
 tracing = "0.1"
 tracing-error = "0.2"

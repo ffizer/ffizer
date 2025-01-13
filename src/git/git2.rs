@@ -88,19 +88,10 @@ mod tests {
     use pretty_assertions::assert_eq;
     use std::fs;
     use tempfile::tempdir;
-    use tracing_subscriber::FmtSubscriber;
 
     #[cfg(not(target_os = "windows"))]
-    #[test]
+    #[test_trace::test]
     fn retrieve_should_update_existing_template() {
-        let subscriber = FmtSubscriber::builder()
-            .with_writer(tracing_subscriber::fmt::writer::TestWriter::default())
-            .with_max_level(tracing::Level::WARN)
-            .finish();
-
-        tracing::subscriber::set_global_default(subscriber)
-            .expect("setting default subscriber failed");
-
         if std::process::Command::new("git")
             .arg("version")
             .output()

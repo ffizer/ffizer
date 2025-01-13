@@ -126,10 +126,8 @@ mod tests {
     }
 
     #[cfg(not(target_os = "windows"))]
-    #[test]
+    #[test_trace::test]
     fn retrieve_should_update_existing_template() {
-        let _ = tracing_subscriber::fmt::try_init();
-
         if !has_git_cli() {
             eprintln!("skip the test because `git` is not installed");
             return;

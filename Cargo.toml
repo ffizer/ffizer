@@ -59,7 +59,8 @@ rstest = "0.24"
 # rexpect = "0.3"
 similar-asserts = "1.4"
 test-generator = "0.3"
-tracing-subscriber = { version = "0.3", features = ["fmt"] }
+test-trace = "0.3"
+# traced-test = "1"     # 1.0.2 & 0.5 failed to compile on stable due to "#![feature(associated_type_defaults)]"
 
 [[bin]]
 name = "ffizer"

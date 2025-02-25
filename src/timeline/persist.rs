@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use crate::error::*;
-use crate::variables::Variables;
 use crate::SourceLoc;
 use crate::SourceUri;
+use crate::error::*;
+use crate::variables::Variables;
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct PersistedOptions {

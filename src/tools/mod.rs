@@ -2,13 +2,13 @@ pub mod dir_diff_list;
 
 use crate::cli_opt::{ApplyOpts, CliOpts, Command, TestSamplesOpts};
 use crate::path_pattern::PathPattern;
-use crate::{error::*, timeline, SourceLoc};
+use crate::{SourceLoc, error::*, timeline};
 use clap::Parser;
 use dir_diff_list::Difference;
 use dir_diff_list::EntryDiff;
 use std::fs;
 use std::path::{Path, PathBuf};
-use tempfile::{tempdir, TempDir};
+use tempfile::{TempDir, tempdir};
 use tracing::info;
 
 pub fn test_samples(cfg: &TestSamplesOpts) -> Result<()> {

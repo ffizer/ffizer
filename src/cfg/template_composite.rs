@@ -1,17 +1,17 @@
 use super::template_cfg::TemplateCfg;
 use super::transform_values::TransformsValues;
 use super::variable_cfg::VariableCfg;
+use crate::Result;
+use crate::Variables;
 use crate::files;
 use crate::graph::Graph;
 use crate::scripts::Script;
 use crate::source_file::SourceFile;
 use crate::source_loc::SourceLoc;
-use crate::Result;
-use crate::Variables;
 use handlebars_misc_helpers::new_hbs;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use tracing::{debug, instrument, span, warn, Level};
+use tracing::{Level, debug, instrument, span, warn};
 #[derive(Debug, Clone)]
 pub struct TemplateLayer {
     order: usize,

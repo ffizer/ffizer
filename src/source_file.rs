@@ -1,5 +1,5 @@
-use crate::files;
 use crate::ChildPath;
+use crate::files;
 use std::cmp::{Ord, Ordering};
 use std::path::PathBuf;
 

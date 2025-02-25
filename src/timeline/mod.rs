@@ -168,9 +168,9 @@ mod tests {
 
     use super::persist;
     use super::*;
+    use crate::Ctx;
     use crate::cli_opt::ApplyOpts;
     use crate::tests::new_ctx_from;
-    use crate::Ctx;
     use tempfile::TempDir;
 
     #[fixture]

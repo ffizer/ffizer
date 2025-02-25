@@ -1,6 +1,6 @@
 use assert_cmd::Command;
-use ffizer::tools::dir_diff_list;
 use ffizer::PathPattern;
+use ffizer::tools::dir_diff_list;
 use predicates::prelude::*;
 use pretty_assertions::assert_eq;
 use std::error::Error;

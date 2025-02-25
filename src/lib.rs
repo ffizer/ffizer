@@ -28,7 +28,7 @@ pub use crate::path_pattern::PathPattern;
 pub use crate::source_loc::SourceLoc;
 pub use crate::source_uri::SourceUri;
 
-use crate::cfg::{render_composite, TemplateComposite, VariableValueCfg};
+use crate::cfg::{TemplateComposite, VariableValueCfg, render_composite};
 use crate::error::*;
 use crate::files::ChildPath;
 use crate::source_file::{SourceFile, SourceFileMetadata};

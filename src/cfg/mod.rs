@@ -12,12 +12,12 @@ pub(crate) use template_composite::*;
 pub(crate) use transform_values::*;
 pub(crate) use variable_cfg::*;
 
+use crate::Result;
 use crate::path_pattern::PathPattern;
 use crate::scripts::Script;
 use crate::source_loc::SourceLoc;
 use crate::source_uri::SourceUri;
 use crate::timeline::FFIZER_DATASTORE_DIRNAME;
-use crate::Result;
 use std::path::PathBuf;
 use std::str::FromStr;
 

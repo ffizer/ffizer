@@ -1,5 +1,5 @@
-use crate::path_pattern::PathPattern;
 use crate::Result;
+use crate::path_pattern::PathPattern;
 use std::path::Path;
 use std::path::PathBuf;
 use walkdir::WalkDir;

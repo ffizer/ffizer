@@ -4,7 +4,7 @@ use std::{fs, io, process};
 
 use tracing::{debug, error};
 
-use super::{git_cmd, GitError};
+use super::{GitError, git_cmd};
 
 #[derive(Debug, thiserror::Error)]
 pub enum GitCliError {

@@ -1,9 +1,9 @@
 use super::transform_values::TransformsValues;
-use crate::variable_def::LabelValue;
 use crate::Result;
+use crate::variable_def::LabelValue;
+use schemars::JsonSchema;
 use schemars::r#gen::SchemaGenerator;
 use schemars::schema::Schema;
-use schemars::JsonSchema;
 
 #[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, Eq, JsonSchema)]
 pub struct VariableCfg {

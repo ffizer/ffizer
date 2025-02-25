@@ -1,5 +1,4 @@
 use clap::Parser;
-use ffizer::provide_json_schema;
 use ffizer::ApplyOpts;
 use ffizer::CliOpts;
 use ffizer::Command;
@@ -7,6 +6,7 @@ use ffizer::Ctx;
 use ffizer::ReapplyOpts;
 use ffizer::SourceLoc;
 use ffizer::TestSamplesOpts;
+use ffizer::provide_json_schema;
 use std::error::Error;
 use tracing::{debug, error, info, trace};
 use tracing_error::ErrorLayer;

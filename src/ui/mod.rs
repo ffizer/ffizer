@@ -1,12 +1,12 @@
 mod tree;
 
+use crate::FileOperation;
 use crate::cfg::TransformsValues;
 use crate::cfg::VariableCfg;
 use crate::cli_opt::*;
 use crate::error::*;
 use crate::variable_def::LabelValue;
 use crate::variable_def::VariableDef;
-use crate::FileOperation;
 use crate::{Action, Ctx, Variables};
 use cliclack::confirm;
 use cliclack::input;
@@ -15,7 +15,7 @@ use cliclack::select;
 use console::Style;
 use handlebars_misc_helpers::new_hbs;
 use std::borrow::Cow;
-use tracing::{debug, instrument, span, warn, Level};
+use tracing::{Level, debug, instrument, span, warn};
 
 #[derive(Debug)]
 pub struct VariableResponse {
@@ -325,13 +325,28 @@ where
 {
     // let values = UpdateMode::variants();
     let values = [
-                //("ask what to do", UpdateMode::Ask),
-                ("show diff then ask", UpdateMode::ShowDiff),
-                ("keep existing local file (ignore template)", UpdateMode::Keep),
-                ("override local file with file from template", UpdateMode::Override),
-                ("keep existing local file, add template with extension .REMOTE", UpdateMode::UpdateAsRemote),
-                ("rename existing local file with extension .LOCAL, add template file", UpdateMode::CurrentAsLocal),
-                ("try to merge existing local with remote template via merge tool (defined in the git's configuration)", UpdateMode::Merge),
+        //("ask what to do", UpdateMode::Ask),
+        ("show diff then ask", UpdateMode::ShowDiff),
+        (
+            "keep existing local file (ignore template)",
+            UpdateMode::Keep,
+        ),
+        (
+            "override local file with file from template",
+            UpdateMode::Override,
+        ),
+        (
+            "keep existing local file, add template with extension .REMOTE",
+            UpdateMode::UpdateAsRemote,
+        ),
+        (
+            "rename existing local file with extension .LOCAL, add template file",
+            UpdateMode::CurrentAsLocal,
+        ),
+        (
+            "try to merge existing local with remote template via merge tool (defined in the git's configuration)",
+            UpdateMode::Merge,
+        ),
     ];
     let mut input = select(format!(
         "Modification of {:?} (use arrow + return to select option)",

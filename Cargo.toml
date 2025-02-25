@@ -11,7 +11,7 @@ categories = ["command-line-utilities", "development-tools", "template-engine"]
 repository = "https://github.com/ffizer/ffizer"
 homepage = "https://ffizer.github.io/ffizer/book/"
 exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

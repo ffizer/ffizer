@@ -1,7 +1,7 @@
 use super::transform_values::TransformsValues;
 use crate::variable_def::LabelValue;
 use crate::Result;
-use schemars::gen::SchemaGenerator;
+use schemars::r#gen::SchemaGenerator;
 use schemars::schema::Schema;
 use schemars::JsonSchema;
 

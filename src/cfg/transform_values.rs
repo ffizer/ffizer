@@ -66,13 +66,13 @@ impl TransformsValues for serde_yaml::Value {
         F: Fn(&str) -> String,
     {
         match self {
-            serde_yaml::Value::String(ref v) => {
+            serde_yaml::Value::String(v) => {
                 Ok(serde_yaml::Value::String(v.transforms_values(render)?))
             }
-            serde_yaml::Value::Sequence(ref s) => {
+            serde_yaml::Value::Sequence(s) => {
                 Ok(serde_yaml::Value::Sequence(s.transforms_values(render)?))
             }
-            serde_yaml::Value::Mapping(ref m) => {
+            serde_yaml::Value::Mapping(m) => {
                 let mut expected = serde_yaml::Mapping::new();
                 for (k, v) in m {
                     expected.insert(k.transforms_values(render)?, v.transforms_values(render)?);

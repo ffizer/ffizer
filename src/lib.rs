@@ -328,7 +328,7 @@ fn render_template(
     output.clear(); //vec![u8] writer appends content if not clear
     handlebars
         .render_to_write(src_name, &variables, output)
-        .map_err(handlebars::RenderError::from)
+        //.map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
             when: "render template into buffer".into(),
             template: Box::new(src_name.to_string()),

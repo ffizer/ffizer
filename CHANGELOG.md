@@ -1,6 +1,13 @@
 # Changelog
 
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
+
+## [2.13.2](https://github.com/ffizer/ffizer/compare/2.13.1...2.13.2) - 2025-02-25
+
+### <!-- 4 -->Changed
+
+- ⬆️ update to rust 1.85 (edition 2024)
+
 ## Version x.y.z-dev
 
 <a name="2.7.0" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>

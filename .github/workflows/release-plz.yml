@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - main
+      - master
 
 env:
   SCCACHE_GHA_ENABLED: "true"

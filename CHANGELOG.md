@@ -2,6 +2,12 @@
 
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 
+## [2.13.3](https://github.com/ffizer/ffizer/compare/2.13.2...2.13.3) - 2025-06-03
+
+### <!-- 4 -->Changed
+
+- ⬆️ bump schemars from 0.8 to 0.9
+
 ## [2.13.2](https://github.com/ffizer/ffizer/compare/2.13.1...2.13.2) - 2025-02-25
 
 ### <!-- 4 -->Changed

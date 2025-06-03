@@ -1,9 +1,9 @@
+use std::borrow::Cow;
+
 use super::transform_values::TransformsValues;
 use crate::Result;
 use crate::variable_def::LabelValue;
-use schemars::JsonSchema;
-use schemars::r#gen::SchemaGenerator;
-use schemars::schema::Schema;
+use schemars::{JsonSchema, Schema, SchemaGenerator, json_schema};
 
 #[derive(Deserialize, Serialize, Debug, Default, Clone, PartialEq, Eq, JsonSchema)]
 pub struct VariableCfg {
@@ -46,12 +46,14 @@ pub struct VariableValueCfg(pub serde_yaml::Value);
 impl JsonSchema for VariableValueCfg {
     //no_ref_schema!();
 
-    fn schema_name() -> String {
-        "AnyValue".to_owned()
+    fn schema_name() -> Cow<'static, str> {
+        "AnyValue".into()
     }
 
     fn json_schema(_: &mut SchemaGenerator) -> Schema {
-        Schema::Bool(true)
+        json_schema!({
+            "type": "boolean"
+        })
     }
 }
 

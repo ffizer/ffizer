@@ -30,7 +30,7 @@ handlebars_misc_helpers = { version = "0.17", features = [
 ], default-features = false }
 human-panic = { version = "2", optional = true }
 lazy_static = "1"
-md5 = "0.7"
+md5 = "0.8"
 regex = "1"
 run_script = "0.11"
 schemars = "1.0"

@@ -53,7 +53,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # - name: Version
       #   shell: bash

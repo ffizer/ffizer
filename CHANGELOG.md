@@ -1,5 +1,15 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [2.13.4](https://github.com/ffizer/ffizer/compare/2.13.3...2.13.4) - 2025-08-26
+# Changelog
+
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 
 ## [2.13.3](https://github.com/ffizer/ffizer/compare/2.13.2...2.13.3) - 2025-06-03

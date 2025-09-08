@@ -16,7 +16,7 @@ edition = "2024"
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 cliclack = "0.3"
-console = "0.15"
+console = "0.16"
 directories = "6"
 git2 = { version = "0.20", optional = true }
 git2_credentials = { version = "0.15", optional = true }

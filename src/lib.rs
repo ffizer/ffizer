@@ -524,12 +524,11 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
                 if let Some(message) = &script.message {
                     ui::show_message(ctx, loc, message)?;
                 }
-                if let Some(cmd) = &script.cmd {
-                    if ui::confirm_run_script(ctx, loc, cmd, script.default_confirm_answer)? {
-                        if let Err(err) = script.run() {
-                            warn!(?err);
-                        }
-                    }
+                if let Some(cmd) = &script.cmd
+                    && ui::confirm_run_script(ctx, loc, cmd, script.default_confirm_answer)?
+                    && let Err(err) = script.run()
+                {
+                    warn!(?err);
                 }
             }
         }

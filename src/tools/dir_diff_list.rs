@@ -115,13 +115,13 @@ pub fn search_diff<A: AsRef<Path>, B: AsRef<Path>>(
             expect_index += 1;
             continue;
         }
-        if expect_entry.file_type().is_file() {
-            if let Some(diff) = compare_file(
+        if expect_entry.file_type().is_file()
+            && let Some(diff) = compare_file(
                 expect_entry.path().to_path_buf(),
                 actual_entry.path().to_path_buf(),
-            )? {
-                add_diff(expect_rpath, diff);
-            }
+            )?
+        {
+            add_diff(expect_rpath, diff);
         }
         actual_index += 1;
         expect_index += 1;

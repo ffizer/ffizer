@@ -9,7 +9,7 @@ jobs:
   build:
     name: "Build ${{ matrix.job.target }}"
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         # list of runners at https://docs.github.com/en/actions/reference/runners/github-hosted-runners
         job:
@@ -39,18 +39,18 @@ jobs:
               # use-cross: true,
               jreleaser_platform: linux-aarch_64,
             }
-          - {
-              target: x86_64-unknown-linux-musl,
-              os: ubuntu-latest,
-              use-cross: true,
-              jreleaser_platform: linux_musl-x86_64,
-            }
-          - {
-              target: aarch64-unknown-linux-musl,
-              os: ubuntu-24.04-arm,
-              use-cross: true,
-              jreleaser_platform: linux_musl-aarch_64,
-            }
+          # - {
+          #     target: x86_64-unknown-linux-musl,
+          #     os: ubuntu-latest,
+          #     use-cross: true,
+          #     jreleaser_platform: linux_musl-x86_64,
+          #   }
+          # - {
+          #     target: aarch64-unknown-linux-musl,
+          #     os: ubuntu-24.04-arm,
+          #     use-cross: true,
+          #     jreleaser_platform: linux_musl-aarch_64,
+          #   }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout

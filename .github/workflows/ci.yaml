@@ -17,69 +17,28 @@ env:
   RUSTC_WRAPPER: "sccache"
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os.imageName }}
-    strategy:
-      matrix:
-        rust_toolchain: ["stable"]
-        os:
-          - imageName: ubuntu-latest
-            # profile_rustup: default
-            profile_ci_flow: ci-static-code-analysis-tasks
-            target_platform: x86_64-unknown-linux-gnu
-          - target_platform: x86_64-apple-darwin
-            imageName: "macOS-latest"
-            # profile_rustup: minimal
-            profile_ci_flow: none
-          # - imageName: "macOS-latest"
-          #   profile_rustup: minimal
-          #   profile_ci_flow: none
-          #   target_platform: aarch64-apple-darwin
-          # - imageName: windows-latest
-          #   profile_rustup: minimal
-          #   profile_ci_flow: none
-          #   target_platform:
-
+  check:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: mozilla-actions/sccache-action@v0.0.9
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: ${{ matrix.rust_toolchain }}
-          targets: ${{ matrix.os.target_platform }}
-          # override: true
-          # profile: ${{ matrix.os.profile_rustup }}
-      # - uses: davidB/rust-cargo-make@v1
-      - run: cargo test
-        env:
-          TARGET: ${{ matrix.os.target_platform }}
-          # for list of xcode sdk see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners#xcode
-          # DEVELOPER_DIR: "/Applications/Xcode_11.app/Contents/Developer"
-          # CARGO_MAKE_RUN_CODECOV: "true"
-          # to have CODECOV_TOKEN go to https://codecov.io/gh/${GITHUB_USER}/${GITHUB_REPO}
-          # CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - run: cargo fmt --check
-        env:
-          TARGET: ${{ matrix.os.target_platform }}
       - run: cargo clippy --workspace --all-features --all-targets -- --deny warnings --deny deprecated --allow unknown-lints
-        env:
-          TARGET: ${{ matrix.os.target_platform }}
-      - run: ${SCCACHE_PATH} --show-stats
-        shell: bash
 
-  # test:
-  #   name: coverage
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: xd009642/tarpaulin:develop-nightly
-  #     options: --security-opt seccomp=unconfined
-  #   steps:
-  #     - uses: actions/checkout@v5
-  #     - name: Generate code coverage
-  #       run: |
-  #         cargo +nightly tarpaulin --verbose --all-features --workspace --timeout 120 --out xml
-  #     - name: Upload to codecov.io
-  #       uses: codecov/codecov-action@v2
-  #       with:
-  #         token: ${{secrets.CODECOV_TOKEN}} # not required for public repos
-  #         fail_ci_if_error: true
+  test:
+    runs-on: ${{ matrix.os.runner }}
+    strategy:
+      matrix:
+        os:
+          - runner: ubuntu-latest
+            # target_platform: x86_64-unknown-linux-gnu
+          - runner: "macOS-13"
+            # target_platform: x86_64-apple-darwin
+          - runner: "macOS-latest"
+            # target_platform: aarch64-apple-darwin
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test

@@ -1,6 +1,0 @@
-[toolchain]
-# `mise` set the env var RUSTUP_TOOLCHAIN and in docker use the provided toolchain => no channel set
-# But some ci/workflow (release*) doesn't use mise
-channel = "1.85.0"
-components = ["rustc", "cargo", "rust-std", "clippy", "rustfmt"]
-profile = "minimal"

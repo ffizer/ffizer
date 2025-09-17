@@ -2,6 +2,8 @@
 
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 
+## [2.13.4](https://github.com/ffizer/ffizer/compare/2.13.3...2.13.4) - 2025-09-17
+
 ## [2.13.3](https://github.com/ffizer/ffizer/compare/2.13.2...2.13.3) - 2025-06-03
 
 ### <!-- 4 -->Changed

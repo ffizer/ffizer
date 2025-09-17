@@ -1,0 +1,18 @@
+[tools]
+rust = { version = "1.89.0", profile = "minimal" } # the rust tool stack (with cargo, fmt, clippy) to build source
+"aqua:cargo-bins/cargo-binstall" = "1" # do not use cargo-binstall (it's a special name used by mise)
+mdbook = "latest" # 0.4
+"cargo:mdbook-admonish" = "latest"
+"cargo:mdbook-mermaid" = "latest"
+
+[tasks.build]
+run = [
+  "mdbook clean",
+  "mdbook build",
+]
+
+[tasks.update-json-schema]
+run = """
+  cd ..
+  cargo run -- show-json-schema > docs/ffizer.schema.json
+  """

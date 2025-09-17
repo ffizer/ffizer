@@ -1,55 +1,54 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "TemplateCfg",
   "type": "object",
   "properties": {
     "ignores": {
       "description": "list of path from the current template to ignore",
-      "default": [],
       "type": "array",
+      "default": [],
       "items": {
         "type": "string"
       }
     },
     "imports": {
       "description": "list of template to import and to apply as part of this template",
-      "default": [],
       "type": "array",
+      "default": [],
       "items": {
-        "$ref": "#/definitions/ImportCfg"
+        "$ref": "#/$defs/ImportCfg"
       }
     },
     "scripts": {
       "description": "list of the scripts to apply at end of generation",
-      "default": [],
       "type": "array",
+      "default": [],
       "items": {
-        "$ref": "#/definitions/ScriptCfg"
+        "$ref": "#/$defs/ScriptCfg"
       }
     },
     "use_template_dir": {
       "description": "set to true if the template content is under a `template` folder (not mixed with metadata)",
-      "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "variables": {
       "description": "list of variables/parameters of the template",
-      "default": [],
       "type": "array",
+      "default": [],
       "items": {
-        "$ref": "#/definitions/VariableCfg"
+        "$ref": "#/$defs/VariableCfg"
       }
     }
   },
   "additionalProperties": false,
-  "definitions": {
-    "AnyValue": true,
+  "$defs": {
+    "AnyValue": {
+      "type": "boolean"
+    },
     "ImportCfg": {
       "description": "define a template layer to import",
       "type": "object",
-      "required": [
-        "uri"
-      ],
       "properties": {
         "rev": {
           "type": [
@@ -66,14 +65,13 @@
         "uri": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "uri"
+      ]
     },
     "LabelValueCfg": {
       "type": "object",
-      "required": [
-        "label",
-        "value"
-      ],
       "properties": {
         "label": {
           "description": "display of the value (in select)",
@@ -81,13 +79,13 @@
         },
         "value": {
           "description": "the value",
-          "allOf": [
-            {
-              "$ref": "#/definitions/AnyValue"
-            }
-          ]
+          "$ref": "#/$defs/AnyValue"
         }
-      }
+      },
+      "required": [
+        "label",
+        "value"
+      ]
     },
     "ScriptCfg": {
       "type": "object",
@@ -117,9 +115,6 @@
     },
     "VariableCfg": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "ask": {
           "description": "sentence to ask the value (default to the name on variable)",
@@ -132,7 +127,7 @@
           "description": "optionnal default value",
           "anyOf": [
             {
-              "$ref": "#/definitions/AnyValue"
+              "$ref": "#/$defs/AnyValue"
             },
             {
               "type": "null"
@@ -154,27 +149,30 @@
           "description": "if non-empty then the value should selected into the list of value",
           "anyOf": [
             {
-              "$ref": "#/definitions/VariableValuesCfg"
+              "$ref": "#/$defs/VariableValuesCfg"
             },
             {
               "type": "null"
             }
           ]
         }
-      }
+      },
+      "required": [
+        "name"
+      ]
     },
     "VariableValuesCfg": {
       "anyOf": [
         {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/LabelValueCfg"
+            "$ref": "#/$defs/LabelValueCfg"
           }
         },
         {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AnyValue"
+            "$ref": "#/$defs/AnyValue"
           }
         },
         {

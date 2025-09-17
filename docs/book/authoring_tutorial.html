@@ -7,7 +7,7 @@
 
 
         <!-- Custom HTML head -->
-        
+
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,6 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
-        <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
         <!-- MathJax -->
@@ -85,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html" class="active"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup&#39; suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -93,7 +92,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -209,7 +208,7 @@ EOF
 <p>Now you can test again, and commit.</p>
 <pre><code class="language-sh">ffizer test-samples --source .
 git add .
-git commit -m &quot;:tada: initialize the template&quot;
+git commit -m ":tada: initialize the template"
 </code></pre>
 <h2 id="publish-on-remote-git-repository"><a class="header" href="#publish-on-remote-git-repository">Publish on remote git repository</a></h2>
 <p>ffizer support templates hosted on local file system or on remote git repositories (accessible via ssh or https). To share your template you can create and push your local repository to your favorite host (github, gitlab, bitbucket,…) following the same workflow than for any git repository (instructions are provided by the hosting service).</p>
@@ -225,10 +224,10 @@ ffizer test-samples --source git@github.com:xxxx/my_template.git
 <pre><code class="language-sh"># adapt to your case
 mv README.md README.ffizer.hbs.md
 cat &gt;README.ffizer.hbs.md &lt;&lt;EOF
-Hello {{env_var &quot;USERNAME&quot;}}
+Hello {{env_var "USERNAME"}}
 EOF
 </code></pre>
-<p>At render time, the content between <code>{{</code> and  <code>}}</code> is evaluated, the sample bellow it call the function <code>env_var</code> with the parameter <code>&quot;USERNAME&quot;</code>, this function is <a href="./builtin_functions.html">built-in</a> into ffizer.</p>
+<p>At render time, the content between <code>{{</code> and  <code>}}</code> is evaluated, the sample bellow it call the function <code>env_var</code> with the parameter <code>"USERNAME"</code>, this function is <a href="./builtin_functions.html">built-in</a> into ffizer.</p>
 <p>If you run the test, an error should be raised, because the rendered content doesn’t match the sample.</p>
 <pre><code class="language-sh">&gt; ffizer test-samples --source .
 
@@ -242,12 +241,12 @@ Plan to execute
    - add file         └─README.md
 Nov 08 17:54:38.837 WARN check failed Differences: [
     EntryDiff {
-        expect_base_path: &quot;/home/david/tmp/my-template/.ffizer.samples.d/my-sample.expected&quot;,
-        actual_base_path: &quot;/tmp/.tmpROuSyU/my-sample&quot;,
-        relative_path: &quot;README.md&quot;,
+        expect_base_path: "/home/david/tmp/my-template/.ffizer.samples.d/my-sample.expected",
+        actual_base_path: "/tmp/.tmpROuSyU/my-sample",
+        relative_path: "README.md",
         difference: StringContent {
-            expect: &quot;Hello World\n&quot;,
-            actual: &quot;Hello david\n&quot;,
+            expect: "Hello World\n",
+            actual: "Hello david\n",
         },
     },
 ], sample: my-sample, sub-cmd: test-samples
@@ -257,11 +256,11 @@ Nov 08 17:54:38.837 ERRO cmd: CliOpts {
         TestSamplesOpts {
             src: SourceLoc {
                 uri: SourceUri {
-                    raw: &quot;.&quot;,
-                    path: &quot;.&quot;,
+                    raw: ".",
+                    path: ".",
                     host: None,
                 },
-                rev: &quot;master&quot;,
+                rev: "master",
                 subfolder: None,
             },
             offline: false,
@@ -274,7 +273,7 @@ Nov 08 17:54:38.837 ERRO failed: TestSamplesFailed
 <pre><code class="language-sh">cat &gt;.ffizer.yaml &lt;&lt;EOF
 variables:
   - name: author_name
-    default_value: '{{ env_var &quot;USERNAME&quot; }}'
+    default_value: '{{ env_var "USERNAME" }}'
 
 ignores:
   - .git # exclude .git of the template host
@@ -304,15 +303,15 @@ ffizer test-samples --source .
 <pre><code class="language-sh">cat &gt;.ffizer.yaml &lt;&lt;EOF
 variables:
   - name: author_name
-    default_value: '{{ env_var &quot;USERNAME&quot; }}'
+    default_value: '{{ env_var "USERNAME" }}'
 
 ignores:
   - .git # exclude .git of the template host
 
 imports:
-  - uri: &quot;https://github.com/ffizer/templates_default.git&quot;
-    rev: &quot;master&quot;
-    subfolder: &quot;gitignore_io&quot;
+  - uri: "https://github.com/ffizer/templates_default.git"
+    rev: "master"
+    subfolder: "gitignore_io"
 
 EOF
 </code></pre>
@@ -339,7 +338,7 @@ EOF
 <pre><code class="language-sh">cat &gt;.ffizer.yaml &lt;&lt;EOF
 variables:
   - name: author_name
-    default_value: '{{ env_var &quot;USERNAME&quot; }}'
+    default_value: '{{ env_var "USERNAME" }}'
   - name: gitignore_what
     default_value: git
     ask: Create useful .gitignore (via gitignore.io) for
@@ -348,9 +347,9 @@ ignores:
   - .git # exclude .git of the template host
 
 imports:
-  - uri: &quot;https://github.com/ffizer/templates_default.git&quot;
-    rev: &quot;master&quot;
-    subfolder: &quot;gitignore_io&quot;
+  - uri: "https://github.com/ffizer/templates_default.git"
+    rev: "master"
+    subfolder: "gitignore_io"
 
 EOF
 </code></pre>
@@ -403,22 +402,6 @@ ffizer test-samples --source .
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

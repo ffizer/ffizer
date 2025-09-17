@@ -7,7 +7,7 @@
 
 
         <!-- Custom HTML head -->
-        
+
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,6 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
-        <link rel="stylesheet" href="./theme/catppuccin-highlight.css">
         <link rel="stylesheet" href="./theme/mdbook-admonish.css">
 
         <!-- MathJax -->
@@ -85,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html" class="active"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup' suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="overview.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="template_authoring.html"><strong aria-hidden="true">2.</strong> Template Authoring</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="authoring_tutorial.html"><strong aria-hidden="true">2.1.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="how_to.html"><strong aria-hidden="true">2.2.</strong> How to...</a></li><li class="chapter-item expanded "><a href="template_configuration.html"><strong aria-hidden="true">2.3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="schema_of_ffizer_yaml.html"><strong aria-hidden="true">2.4.</strong> Schema of .ffizer.yaml</a></li><li class="chapter-item expanded "><a href="builtin_variables.html"><strong aria-hidden="true">2.5.</strong> Built-in Variables</a></li><li class="chapter-item expanded "><a href="builtin_functions.html"><strong aria-hidden="true">2.6.</strong> Built-in Functions</a></li><li class="chapter-item expanded "><a href="editors_setup.html"><strong aria-hidden="true">2.7.</strong> IDE/Editor setup&#39; suggestions</a></li></ol></li><li class="chapter-item expanded "><a href="changelog.html"><strong aria-hidden="true">3.</strong> Changelog</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -93,7 +92,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -206,22 +205,6 @@ templates_default)
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script type="text/javascript">
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

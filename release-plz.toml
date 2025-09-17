@@ -1,7 +1,9 @@
 # [Configuration | Release-plz](https://release-plz.ieni.dev/docs/config)
 [workspace]
+features_always_increment_minor = true
 git_tag_name = "{{version}}"
 git_release_name = "{{version}}"
+semver_check = false # TODO enable when the lib will be used out of this cli (=> increase CI time)
 
 [changelog]
 sort_commits = "newest"
@@ -24,7 +26,7 @@ commit_parsers = [
     { message = "^(style|💄)", group = "<!-- 4 -->Changed" },
     { message = "^(doc|✏️|📝)", group = "<!-- 4 -->Changed" },
     { message = "^(perf|⚡️)", group = "<!-- 4 -->Changed" },
-    { message = "^(chore|ci|💚|👷|🚧)", group = "<!-- 4 -->Changed", skip = true },
+    { message = "^(chore|ci|build|💚|👷|🚧)", group = "<!-- 4 -->Changed", skip = true },
     { message = "^revert", group = "<!-- 4 -->Changed" },
     { message = "^(chore\\(deps\\)|⬇️|⬆️|➕|➖)", group = "<!-- 4 -->Changed" },
     { message = "^(refactor|🎨|🔥|♻️)", group = "<!-- 5 -->Refactor", skip = true },

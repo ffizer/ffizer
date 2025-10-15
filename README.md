@@ -76,7 +76,7 @@ Or download the binary for your platform from [github releases](https://github.c
 #### via homebrew (MacOs & Linux)
 
 ```sh
-brew install ffizer/ffizer/ffizer-bin
+brew install ffizer/ffizer/ffizer
 ffizer upgrade
 ```
 

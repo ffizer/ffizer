@@ -43,7 +43,7 @@ jobs:
           JRELEASER_PLATFORM_OVERRIDE: osx
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: artifacts-all-apple-darwin
@@ -53,7 +53,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: jreleaser-all-apple-darwin

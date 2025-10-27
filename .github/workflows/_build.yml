@@ -88,7 +88,7 @@ jobs:
           JRELEASER_PLATFORM_OVERRIDE: ${{ matrix.job.jreleaser_platform }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: artifacts-${{ matrix.job.target }}
@@ -98,7 +98,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: jreleaser-${{ matrix.job.target }}

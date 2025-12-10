@@ -214,3 +214,9 @@ Release a new version by bump `patch` (or `minor`or `major`)
 cargo make publish patch # dry-run
 cargo make publish --execute patch
 ```
+
+## Downloads
+
+![Download History - Last 60 Days (Daily)](https://download-history.cdviz.dev/api/chart/github.com/ffizer/ffizer/60d.svg?granularity=daily)
+
+![Download History - All Time (Weekly)](https://download-history.cdviz.dev/api/chart/github.com/ffizer/ffizer/all.svg?granularity=weekly)

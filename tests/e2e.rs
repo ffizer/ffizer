@@ -1,4 +1,4 @@
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use ffizer::PathPattern;
 use ffizer::tools::dir_diff_list;
 use predicates::prelude::*;
@@ -21,7 +21,7 @@ fn run_test_samples(template_path: &str) {
 }
 
 pub fn do_run_test_samples(template_path: &str) -> Result<(), Box<dyn Error>> {
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
         .arg("test-samples")
         .arg("--source")
         .arg(template_path)
@@ -85,7 +85,7 @@ mod test_reapply {
             PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected");
         let apply_result_path = tmp_dir.path().to_path_buf();
 
-        let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        let output = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
             .arg("apply")
             .arg("--no-interaction")
             .arg("--confirm")
@@ -101,7 +101,7 @@ mod test_reapply {
             .ok()?;
         assert_is_same(&apply_result_path, &expected_path, &output)?;
 
-        let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        let output_reapply = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
             .arg("reapply")
             .arg("--no-interaction")
             .arg("--confirm")
@@ -125,7 +125,7 @@ mod test_reapply {
             PathBuf::from("./tests/data/template_1/.ffizer.samples.d/my-project.expected");
         let apply_result_path = tmp_dir_apply.path().to_path_buf();
 
-        let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        let output = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
             .arg("apply")
             .arg("--no-interaction")
             .arg("--confirm")
@@ -149,7 +149,7 @@ mod test_reapply {
             tmp_dir_reapply.path().join(".ffizer"),
         )?;
 
-        let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        let output_reapply = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
             .arg("reapply")
             .arg("--no-interaction")
             .arg("--confirm")
@@ -188,7 +188,7 @@ mod test_reapply {
         let apply_result_path = tmp_dir_apply.path().to_path_buf();
 
         for source_subfolder in ["template_2", "template_1"] {
-            Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
                 .arg("apply")
                 .arg("--no-interaction")
                 .arg("--confirm")
@@ -214,7 +214,7 @@ mod test_reapply {
             reapply_result_path.join(".ffizer"),
         )?;
 
-        let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        let output_reapply = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
             .arg("reapply")
             .arg("--no-interaction")
             .arg("--confirm")
@@ -253,7 +253,7 @@ mod test_reapply {
         let apply_result_path = tmp_dir_apply.path().to_path_buf();
 
         for source_subfolder in ["template_2", "template_1"] {
-            let output = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+            let output = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
                 .arg("apply")
                 .arg("--no-interaction")
                 .arg("--confirm")
@@ -273,7 +273,7 @@ mod test_reapply {
             assert_eq!(output.status.success(), true);
         }
 
-        let output_reapply = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+        let output_reapply = cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
             .arg("reapply")
             .arg("--no-interaction")
             .arg("--confirm")
@@ -291,7 +291,7 @@ mod test_reapply {
 #[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
         .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
@@ -302,7 +302,7 @@ fn test_1_remote_master() -> Result<(), Box<dyn Error>> {
 #[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_commithash() -> Result<(), Box<dyn Error>> {
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
         .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
@@ -315,7 +315,7 @@ fn test_1_remote_commithash() -> Result<(), Box<dyn Error>> {
 #[cfg(feature = "test_remote")]
 #[test]
 fn test_1_remote_tag() -> Result<(), Box<dyn Error>> {
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
         .arg("test-samples")
         .arg("--source")
         .arg("https://github.com/ffizer/template_sample.git")
@@ -333,7 +333,7 @@ fn log_should_report_error() -> Result<(), Box<dyn Error>> {
     let template_path = sample_path.join("template");
     let actual_path = tmp_dir.path().join("my-project");
 
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    cargo_bin_cmd!(env!("CARGO_PKG_NAME"))
         .arg("apply")
         .arg("--no-interaction")
         .arg("--confirm")

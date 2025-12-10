@@ -33,7 +33,7 @@ jobs:
         os:
           - runner: ubuntu-latest
             # target_platform: x86_64-unknown-linux-gnu
-          - runner: "macOS-13"
+          - runner: "macOS-15"
             # target_platform: x86_64-apple-darwin
           - runner: "macOS-latest"
             # target_platform: aarch64-apple-darwin

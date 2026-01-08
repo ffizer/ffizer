@@ -2,7 +2,7 @@ use std::path::Path;
 use std::process::ExitStatus;
 use std::{fs, io, process};
 
-use tracing::{debug, error};
+use tracing::debug;
 
 use super::{GitError, git_cmd};
 

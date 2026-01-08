@@ -1,5 +1,20 @@
 [tools]
-rust = { version = "1.91.1", profile = "minimal", components = "rustfmt,clippy" } # the rust tool stack (with cargo, fmt, clippy) to build source
+rust = { version = "1.92.0", profile = "minimal", components = "rustfmt,clippy" } # the rust tool stack (with cargo, fmt, clippy) to build source
 # "aqua:cargo-bins/cargo-binstall" = "1" # do not use cargo-binstall (it's a special name used by mise)
 java = "21"         # require by jreleaser
 jreleaser = "1.9"
+
+[tasks.ci]
+description = "run tests and lint (like CI)"
+run = [
+  "cargo fmt --check --all",
+  "cargo clippy --workspace --all-features --all-targets -- --deny warnings --deny deprecated --allow unknown-lints",
+  "cargo test",
+]
+
+[tasks.autofix]
+description = "auto-fix lint warnings and format code"
+run = [
+  "cargo clippy --fix --allow-dirty --workspace --all-features --all-targets -- --deny warnings --deny deprecated --allow unknown-lints",
+  "cargo fmt --all",
+]

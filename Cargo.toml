@@ -1,7 +1,6 @@
 [package]
 name = "ffizer"
 version = "2.13.6"
-authors = ["David Bernard"]
 description = """ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)"""
 readme = "README.md"
@@ -12,6 +11,20 @@ repository = "https://github.com/ffizer/ffizer"
 homepage = "https://ffizer.github.io/ffizer/book/"
 exclude = ["/.github/**", "/docs/**", "/scripts/**", ".gitignore", "/tests/**"]
 edition = "2024"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/{ version }/{ name }_{ version }-{ target }{ archive-suffix }"
+bin-dir = "{ name }_{ version }-{ target }/{ bin }{ binary-ext }"
+pkg-fmt = "tgz"
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-fmt = "zip"
+
+[package.metadata.release]
+pre-release-commit-message = "🚀 (cargo-release) version {{version}}"
+tag-prefix = ""
+tag-name = "{{prefix}}{{version}}"
+tag-message = "🔖 {{version}}"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
@@ -94,17 +107,3 @@ default = ["cli"]
 test_remote = []                                            # feature has no explicit dependencies
 cli = ["git2", "dep:human-panic", "dep:tracing-subscriber"]
 git2 = ["dep:git2", "dep:git2_credentials"]
-
-[package.metadata.binstall]
-pkg-url = "{ repo }/releases/download/{ version }/{ name }_{ version }-{ target }{ archive-suffix }"
-bin-dir = "{ name }_{ version }-{ target }/{ bin }{ binary-ext }"
-pkg-fmt = "tgz"
-
-[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
-pkg-fmt = "zip"
-
-[package.metadata.release]
-pre-release-commit-message = "🚀 (cargo-release) version {{version}}"
-tag-prefix = ""
-tag-name = "{{prefix}}{{version}}"
-tag-message = "🔖 {{version}}"

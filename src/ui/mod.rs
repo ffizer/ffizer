@@ -100,8 +100,7 @@ pub(crate) fn ask_variables(
         let variable = to_variabledef(&variable_cfg)?;
         let name = variable.name;
         let request = {
-            let prompt = if variable.ask.is_some() {
-                let ask = variable.ask.expect("variable ask should defined");
+            let prompt = if let Some(ask) = variable.ask {
                 handlebars
                     .render_template(&ask, &variables)
                     .map_err(|source| Error::Handlebars {

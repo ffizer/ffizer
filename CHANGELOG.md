@@ -2,6 +2,12 @@
 
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 
+## [2.13.7](https://github.com/ffizer/ffizer/compare/2.13.6...2.13.7) - 2026-02-09
+
+### <!-- 1 -->Fixed
+
+- *(deps)* update
+
 ## [2.13.6](https://github.com/ffizer/ffizer/compare/2.13.5...2.13.6) - 2025-12-10
 
 ### <!-- 1 -->Fixed

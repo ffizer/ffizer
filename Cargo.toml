@@ -1,6 +1,6 @@
 [package]
 name = "ffizer"
-version = "2.13.6"
+version = "2.13.7"
 description = """ffizer is a files and folders initializer / generator.
 It creates or updates any kind (or part) of project from template(s)"""
 readme = "README.md"

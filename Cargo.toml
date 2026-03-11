@@ -28,7 +28,7 @@ tag-message = "🔖 {{version}}"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
-cliclack = "0.3"
+cliclack = "0.4"
 console = "0.16"
 directories = "6"
 git2 = { version = "0.20", optional = true }

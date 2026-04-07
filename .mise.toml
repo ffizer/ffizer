@@ -18,3 +18,9 @@ run = [
   "cargo clippy --fix --allow-dirty --workspace --all-features --all-targets -- --deny warnings --deny deprecated --allow unknown-lints",
   "cargo fmt --all",
 ]
+
+# [tasks.test]
+# description = "run tests"
+# run = [
+#   "cargo test --package ffizer --lib -- files::tests::test_find_childpaths_template_1",
+# ]

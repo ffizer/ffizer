@@ -154,4 +154,15 @@ mod tests {
         );
         Ok(())
     }
+
+    // #[test]
+    // fn test_find_childpaths_template_1() {
+    //     let mut children = find_childpaths(
+    //         "tests/data/template_1",
+    //         &[".ffizer.samples.d".parse().unwrap()],
+    //     );
+    //     children.sort();
+    //     children.iter().for_each(|c| println!("{:?}", c));
+    //     assert_eq!(children.len(), 15);
+    // }
 }

@@ -481,12 +481,13 @@ fn compute_dst_path(ctx: &Ctx, src: &ChildPath, variables: &Variables) -> Result
             let p = if !s.contains('{') {
                 s.to_owned()
             } else {
+                let s = s.replace('\\', "/"); // HACK: on Windows path with 'folder\{{...}}' becomes 'folder{{...}}'
                 let handlebars = new_hbs();
                 handlebars
-                    .render_template(s, variables)
+                    .render_template(&s, variables)
                     .map_err(|source| Error::Handlebars {
                         when: format!("define path for '{:?}'", src),
-                        template: Box::new(s.into()),
+                        template: Box::new(s),
                         source: Box::new(source),
                     })?
             };

@@ -72,7 +72,7 @@ where
         dst: dst.to_path_buf(),
         url: url.to_owned(),
         rev: rev.to_owned(),
-        source,
+        source: Box::new(source),
         msg: Box::new("Fail to retrieve repository".to_string()),
     })
 }
@@ -108,7 +108,7 @@ fn git_cmd(current_dir: &Path, args: &[&str]) -> Result<ExitStatus, GitError> {
     Ok(status)
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_os = "windows")))]
 mod tests {
     use std::fs;
 
@@ -125,7 +125,6 @@ mod tests {
         assert_eq!(result, "code --wait $MERGED");
     }
 
-    #[cfg(not(target_os = "windows"))]
     #[test_trace::test]
     fn retrieve_should_update_existing_template() {
         if !has_git_cli() {

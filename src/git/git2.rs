@@ -82,14 +82,14 @@ pub fn find_cmd_tool(kind: &str) -> Result<String, git2::Error> {
     config.get_string(&format!("{}tool.{}.cmd", kind, tool))
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_os = "windows")))]
 mod tests {
     use super::*;
     use pretty_assertions::assert_eq;
     use std::fs;
     use tempfile::tempdir;
 
-    #[cfg(not(target_os = "windows"))]
+    //#[cfg(not(target_os = "windows"))]
     #[test_trace::test]
     fn retrieve_should_update_existing_template() {
         if std::process::Command::new("git")

@@ -30,7 +30,7 @@ pub enum Error {
         dst: PathBuf,
         url: String,
         rev: Option<String>,
-        source: GitError,
+        source: Box<GitError>,
         msg: Box<String>,
     },
     #[error("try to find git config '{key:?}'")]

@@ -589,7 +589,7 @@ dependencies = [
  "serde_json",
  "serde_plain",
  "serde_yaml",
- "similar 3.0.0",
+ "similar",
  "similar-asserts",
  "tempfile",
  "test-generator",
@@ -2220,16 +2220,6 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "similar"
-version = "2.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"
-dependencies = [
- "bstr",
- "unicode-segmentation",
-]
-
-[[package]]
-name = "similar"
 version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26d0b06eba54f0ca0770f970a3e89823e766ca638dd940f8469fa0fa50c75396"
@@ -2240,12 +2230,12 @@ dependencies = [
 
 [[package]]
 name = "similar-asserts"
-version = "1.7.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5b441962c817e33508847a22bd82f03a30cff43642dc2fae8b050566121eb9a"
+checksum = "997e6ca38e97437973fc9f7f50a50d1274cacd874341a4960fea90067291038c"
 dependencies = [
- "console 0.15.11",
- "similar 2.7.0",
+ "console 0.16.3",
+ "similar",
 ]
 
 [[package]]
@@ -2367,7 +2357,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.3.4",
+ "getrandom 0.4.2",
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",

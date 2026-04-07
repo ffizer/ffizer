@@ -37,6 +37,8 @@ jobs:
             # target_platform: x86_64-apple-darwin
           - runner: "macOS-latest"
             # target_platform: aarch64-apple-darwin
+          - runner: "windows-latest"
+            # target_platform: aarch64-apple-darwin
     steps:
       - uses: actions/checkout@v6
       - uses: mozilla-actions/sccache-action@v0.0.9

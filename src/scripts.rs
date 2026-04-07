@@ -58,8 +58,11 @@ mod tests {
         let out = child.wait_with_output().unwrap();
 
         let stdout = String::from_utf8_lossy(&out.stdout);
-        assert_eq!(stdout, "What's your name?\n👋 Hello ffizer\n");
+        let mut stdout_lines = stdout.lines(); // to work on event os
+        assert_eq!(stdout_lines.next(), Some("What's your name?"));
+        assert_eq!(stdout_lines.next(), Some("👋 Hello ffizer"));
         let stderr = String::from_utf8_lossy(&out.stderr);
-        assert_eq!(stderr, "🚨 Plaf!\n");
+        let mut stderr_lines = stderr.lines(); // to work on event os
+        assert_eq!(stderr_lines.next(), Some("🚨 Plaf!"));
     }
 }

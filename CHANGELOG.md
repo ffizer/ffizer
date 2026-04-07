@@ -2,6 +2,12 @@
 
 <a name="x.y.z-dev" data-comment="this line is used by gitmoji-changelog, don't remove it!"></a>
 
+## [2.13.9](https://github.com/ffizer/ffizer/compare/2.13.8...2.13.9) - 2026-04-07
+
+### <!-- 1 -->Fixed
+
+- hack to handle windows path with `folder\{{variable}}...'
+
 ## [2.13.7](https://github.com/ffizer/ffizer/compare/2.13.6...2.13.7) - 2026-02-09
 
 ### <!-- 1 -->Fixed

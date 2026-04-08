@@ -20,7 +20,7 @@ jobs:
             }
           - {
               target: x86_64-apple-darwin,
-              os: macos-13,
+              os: macos-26-intel,
               jreleaser_platform: osx-x86_64,
             }
           - {

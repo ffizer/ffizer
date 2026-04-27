@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
           token: ${{ secrets.JRELEASER_GITHUB_TOKEN }}
-      - uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: mozilla-actions/sccache-action@v0.0.10
       - uses: dtolnay/rust-toolchain@stable
       - name: Run release-plz
         uses: MarcoIeni/release-plz-action@v0.5

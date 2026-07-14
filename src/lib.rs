@@ -321,7 +321,7 @@ fn render_template(
         .register_template_file(src_name, src_full_path)
         .map_err(handlebars::RenderError::from)
         .map_err(|source| Error::Handlebars {
-            when: format!("load content of template '{:?}'", &src_full_path),
+            when: format!("load content of template '{:?}'", src_full_path),
             template: Box::new(src_name.to_string()),
             source: Box::new(source),
         })?;
@@ -540,7 +540,7 @@ fn run_scripts(ctx: &Ctx, template_composite: &TemplateComposite) -> Result<()> 
 #[cfg(test)]
 mod tests {
     use super::*;
-    pub use crate::cli_opt::*;
+
     use pretty_assertions::assert_eq;
     use tempfile::TempDir;
 

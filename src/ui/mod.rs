@@ -104,7 +104,7 @@ pub(crate) fn ask_variables(
                 handlebars
                     .render_template(&ask, &variables)
                     .map_err(|source| Error::Handlebars {
-                        when: format!("define prompt for '{}'", &name),
+                        when: format!("define prompt for '{}'", name),
                         template: Box::new(ask.clone()),
                         source: Box::new(source),
                     })?
